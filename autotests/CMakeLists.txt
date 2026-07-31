@@ -539,6 +539,7 @@ target_include_directories(toolsunittest PRIVATE
 target_link_libraries(toolsunittest
     Qt6::Core
     Qt6::Gui
+    Qt6::Quick
     Qt6::Test
     Qt6::Widgets
     KF6::I18n
