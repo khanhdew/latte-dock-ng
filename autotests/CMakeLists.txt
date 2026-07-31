@@ -539,6 +539,10 @@ target_include_directories(toolsunittest PRIVATE
 target_link_libraries(toolsunittest
     Qt6::Core
     Qt6::Gui
+    #! toolsunittest compiles configview.h which includes QQuickView; the
+    #! Qt6::Quick dependency keeps the QtQuick include dir in the compile
+    #! command. Distros that keep Qt headers outside the default include
+    #! path (Debian's arch-triplet layout) fail to build without it.
     Qt6::Quick
     Qt6::Test
     Qt6::Widgets

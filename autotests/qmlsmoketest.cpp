@@ -27,6 +27,12 @@
 //! context property, so no types from the module are required. The
 //! registration is skipped whenever the real module resolves, keeping the
 //! Plasma 6.5+ behavior untouched.
+//!
+//! Do not "improve" this by registering a stub Plasmoid attached type via
+//! qmlRegisterExtendedType: it breaks "Behavior" type resolution in the
+//! Qt 6.8 QML compiler (ParabolicItem.qml fails with "Behavior cannot
+//! operate on zoom") while the context property already covers the
+//! plasmoid lookups.
 static void ensurePlasmaPlasmoidModuleAvailable()
 {
     static bool checked{false};
