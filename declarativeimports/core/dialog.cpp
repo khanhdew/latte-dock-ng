@@ -91,10 +91,11 @@ void Dialog::onVisualParentChanged()
     }
 
     const QByteArray normalizedSig = QMetaObject::normalizedSignature("anchoredTooltipPositionChanged()");
-    bool hassignal = (visualParent()->metaObject()->indexOfSignal(normalizedSig.constData()) != -1);
+    const int signalIndex = visualParent()->metaObject()->indexOfSignal(normalizedSig.constData());
+    const int slotIndex = metaObject()->indexOfSlot("updateGeometry()");
 
-    if (hassignal) {
-        m_visualParentConnections[0] = connect(visualParent(), SIGNAL(anchoredTooltipPositionChanged()) , this, SLOT(updateGeometry()));
+    if (signalIndex != -1 && slotIndex != -1) {
+        m_visualParentConnections[0] = QMetaObject::connect(visualParent(), signalIndex, this, slotIndex);
     }
 }
 

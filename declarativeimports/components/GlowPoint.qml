@@ -3,8 +3,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.0
-import QtQuick.Shapes 1.0
+import QtQuick 2.15
+import QtQuick.Shapes 1.11
 
 import org.kde.plasma.components 3.0 as Components
 import org.kde.plasma.core 2.0 as PlasmaCore

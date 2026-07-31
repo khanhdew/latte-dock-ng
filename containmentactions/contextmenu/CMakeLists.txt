@@ -20,6 +20,7 @@ set_target_properties(plasma_containmentactions_lattecontextmenu PROPERTIES
 )
 
 target_link_libraries(plasma_containmentactions_lattecontextmenu
+                        latteLogging
                         Qt6::DBus
                         Qt6::Widgets
                         KF6::I18n

@@ -7,6 +7,7 @@
 */
 
 // local
+#include <latte_debug.h>
 #include "config-latte.h"
 #include "apptypes.h"
 #include "knscompat.h"
@@ -54,7 +55,6 @@
 #include <KAboutData>
 #include <KCoreAddons/KSignalHandler>
 #include <KDBusService>
-#include <KQuickAddons/QtQuickSettings>
 #include <KWindowSystem>
 #include <QQmlEngine>
 #include <plasmaquick/sharedqmlengine.h>
@@ -144,8 +144,6 @@ int main(int argc, char **argv)
         qunsetenv("QT_QPA_PLATFORM");
     }
 
-    KQuickAddons::QtQuickSettings::init();
-
     KLocalizedString::setApplicationDomain(Latte::App::TRANSLATIONDOMAIN);
 
     // Automatically clear stale QML disk cache when the installed version changes.
@@ -159,7 +157,7 @@ int main(int argc, char **argv)
     //! DrawerHandle.qml without modifying system files.
     ensureKnsCompat();
 
-    app.setWindowIcon(QIcon::fromTheme(QString::fromLatin1(Latte::App::ICONNAME)));
+    app.setWindowIcon(QIcon::fromTheme(Latte::App::ICONNAME));
     //protect from closing app when changing to "alternative session" and back
     app.setQuitOnLastWindowClosed(false);
 
@@ -169,22 +167,22 @@ int main(int argc, char **argv)
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOptions({
-                          {{"r", "replace"}, i18nc("command line", "Replace the current Latte instance.")}
-                          , {{"d", "debug"}, i18nc("command line", "Show the debugging messages on stdout.")}
-                          , {{"cc", "clear-cache"}, i18nc("command line", "Clear qml cache. It can be useful after system upgrades.")}
-                          , {"enable-autostart", i18nc("command line", "Enable autostart for this application")}
-                          , {"disable-autostart", i18nc("command line", "Disable autostart for this application")}
-                          , {"default-layout", i18nc("command line", "Import and load default layout on startup.")}
-                          , {"available-layouts", i18nc("command line", "Print available layouts")}
-                          , {"available-dock-templates", i18nc("command line", "Print available dock templates")}
-                          , {"available-layout-templates", i18nc("command line", "Print available layout templates")}
-                          , {"layout", i18nc("command line", "Load specific layout on startup."), i18nc("command line: load", "layout_name")}
-                          , {"import-layout", i18nc("command line", "Import and load a layout."), i18nc("command line: import", "absolute_filepath")}
-                          , {"suggested-layout-name", i18nc("command line", "Suggested layout name when importing a layout file"), i18nc("command line: import", "suggested_name")}
-                          , {"import-full", i18nc("command line", "Import full configuration."), i18nc("command line: import", "file_name")}
-                          , {"add-dock", i18nc("command line", "Add Dock"), i18nc("command line: add", "template_name")}
-                          , {"single", i18nc("command line", "Single layout memory mode. Only one layout is active at any case.")}
-                          , {"multiple", i18nc("command line", "Multiple layouts memory mode. Multiple layouts can be active at any time based on Activities running.")}
+                          {{QStringLiteral("r"), QStringLiteral("replace")}, i18nc("command line", "Replace the current Latte instance.")}
+                          , {{QStringLiteral("d"), QStringLiteral("debug")}, i18nc("command line", "Show the debugging messages on stdout.")}
+                          , {{QStringLiteral("cc"), QStringLiteral("clear-cache")}, i18nc("command line", "Clear qml cache. It can be useful after system upgrades.")}
+                          , {QStringLiteral("enable-autostart"), i18nc("command line", "Enable autostart for this application")}
+                          , {QStringLiteral("disable-autostart"), i18nc("command line", "Disable autostart for this application")}
+                          , {QStringLiteral("default-layout"), i18nc("command line", "Import and load default layout on startup.")}
+                          , {QStringLiteral("available-layouts"), i18nc("command line", "Print available layouts")}
+                          , {QStringLiteral("available-dock-templates"), i18nc("command line", "Print available dock templates")}
+                          , {QStringLiteral("available-layout-templates"), i18nc("command line", "Print available layout templates")}
+                          , {QStringLiteral("layout"), i18nc("command line", "Load specific layout on startup."), i18nc("command line: load", "layout_name")}
+                          , {QStringLiteral("import-layout"), i18nc("command line", "Import and load a layout."), i18nc("command line: import", "absolute_filepath")}
+                          , {QStringLiteral("suggested-layout-name"), i18nc("command line", "Suggested layout name when importing a layout file"), i18nc("command line: import", "suggested_name")}
+                          , {QStringLiteral("import-full"), i18nc("command line", "Import full configuration."), i18nc("command line: import", "file_name")}
+                          , {QStringLiteral("add-dock"), i18nc("command line", "Add Dock"), i18nc("command line: add", "template_name")}
+                          , {QStringLiteral("single"), i18nc("command line", "Single layout memory mode. Only one layout is active at any case.")}
+                          , {QStringLiteral("multiple"), i18nc("command line", "Multiple layouts memory mode. Multiple layouts can be active at any time based on Activities running.")}
                       });
 
     //! START: Hidden options for Developer and Debugging usage
@@ -419,8 +417,8 @@ int main(int argc, char **argv)
     //! choose layout for startup
     bool defaultLayoutOnStartup = false;
     int memoryUsage = -1;
-    QString layoutNameOnStartup = "";
-    QString addViewTemplateNameOnStartup = "";
+    QString layoutNameOnStartup;
+    QString addViewTemplateNameOnStartup;
 
     //! --default-layout option
     if (parser.isSet(QStringLiteral("default-layout"))) {
@@ -436,12 +434,12 @@ int main(int argc, char **argv)
     }
 
     //! --replace option
-    QString username = qgetenv("USER");
+    QString username = QString::fromLocal8Bit(qgetenv("USER"));
 
     if (username.isEmpty())
-        username = qgetenv("USERNAME");
+        username = QString::fromLocal8Bit(qgetenv("USERNAME"));
 
-    QLockFile lockFile {QDir::tempPath() + "/" + QString::fromLatin1(Latte::App::BINARYNAME) + "." + username + ".lock"};
+    QLockFile lockFile {QDir::tempPath() + QLatin1Char('/') + QString::fromLatin1(Latte::App::BINARYNAME) + QLatin1Char('.') + username + QLatin1String(".lock")};
 
     int timeout {100};
 
@@ -471,7 +469,7 @@ int main(int argc, char **argv)
                 QStringLiteral("org.kde.lattedock"),
                 QStringLiteral("/Latte"), QString(),
                 QStringLiteral("addView"));
-            msg.setArguments({(uint)0, parser.value(QStringLiteral("add-dock"))});
+            msg.setArguments({static_cast<uint>(0), parser.value(QStringLiteral("add-dock"))});
             QDBusConnection::sessionBus().call(msg);
             return 0;
         } else if (importlayout) {
@@ -518,7 +516,7 @@ int main(int argc, char **argv)
 
         if (cacheDir.exists()) {
             cacheDir.removeRecursively();
-            qDebug() << "Cache directory found and cleared...";
+            qCDebug(latteApp) << "Cache directory found and cleared...";
         }
     }
 
@@ -562,7 +560,7 @@ int main(int argc, char **argv)
         if (viewTemplates.contains(viewTemplateName)) {
             if (layoutNameOnStartup.isEmpty()) {
                 //! Clean layout template is applied and proper name is used
-                QString emptytemplatepath = Latte::Layouts::Importer::layoutTemplateSystemFilePath(Latte::Templates::EMPTYLAYOUTTEMPLATENAME);
+                QString emptytemplatepath = Latte::Layouts::Importer::layoutTemplateSystemFilePath(QLatin1String(Latte::Templates::EMPTYLAYOUTTEMPLATENAME));
                 QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : viewTemplateName;
                 QString importedLayout = Latte::Layouts::Importer::importLayoutHelper(emptytemplatepath, suggestedname);
 
@@ -866,7 +864,7 @@ inline void autoClearQmlCacheOnVersionChange()
         QDir cacheDir(cachePath);
         if (cacheDir.exists()) {
             cacheDir.removeRecursively();
-            qDebug() << "QML cache cleared — version changed from"
+            qCDebug(latteApp) << "QML cache cleared — version changed from"
                      << (cachedVersion.isEmpty() ? QStringLiteral("(none)") : cachedVersion)
                      << "to" << currentVersion;
         }
@@ -922,25 +920,25 @@ inline bool isPlasmaShutdownServiceActive()
 //! the session-ending marker on the signal handler side guarantees that
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    if (msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.This behavior is deprecated.In Qt < 6.0 the default is Binding.RestoreBinding.In Qt >= 6.0 the default is Binding.RestoreBindingOrValue.")
-        || msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.\n")
-        || msg.endsWith("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.")
-        || msg.endsWith("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }")
-        || msg.contains("Toolbox not loading, toolbox package is either invalid or disabled.")
-        || (msg.contains("Could not find required file \"mainscript\" for package \"/usr/share/plasma/plasmoids/org.kde.plasma.")
-            && msg.contains("should be QList(\"ui/main.qml\")"))
-        || msg.contains("qrc:/qt/qml/org/kde/plasma/components/ScrollView.qml")
-        || msg.contains("qrc:/qt/qml/org/kde/plasma/components/ScrollBar.qml")
-        || msg.startsWith("QFont::setPointSizeF: Point size <= 0 (0.000000), must be greater than 0")
-        || (msg.contains("QModelIndex(") && msg.contains("is not valid (expected valid)"))
-        || (msg.contains("Member palette of the object") && msg.contains("overrides a member of the base object"))
+    if (msg.endsWith(QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.This behavior is deprecated.In Qt < 6.0 the default is Binding.RestoreBinding.In Qt >= 6.0 the default is Binding.RestoreBindingOrValue."))
+        || msg.endsWith(QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.\n"))
+        || msg.endsWith(QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue."))
+        || msg.endsWith(QStringLiteral("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }"))
+        || msg.contains(QStringLiteral("Toolbox not loading, toolbox package is either invalid or disabled."))
+        || (msg.contains(QStringLiteral("Could not find required file \"mainscript\" for package \"/usr/share/plasma/plasmoids/org.kde.plasma."))
+            && msg.contains(QStringLiteral("should be QList(\"ui/main.qml\")")))
+        || msg.contains(QStringLiteral("qrc:/qt/qml/org/kde/plasma/components/ScrollView.qml"))
+        || msg.contains(QStringLiteral("qrc:/qt/qml/org/kde/plasma/components/ScrollBar.qml"))
+        || msg.startsWith(QStringLiteral("QFont::setPointSizeF: Point size <= 0 (0.000000), must be greater than 0"))
+        || (msg.contains(QStringLiteral("QModelIndex(")) && msg.contains(QStringLiteral("is not valid (expected valid)")))
+        || (msg.contains(QStringLiteral("Member palette of the object")) && msg.contains(QStringLiteral("overrides a member of the base object")))
         // Property shadowing in KDE frameworks — not actionable in this project.
-        || (msg.contains("Member visible of the object PlasmaQuick::Dialog") && msg.contains("overrides"))
-        || (msg.contains("Member enabled of the object DeclarativeDropArea") && msg.contains("overrides"))
-        || (msg.contains("Member enabled of the object DeclarativeDragArea") && msg.contains("overrides"))
-        || (msg.contains("Member implicitHeight of the object Button_QMLTYPE") && msg.contains("overrides"))
-        || (msg.contains("Member implicitWidth of the object HeaderSwitch_QMLTYPE") && msg.contains("overrides"))
-        || (msg.contains("Member implicitHeight of the object HeaderSwitch_QMLTYPE") && msg.contains("overrides"))
+        || (msg.contains(QStringLiteral("Member visible of the object PlasmaQuick::Dialog")) && msg.contains(QStringLiteral("overrides")))
+        || (msg.contains(QStringLiteral("Member enabled of the object DeclarativeDropArea")) && msg.contains(QStringLiteral("overrides")))
+        || (msg.contains(QStringLiteral("Member enabled of the object DeclarativeDragArea")) && msg.contains(QStringLiteral("overrides")))
+        || (msg.contains(QStringLiteral("Member implicitHeight of the object Button_QMLTYPE")) && msg.contains(QStringLiteral("overrides")))
+        || (msg.contains(QStringLiteral("Member implicitWidth of the object HeaderSwitch_QMLTYPE")) && msg.contains(QStringLiteral("overrides")))
+        || (msg.contains(QStringLiteral("Member implicitHeight of the object HeaderSwitch_QMLTYPE")) && msg.contains(QStringLiteral("overrides")))
         // Qt 6 internal: Drag.imageSource from grabToImage triggers this
         // even when targetSize is passed — harmless.
         || msg.contains(QLatin1String("sourceSize request for image url that came from grabToImage"))
@@ -951,9 +949,9 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
         || msg == QLatin1String("Failed to register JobViewServer DBus object")
         || msg == QLatin1String("<Unknown File>: QML ToolTipDialog: location should be set before showing popup window")
         // Plasma digital clock Tooltip — internal TypeError, harmless.
-        || msg.contains("digitalclock/Tooltip.qml:40: TypeError")
+        || msg.contains(QStringLiteral("digitalclock/Tooltip.qml:40: TypeError"))
         // Plasma clipboard applet — QML type mismatch with Plasma 6 framework.
-        || (msg.contains("org.kde.plasma.clipboard") && msg.contains("error when loading"))) {
+        || (msg.contains(QStringLiteral("org.kde.plasma.clipboard")) && msg.contains(QStringLiteral("error when loading")))) {
         //! block warnings from dependencies that still ship legacy QML snippets.
         //! this project requires Qt 6.6+, so warnings related to Qt < 6 fallback code are irrelevant here.
         //! this also filters a known Qt/Plasma startup warning from workspace calendar internals.
@@ -969,19 +967,19 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
     QString typeStr;
     switch (type) {
     case QtDebugMsg:
-        typeStr = "Debug";
+        typeStr = QStringLiteral("Debug");
         break;
     case QtInfoMsg:
-        typeStr = "Info";
+        typeStr = QStringLiteral("Info");
         break;
     case QtWarningMsg:
-        typeStr = "Warning" ;
+        typeStr = QStringLiteral("Warning");
         break;
     case QtCriticalMsg:
-        typeStr = "Critical";
+        typeStr = QStringLiteral("Critical");
         break;
     case QtFatalMsg:
-        typeStr = "Fatal";
+        typeStr = QStringLiteral("Fatal");
         break;
     };
 
@@ -996,7 +994,7 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
     }
 
     if (filterDebugLogFile.isEmpty()) {
-        qDebug().nospace() << TypeColor << "[" << typeStr.toStdString().c_str() << " : " << CGREEN << QTime::currentTime().toString("h:mm:ss.zz").toStdString().c_str() << TypeColor << "]" << CNORMAL
+        qCDebug(latteApp).nospace() << TypeColor << "[" << qPrintable(typeStr) << " : " << CGREEN << QTime::currentTime().toString(QStringLiteral("h:mm:ss.zz")).toStdString().c_str() << TypeColor << "]" << CNORMAL
                           #ifndef QT_NO_DEBUG
                            << CIRED << " [" << CCYAN << function << CIRED << ":" << CCYAN << context.line << CIRED << "]"
                           #endif
@@ -1007,7 +1005,7 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
             return;
         }
         QTextStream logts(&logfile);
-        logts << "[" << typeStr.toStdString().c_str() << " : " << QTime::currentTime().toString("h:mm:ss.zz").toStdString().c_str() << "]"
+        logts << "[" << qPrintable(typeStr) << " : " << QTime::currentTime().toString(QStringLiteral("h:mm:ss.zz")).toStdString().c_str() << "]"
               <<  " - " << msg << Qt::endl;
     }
 }
@@ -1027,9 +1025,9 @@ inline void configureAboutData()
                      , KAboutLicense::GPL_V3
                      , QStringLiteral("(C) 2024-2026 Ruizhi Zhong"));
 
-    about.setHomepage(WEBSITE);
+    about.setHomepage(QStringLiteral(WEBSITE));
     about.setBugAddress(BUG_ADDRESS);
-    about.setProgramLogo(QIcon::fromTheme(QString::fromLatin1(Latte::App::ICONNAME)));
+    about.setProgramLogo(QIcon::fromTheme(Latte::App::ICONNAME));
     about.setDesktopFileName(QString::fromLatin1(Latte::App::DESKTOPFILENAME));
     about.setProductName(QByteArray("lattedock"));
 

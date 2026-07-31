@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "indicator.h"
 
 // local
@@ -51,7 +52,7 @@ Indicator::Indicator(Latte::View *parent)
 
     connect(m_view, &Latte::View::indicatorPluginRemoved, [this](const QString &indicatorId) {
         if (m_corona && m_type == indicatorId && !m_corona->indicatorFactory()->pluginExists(indicatorId)) {
-            setType("org.kde.latte.default");
+            setType(QStringLiteral("org.kde.latte.default"));
         }
 
         if (m_corona && m_corona->indicatorFactory()->isCustomType(indicatorId)) {
@@ -260,9 +261,9 @@ void Indicator::load(QString type)
 
         //! create all indicators with the new type
         setPluginIsReady(true);
-    } else if (type!="org.kde.latte.default") {
-        qDebug() << " Indicator metadata are not valid : " << type;
-        setType("org.kde.latte.default");
+    } else if (type != QStringLiteral("org.kde.latte.default")) {
+        qCDebug(latteIndicator) << " Indicator metadata are not valid : " << type;
+        setType(QStringLiteral("org.kde.latte.default"));
     }
 }
 
@@ -270,10 +271,10 @@ void Indicator::updateComponent()
 {
     auto prevComponent = m_component;
 
-    QString uiPath = m_metadata.value("X-Latte-MainScript");
+    QString uiPath = m_metadata.value(QStringLiteral("X-Latte-MainScript"));
 
     if (!uiPath.isEmpty()) {
-        uiPath = m_pluginPath + "/package/" + uiPath;
+        uiPath = m_pluginPath + QLatin1String("/package/") + uiPath;
         m_component = new QQmlComponent(m_view->engine().get(), uiPath);
     }
 
@@ -286,11 +287,11 @@ void Indicator::loadPlasmaComponent()
 {
     auto prevComponent = m_plasmaComponent;
 
-    KPluginMetaData metadata = m_corona->indicatorFactory()->metadata("org.kde.latte.plasmatabstyle");
-    QString uiPath = metadata.value("X-Latte-MainScript");
+    KPluginMetaData metadata = m_corona->indicatorFactory()->metadata(QStringLiteral("org.kde.latte.plasmatabstyle"));
+    QString uiPath = metadata.value(QStringLiteral("X-Latte-MainScript"));
 
     if (!uiPath.isEmpty()) {
-        uiPath = QFileInfo(metadata.fileName()).absolutePath() + "/package/" + uiPath;
+        uiPath = QFileInfo(metadata.fileName()).absolutePath() + QLatin1String("/package/") + uiPath;
         m_plasmaComponent = new QQmlComponent(m_view->engine().get(), uiPath);
     }
 
@@ -311,14 +312,14 @@ void Indicator::updateScheme()
     auto prevConfigLoader = m_configLoader;
     auto prevConfiguration = m_configuration;
 
-    QString xmlPath = m_metadata.value("X-Latte-ConfigXml");
+    QString xmlPath = m_metadata.value(QStringLiteral("X-Latte-ConfigXml"));
 
     if (!xmlPath.isEmpty()) {
-        QFile file(m_pluginPath + "/package/" + xmlPath);
-        m_configLoader = new KConfigLoader(m_view->containment()->config().group("Indicator").group(m_metadata.pluginId()), &file);
+        QFile file(m_pluginPath + QLatin1String("/package/") + xmlPath);
+        m_configLoader = new KConfigLoader(m_view->containment()->config().group(QStringLiteral("Indicator")).group(m_metadata.pluginId()), &file);
         m_configuration = new KDeclarative::ConfigPropertyMap(m_configLoader, this);
 
-        const QString dockStyle = m_view->containment()->config().group("General").readEntry("dockStyle", QStringLiteral("Classic"));
+        const QString dockStyle = m_view->containment()->config().group(QStringLiteral("General")).readEntry(QStringLiteral("dockStyle"), QStringLiteral("Classic"));
         const bool modernDockStyle = (dockStyle == QLatin1String("Modern")) || (dockStyle == QLatin1String("1"));
         if (modernDockStyle && m_metadata.pluginId() == QLatin1String(Latte::PluginId::kDefaultIndicator)) {
             // Modern is macOS-like: active/running state is always represented by a dot.
@@ -343,10 +344,10 @@ void Indicator::updateScheme()
 
 void Indicator::loadConfig()
 {
-    auto config = m_view->containment()->config().group("Indicator");
-    m_customType = config.readEntry("customType", QString());
-    m_enabled = config.readEntry("enabled", true);
-    m_type = config.readEntry("type", "org.kde.latte.default");
+    auto config = m_view->containment()->config().group(QStringLiteral("Indicator"));
+    m_customType = config.readEntry(QStringLiteral("customType"), QString());
+    m_enabled = config.readEntry(QStringLiteral("enabled"), true);
+    m_type = config.readEntry(QStringLiteral("type"), "org.kde.latte.default");
     if (m_type == QLatin1String(Latte::PluginId::kPlasmaIndicator)) {
         m_type = QStringLiteral("org.kde.latte.default");
     }
@@ -354,10 +355,10 @@ void Indicator::loadConfig()
 
 void Indicator::saveConfig()
 {
-    auto config = m_view->containment()->config().group("Indicator");
-    config.writeEntry("customType", m_customType);
-    config.writeEntry("enabled", m_enabled);
-    config.writeEntry("type", m_type);
+    auto config = m_view->containment()->config().group(QStringLiteral("Indicator"));
+    config.writeEntry(QStringLiteral("customType"), m_customType);
+    config.writeEntry(QStringLiteral("enabled"), m_enabled);
+    config.writeEntry(QStringLiteral("type"), m_type);
     config.sync();
 }
 

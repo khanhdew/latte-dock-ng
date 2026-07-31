@@ -11,6 +11,7 @@
 #include "../../data/preferencesdata.h"
 
 //! Qt
+#include <QStringList>
 #include <QAction>
 #include <QObject>
 #include <QButtonGroup>

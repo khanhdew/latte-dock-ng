@@ -14,6 +14,7 @@
 #include "../data/viewstable.h"
 
 // Qt
+#include <QStringList>
 #include <QTemporaryDir>
 
 // KDE

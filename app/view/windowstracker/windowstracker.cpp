@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "windowstracker.h"
 
 // local
@@ -21,7 +22,7 @@ WindowsTracker::WindowsTracker(Latte::View *parent)
     : QObject(parent),
       m_latteView(parent)
 {
-    qDebug() << "WindowsTracker creating...";
+    qCDebug(latteWm) << "WindowsTracker creating...";
 
     auto corona = qobject_cast<Latte::Corona *>(m_latteView->corona());
     m_wm = corona->wm();
@@ -42,7 +43,7 @@ WindowsTracker::WindowsTracker(Latte::View *parent)
 
 WindowsTracker::~WindowsTracker()
 {
-    qDebug() << "WindowsTracker removing...";
+    qCDebug(latteWm) << "WindowsTracker removing...";
 
     if (m_allScreensTracker) {
         m_allScreensTracker->deleteLater();

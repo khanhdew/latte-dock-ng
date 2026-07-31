@@ -7,6 +7,7 @@
 #define GENERICSETTINGSTOOLS_H
 
 // Qt
+#include <QStringList>
 #include <QColor>
 #include <QPainter>
 #include <QPalette>

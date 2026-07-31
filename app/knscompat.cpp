@@ -3,6 +3,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
+#include <latte_debug.h>
 #include "knscompat.h"
 
 #include <QDebug>
@@ -472,7 +474,7 @@ static bool symlinkChecked(const QString &target, const QString &link)
 void ensureKnsCompat()
 {
     if (qEnvironmentVariableIntValue(kDisableCompatEnv) == 1) {
-        qDebug() << "KnsCompat: disabled by" << kDisableCompatEnv;
+        qCDebug(latteApp) << "KnsCompat: disabled by" << kDisableCompatEnv;
         return;
     }
 
@@ -490,7 +492,7 @@ void ensureKnsCompat()
         };
         for (const auto &d : oldDirs) {
             if (QFile::exists(d + QStringLiteral("/qmldir"))) {
-                qDebug() << "KnsCompat: removing old overrides from" << d;
+                qCDebug(latteApp) << "KnsCompat: removing old overrides from" << d;
                 QDir(d).removeRecursively();
             }
         }
@@ -526,7 +528,7 @@ void ensureKnsCompat()
         return;
     }
 
-    qDebug() << "KnsCompat: setting up KNS dialog compatibility overrides (v" << kCompatVersion << ")";
+    qCDebug(latteApp) << "KnsCompat: setting up KNS dialog compatibility overrides (v" << kCompatVersion << ")";
 
     // --- Kirigami templates module (pure filesystem, no plugin) ---
     const QString sysTemplates = systemQmlBase + QStringLiteral("/org/kde/kirigami/templates");
@@ -622,5 +624,5 @@ void ensureKnsCompat()
         f.write(QByteArray::number(kCompatVersion));
     }
 
-    qDebug() << "KnsCompat: done";
+    qCDebug(latteApp) << "KnsCompat: done";
 }

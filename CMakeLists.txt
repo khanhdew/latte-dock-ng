@@ -39,10 +39,17 @@ include(ECMQtDeclareLoggingCategory)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEPackageAppTemplates)
-include(LatteCompilerWarnings)
 include(LatteTargetResolution)
 include(WriteBasicConfigVersionFile)
 include(CTest)
+
+# Categorized logging categories shared by all Latte targets. The latte_debug.h
+# header is exported by the latteLogging static library. Debug severity keeps
+# the existing qDebug() output volume unchanged while making it filterable
+# via QT_LOGGING_RULES.
+add_library(latteLogging STATIC latte_debug.cpp)
+target_link_libraries(latteLogging PUBLIC Qt6::Core)
+target_include_directories(latteLogging PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Some Plasma 6 environments include both lib/qml and lib/qt6/qml in the QML
 # import path. Install Latte QML modules to both locations when they differ so
@@ -75,13 +82,12 @@ find_package(LayerShellQt REQUIRED)
 
 # Detect whether LayerShellQt::Window::setScreen(QScreen*) is available.
 # It was added in LayerShellQt 6.6 and later removed upstream.
-try_compile(
-    LATTE_LAYERSHELL_HAS_SET_SCREEN
-    SOURCES ${CMAKE_SOURCE_DIR}/cmake/CheckLayerShellSetScreen.cpp
-    LINK_LIBRARIES LayerShellQt::Interface Qt6::Core Qt6::Gui
-)
+include(CheckCXXSourceCompiles)
+file(READ ${CMAKE_SOURCE_DIR}/cmake/CheckLayerShellSetScreen.cpp LATTE_LAYERSHELL_SETSCREEN_SOURCE)
+set(CMAKE_REQUIRED_LIBRARIES LayerShellQt::Interface Qt6::Core Qt6::Gui)
+check_cxx_source_compiles("${LATTE_LAYERSHELL_SETSCREEN_SOURCE}" LATTE_LAYERSHELL_HAS_SET_SCREEN)
+unset(CMAKE_REQUIRED_LIBRARIES)
 if(LATTE_LAYERSHELL_HAS_SET_SCREEN)
-    add_definitions(-DLATTE_LAYERSHELL_HAS_SET_SCREEN)
     message(STATUS "LayerShellQt::Window::setScreen detected — enabled")
 else()
     message(STATUS "LayerShellQt::Window::setScreen not available — using QWindow::setScreen only")
@@ -90,13 +96,11 @@ endif()
 # Detect whether LayerShellQt::Window::setDesiredSize(QSize) is available.
 # It was added in a later LayerShellQt 6.x release and is absent from
 # the liblayershellqtinterface shipped by Debian 13 Trixie.
-try_compile(
-    LATTE_LAYERSHELL_HAS_DESIRED_SIZE
-    SOURCES ${CMAKE_SOURCE_DIR}/cmake/CheckLayerShellDesiredSize.cpp
-    LINK_LIBRARIES LayerShellQt::Interface Qt6::Core Qt6::Gui
-)
+file(READ ${CMAKE_SOURCE_DIR}/cmake/CheckLayerShellDesiredSize.cpp LATTE_LAYERSHELL_DESIREDSIZE_SOURCE)
+set(CMAKE_REQUIRED_LIBRARIES LayerShellQt::Interface Qt6::Core Qt6::Gui)
+check_cxx_source_compiles("${LATTE_LAYERSHELL_DESIREDSIZE_SOURCE}" LATTE_LAYERSHELL_HAS_DESIRED_SIZE)
+unset(CMAKE_REQUIRED_LIBRARIES)
 if(LATTE_LAYERSHELL_HAS_DESIRED_SIZE)
-    add_definitions(-DLATTE_LAYERSHELL_HAS_DESIRED_SIZE)
     message(STATUS "LayerShellQt::Window::setDesiredSize detected — enabled")
 else()
     message(STATUS "LayerShellQt::Window::setDesiredSize not available — using QWindow::resize fallback")
@@ -104,7 +108,6 @@ endif()
 find_package(KF6Declarative ${KF6_MIN_VERSION} REQUIRED CONFIG)
 
 find_package(LibTaskManager ${PLASMA_MIN_VERSION} REQUIRED)
-add_definitions(-DPLASMA_WORKSPACE_VERSION="${LibTaskManager_VERSION}")
 
 
 find_package(QtWaylandScanner REQUIRED)
@@ -253,14 +256,8 @@ ecm_find_qmlmodule(org.kde.plasma.components 3.0)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/app/config-latte.h.cmake
                ${CMAKE_CURRENT_BINARY_DIR}/app/config-latte.h)
 
-latte_apply_relaxed_warning_flags()
-
 #add format security check
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat -Werror=format-security")
-# KDECompilerSettings may enforce stricter Qt macros depending on distro patching.
-# Keep Latte sources buildable on Plasma 6.3+ by explicitly dropping those macros here.
-remove_definitions(-DQT_NO_CAST_FROM_ASCII -DQT_RESTRICTED_CAST_FROM_ASCII -DQT_NO_KEYWORDS)
-add_compile_options(-UQT_NO_CAST_FROM_ASCII -UQT_RESTRICTED_CAST_FROM_ASCII)
 
 message(STATUS "COMPILER FLAGS : ${CMAKE_CXX_FLAGS}")
 

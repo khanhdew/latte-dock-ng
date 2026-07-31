@@ -100,7 +100,7 @@ void DetailsHandler::reload()
 void DetailsHandler::loadLayout(const Latte::Data::Layout &data)
 {
     if (data.icon.isEmpty()) {
-        m_ui->iconBtn->setIcon(QIcon::fromTheme("add"));
+        m_ui->iconBtn->setIcon(QIcon::fromTheme(QStringLiteral("add")));
         m_ui->iconClearBtn->setVisible(false);
     } else {
         m_ui->iconBtn->setIcon(QIcon::fromTheme(data.icon));
@@ -151,7 +151,7 @@ void DetailsHandler::save()
 
 void DetailsHandler::clearIcon()
 {
-    setIcon("");
+    setIcon(QString());
 }
 
 void DetailsHandler::onCurrentLayoutIndexChanged(int row)

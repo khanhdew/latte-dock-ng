@@ -17,7 +17,7 @@
 
 // Plasma
 #include <Plasma/package.h>
-#include <Plasma/FrameSvg>
+#include <KSvg/FrameSvg>
 
 
 namespace Plasma {

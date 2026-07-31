@@ -14,6 +14,7 @@
 #include "../../data/layoutstable.h"
 
 // KActivities
+#include <QStringList>
 #include <KActivities/Info>
 
 // Qt

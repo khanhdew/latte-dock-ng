@@ -11,6 +11,7 @@
 #include "../../data/layoutdata.h"
 
 //! Qt
+#include <QStringList>
 #include <QAction>
 #include <QButtonGroup>
 #include <QMenu>

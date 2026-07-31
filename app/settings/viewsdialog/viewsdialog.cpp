@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "viewsdialog.h"
 
 // local
@@ -19,7 +20,7 @@ ViewsDialog::ViewsDialog(SettingsDialog *parent, Controller::Layouts *controller
       m_parentDlg(parent),
       m_ui(new Ui::ViewsDialog),
       m_layoutsController(controller),
-      m_storage(KConfigGroup(KSharedConfig::openConfig(),"LatteSettingsDialog").group("ViewsDialog"))
+      m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("ViewsDialog")))
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
     loadConfig();
@@ -30,7 +31,7 @@ ViewsDialog::ViewsDialog(SettingsDialog *parent, Controller::Layouts *controller
     m_handler = new Handler::ViewsHandler(this);
 
     //! Button Group
-    m_applyNowBtn = new QPushButton(QIcon::fromTheme("dialog-yes"), i18n("Apply Now"), m_ui->buttonBox);
+    m_applyNowBtn = new QPushButton(QIcon::fromTheme(QStringLiteral("dialog-yes")), i18n("Apply Now"), m_ui->buttonBox);
     m_applyNowBtn->setToolTip(i18n("Apply all dock changes now"));
     m_ui->buttonBox->addButton(m_applyNowBtn, QDialogButtonBox::ApplyRole);
 
@@ -80,42 +81,42 @@ void ViewsDialog::updateApplyButtonsState()
 
 void ViewsDialog::accept()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 }
 
 void ViewsDialog::onOk()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 //    m_handler->save();
     close();
 }
 
 void ViewsDialog::onApply()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     m_handler->save();
 }
 
 void ViewsDialog::onCancel()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     close();
 }
 
 void ViewsDialog::onReset()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     m_handler->reset();
 }
 
 void ViewsDialog::loadConfig()
 {
-    m_windowSize = m_storage.readEntry("windowSize", QSize(980, 630));
+    m_windowSize = m_storage.readEntry(QStringLiteral("windowSize"), QSize(980, 630));
 }
 
 void ViewsDialog::saveConfig()
 {
-    m_storage.writeEntry("windowSize", size());
+    m_storage.writeEntry(QStringLiteral("windowSize"), size());
     m_storage.sync();
 }
 

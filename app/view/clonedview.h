@@ -7,6 +7,7 @@
 #define CLONEDVIEW_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 #include "originalview.h"
 #include "indicator/indicator.h"

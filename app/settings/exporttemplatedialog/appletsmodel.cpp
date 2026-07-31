@@ -23,13 +23,13 @@ Applets::Applets(QObject *parent)
     : QAbstractTableModel(parent)
 {
     m_appletsWithNoPersonalData = {
-        "org.kde.latte.separator",
-        "org.kde.latte.spacer",
-        "org.kde.latte.plasmoid",
-        "org.kde.windowtitle",
-        "org.kde.windowbuttons",
-        "org.kde.windowappmenu",
-        "org.kde.plasma.marginsseparator"
+        QStringLiteral("org.kde.latte.separator"),
+        QStringLiteral("org.kde.latte.spacer"),
+        QStringLiteral("org.kde.latte.plasmoid"),
+        QStringLiteral("org.kde.windowtitle"),
+        QStringLiteral("org.kde.windowbuttons"),
+        QStringLiteral("org.kde.windowappmenu"),
+        QStringLiteral("org.kde.plasma.marginsseparator")
     };
 }
 
@@ -99,7 +99,7 @@ void Applets::reset()
 {
     c_applets = o_applets;
 
-    QVector<int> roles;
+    QList<int> roles;
     roles << Qt::CheckStateRole;
 
     Q_EMIT dataChanged(index(0, NAMECOLUMN), index(c_applets.rowCount()-1, NAMECOLUMN), roles);
@@ -123,7 +123,7 @@ void Applets::setData(const Latte::Data::AppletsTable &applets)
 
 void Applets::selectAll()
 {
-    QVector<int> roles;
+    QList<int> roles;
     roles << Qt::CheckStateRole;
 
     bool changed{false};
@@ -143,7 +143,7 @@ void Applets::selectAll()
 
 void Applets::deselectAll()
 {
-    QVector<int> roles;
+    QList<int> roles;
     roles << Qt::CheckStateRole;
 
     bool changed{false};
@@ -169,7 +169,7 @@ void Applets::setSelected(const Latte::Data::AppletsTable &applets)
         int pos = c_applets.indexOf(applets[i].id);
 
         if (pos>=0 && applets[i].isSelected != c_applets[pos].isSelected) {
-            QVector<int> roles;
+            QList<int> roles;
             roles << Qt::CheckStateRole;
 
             c_applets[pos].isSelected = applets[i].isSelected;
@@ -197,8 +197,6 @@ Latte::Data::AppletsTable Applets::selectedApplets()
 
 Qt::ItemFlags Applets::flags(const QModelIndex &index) const
 {
-    const int column = index.column();
-    const int row = index.row();
 
     auto flags = QAbstractTableModel::flags(index);
 

@@ -12,6 +12,7 @@
 #include "../apptypes.h"
 
 // Qt
+#include <QStringList>
 #include <QObject>
 #include <QTemporaryDir>
 

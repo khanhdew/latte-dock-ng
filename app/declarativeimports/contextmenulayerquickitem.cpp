@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "contextmenulayerquickitem.h"
 
 // local
@@ -242,7 +243,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    //qDebug() << "2 ...";
+    //qCDebug(latteQml) << "2 ...";
     //the plugin can be a single action or a context menu
     //Don't have an action list? execute as single action
     //and set the event position as action data
@@ -305,7 +306,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         applet = m_latteView->containment();
     }
 
-    //qDebug() << "3 ...";
+    //qCDebug(latteQml) << "3 ...";
 
     QMenu *desktopMenu = new QMenu;
 
@@ -325,16 +326,16 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
     //end workaround
     //!end of plasma official code(workaround)
 
-    //qDebug() << "5 ...";
+    //qCDebug(latteQml) << "5 ...";
 
     Q_EMIT m_latteView->containment()->contextualActionsAboutToShow();
 
     if (applet && applet != m_latteView->containment()) {
-        //qDebug() << "5.3 ...";
+        //qCDebug(latteQml) << "5.3 ...";
         Q_EMIT applet->contextualActionsAboutToShow();
         addAppletActions(desktopMenu, applet, event);
     } else {
-        //qDebug() << "5.6 ...";
+        //qCDebug(latteQml) << "5.6 ...";
         addContainmentActions(desktopMenu, event);
     }
 
@@ -371,10 +372,10 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         globalPos = popUpRelevantToGlobalPoint(QRect(0,0,0,0), popUpRect);
     }
 
-    //qDebug() << "7...";
+    //qCDebug(latteQml) << "7...";
 
     if (desktopMenu->isEmpty()) {
-        //qDebug() << "7.5 ...";
+        //qCDebug(latteQml) << "7.5 ...";
         delete desktopMenu;
         event->accept();
         return;
@@ -399,7 +400,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         }
     }
 
-    //qDebug() << "8 ...";
+    //qCDebug(latteQml) << "8 ...";
     desktopMenu->popup(globalPos);
     event->setAccepted(true);
 }
@@ -559,7 +560,7 @@ void ContextMenuLayerQuickItem::addContainmentActions(QMenu *desktopMenu, QEvent
 
     if (m_latteView->containment()->corona()->immutability() != Plasma::Types::Mutable &&
             !KAuthorized::authorizeAction(QStringLiteral("plasma/containment_actions"))) {
-        //qDebug() << "immutability";
+        //qCDebug(latteQml) << "immutability";
         return;
     }
 
@@ -575,7 +576,7 @@ void ContextMenuLayerQuickItem::addContainmentActions(QMenu *desktopMenu, QEvent
     if (plugin->containment() != m_latteView->containment()) {
         plugin->setContainment(m_latteView->containment());
         // now configure it
-        KConfigGroup cfg(m_latteView->containment()->corona()->config(), "ActionPlugins");
+        KConfigGroup cfg(m_latteView->containment()->corona()->config(), QStringLiteral("ActionPlugins"));
         cfg = KConfigGroup(&cfg, QString::number(m_latteView->containment()->containmentType()));
         KConfigGroup pluginConfig = KConfigGroup(&cfg, trigger);
         plugin->restore(pluginConfig);

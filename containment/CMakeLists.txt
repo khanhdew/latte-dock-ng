@@ -12,6 +12,7 @@ set(containment_SRCS
 add_library(lattecontainmentplugin SHARED ${containment_SRCS})
 
 target_link_libraries(lattecontainmentplugin
+                      latteLogging
                       Qt6::Core
                       Qt6::Qml
                       Qt6::Quick

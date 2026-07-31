@@ -5,6 +5,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "primaryoutputwatcher.h"
 
 #include <QDebug>
@@ -154,7 +155,7 @@ QScreen *PrimaryOutputWatcher::primaryScreen() const
 {
     auto screen = screenForName(m_primaryOutputName);
     if (!screen) {
-        qDebug() << "PrimaryOutputWatcher: Could not find primary screen:" << m_primaryOutputName;
+        qCDebug(latteApp) << "PrimaryOutputWatcher: Could not find primary screen:" << m_primaryOutputName;
         return qGuiApp->primaryScreen();
     }
     return screen;

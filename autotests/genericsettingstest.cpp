@@ -89,21 +89,21 @@ void GenericSettingsTest::handlerMirrorsTwinActionPropertiesOnlyForKnownActions(
     QPushButton linkedButton;
     handler.connectActionWithButton(&linkedButton, &linkedAction);
 
-    handler.setTwinProperty(&linkedAction, Latte::Settings::Handler::Generic::TWINVISIBLE, false);
+    handler.setTwinProperty(&linkedAction, QLatin1String(Latte::Settings::Handler::Generic::TWINVISIBLE), false);
     QCOMPARE(linkedAction.isVisible(), false);
     QCOMPARE(linkedButton.isVisible(), false);
 
-    handler.setTwinProperty(&linkedAction, Latte::Settings::Handler::Generic::TWINENABLED, false);
+    handler.setTwinProperty(&linkedAction, QLatin1String(Latte::Settings::Handler::Generic::TWINENABLED), false);
     QCOMPARE(linkedAction.isEnabled(), false);
     QCOMPARE(linkedButton.isEnabled(), false);
 
-    handler.setTwinProperty(&linkedAction, Latte::Settings::Handler::Generic::TWINCHECKED, true);
+    handler.setTwinProperty(&linkedAction, QLatin1String(Latte::Settings::Handler::Generic::TWINCHECKED), true);
     QCOMPARE(linkedAction.isChecked(), true);
     QCOMPARE(linkedButton.isChecked(), true);
 
     QAction unknownAction(QStringLiteral("Unknown"), &handler);
     unknownAction.setVisible(true);
-    handler.setTwinProperty(&unknownAction, Latte::Settings::Handler::Generic::TWINVISIBLE, false);
+    handler.setTwinProperty(&unknownAction, QLatin1String(Latte::Settings::Handler::Generic::TWINVISIBLE), false);
     QCOMPARE(unknownAction.isVisible(), true);
 }
 

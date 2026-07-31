@@ -34,7 +34,7 @@ private:
     float colorLumina(float r, float g, float b);
 };
 
-static QObject *tools_qobject_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+[[maybe_unused]] static QObject *tools_qobject_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)

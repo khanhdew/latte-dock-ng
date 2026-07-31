@@ -8,6 +8,7 @@
 #define ABSTRACTWINDOWINTERFACE_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 #include "schemecolors.h"
 #include "tasktools.h"

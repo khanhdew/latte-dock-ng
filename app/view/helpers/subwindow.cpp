@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "subwindow.h"
 
 // local
@@ -28,7 +29,7 @@ SubWindow::SubWindow(Latte::View *view, QString debugType) :
 {
     m_corona = qobject_cast<Latte::Corona *>(view->corona());
 
-    m_debugMode = (qApp->arguments().contains("-d") && qApp->arguments().contains("--kwinedges"));
+    m_debugMode = (qApp->arguments().contains(QStringLiteral("-d")) && qApp->arguments().contains(QStringLiteral("--kwinedges")));
     m_debugType = debugType;
 
     m_showColor = QColor(Qt::transparent);
@@ -106,7 +107,7 @@ int SubWindow::thickness() const
 
 QString SubWindow::validTitlePrefix() const
 {
-    return QString("#subwindow#");
+    return QStringLiteral("#subwindow#");
 }
 
 QString SubWindow::validTitle() const
@@ -190,7 +191,7 @@ void SubWindow::setupWaylandIntegration()
             return;
         }
 
-        qDebug() << "wayland screen edge ghost window surface was created...";
+        qCDebug(latteView) << "wayland screen edge ghost window surface was created...";
         m_shellSurface = interface->createSurface(s, this);
         m_corona->wm()->setViewExtraFlags(m_shellSurface);
 
@@ -211,7 +212,7 @@ bool SubWindow::event(QEvent *e)
 void SubWindow::hideWithMask()
 {
     if (m_debugMode) {
-        qDebug() << m_debugType + " :: MASK HIDE...";
+        qCDebug(latteView) << m_debugType + QLatin1String(" :: MASK HIDE...");
     }
 
     setMask(VisibilityManager::ISHIDDENMASK);
@@ -223,7 +224,7 @@ void SubWindow::hideWithMask()
 void SubWindow::showWithMask()
 {
     if (m_debugMode) {
-        qDebug() << m_debugType + " :: MASK SHOW...";
+        qCDebug(latteView) << m_debugType + QLatin1String(" :: MASK SHOW...");
     }
 
     setMask(QRegion());

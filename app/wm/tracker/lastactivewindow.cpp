@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "lastactivewindow.h"
 
 // local
@@ -494,7 +495,7 @@ void LastActiveWindow::applicationDataChanged(const WindowId &wid)
 void LastActiveWindow::windowChanged(const WindowId &wid)
 {
     if (!m_trackedInfo->enabled()) {
-        // qDebug() << " Last Active Window, Window Changed : TrackedInfo is disabled...";
+        // qCDebug(latteWm) << " Last Active Window, Window Changed : TrackedInfo is disabled...";
         setIsValid(false);
         return;
     }
@@ -515,7 +516,7 @@ void LastActiveWindow::windowChanged(const WindowId &wid)
             setInformation(historyitem);
         }
     } else {
-        //qDebug() << " LastActiveWindow : window is not in history";
+        //qCDebug(latteWm) << " LastActiveWindow : window is not in history";
     }
 }
 

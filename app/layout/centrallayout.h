@@ -14,6 +14,7 @@
 #include "../wm/schemecolors.h"
 
 // Qt
+#include <QStringList>
 #include <QObject>
 
 namespace Latte {

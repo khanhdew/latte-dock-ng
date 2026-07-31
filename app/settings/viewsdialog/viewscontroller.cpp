@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "../../tools/commontools.h"
 #include "viewscontroller.h"
 
@@ -47,7 +48,7 @@ Views::Views(Settings::Handler::ViewsHandler *parent)
       m_model(new Model::Views(this, m_handler->corona())),
       m_proxyModel(new QSortFilterProxyModel(this)),
       m_view(m_handler->ui()->viewsTable),
-      m_storage(KConfigGroup(KSharedConfig::openConfig(),"LatteSettingsDialog").group("ViewsDialog"))
+      m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("ViewsDialog")))
 {
     loadConfig();
     m_proxyModel->setSourceModel(m_model);
@@ -102,19 +103,19 @@ void Views::init()
 
     applyColumnWidths();
 
-    m_cutAction = new QAction(QIcon::fromTheme("edit-cut"), i18n("Cut"), m_view);
+    m_cutAction = new QAction(QIcon::fromTheme(QStringLiteral("edit-cut")), i18n("Cut"), m_view);
     m_cutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_X));
     connect(m_cutAction, &QAction::triggered, this, &Views::cutSelectedViews);
 
-    m_copyAction = new QAction(QIcon::fromTheme("edit-copy"), i18n("Copy"), m_view);
+    m_copyAction = new QAction(QIcon::fromTheme(QStringLiteral("edit-copy")), i18n("Copy"), m_view);
     m_copyAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_C));
     connect(m_copyAction, &QAction::triggered, this, &Views::copySelectedViews);
 
-    m_pasteAction = new QAction(QIcon::fromTheme("edit-paste"), i18n("Paste"), m_view);
+    m_pasteAction = new QAction(QIcon::fromTheme(QStringLiteral("edit-paste")), i18n("Paste"), m_view);
     m_pasteAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_V));
     connect(m_pasteAction, &QAction::triggered, this, &Views::pasteSelectedViews);
 
-    m_duplicateAction = new QAction(QIcon::fromTheme("edit-copy"), i18n("Duplicate Here"), m_view);
+    m_duplicateAction = new QAction(QIcon::fromTheme(QStringLiteral("edit-copy")), i18n("Duplicate Here"), m_view);
     m_duplicateAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_D));
     connect(m_duplicateAction, &QAction::triggered, this, &Views::duplicateSelectedViews);
 
@@ -237,7 +238,7 @@ Data::ViewsTable Views::selectedViewsForClipboard()
 
 void Views::copySelectedViews()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!hasSelectedView()) {
         return;
@@ -267,7 +268,7 @@ void Views::copySelectedViews()
 
 void Views::cutSelectedViews()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!hasSelectedView()) {
         return;
@@ -325,7 +326,7 @@ void Views::pasteSelectedViews()
 
 void Views::duplicateSelectedViews()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!hasSelectedView()) {
         return;
@@ -594,7 +595,7 @@ void Views::showDefaultPersistentErrorWarningInlineMessage(const QString &messag
         //! add default action to open layout
         QAction *openlayoutaction = new QAction(i18n("Edit Layout"), this);
         openlayoutaction->setEnabled(!currentlayout.isActive);
-        openlayoutaction->setIcon(QIcon::fromTheme("document-edit"));
+        openlayoutaction->setIcon(QIcon::fromTheme(QStringLiteral("document-edit")));
         openlayoutaction->setData(currentlayout.id);
         actions << openlayoutaction;
 
@@ -622,7 +623,7 @@ void Views::showDefaultInlineMessageValidator()
 
     //! add default action to open layout
     QAction *validateaction = new QAction(i18n("Validate"), this);
-    validateaction->setIcon(QIcon::fromTheme("view-refresh"));
+    validateaction->setIcon(QIcon::fromTheme(QStringLiteral("view-refresh")));
     validateaction->setData(currentlayout.id);
 
     QList<QAction *> actions;
@@ -657,10 +658,10 @@ void Views::messageForErrorAppletsWithSameId(const Data::Error &error)
 
     //! construct message
     QString message = i18nc("error id and title", "<b>Error #%1: %2</b> <br/>",error.id, error.name);
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("In your layout there are two or more applets with same id. Such situation can create crashes, abnormal behavior and data loss when you activate and use this layout.<br/>");
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Applets:</b><br/>");
     for (int i=0; i<error.information.rowCount(); ++i) {
         QString appletname = error.information[i].applet.visibleName();
@@ -676,7 +677,7 @@ void Views::messageForErrorAppletsWithSameId(const Data::Error &error)
                          containmentstorageid);
     }
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Possible Solutions:</b><br/>");
     message += i18n("&nbsp;&nbsp;1. Activate this layout and restart Latte<br/>");
     message += i18n("&nbsp;&nbsp;2. Remove the mentioned applets from your layout<br/>");
@@ -696,7 +697,7 @@ void Views::messageForErrorOrphanedParentAppletOfSubContainment(const Data::Erro
     QString message = i18nc("error id and title", "<b>Error #%1: %2</b> <br/><br/>", error.id, error.name);
     message += i18n("In your layout there are orphaned pseudo applets that link to unexistent subcontainments. Such case is for example a systemtray that has lost connection with its child applets. Such situation can create crashes, abnormal behavior and data loss when you activate and use this layout.<br/>");
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Pseudo Applets:</b><br/>");
     for (int i=0; i<error.information.rowCount(); ++i) {
         if (!error.information[i].applet.isValid()) {
@@ -716,7 +717,7 @@ void Views::messageForErrorOrphanedParentAppletOfSubContainment(const Data::Erro
                          containmentstorageid);
     }
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Orphaned Subcontainments:</b><br/>");
     for (int i=0; i<error.information.rowCount(); ++i) {
         if (error.information[i].applet.isValid()) {
@@ -732,7 +733,7 @@ void Views::messageForErrorOrphanedParentAppletOfSubContainment(const Data::Erro
                          containmentstorageid);
     }
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Possible Solutions:</b><br/>");
     message += i18n("&nbsp;&nbsp;1. Update manually the subcontainment id inside pseudo applet settings when the layout is <b>not active</b><br/>");
     message += i18n("&nbsp;&nbsp;2. Remove this layout totally<br/>");
@@ -751,7 +752,7 @@ void Views::messageForWarningAppletAndContainmentWithSameId(const Data::Warning 
     QString message = i18nc("warning id and title", "<b>Warning #%1: %2</b> <br/><br/>", warning.id, warning.name);
     message += i18n("In your layout there are applets and containments with the same id. Such situation is not dangerous but it should not occur.<br/>");
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Applets:</b><br/>");
     for (int i=0; i<warning.information.rowCount(); ++i) {
         if (!warning.information[i].applet.isValid()) {
@@ -771,7 +772,7 @@ void Views::messageForWarningAppletAndContainmentWithSameId(const Data::Warning 
                          containmentstorageid);
     }
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Containments:</b><br/>");
     for (int i=0; i<warning.information.rowCount(); ++i) {
         if (warning.information[i].applet.isValid()) {
@@ -787,7 +788,7 @@ void Views::messageForWarningAppletAndContainmentWithSameId(const Data::Warning 
                          containmentstorageid);
     }
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Possible Solutions:</b><br/>");
     message += i18n("&nbsp;&nbsp;1. Update manually the containments or applets id when the layout is <b>not active</b><br/>");
     message += i18n("&nbsp;&nbsp;2. Remove any of the containments or applets that conflict with each other<br/>");
@@ -808,7 +809,7 @@ void Views::messageForWarningOrphanedSubContainments(const Data::Warning &warnin
     QString message = i18nc("warning id and title", "<b>Warning #%1: %2</b> <br/><br/>", warning.id, warning.name);
     message += i18n("In your layout there are orphaned subcontainments that are not used by any dock. Such situation is not dangerous but it is advised to remove them in order to reduce memory usage.<br/>");
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Orphaned Subcontainments:</b><br/>");
     for (int i=0; i<warning.information.rowCount(); ++i) {
         if (warning.information[i].applet.isValid()) {
@@ -826,14 +827,14 @@ void Views::messageForWarningOrphanedSubContainments(const Data::Warning &warnin
         orphaned << warning.information[i].containment.storageId.toInt();
     }
 
-    message += "<br/>";
+    message += QStringLiteral("<br/>");
     message += i18n("<b>Possible Solutions:</b><br/>");
     message += i18n("&nbsp;&nbsp;1. Click <b>Repair</b> button in order to remove orphaned subcontainments<br/>");
     message += i18n("&nbsp;&nbsp;2. Remove manually orphaned subcontainments when the layout is <b>not active</b><br/>");
 
     //! add extra repair action
     QAction *repairlayoutaction = new QAction(i18n("Repair"), this);
-    repairlayoutaction->setIcon(QIcon::fromTheme("dialog-yes"));
+    repairlayoutaction->setIcon(QIcon::fromTheme(QStringLiteral("dialog-yes")));
     QList<QAction *> extraactions;
     extraactions << repairlayoutaction;
 
@@ -875,7 +876,7 @@ void Views::save()
     QHash<QString, Data::View> cuttedpastedactiveviews;
 
     m_debugSaveCall++;
-    qDebug() << "org.kde.latte ViewsDialog::save() call: " << m_debugSaveCall << "-------- ";
+    qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() call: " << m_debugSaveCall << "-------- ";
 
     //! add new views that are accepted
     for(int i=0; i<newViews.rowCount(); ++i){
@@ -907,7 +908,7 @@ void Views::save()
     //! update altered views
     for (int i=0; i<alteredViews.rowCount(); ++i) {
         if (alteredViews[i].state() == Data::View::IsCreated && !alteredViews[i].isMoveOrigin) {
-            qDebug() << "org.kde.latte ViewsDialog::save() updating altered view :: " << alteredViews[i];
+            qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() updating altered view :: " << alteredViews[i];
             central->updateView(alteredViews[i]);
         }
     }
@@ -916,7 +917,7 @@ void Views::save()
     Latte::Data::ViewsTable removedViews = originalViews.subtracted(currentViews);
 
     for (int i=0; i<removedViews.rowCount(); ++i) {
-        qDebug() << "org.kde.latte ViewsDialog::save() real removing view :: " << removedViews[i];
+        qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() real removing view :: " << removedViews[i];
         central->removeView(removedViews[i]);
     }
 
@@ -931,7 +932,7 @@ void Views::save()
             continue;
         }
 
-        qDebug() << "org.kde.latte ViewsDialog::save() removing cut-pasted view :: " << cuttedpastedviews[vid];
+        qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() removing cut-pasted view :: " << cuttedpastedviews[vid];
 
         //! Be Careful: Remove deprecated views from Cut->Paste Action
         QString origincurrentid = cuttedpastedviews[vid].originLayout();
@@ -958,7 +959,7 @@ void Views::save()
         QString tempviewid = pastedactiveview.id;
         pastedactiveview.id = QString::number(originviewid);
 
-        qDebug() << "org.kde.latte ViewsDialog::save() move to another layout cutted-pasted active view :: " << pastedactiveview;
+        qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() move to another layout cutted-pasted active view :: " << pastedactiveview;
 
         if (view) {
             //! onscreen_view->onscreen_view
@@ -1015,14 +1016,14 @@ QString Views::uniqueViewName(QString name)
     QString namePart = name;
 
     while (m_model->containsCurrentName(name) && i < 10000) {
-        name = namePart + " - " + QString::number(i);
+        name = namePart + QLatin1String(" - ") + QString::number(i);
         i++;
     }
 
     if (m_model->containsCurrentName(name)) {
         //! All numbered suffixes are taken — fall back to a random
         //! suffix instead of returning a name that still exists.
-        name = namePart + " - " + QString::number(QRandomGenerator::global()->generate(), 16);
+        name = namePart + QLatin1String(" - ") + QString::number(QRandomGenerator::global()->generate(), 16);
     }
 
     return name;
@@ -1064,7 +1065,7 @@ void Views::storeColumnWidths()
     if (m_viewColumnWidths.isEmpty() || (m_viewColumnWidths.count()<Model::Views::columnCount()-1)) {
         m_viewColumnWidths.clear();
         for (int i=0; i<Model::Views::columnCount(); ++i) {
-            m_viewColumnWidths << "";
+            m_viewColumnWidths << QString();
         }
     }
 
@@ -1080,16 +1081,16 @@ void Views::loadConfig()
     QStringList defaultcolumnwidths;
     defaultcolumnwidths << QString::number(59) << QString::number(256) << QString::number(142) << QString::number(135) << QString::number(131);
 
-    m_viewColumnWidths = m_storage.readEntry("columnWidths", defaultcolumnwidths);
-    m_viewSortColumn = m_storage.readEntry("sortColumn", static_cast<int>(Model::Views::SCREENCOLUMN));
-    m_viewSortOrder = static_cast<Qt::SortOrder>(m_storage.readEntry("sortOrder", (int)Qt::AscendingOrder));
+    m_viewColumnWidths = m_storage.readEntry(QStringLiteral("columnWidths"), defaultcolumnwidths);
+    m_viewSortColumn = m_storage.readEntry(QStringLiteral("sortColumn"), static_cast<int>(Model::Views::SCREENCOLUMN));
+    m_viewSortOrder = static_cast<Qt::SortOrder>(m_storage.readEntry(QStringLiteral("sortOrder"), static_cast<int>(Qt::AscendingOrder)));
 }
 
 void Views::saveConfig()
 {
-    m_storage.writeEntry("columnWidths", m_viewColumnWidths);
-    m_storage.writeEntry("sortColumn", m_viewSortColumn);
-    m_storage.writeEntry("sortOrder", static_cast<int>(m_viewSortOrder));
+    m_storage.writeEntry(QStringLiteral("columnWidths"), m_viewColumnWidths);
+    m_storage.writeEntry(QStringLiteral("sortColumn"), m_viewSortColumn);
+    m_storage.writeEntry(QStringLiteral("sortOrder"), static_cast<int>(m_viewSortOrder));
     m_storage.sync();
 }
 

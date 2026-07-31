@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "viewshandler.h"
 
 // local
@@ -68,7 +69,7 @@ void ViewsHandler::init()
     //! New Button
     m_newViewAction = new QAction(i18nc("new view", "&New"), this);
     m_newViewAction->setToolTip(i18n("New dock"));
-    m_newViewAction->setIcon(QIcon::fromTheme("add"));
+    m_newViewAction->setIcon(QIcon::fromTheme(QStringLiteral("add")));
     m_newViewAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_N));
     connectActionWithButton(m_ui->newBtn, m_newViewAction);
     connect(m_newViewAction, &QAction::triggered, m_ui->newBtn, &QPushButton::showMenu);
@@ -82,7 +83,7 @@ void ViewsHandler::init()
     //! Duplicate Button
     m_duplicateViewAction = new QAction(i18nc("duplicate dock", "&Duplicate"), this);
     m_duplicateViewAction->setToolTip(i18n("Duplicate selected dock"));
-    m_duplicateViewAction->setIcon(QIcon::fromTheme("edit-copy"));
+    m_duplicateViewAction->setIcon(QIcon::fromTheme(QStringLiteral("edit-copy")));
     m_duplicateViewAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_D));
     connectActionWithButton(m_ui->duplicateBtn, m_duplicateViewAction);
     connect(m_duplicateViewAction, &QAction::triggered, m_viewsController, &Controller::Views::duplicateSelectedViews);
@@ -90,7 +91,7 @@ void ViewsHandler::init()
     //! Remove Button
     m_removeViewAction = new QAction(i18nc("remove layout", "Remove"), m_ui->removeBtn);
     m_removeViewAction->setToolTip(i18n("Remove selected view"));
-    m_removeViewAction->setIcon(QIcon::fromTheme("delete"));
+    m_removeViewAction->setIcon(QIcon::fromTheme(QStringLiteral("delete")));
     m_removeViewAction->setShortcut(QKeySequence(Qt::Key_Delete));
     connectActionWithButton(m_ui->removeBtn, m_removeViewAction);
     connect(m_removeViewAction, &QAction::triggered, this, &ViewsHandler::removeSelectedViews);
@@ -99,7 +100,7 @@ void ViewsHandler::init()
     //! Import
     m_importViewAction =new QAction(i18nc("import dock","&Import..."));
     m_importViewAction->setToolTip(i18n("Import dock from local file"));
-    m_importViewAction->setIcon(QIcon::fromTheme("document-import"));
+    m_importViewAction->setIcon(QIcon::fromTheme(QStringLiteral("document-import")));
     m_importViewAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_I));
     connectActionWithButton(m_ui->importBtn, m_importViewAction);
     connect(m_importViewAction, &QAction::triggered, this, &ViewsHandler::importView);
@@ -107,7 +108,7 @@ void ViewsHandler::init()
     //! Export
     m_exportViewAction = new QAction(i18nc("export layout", "&Export"), this);
     m_exportViewAction->setToolTip(i18n("Export selected dock at your system"));
-    m_exportViewAction->setIcon(QIcon::fromTheme("document-export"));
+    m_exportViewAction->setIcon(QIcon::fromTheme(QStringLiteral("document-export")));
     m_exportViewAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
     connectActionWithButton(m_ui->exportBtn, m_exportViewAction);
     connect(m_exportViewAction, &QAction::triggered, m_ui->exportBtn, &QPushButton::showMenu);
@@ -156,7 +157,7 @@ void ViewsHandler::initViewTemplatesSubMenu()
         }
 
         QAction *newview = m_viewTemplatesSubMenu->addAction(templates[i].name);
-        newview->setIcon(QIcon::fromTheme("document-new"));
+        newview->setIcon(QIcon::fromTheme(QStringLiteral("document-new")));
 
         Data::Generic templateData = templates[i];
 
@@ -168,10 +169,10 @@ void ViewsHandler::initViewTemplatesSubMenu()
     if (templates.rowCount() > 0) {
         QAction *openTemplatesDirectory = m_viewTemplatesSubMenu->addAction(i18n("Templates..."));
         openTemplatesDirectory->setToolTip(i18n("Open templates directory"));
-        openTemplatesDirectory->setIcon(QIcon::fromTheme("edit"));
+        openTemplatesDirectory->setIcon(QIcon::fromTheme(QStringLiteral("edit")));
 
         connect(openTemplatesDirectory, &QAction::triggered, this, [this]() {
-            KIO::highlightInFileManager(QList<QUrl>({QUrl::fromLocalFile(QString(Latte::configPath() + "/latte/templates/Dock.view.latte"))}));
+            KIO::highlightInFileManager(QList<QUrl>({QUrl::fromLocalFile(Latte::configPath() + QLatin1String("/latte/templates/Dock.view.latte"))}));
         });
     }
 }
@@ -186,12 +187,12 @@ void ViewsHandler::initViewExportSubMenu()
     }
 
     QAction *exportforbackup = m_viewExportSubMenu->addAction(i18nc("export for backup","&Export For Backup..."));
-    exportforbackup->setIcon(QIcon::fromTheme("document-export"));
+    exportforbackup->setIcon(QIcon::fromTheme(QStringLiteral("document-export")));
     exportforbackup->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_E));
     connect(exportforbackup, &QAction::triggered, this, &ViewsHandler::exportViewForBackup);
 
     QAction *exportastemplate = m_viewExportSubMenu->addAction(i18nc("export as template","Export As &Template..."));
-    exportastemplate->setIcon(QIcon::fromTheme("document-export"));
+    exportastemplate->setIcon(QIcon::fromTheme(QStringLiteral("document-export")));
     exportastemplate->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_T));
     connect(exportastemplate, &QAction::triggered, this, &ViewsHandler::exportViewAsTemplate);
 }
@@ -309,7 +310,7 @@ void ViewsHandler::newView(const Data::Generic &templateData)
 
 void ViewsHandler::removeSelectedViews()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!m_removeViewAction->isEnabled() || !m_viewsController->hasSelectedView()) {
         return;
@@ -344,10 +345,10 @@ void ViewsHandler::exportViewForBackup()
     exportFileDialog->setLabelText(QFileDialog::Accept, i18nc("export view","Export"));
     exportFileDialog->setFileMode(QFileDialog::AnyFile);
     exportFileDialog->setAcceptMode(QFileDialog::AcceptSave);
-    exportFileDialog->setDefaultSuffix("view.latte");
+    exportFileDialog->setDefaultSuffix(QStringLiteral("view.latte"));
 
     QStringList filters;
-    QString filter1(i18nc("export view", "Latte Dock NG file v0.2") + "(*.view.latte)");
+    QString filter1(i18nc("export view", "Latte Dock NG file v0.2") + QStringLiteral("(*.view.latte)"));
 
     filters << filter1;
 
@@ -367,7 +368,7 @@ void ViewsHandler::exportViewForBackup()
             return;
         }
 
-        if (file.endsWith(".view.latte")) {
+        if (file.endsWith(QStringLiteral(".view.latte"))) {
             if (!QFile(temporiginfile).copy(file)) {
                 showExportViewError(file);
                 return;
@@ -426,18 +427,18 @@ void ViewsHandler::exportViewAsTemplate()
 
 void ViewsHandler::importView()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     QFileDialog *importFileDialog = new QFileDialog(m_dialog, i18nc("import dock", "Import Dock"), QDir::homePath(), QStringLiteral("view.latte"));
 
-    importFileDialog->setWindowIcon(QIcon::fromTheme("document-import"));
+    importFileDialog->setWindowIcon(QIcon::fromTheme(QStringLiteral("document-import")));
     importFileDialog->setLabelText(QFileDialog::Accept, i18n("Import"));
     importFileDialog->setFileMode(QFileDialog::AnyFile);
     importFileDialog->setAcceptMode(QFileDialog::AcceptOpen);
-    importFileDialog->setDefaultSuffix("view.latte");
+    importFileDialog->setDefaultSuffix(QStringLiteral("view.latte"));
 
     QStringList filters;
-    filters << QString(i18nc("import dock", "Latte Dock NG file v0.2") + "(*.view.latte)");
+    filters << i18nc("import dock", "Latte Dock NG file v0.2") + QStringLiteral("(*.view.latte)");
     importFileDialog->setNameFilters(filters);
 
     connect(importFileDialog, &QFileDialog::finished, importFileDialog, &QFileDialog::deleteLater);
@@ -446,7 +447,7 @@ void ViewsHandler::importView()
         Data::Generic templatedata;
         templatedata.id = file;
         templatedata.name = QFileInfo(file).fileName();
-        templatedata.name = templatedata.name.remove(".view.latte");
+        templatedata.name = templatedata.name.remove(QStringLiteral(".view.latte"));
         newView(templatedata);
     });
 
@@ -500,9 +501,9 @@ void ViewsHandler::onSelectionChanged()
 {
     bool hasselected = m_viewsController->hasSelectedView();
 
-    setTwinProperty(m_duplicateViewAction, TWINENABLED, hasselected);
-    setTwinProperty(m_removeViewAction, TWINENABLED, hasselected);
-    setTwinProperty(m_exportViewAction, TWINENABLED, hasselected);
+    setTwinProperty(m_duplicateViewAction, QLatin1String(TWINENABLED), hasselected);
+    setTwinProperty(m_removeViewAction, QLatin1String(TWINENABLED), hasselected);
+    setTwinProperty(m_exportViewAction, QLatin1String(TWINENABLED), hasselected);
     m_viewExportSubMenu->setEnabled(hasselected);
 }
 

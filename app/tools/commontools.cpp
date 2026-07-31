@@ -36,9 +36,9 @@ float colorBrightness(float r, float g, float b)
 
 float colorLumina(QRgb rgb)
 {
-    float r = (float)(qRed(rgb)) / 255;
-    float g = (float)(qGreen(rgb)) / 255;
-    float b = (float)(qBlue(rgb)) / 255;
+    float r = static_cast<float>(qRed(rgb)) / 255;
+    float g = static_cast<float>(qGreen(rgb)) / 255;
+    float b = static_cast<float>(qBlue(rgb)) / 255;
 
     return colorLumina(r, g, b);
 }
@@ -65,18 +65,18 @@ float colorLumina(float r, float g, float b)
 QString rectToString(const QRect &rect)
 {
     QString result;
-    result += QString(QString::number(rect.x()) + ","  + QString::number(rect.y()));
-    result += " ";
-    result += QString(QString::number(rect.width()) + "x" + QString::number(rect.height()));
+    result += QString(QString::number(rect.x()) + QLatin1Char(',') + QString::number(rect.y()));
+    result += QLatin1Char(' ');
+    result += QString(QString::number(rect.width()) + QLatin1Char('x') + QString::number(rect.height()));
 
     return result;
 }
 
 QRect stringToRect(const QString &str)
 {
-    QStringList parts = str.split(" ");
-    QStringList pos = parts[0].split(",");
-    QStringList size = parts[1].split("x");
+    QStringList parts = str.split(QLatin1Char(' '));
+    QStringList pos = parts[0].split(QLatin1Char(','));
+    QStringList size = parts[1].split(QLatin1Char('x'));
     return QRect(pos[0].toInt(), pos[1].toInt(), size[0].toInt(), size[1].toInt());
 }
 
@@ -96,7 +96,7 @@ QString standardPath(QString subPath, bool localfirst)
 {
     QStringList paths = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
 
-    QString separator = subPath.startsWith("/") ? "" : "/";
+    QString separator = subPath.startsWith(QLatin1Char('/')) ? QString() : QLatin1String("/");
 
     if (localfirst) {
         for (const auto &pt : paths) {
@@ -115,11 +115,11 @@ QString standardPath(QString subPath, bool localfirst)
     }
 
     //! in any case that above fails
-    if (QFileInfo("/usr/share" + separator + subPath).exists()) {
-        return "/usr/share" + separator + subPath;
+    if (QFileInfo(QLatin1String("/usr/share") + separator + subPath).exists()) {
+        return QLatin1String("/usr/share") + separator + subPath;
     }
 
-    return "";
+    return QString();
 }
 
 QString configPath()
@@ -127,7 +127,7 @@ QString configPath()
     QStringList configPaths = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation);
 
     if (configPaths.count() == 0) {
-        return QDir::homePath() + "/.config";
+        return QDir::homePath() + QLatin1String("/.config");
     }
 
     return configPaths[0];

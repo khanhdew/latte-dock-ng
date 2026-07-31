@@ -30,7 +30,7 @@ void PanelShadowUnitTest::ignoresNullWindowsAndAllowsRepeatedRemoval()
     PanelShadows shadows(nullptr, QStringLiteral("missing/panel-shadow-test"));
 
     shadows.addWindow(nullptr);
-    shadows.setEnabledBorders(nullptr, Plasma::FrameSvg::NoBorder);
+    shadows.setEnabledBorders(nullptr, KSvg::FrameSvg::NoBorder);
     shadows.removeWindow(nullptr);
 }
 
@@ -40,8 +40,8 @@ void PanelShadowUnitTest::tracksWindowUntilDestroyed()
     auto *window = new QWindow;
     QSignalSpy destroyedSpy(window, &QObject::destroyed);
 
-    shadows.addWindow(window, Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
-    shadows.setEnabledBorders(window, Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
+    shadows.addWindow(window, KSvg::FrameSvg::TopBorder | KSvg::FrameSvg::BottomBorder);
+    shadows.setEnabledBorders(window, KSvg::FrameSvg::LeftBorder | KSvg::FrameSvg::RightBorder);
     shadows.removeWindow(window);
     shadows.removeWindow(window);
 

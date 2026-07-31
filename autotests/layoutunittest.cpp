@@ -73,14 +73,14 @@ void LayoutUnitTest::abstractLayoutLoadsSettingsFromFile()
 
     const QString layoutFile = dir.path() + QStringLiteral("/Loaded.layout.latte");
     KSharedConfigPtr config = KSharedConfig::openConfig(layoutFile);
-    KConfigGroup group(config, "LayoutSettings");
-    group.writeEntry("version", 7);
-    group.writeEntry("launchers", QStringList{QStringLiteral("applications:org.kde.konsole.desktop")});
-    group.writeEntry("lastUsedActivity", QStringLiteral("activity-1"));
-    group.writeEntry("preferredForShortcutsTouched", true);
-    group.writeEntry("popUpMargin", 12);
-    group.writeEntry("schemeFile", QStringLiteral("/missing/color-scheme.colors"));
-    group.writeEntry("icon", QStringLiteral("latte-dock"));
+    KConfigGroup group(config, QStringLiteral("LayoutSettings"));
+    group.writeEntry(QStringLiteral("version"), 7);
+    group.writeEntry(QStringLiteral("launchers"), QStringList{QStringLiteral("applications:org.kde.konsole.desktop")});
+    group.writeEntry(QStringLiteral("lastUsedActivity"), QStringLiteral("activity-1"));
+    group.writeEntry(QStringLiteral("preferredForShortcutsTouched"), true);
+    group.writeEntry(QStringLiteral("popUpMargin"), 12);
+    group.writeEntry(QStringLiteral("schemeFile"), QStringLiteral("/missing/color-scheme.colors"));
+    group.writeEntry(QStringLiteral("icon"), QStringLiteral("latte-dock"));
     group.sync();
 
     Latte::Layout::AbstractLayout layout(nullptr, layoutFile);
@@ -118,13 +118,13 @@ void LayoutUnitTest::abstractLayoutSettersPersistSettings()
     QCOMPARE(launchersSpy.count(), 1);
 
     KSharedConfigPtr config = KSharedConfig::openConfig(layoutFile);
-    KConfigGroup group(config, "LayoutSettings");
-    QCOMPARE(group.readEntry("icon", QString()), QStringLiteral("new-icon"));
-    QCOMPARE(group.readEntry("launchers", QStringList()), QStringList{QStringLiteral("applications:org.kde.dolphin.desktop")});
-    QCOMPARE(group.readEntry("version", 0), 9);
-    QCOMPARE(group.readEntry("popUpMargin", -1), 22);
-    QCOMPARE(group.readEntry("preferredForShortcutsTouched", false), true);
-    QCOMPARE(group.readEntry("lastUsedActivity", QStringLiteral("not-cleared")), QString());
+    KConfigGroup group(config, QStringLiteral("LayoutSettings"));
+    QCOMPARE(group.readEntry(QStringLiteral("icon"), QString()), QStringLiteral("new-icon"));
+    QCOMPARE(group.readEntry(QStringLiteral("launchers"), QStringList()), QStringList{QStringLiteral("applications:org.kde.dolphin.desktop")});
+    QCOMPARE(group.readEntry(QStringLiteral("version"), 0), 9);
+    QCOMPARE(group.readEntry(QStringLiteral("popUpMargin"), -1), 22);
+    QCOMPARE(group.readEntry(QStringLiteral("preferredForShortcutsTouched"), false), true);
+    QCOMPARE(group.readEntry(QStringLiteral("lastUsedActivity"), QStringLiteral("not-cleared")), QString());
 }
 
 void LayoutUnitTest::abstractLayoutPersistsCustomSchemeFile()
@@ -146,8 +146,8 @@ void LayoutUnitTest::abstractLayoutPersistsCustomSchemeFile()
     QCOMPARE(layout.schemeFile(), schemeFile);
 
     KSharedConfigPtr config = KSharedConfig::openConfig(layoutFile);
-    KConfigGroup group(config, "LayoutSettings");
-    QCOMPARE(group.readEntry("schemeFile", QString()), schemeFile);
+    KConfigGroup group(config, QStringLiteral("LayoutSettings"));
+    QCOMPARE(group.readEntry(QStringLiteral("schemeFile"), QString()), schemeFile);
 
     Latte::Layout::AbstractLayout reloaded(nullptr, layoutFile);
     QCOMPARE(reloaded.schemeFile(), schemeFile);

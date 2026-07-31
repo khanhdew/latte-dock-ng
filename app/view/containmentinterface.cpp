@@ -3,7 +3,11 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "containmentinterface.h"
+
+// local
+#include "../../containment/plugin/layoutmanager.h"
 
 // local
 #include "pluginids.h"
@@ -650,7 +654,7 @@ bool ContainmentInterface::appletIsExpandable(const int id) const
     }
 
     for (const auto applet : m_view->containment()->applets()) {
-        if (applet && applet->id() == (uint)id) {
+        if (applet && applet->id() == static_cast<uint>(id)) {
             if (Layouts::Storage::self()->isSubContainment(m_view->corona(), applet)) {
                 return true;
             }
@@ -684,7 +688,7 @@ bool ContainmentInterface::appletIsActivationTogglesExpanded(const int id) const
     }
 
     for (const auto applet : m_view->containment()->applets()) {
-        if (applet && applet->id() == (uint)id) {
+        if (applet && applet->id() == static_cast<uint>(id)) {
             if (Layouts::Storage::self()->isSubContainment(m_view->corona(), applet)) {
                 return true;
             }
@@ -911,7 +915,7 @@ void ContainmentInterface::setLayoutManager(QObject *manager)
 
 void ContainmentInterface::addApplet(const QString &pluginId)
 {
-    qDebug() << "org.kde.sync containment addApplet(plugin)"
+    qCDebug(latteView) << "org.kde.sync containment addApplet(plugin)"
              << "containment" << (m_view && m_view->containment() ? m_view->containment()->id() : 0)
              << "screen" << (m_view && m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
              << "plugin" << pluginId;
@@ -932,7 +936,7 @@ void ContainmentInterface::addApplet(const QString &pluginId)
 
     suppressNextAppletCreatedSignal();
     Plasma::Applet *createdApplet = m_view->containment()->createApplet(pluginId);
-    qDebug() << "org.kde.sync containment createApplet(plugin) result"
+    qCDebug(latteView) << "org.kde.sync containment createApplet(plugin) result"
              << "containment" << (m_view && m_view->containment() ? m_view->containment()->id() : 0)
              << "screen" << (m_view && m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
              << "plugin" << pluginId
@@ -951,7 +955,7 @@ void ContainmentInterface::suppressNextAppletCreatedSignal()
 
 void ContainmentInterface::addApplet(QObject *metadata, int x, int y)
 {
-    qDebug() << "org.kde.sync containment addApplet(drop)"
+    qCDebug(latteView) << "org.kde.sync containment addApplet(drop)"
              << "containment" << (m_view && m_view->containment() ? m_view->containment()->id() : 0)
              << "screen" << (m_view && m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
              << "coords" << QPoint(x, y);
@@ -1610,8 +1614,8 @@ void ContainmentInterface::saveAppletsOrder(const QList<int> &order)
         }
     }
 
-    KConfigGroup generalConfig = m_view->containment()->config().group("General");
-    generalConfig.writeEntry("appletOrder", serializedOrder.join(QLatin1Char(';')));
+    KConfigGroup generalConfig = m_view->containment()->config().group(QStringLiteral("General"));
+    generalConfig.writeEntry(QStringLiteral("appletOrder"), serializedOrder.join(QLatin1Char(';')));
     generalConfig.sync();
 }
 
@@ -1648,8 +1652,8 @@ void ContainmentInterface::persistAppletsOrder(const QList<int> &order)
         }
     }
 
-    KConfigGroup generalConfig = m_view->containment()->config().group("General");
-    generalConfig.writeEntry("appletOrder", serializedOrder.join(QLatin1Char(';')));
+    KConfigGroup generalConfig = m_view->containment()->config().group(QStringLiteral("General"));
+    generalConfig.writeEntry(QStringLiteral("appletOrder"), serializedOrder.join(QLatin1Char(';')));
     generalConfig.sync();
 }
 
@@ -1689,7 +1693,7 @@ void ContainmentInterface::updateAppletsOrder()
     }
 
     m_appletOrder = neworder;
-    qDebug() << "org.kde.sync containment appletsOrderChanged"
+    qCDebug(latteView) << "org.kde.sync containment appletsOrderChanged"
              << "containment" << (m_view && m_view->containment() ? m_view->containment()->id() : 0)
              << "screen" << (m_view && m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
              << "order" << m_appletOrder;
@@ -1747,7 +1751,7 @@ void ContainmentInterface::onLatteTasksCountChanged()
     }
 
     m_hasLatteTasks = (m_latteTasksModel->count() > 0);
-    qDebug() << "org.kde.sync hasLatteTasks changed, count" << m_latteTasksModel->count();
+    qCDebug(latteView) << "org.kde.sync hasLatteTasks changed, count" << m_latteTasksModel->count();
     Q_EMIT hasLatteTasksChanged();
 }
 
@@ -1774,7 +1778,7 @@ void ContainmentInterface::toggleAppletExpanded(const int id)
     }
 
     for (const auto applet : m_view->containment()->applets()) {
-        if (applet->id() == (uint)id && !Layouts::Storage::self()->isSubContainment(m_view->corona(), applet)/*block for sub-containments*/) {
+        if (applet->id() == static_cast<uint>(id) && !Layouts::Storage::self()->isSubContainment(m_view->corona(), applet)/*block for sub-containments*/) {
             PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(applet);
 
             if (ai) {
@@ -1786,7 +1790,7 @@ void ContainmentInterface::toggleAppletExpanded(const int id)
 
 void ContainmentInterface::removeApplet(const int &id)
 {
-    qDebug() << "org.kde.sync containment removeApplet"
+    qCDebug(latteView) << "org.kde.sync containment removeApplet"
              << "containment" << (m_view && m_view->containment() ? m_view->containment()->id() : 0)
              << "screen" << (m_view && m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
              << "id" << id
@@ -1824,11 +1828,14 @@ void ContainmentInterface::setAppletsOrder(const QList<int> &order)
 
     const QList<int> sanitizedOrder = sanitizeSeparatorOrder(order, m_appletData, containmentPlugins);
 
+    // The layout manager lives in the containment plugin which is not linked
+    // into latte-dock-ng, so invoke it through the meta-object system. The
+    // methods are Q_INVOKABLE (see layoutmanager.h), so this call actually
+    // dispatches instead of silently failing.
     QMetaObject::invokeMethod(m_layoutManager,
                               "requestAppletsOrder",
                               Qt::DirectConnection,
                               Q_ARG(QList<int>, sanitizedOrder));
-
 }
 
 void ContainmentInterface::setAppletsInLockedZoom(const QList<int> &applets)
@@ -1907,7 +1914,7 @@ void ContainmentInterface::updateAppletsTracking()
     }
 
     m_initializationCompleted = true;
-    qDebug() << "org.kde.sync containment initializationCompleted"
+    qCDebug(latteView) << "org.kde.sync containment initializationCompleted"
              << "containment" << (m_view && m_view->containment() ? m_view->containment()->id() : 0)
              << "screen" << (m_view && m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
              << "order" << m_appletOrder
@@ -1923,7 +1930,7 @@ void ContainmentInterface::updateAppletDelayedConfiguration()
             m_appletData[id].configuration = appletConfiguration(m_appletData[id].applet);
 
             if (m_appletData[id].configuration) {
-                qDebug() << "org.kde.sync delayed applet configuration was successful for : " << id;
+                qCDebug(latteView) << "org.kde.sync delayed applet configuration was successful for : " << id;
                 initAppletConfigurationSignals(id, m_appletData[id].configuration);
             }
         }
@@ -1949,7 +1956,7 @@ void ContainmentInterface::initAppletConfigurationSignals(const int &id, QQmlPro
 
     connect(configuration, &QQmlPropertyMap::valueChanged,
             this, [&, id](const QString &key, const QVariant &value) {
-        //qDebug() << "org.kde.sync applet property changed : " << currentAppletId << " __ " << m_appletData[currentAppletId].plugin << " __ " << key << " __ " << value;
+        //qCDebug(latteView) << "org.kde.sync applet property changed : " << currentAppletId << " __ " << m_appletData[currentAppletId].plugin << " __ " << key << " __ " << value;
         Q_EMIT appletConfigPropertyChanged(id, key, value);
     });
 }
@@ -2072,7 +2079,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         m_handledRuntimeAppletCreations.insert(currentAppletId);
 
         if (m_suppressedAppletCreations > 0) {
-            qDebug() << "org.kde.sync containment appletCreated suppressed"
+            qCDebug(latteView) << "org.kde.sync containment appletCreated suppressed"
                      << "containment" << m_view->containment()->id()
                      << "screen" << (m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
                      << "id" << currentAppletId
@@ -2080,7 +2087,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
                      << "suppressed" << m_suppressedAppletCreations;
             --m_suppressedAppletCreations;
         } else {
-            qDebug() << "org.kde.sync containment appletCreated"
+            qCDebug(latteView) << "org.kde.sync containment appletCreated"
                      << "containment" << m_view->containment()->id()
                      << "screen" << (m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
                      << "id" << currentAppletId
@@ -2179,7 +2186,7 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
             // the delayed timer will retry.  Only warn when this happens
             // outside of initialization (e.g. runtime applet creation).
             if (m_initializationCompleted) {
-                qDebug() << "org.kde.sync configuration syncing delayed for ::" << currentAppletId;
+                qCDebug(latteView) << "org.kde.sync configuration syncing delayed for ::" << currentAppletId;
             }
             m_appletDelayedConfigurationTimer.start();
         }
@@ -2200,13 +2207,13 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
 
             //! remove on applet destruction
             connect(applet, &QObject::destroyed, this, [&, data](){
-                qDebug() << "org.kde.sync containment appletRemoved"
+                qCDebug(latteView) << "org.kde.sync containment appletRemoved"
                          << "containment" << (m_view && m_view->containment() ? m_view->containment()->id() : 0)
                          << "screen" << (m_view && m_view->screen() ? m_view->screen()->name() : QStringLiteral("<none>"))
                          << "id" << data.id
                          << "plugin" << data.plugin;
                 Q_EMIT appletRemoved(data.id);
-                //qDebug() << "org.kde.sync: removing applet ::: " << data.id << " __ " << data.plugin << " remained : " << m_appletData.keys();
+                //qCDebug(latteView) << "org.kde.sync: removing applet ::: " << data.id << " __ " << data.plugin << " remained : " << m_appletData.keys();
                 m_appletData.remove(data.id);
             });
         }

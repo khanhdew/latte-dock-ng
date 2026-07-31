@@ -49,17 +49,17 @@ void Schemes::initSchemes()
     QString currentSchemePath = WindowSystem::SchemeColors::possibleSchemeFile(Data::Layout::DEFAULTSCHEMEFILE);
     insertSchemeInList(currentSchemePath);
 
-    QStringList standardPaths = Latte::Layouts::Importer::standardPathsFor("color-schemes");
+    QStringList standardPaths = Latte::Layouts::Importer::standardPathsFor(QStringLiteral("color-schemes"));
 
     QStringList registeredSchemes;
 
     for(auto path : standardPaths) {
         QDir directory(path);
-        QStringList tempSchemes = directory.entryList(QStringList() << "*.colors" << "*.COLORS", QDir::Files);
+        QStringList tempSchemes = directory.entryList(QStringList() << QStringLiteral("*.colors") << QStringLiteral("*.COLORS"), QDir::Files);
 
         for (const auto &filename : std::as_const(tempSchemes)) {
             if (!registeredSchemes.contains(filename)) {
-                QString fullPath = path + "/" + filename;
+                QString fullPath = path + QLatin1String("/") + filename;
                 insertSchemeInList(fullPath);
                 registeredSchemes << filename;
             }

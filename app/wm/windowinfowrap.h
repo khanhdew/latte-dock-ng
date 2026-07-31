@@ -8,6 +8,7 @@
 #define WINDOWINFOWRAP_H
 
 // Qt
+#include <QStringList>
 #include <QWindow>
 #include <QIcon>
 #include <QRect>

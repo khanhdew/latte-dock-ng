@@ -21,13 +21,13 @@ namespace Data {
 class Screen : public Generic
 {
 public:
-    static constexpr const char* SERIALIZESPLITTER = ":::";
+    static inline const QString SERIALIZESPLITTER = QStringLiteral(":::");
     static const int ONPRIMARYID = 0;
     static const int ONALLSCREENSID = -100;
     static const int ONALLSECONDARYSCREENSID = -101;
-    static constexpr const char* ONPRIMARYNAME = "{primary-screen}";
-    static constexpr const char* ONALLSCREENSNAME = "{all-screens}";
-    static constexpr const char* ONALLSECONDARYSCREENSNAME = "{all-secondary-screens}";
+    static inline const QString ONPRIMARYNAME = QStringLiteral("{primary-screen}");
+    static inline const QString ONALLSCREENSNAME = QStringLiteral("{all-screens}");
+    static inline const QString ONALLSECONDARYSCREENSNAME = QStringLiteral("{all-secondary-screens}");
 
     Screen();
     Screen(Screen &&o);

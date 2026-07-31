@@ -7,6 +7,7 @@
 #define SHORTCUTSTRACKER_H
 
 // Qt
+#include <QStringList>
 #include <QHash>
 #include <QObject>
 

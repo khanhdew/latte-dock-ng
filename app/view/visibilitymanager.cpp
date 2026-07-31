@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "visibilitymanager.h"
 
 // local
@@ -49,7 +50,7 @@ const QRect VisibilityManager::ISHIDDENMASK = QRect(-1, -1, 1, 1);
 VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
     : QObject(view)
 {
-    qDebug() << "VisibilityManager creating...";
+    qCDebug(latteView) << "VisibilityManager creating...";
 
     m_latteView = qobject_cast<Latte::View *>(view);
     m_corona = qobject_cast<Latte::Corona *>(view->corona());
@@ -114,7 +115,7 @@ VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
 
     connect(&m_timerShow, &QTimer::timeout, this, [this]() {
         if (m_isHidden ||  m_isBelowLayer) {
-            //   qDebug() << "must be shown";
+            //   qCDebug(latteView) << "must be shown";
             Q_EMIT mustBeShown();
         }
     });
@@ -151,7 +152,7 @@ VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
 
 VisibilityManager::~VisibilityManager()
 {
-    qDebug() << "VisibilityManager deleting...";
+    qCDebug(latteView) << "VisibilityManager deleting...";
     m_wm->removeViewStruts(*m_latteView);
 
     if (m_edgeGhostWindow) {
@@ -214,7 +215,7 @@ void VisibilityManager::setMode(Latte::Types::Visibility mode)
         return;
     }
 
-    qDebug() << "Updating visibility mode to  :::: " << mode;
+    qCDebug(latteView) << "Updating visibility mode to  :::: " << mode;
 
     Q_ASSERT_X(mode != Types::None, staticMetaObject.className(), "set visibility to Types::None");
 
@@ -577,7 +578,7 @@ void VisibilityManager::addBlockHidingEvent(const QString &type)
     if (m_blockHidingEvents.contains(type) || type.isEmpty()) {
         return;
     }
-    //qDebug() << " org.kde.late {{ ++++ adding block hiding event :: " << type;
+    //qCDebug(latteView) << " org.kde.late {{ ++++ adding block hiding event :: " << type;
 
     bool prevHidingIsBlocked = hidingIsBlocked();
 
@@ -593,7 +594,7 @@ void VisibilityManager::removeBlockHidingEvent(const QString &type)
     if (!m_blockHidingEvents.contains(type) || type.isEmpty()) {
         return;
     }
-    //qDebug() << " org.kde.latte {{ ---- remove block hiding event :: " << type;
+    //qCDebug(latteView) << " org.kde.latte {{ ---- remove block hiding event :: " << type;
 
     bool prevHidingIsBlocked = hidingIsBlocked();
 
@@ -642,7 +643,7 @@ void VisibilityManager::publishFrameExtents(bool forceUpdate)
             frameExtents.setTop(m_frameExtentsHeadThicknessGap);
         }
 
-        qDebug() << " -> Frame Extents :: " << m_frameExtentsLocation << " __ " << " extents :: " << frameExtents;
+        qCDebug(latteView) << " -> Frame Extents :: " << m_frameExtentsLocation << " __ " << " extents :: " << frameExtents;
 
         if (!frameExtents.isNull()) {
             //! When a view returns its frame extents to zero then that triggers a compositor
@@ -908,12 +909,12 @@ void VisibilityManager::saveConfig()
 
     auto config = m_latteView->containment()->config();
 
-    config.writeEntry("enableKWinEdges", m_enableKWinEdgesFromUser);
-    config.writeEntry("timerShow", m_timerShow.interval());
-    config.writeEntry("timerHide", m_timerHideInterval);
-    config.writeEntry("raiseOnDesktopChange", m_raiseOnDesktopChange);
-    config.writeEntry("raiseOnActivityChange", m_raiseOnActivityChange);
-    config.writeEntry("visibility", static_cast<int>(m_mode));
+    config.writeEntry(QStringLiteral("enableKWinEdges"), m_enableKWinEdgesFromUser);
+    config.writeEntry(QStringLiteral("timerShow"), m_timerShow.interval());
+    config.writeEntry(QStringLiteral("timerHide"), m_timerHideInterval);
+    config.writeEntry(QStringLiteral("raiseOnDesktopChange"), m_raiseOnDesktopChange);
+    config.writeEntry(QStringLiteral("raiseOnActivityChange"), m_raiseOnActivityChange);
+    config.writeEntry(QStringLiteral("visibility"), static_cast<int>(m_mode));
 
     config.sync();
 }
@@ -921,13 +922,13 @@ void VisibilityManager::saveConfig()
 void VisibilityManager::restoreConfig()
 {
     auto config = m_latteView->containment()->config();
-    setTimerHide(qMax(HIDEMINIMUMINTERVAL, config.readEntry("timerHide", 700)));
-    setTimerShow(config.readEntry("timerShow", 0));
-    setEnableKWinEdges(config.readEntry("enableKWinEdges", true));
-    setRaiseOnDesktop(config.readEntry("raiseOnDesktopChange", false));
-    setRaiseOnActivity(config.readEntry("raiseOnActivityChange", false));
+    setTimerHide(qMax(HIDEMINIMUMINTERVAL, config.readEntry(QStringLiteral("timerHide"), 700)));
+    setTimerShow(config.readEntry(QStringLiteral("timerShow"), 0));
+    setEnableKWinEdges(config.readEntry(QStringLiteral("enableKWinEdges"), true));
+    setRaiseOnDesktop(config.readEntry(QStringLiteral("raiseOnDesktopChange"), false));
+    setRaiseOnActivity(config.readEntry(QStringLiteral("raiseOnActivityChange"), false));
 
-    setMode(static_cast<Types::Visibility>(config.readEntry("visibility", static_cast<int>(Types::DodgeActive))));
+    setMode(static_cast<Types::Visibility>(config.readEntry(QStringLiteral("visibility"), static_cast<int>(Types::DodgeActive))));
 }
 
 bool VisibilityManager::containsMouse() const

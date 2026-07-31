@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "lattepackage.h"
 
 // Qt
@@ -28,9 +29,9 @@ Package::~Package()
 
 void Package::initPackage(KPackage::Package *package)
 {
-    auto fallback = KPackage::PackageLoader::self()->loadPackage("Plasma/Shell", "org.kde.plasma.desktop");
+    auto fallback = KPackage::PackageLoader::self()->loadPackage(QStringLiteral("Plasma/Shell"), QStringLiteral("org.kde.plasma.desktop"));
     package->setDefaultPackageRoot(QStringLiteral("plasma/shells/"));
-    package->setPath("org.kde.latte.shell");
+    package->setPath(QStringLiteral("org.kde.latte.shell"));
     package->addFileDefinition("defaults", QStringLiteral("defaults"));
     package->addFileDefinition("lattedockui", QStringLiteral("views/Panel.qml"));
     package->addFileDefinition("widgetexplorerui", QStringLiteral("views/WidgetExplorer.qml"));
@@ -58,7 +59,7 @@ void Package::initPackage(KPackage::Package *package)
     package->addFileDefinition("compactapplet", QStringLiteral("applet/CompactApplet.qml"));
 
     package->setFallbackPackage(fallback);
-    qDebug() << "package is valid" << package->isValid();
+    qCDebug(latteApp) << "package is valid" << package->isValid();
 }
 
 void Package::pathChanged(KPackage::Package *package)
@@ -68,8 +69,8 @@ void Package::pathChanged(KPackage::Package *package)
 
     const QString pluginName = package->metadata().pluginId();
 
-    if (!pluginName.isEmpty() && pluginName != "org.kde.latte.shell") {
-        auto fallback = KPackage::PackageLoader::self()->loadPackage("Plasma/Shell", "org.kde.latte.shell");
+    if (!pluginName.isEmpty() && pluginName != QStringLiteral("org.kde.latte.shell")) {
+        auto fallback = KPackage::PackageLoader::self()->loadPackage(QStringLiteral("Plasma/Shell"), QStringLiteral("org.kde.latte.shell"));
         package->setFallbackPackage(fallback);
     } else if (pluginName.isEmpty() || pluginName == QLatin1String("org.kde.latte.shell")) {
         package->setFallbackPackage(KPackage::Package());

@@ -18,46 +18,46 @@ View::View()
 View::View(View &&o)
     : Generic(o),
       isActive(o.isActive),
-      isMoveOrigin(o.isMoveOrigin),
-      isMoveDestination(o.isMoveDestination),
       onPrimary(o.onPrimary),
       isClonedFrom(o.isClonedFrom),
       screen(o.screen),
       screenEdgeMargin(o.screenEdgeMargin),
-      screensGroup(o.screensGroup),
       maxLength(o.maxLength),
       edge(o.edge),
       alignment(o.alignment),
+      screensGroup(o.screensGroup),
+      subcontainments(o.subcontainments),
+      errors(o.errors),
+      warnings(o.warnings),
+      isMoveOrigin(o.isMoveOrigin),
+      isMoveDestination(o.isMoveDestination),
       m_state(o.m_state),
       m_originFile(o.m_originFile),
       m_originLayout(o.m_originLayout),
-      m_originView(o.m_originView),
-      errors(o.errors),
-      warnings(o.warnings),
-      subcontainments(o.subcontainments)
+      m_originView(o.m_originView)
 {
 }
 
 View::View(const View &o)
     : Generic(o),
       isActive(o.isActive),
-      isMoveOrigin(o.isMoveOrigin),
-      isMoveDestination(o.isMoveDestination),
       onPrimary(o.onPrimary),
       isClonedFrom(o.isClonedFrom),
       screen(o.screen),
       screenEdgeMargin(o.screenEdgeMargin),
-      screensGroup(o.screensGroup),
       maxLength(o.maxLength),
       edge(o.edge),
       alignment(o.alignment),
+      screensGroup(o.screensGroup),
+      subcontainments(o.subcontainments),
+      errors(o.errors),
+      warnings(o.warnings),
+      isMoveOrigin(o.isMoveOrigin),
+      isMoveDestination(o.isMoveDestination),
       m_state(o.m_state),
       m_originFile(o.m_originFile),
       m_originLayout(o.m_originLayout),
-      m_originView(o.m_originView),
-      errors(o.errors),
-      warnings(o.warnings),
-      subcontainments(o.subcontainments)
+      m_originView(o.m_originView)
 {
 }
 
@@ -154,81 +154,81 @@ View::operator QString() const
     QString result;
 
     result += id;
-    result +=" : ";
-    result += isActive ? "Active" : "Inactive";
-    result +=" : ";
+    result += QLatin1String(" : ");
+    result += isActive ? QStringLiteral("Active") : QStringLiteral("Inactive");
+    result += QLatin1String(" : ");
     if (m_state==OriginFromLayout && isMoveOrigin && isMoveDestination) {
-        result += " ↑↓ ";
+        result += QStringLiteral(" ↑↓ ");
     } else if (m_state==OriginFromLayout && isMoveOrigin) {
-        result += " ↑ ";
+        result += QStringLiteral(" ↑ ");
     } else if (m_state==OriginFromLayout && isMoveDestination) {
-        result += " ↓ ";
+        result += QStringLiteral(" ↓ ");
     } else {
-        result += " - ";
+        result += QLatin1String(" - ");
     }
 
-    result += " : ";
+    result += QLatin1String(" : ");
 
     if (m_state == IsInvalid) {
-        result += "IsInvalid";
+        result += QLatin1String("IsInvalid");
     } else if (m_state == IsCreated) {
-        result += "IsCreated";
+        result += QLatin1String("IsCreated");
     } else if (m_state == OriginFromViewTemplate) {
-        result += "OriginFromViewTemplate";
+        result += QLatin1String("OriginFromViewTemplate");
     } else if (m_state == OriginFromLayout) {
-        result += "OriginFromLayout";
+        result += QLatin1String("OriginFromLayout");
     }
 
-    result += " : ";
+    result += QLatin1String(" : ");
     if (isCloned()) {
-        result += "Cloned from:" + QString::number(isClonedFrom);
+        result += QLatin1String("Cloned from:") + QString::number(isClonedFrom);
     } else {
-        result += "Original";
+        result += QLatin1String("Original");
     }
 
-    result += " : ";
+    result += QLatin1String(" : ");
     if (screensGroup == Latte::Types::SingleScreenGroup) {
-        result += onPrimary ? "Primary" : "Explicit";
+        result += onPrimary ? QStringLiteral("Primary") : QStringLiteral("Explicit");
     } else if (screensGroup == Latte::Types::AllScreensGroup) {
-        result += "All Screens";
+        result += QLatin1String("All Screens");
     } else if (screensGroup == Latte::Types::AllSecondaryScreensGroup) {
-        result += "All Secondary Screens";
+        result += QLatin1String("All Secondary Screens");
     }
 
-    result += onPrimary ? "Primary" : "Explicit";
-    result += " : ";
+    result += onPrimary ? QStringLiteral("Primary") : QStringLiteral("Explicit");
+    result += QLatin1String(" : ");
     result += QString::number(screen);
-    result += " : ";
+    result += QLatin1String(" : ");
     if (edge == Plasma::Types::BottomEdge) {
-        result += "BottomEdge";
+        result += QLatin1String("BottomEdge");
     } else if (edge == Plasma::Types::TopEdge) {
-        result += "TopEdge";
+        result += QLatin1String("TopEdge");
     } else if (edge == Plasma::Types::LeftEdge) {
-        result += "LeftEdge";
+        result += QLatin1String("LeftEdge");
     } else if (edge == Plasma::Types::RightEdge) {
-        result += "RightEdge";
+        result += QLatin1String("RightEdge");
     }
 
-    result += " : ";
+    result += QLatin1String(" : ");
 
     if (alignment == Latte::Types::Center) {
-        result += "CenterAlignment";
+        result += QLatin1String("CenterAlignment");
     } else if (alignment == Latte::Types::Left) {
-        result += "LeftAlignment";
+        result += QLatin1String("LeftAlignment");
     } else if (alignment == Latte::Types::Right) {
-        result += "RightAlignment";
+        result += QLatin1String("RightAlignment");
     } else if (alignment == Latte::Types::Top) {
-        result += "TopAlignment";
+        result += QLatin1String("TopAlignment");
     } else if (alignment == Latte::Types::Bottom) {
-        result += "BottomAlignment";
+        result += QLatin1String("BottomAlignment");
     } else if (alignment == Latte::Types::Justify) {
-        result += "JustifyAlignment";
+        result += QLatin1String("JustifyAlignment");
     }
 
-    result += " : ";
-    result += QString::number(maxLength) + "%";
+    result += QLatin1String(" : ");
+    result += QString::number(maxLength) + QLatin1Char('%');
 
-    result += " || ";
+    result += QLatin1String(" || ");
     result += QStringLiteral("{") + QString(subcontainments) + QStringLiteral("}");
 
     return result;

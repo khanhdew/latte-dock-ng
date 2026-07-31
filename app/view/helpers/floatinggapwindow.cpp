@@ -23,7 +23,7 @@ namespace Latte {
 namespace ViewPart {
 
 FloatingGapWindow::FloatingGapWindow(Latte::View *view) :
-    SubWindow(view, QString("Floating Gap Window"))
+    SubWindow(view, QStringLiteral("Floating Gap Window"))
 {
     if (m_debugMode) {
         m_showColor = QColor("green");
@@ -61,7 +61,7 @@ FloatingGapWindow::~FloatingGapWindow()
 
 QString FloatingGapWindow::validTitlePrefix() const
 {
-    return QString("#subfloatgap#");
+    return QStringLiteral("#subfloatgap#");
 }
 
 void FloatingGapWindow::updateGeometry()

@@ -7,6 +7,7 @@
 #define PLASMASCREENGEOMETRIES_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 
 // Qt

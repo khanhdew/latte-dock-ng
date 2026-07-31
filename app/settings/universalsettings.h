@@ -9,6 +9,7 @@
 #define UNIVERSALSETTINGS_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 #include "../apptypes.h"
 #include "../lattecorona.h"

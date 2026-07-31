@@ -48,7 +48,7 @@ Q_SIGNALS:
     void shortDurationChanged();
     void iconThemeVersionChanged();
 
-private slots:
+private Q_SLOTS:
     void emitIconThemeVersionChanged();
 
 private:
@@ -60,7 +60,7 @@ private:
 
 };
 
-static QObject *environment_qobject_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+[[maybe_unused]] static QObject *environment_qobject_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)

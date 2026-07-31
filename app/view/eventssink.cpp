@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "eventssink.h"
 
 // local
@@ -172,7 +173,7 @@ QEvent *EventsSink::onEvent(QEvent *e)
                                            positionadjusted + m_view->position(),
                                            me->button(), me->buttons(), me->modifiers());
 
-                qDebug() << "Sunk Event:: sunk event pressed...";
+                qCDebug(latteView) << "Sunk Event:: sunk event pressed...";
                 sunkevent = me2;
             } else if (!destinationContains(scenePos)) {
                 release();

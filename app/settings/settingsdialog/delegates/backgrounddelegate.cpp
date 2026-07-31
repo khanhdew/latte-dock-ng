@@ -21,7 +21,6 @@ namespace Settings {
 namespace Layout {
 namespace Delegate {
 
-const int MARGIN = 2;
 
 BackgroundDelegate::BackgroundDelegate(QObject *parent)
     : QStyledItemDelegate(parent)

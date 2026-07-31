@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "screensdialog.h"
 
 // local
@@ -67,7 +68,7 @@ void ScreensDialog::initRemoveNowButton()
 {
     m_removeNowButton = new QPushButton(this);
     m_removeNowButton->setText(i18nc("remove selected screens", "Remove Now"));
-    m_removeNowButton->setIcon(QIcon::fromTheme("edit-delete"));
+    m_removeNowButton->setIcon(QIcon::fromTheme(QStringLiteral("edit-delete")));
     m_removeNowButton->setToolTip(i18n("Remove selected screen references"));
 
     m_ui->buttonBox->addButton(m_removeNowButton, QDialogButtonBox::AcceptRole);
@@ -91,19 +92,19 @@ void ScreensDialog::onDataChanged()
 
 void ScreensDialog::accept()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     //close();
 }
 
 void ScreensDialog::onCancel()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     close();
 }
 
 void ScreensDialog::onReset()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 }
 
 }

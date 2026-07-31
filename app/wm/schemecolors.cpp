@@ -147,9 +147,9 @@ void SchemeColors::setSchemeFile(QString file)
 QString SchemeColors::possibleSchemeFile(QString scheme)
 {
     if (scheme == QLatin1String("kdeglobals")
-            || (scheme.endsWith("kdeglobals") && QFileInfo(scheme).exists()) ) {
+            || (scheme.endsWith(QStringLiteral("kdeglobals")) && QFileInfo(scheme).exists()) ) {
         // do nothing, accept kdeglobals case
-    } else if (scheme.startsWith("/") && scheme.endsWith("colors") && QFileInfo(scheme).exists()) {
+    } else if (scheme.startsWith(QLatin1Char('/')) && scheme.endsWith(QStringLiteral("colors")) && QFileInfo(scheme).exists()) {
         return scheme;
     }
 
@@ -157,72 +157,72 @@ QString SchemeColors::possibleSchemeFile(QString scheme)
     QString tempScheme = scheme;
 
     if (scheme == QLatin1String("kdeglobals")
-            || (scheme.endsWith("kdeglobals") && QFileInfo(scheme).exists()) ) {
-        QString settingsFile = Latte::configPath() + "/kdeglobals";
+            || (scheme.endsWith(QStringLiteral("kdeglobals")) && QFileInfo(scheme).exists()) ) {
+        QString settingsFile = Latte::configPath() + QLatin1String("/kdeglobals");
 
         bool supportsAutoAccentColor{false}; // introduced on plasma 5.25
 
         if (QFileInfo(settingsFile).exists()) {
             KSharedConfigPtr filePtr = KSharedConfig::openConfig(settingsFile);
-            KConfigGroup wmGroup = KConfigGroup(filePtr, "WM");
-            KConfigGroup generalGroup = KConfigGroup(filePtr, "General");
+            KConfigGroup wmGroup = KConfigGroup(filePtr, QStringLiteral("WM"));
+            KConfigGroup generalGroup = KConfigGroup(filePtr, QStringLiteral("General"));
 
-            if (wmGroup.hasKey("activeBackground")) {
+            if (wmGroup.hasKey(QStringLiteral("activeBackground"))) {
                 supportsAutoAccentColor = true;
             } else {
-                tempScheme = generalGroup.readEntry("ColorScheme", "BreezeLight");
+                tempScheme = generalGroup.readEntry(QStringLiteral("ColorScheme"), "BreezeLight");
             }
         }
 
         if (supportsAutoAccentColor) {
-            schemePath = Latte::configPath() + "/kdeglobals";
+            schemePath = Latte::configPath() + QLatin1String("/kdeglobals");
         } else {
-            schemePath = Layouts::Importer::standardPath("color-schemes/" + tempScheme + ".colors");
+            schemePath = Layouts::Importer::standardPath(QStringLiteral("color-schemes/") + tempScheme + QStringLiteral(".colors"));
         }
     } else {
-        schemePath = Layouts::Importer::standardPath("color-schemes/" + tempScheme + ".colors");
+        schemePath = Layouts::Importer::standardPath(QStringLiteral("color-schemes/") + tempScheme + QStringLiteral(".colors"));
     }
 
     if (schemePath.isEmpty() || !QFileInfo(schemePath).exists()) {
         //! remove all whitespaces and "-" from scheme in order to access correctly its file
-        QString schemeNameSimplified = tempScheme.simplified().remove(" ").remove("-");
+        QString schemeNameSimplified = tempScheme.simplified().remove(QLatin1Char(' ')).remove(QLatin1Char('-'));
 
-        schemePath = Layouts::Importer::standardPath("color-schemes/" + schemeNameSimplified + ".colors");
+        schemePath = Layouts::Importer::standardPath(QStringLiteral("color-schemes/") + schemeNameSimplified + QStringLiteral(".colors"));
     }
 
     if (QFileInfo(schemePath).exists()) {
         return schemePath;
     }
 
-    return "";
+    return QString();
 }
 
 QString SchemeColors::schemeName(QString originalFile)
 {
-    if (originalFile.endsWith("kdeglobals") && QFileInfo(originalFile).exists()) {
-        return "kdeglobals";
+    if (originalFile.endsWith(QStringLiteral("kdeglobals")) && QFileInfo(originalFile).exists()) {
+        return QStringLiteral("kdeglobals");
     }
 
-    if (!(originalFile.startsWith("/") && originalFile.endsWith("colors") && QFileInfo(originalFile).exists())) {
-        return "";
+    if (!(originalFile.startsWith(QLatin1Char('/')) && originalFile.endsWith(QStringLiteral("colors")) && QFileInfo(originalFile).exists())) {
+        return QString();
     }
 
     QString fileNameNoExt =  originalFile;
 
-    int lastSlash = originalFile.lastIndexOf("/");
+    int lastSlash = originalFile.lastIndexOf(QLatin1Char('/'));
 
     if (lastSlash >= 0) {
         fileNameNoExt.remove(0, lastSlash + 1);
     }
 
-    if (fileNameNoExt.endsWith(".colors")) {
-        fileNameNoExt.remove(".colors");
+    if (fileNameNoExt.endsWith(QStringLiteral(".colors"))) {
+        fileNameNoExt.remove(QStringLiteral(".colors"));
     }
 
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(originalFile);
-    KConfigGroup generalGroup = KConfigGroup(filePtr, "General");
+    KConfigGroup generalGroup = KConfigGroup(filePtr, QStringLiteral("General"));
 
-    return generalGroup.readEntry("Name", fileNameNoExt);
+    return generalGroup.readEntry(QStringLiteral("Name"), fileNameNoExt);
 }
 
 void SchemeColors::updateScheme()
@@ -232,35 +232,35 @@ void SchemeColors::updateScheme()
     }
 
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(m_schemeFile);
-    KConfigGroup wmGroup = KConfigGroup(filePtr, "WM");
-    KConfigGroup selGroup = KConfigGroup(filePtr, "Colors:Selection");
-    //KConfigGroup viewGroup = KConfigGroup(filePtr, "Colors:View");
-    KConfigGroup windowGroup = KConfigGroup(filePtr, "Colors:Window");
-    KConfigGroup buttonGroup = KConfigGroup(filePtr, "Colors:Button");
+    KConfigGroup wmGroup = KConfigGroup(filePtr, QStringLiteral("WM"));
+    KConfigGroup selGroup = KConfigGroup(filePtr, QStringLiteral("Colors:Selection"));
+    //KConfigGroup viewGroup = KConfigGroup(filePtr, QStringLiteral("Colors:View"));
+    KConfigGroup windowGroup = KConfigGroup(filePtr, QStringLiteral("Colors:Window"));
+    KConfigGroup buttonGroup = KConfigGroup(filePtr, QStringLiteral("Colors:Button"));
 
     if (!m_basedOnPlasmaTheme) {
-        m_activeBackgroundColor = wmGroup.readEntry("activeBackground", QColor());
-        m_activeTextColor = wmGroup.readEntry("activeForeground", QColor());
-        m_inactiveBackgroundColor = wmGroup.readEntry("inactiveBackground", QColor());
-        m_inactiveTextColor = wmGroup.readEntry("inactiveForeground", QColor());
+        m_activeBackgroundColor = wmGroup.readEntry(QStringLiteral("activeBackground"), QColor());
+        m_activeTextColor = wmGroup.readEntry(QStringLiteral("activeForeground"), QColor());
+        m_inactiveBackgroundColor = wmGroup.readEntry(QStringLiteral("inactiveBackground"), QColor());
+        m_inactiveTextColor = wmGroup.readEntry(QStringLiteral("inactiveForeground"), QColor());
     } else {
-        m_activeBackgroundColor = windowGroup.readEntry("BackgroundNormal", QColor());
-        m_activeTextColor = windowGroup.readEntry("ForegroundNormal", QColor());
-        m_inactiveBackgroundColor = windowGroup.readEntry("BackgroundAlternate", QColor());
-        m_inactiveTextColor = windowGroup.readEntry("ForegroundInactive", QColor());
+        m_activeBackgroundColor = windowGroup.readEntry(QStringLiteral("BackgroundNormal"), QColor());
+        m_activeTextColor = windowGroup.readEntry(QStringLiteral("ForegroundNormal"), QColor());
+        m_inactiveBackgroundColor = windowGroup.readEntry(QStringLiteral("BackgroundAlternate"), QColor());
+        m_inactiveTextColor = windowGroup.readEntry(QStringLiteral("ForegroundInactive"), QColor());
     }
 
-    m_highlightColor = selGroup.readEntry("BackgroundNormal", QColor());
-    m_highlightedTextColor = selGroup.readEntry("ForegroundNormal", QColor());
+    m_highlightColor = selGroup.readEntry(QStringLiteral("BackgroundNormal"), QColor());
+    m_highlightedTextColor = selGroup.readEntry(QStringLiteral("ForegroundNormal"), QColor());
 
-    m_positiveTextColor = windowGroup.readEntry("ForegroundPositive", QColor());
-    m_neutralTextColor = windowGroup.readEntry("ForegroundNeutral", QColor());;
-    m_negativeTextColor = windowGroup.readEntry("ForegroundNegative", QColor());
+    m_positiveTextColor = windowGroup.readEntry(QStringLiteral("ForegroundPositive"), QColor());
+    m_neutralTextColor = windowGroup.readEntry(QStringLiteral("ForegroundNeutral"), QColor());;
+    m_negativeTextColor = windowGroup.readEntry(QStringLiteral("ForegroundNegative"), QColor());
 
-    m_buttonTextColor = buttonGroup.readEntry("ForegroundNormal", QColor());
-    m_buttonBackgroundColor = buttonGroup.readEntry("BackgroundNormal", QColor());
-    m_buttonHoverColor = buttonGroup.readEntry("DecorationHover", QColor());
-    m_buttonFocusColor = buttonGroup.readEntry("DecorationFocus", QColor());
+    m_buttonTextColor = buttonGroup.readEntry(QStringLiteral("ForegroundNormal"), QColor());
+    m_buttonBackgroundColor = buttonGroup.readEntry(QStringLiteral("BackgroundNormal"), QColor());
+    m_buttonHoverColor = buttonGroup.readEntry(QStringLiteral("DecorationHover"), QColor());
+    m_buttonFocusColor = buttonGroup.readEntry(QStringLiteral("DecorationFocus"), QColor());
 
     Q_EMIT colorsChanged();
 }

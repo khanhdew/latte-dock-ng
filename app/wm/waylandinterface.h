@@ -8,6 +8,7 @@
 #define WAYLANDINTERFACE_H
 
 // local
+#include <QStringList>
 #include <config-latte.h>
 #include "abstractwindowinterface.h"
 #include "windowinfowrap.h"

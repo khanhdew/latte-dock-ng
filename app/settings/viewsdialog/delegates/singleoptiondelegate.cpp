@@ -33,7 +33,6 @@ SingleOption::SingleOption(QObject *parent)
 
 QWidget *SingleOption::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    const int row = index.row();
     const int column = index.column();
 
     QPushButton *button = new QPushButton(parent);
@@ -41,8 +40,6 @@ QWidget *SingleOption::createEditor(QWidget *parent, const QStyleOptionViewItem 
     QMenu *menu = new QMenu(button);
     button->setMenu(menu);
     menu->setMinimumWidth(option.rect.width());
-
-    bool isViewActive = index.data(Model::Views::ISACTIVEROLE).toBool();
 
     QString currentChoice = index.data(Qt::UserRole).toString();
 
@@ -86,7 +83,7 @@ QWidget *SingleOption::createEditor(QWidget *parent, const QStyleOptionViewItem 
             action->setFont(font);
         }
 
-        connect(action, &QAction::triggered, this, [this, button, menu, action](bool) {
+        connect(action, &QAction::triggered, this, [button, menu, action](bool) {
             menu->setProperty(PRESSEDPROPERTY, action->data());
             button->clearFocus();
         });
@@ -161,11 +158,11 @@ void SingleOption::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     float textopacity = 1.0;
 
     if (isActive) {
-        myOptions.text = "<b>" + myOptions.text + "</b>";
+        myOptions.text = QStringLiteral("<b>") + myOptions.text + QStringLiteral("</b>");
     }
 
     if (isChanged) {
-        myOptions.text = "<i>" + myOptions.text + "</i>";
+        myOptions.text = QStringLiteral("<i>") + myOptions.text + QStringLiteral("</i>");
     }
 
     if (isMoveOrigin) {

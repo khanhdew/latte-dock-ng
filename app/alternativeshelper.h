@@ -8,6 +8,7 @@
 #define ALTERNATIVESHELPER_H
 
 // Qt
+#include <QStringList>
 #include <QQuickItem>
 
 // Plasma

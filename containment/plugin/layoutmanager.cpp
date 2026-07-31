@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "layoutmanager.h"
 
 // local
@@ -23,8 +24,8 @@
 // KDE
 #include <KConfigGroup>
 
-#define ISAPPLETLOCKEDOPTION "lockZoom"
-#define ISCOLORINGBLOCKEDOPTION "userBlocksColorizing"
+#define ISAPPLETLOCKEDOPTION QStringLiteral("lockZoom")
+#define ISCOLORINGBLOCKEDOPTION QStringLiteral("userBlocksColorizing")
 
 namespace Latte{
 namespace Containment{
@@ -172,8 +173,8 @@ bool dockStyleIsModernFromVariant(const QVariant &value, bool *ok = nullptr)
 LayoutManager::LayoutManager(QObject *parent)
     : QObject(parent)
 {
-    m_option[ISAPPLETLOCKEDOPTION] = "lockedZoomApplets";
-    m_option[ISCOLORINGBLOCKEDOPTION] = "userBlocksColorizingApplets";
+    m_option[ISAPPLETLOCKEDOPTION] = QStringLiteral("lockedZoomApplets");
+    m_option[ISCOLORINGBLOCKEDOPTION] = QStringLiteral("userBlocksColorizingApplets");
 
     connect(this, &LayoutManager::rootItemChanged, this, &LayoutManager::onRootItemChanged);
 
@@ -433,7 +434,7 @@ void LayoutManager::setMetrics(QQuickItem *metrics)
 
 void LayoutManager::updateOrder()
 {
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
+    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
 
     auto nextorder = m_appletOrder;
 
@@ -501,7 +502,7 @@ bool LayoutManager::isModernDockStyle() const
     }
 
     if (auto containment = containmentObject()) {
-        KConfigGroup generalConfig = containment->config().group("General");
+        KConfigGroup generalConfig = containment->config().group(QStringLiteral("General"));
         if (generalConfig.hasKey(QStringLiteral("dockStyle"))) {
             bool ok = false;
             const bool modern = dockStyleIsModernFromVariant(generalConfig.readEntry(QStringLiteral("dockStyle"), QVariant()), &ok);
@@ -554,7 +555,7 @@ QVariant LayoutManager::readConfigValue(const QString &key, const QVariant &defa
     }
 
     if (auto containment = containmentObject()) {
-        KConfigGroup generalConfig = containment->config().group("General");
+        KConfigGroup generalConfig = containment->config().group(QStringLiteral("General"));
 
         if (generalConfig.hasKey(key)) {
             return generalConfig.readEntry(key, defaultValue);
@@ -575,7 +576,7 @@ QVariant LayoutManager::readConfigValue(const QString &key, const QVariant &defa
 void LayoutManager::writeConfigValue(const QString &key, const QVariant &value)
 {
     if (auto containment = containmentObject()) {
-        KConfigGroup generalConfig = containment->config().group("General");
+        KConfigGroup generalConfig = containment->config().group(QStringLiteral("General"));
         const QVariant currentValue = generalConfig.readEntry(key, QVariant());
 
         if (currentValue != value) {
@@ -738,14 +739,14 @@ QObject *LayoutManager::resolveAppletQuickItemObjectInternal(QObject *applet, QS
     if (!s_unresolvedLogged.contains(applet)) {
         s_unresolvedLogged.insert(applet);
 
-        qDebug() << "org.kde.latte ::: unresolved applet object"
+        qCDebug(latteContainment) << "org.kde.latte ::: unresolved applet object"
                  << "class:" << applet->metaObject()->className()
                  << "id:" << applet->property("id")
                  << "has item property:" << applet->property("item").isValid()
                  << "has _plasma_graphicObject property:" << applet->property("_plasma_graphicObject").isValid();
 
         if (auto plasmaApplet = qobject_cast<Plasma::Applet *>(applet)) {
-            qDebug() << "org.kde.latte ::: unresolved Plasma::Applet"
+            qCDebug(latteContainment) << "org.kde.latte ::: unresolved Plasma::Applet"
                      << "hasItemForApplet:" << PlasmaQuick::AppletQuickItem::hasItemForApplet(plasmaApplet)
                      << "itemForApplet:" << PlasmaQuick::AppletQuickItem::itemForApplet(plasmaApplet);
         }
@@ -763,7 +764,7 @@ QObject *LayoutManager::resolveAppletQuickItemObjectInternal(QObject *applet, QS
                 }
             }
 
-            qDebug() << "org.kde.latte ::: plasmoid itemFor methods:" << itemForMethods;
+            qCDebug(latteContainment) << "org.kde.latte ::: plasmoid itemFor methods:" << itemForMethods;
         }
     }
 
@@ -920,7 +921,7 @@ int LayoutManager::appletId(QObject *applet) const
 int LayoutManager::configuredAppletCount() const
 {
     if (auto containment = containmentObject()) {
-        KConfigGroup appletsConfig = containment->config().group("Applets");
+        KConfigGroup appletsConfig = containment->config().group(QStringLiteral("Applets"));
         const QStringList groups = appletsConfig.groupList();
         int count{0};
 
@@ -982,14 +983,14 @@ void LayoutManager::restore()
         return;
     }
 
-    QList<int> appletIdsOrder = toIntList(readConfigValue("appletOrder", QString()).toString());
+    QList<int> appletIdsOrder = toIntList(readConfigValue(QStringLiteral("appletOrder"), QString()).toString());
     const QList<int> dedupedStoredAppletOrder = dedupeAppletIdsPreserveSplitters(appletIdsOrder);
 
     if (dedupedStoredAppletOrder != appletIdsOrder) {
-        qDebug() << "org.kde.latte ::: duplicate applet ids in appletOrder were removed:" << appletIdsOrder
+        qCDebug(latteContainment) << "org.kde.latte ::: duplicate applet ids in appletOrder were removed:" << appletIdsOrder
                  << " -> " << dedupedStoredAppletOrder;
         appletIdsOrder = dedupedStoredAppletOrder;
-        writeConfigValue("appletOrder", toStr(appletIdsOrder));
+        writeConfigValue(QStringLiteral("appletOrder"), toStr(appletIdsOrder));
     }
 
     QList<QObject *> applets = plasmoidApplets();
@@ -1006,7 +1007,7 @@ void LayoutManager::restore()
             });
         }
 
-        qDebug() << "org.kde.latte ::: applets not ready yet, postponing restore..."
+        qCDebug(latteContainment) << "org.kde.latte ::: applets not ready yet, postponing restore..."
                  << "expectedApplets:" << expectedAppletCount
                  << "retry:" << m_restoreRetryCount;
         if (shouldRetry) {
@@ -1024,14 +1025,14 @@ void LayoutManager::restore()
         }
 
         if (!appletIdsOrder.isEmpty()) {
-            writeConfigValue("appletOrder", toStr(appletIdsOrder));
+            writeConfigValue(QStringLiteral("appletOrder"), toStr(appletIdsOrder));
         }
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
+    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
     const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
-    int splitterPosition = readConfigValue("splitterPosition", -1).toInt();
-    int splitterPosition2 = readConfigValue("splitterPosition2", -1).toInt();
+    int splitterPosition = readConfigValue(QStringLiteral("splitterPosition"), -1).toInt();
+    int splitterPosition2 = readConfigValue(QStringLiteral("splitterPosition2"), -1).toInt();
 
     if (useJustifySplitters) {
         const int appletsCount = appletIdsOrder.count();
@@ -1055,8 +1056,8 @@ void LayoutManager::restore()
 
         if (invalidSplitters) {
             recalculateSplitters(splitterPosition, splitterPosition2);
-            writeConfigValue("splitterPosition", splitterPosition);
-            writeConfigValue("splitterPosition2", splitterPosition2);
+            writeConfigValue(QStringLiteral("splitterPosition"), splitterPosition);
+            writeConfigValue(QStringLiteral("splitterPosition2"), splitterPosition2);
         }
 
         if (splitterPosition!=-1 && splitterPosition2!=-1) {
@@ -1127,7 +1128,7 @@ void LayoutManager::restore()
             QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
             if (!appletItem) {
                 appletContainerCreationFailed = true;
-                qDebug() << "org.kde.latte ::: failed to create applet container for applet:"
+                qCDebug(latteContainment) << "org.kde.latte ::: failed to create applet container for applet:"
                          << appletId(orderedApplets[i]);
                 continue;
             }
@@ -1161,7 +1162,7 @@ void LayoutManager::restore()
             QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
             if (!appletItem) {
                 appletContainerCreationFailed = true;
-                qDebug() << "org.kde.latte ::: failed to create applet container for applet:"
+                qCDebug(latteContainment) << "org.kde.latte ::: failed to create applet container for applet:"
                          << appletId(orderedApplets[i]);
                 continue;
             }
@@ -1177,7 +1178,7 @@ void LayoutManager::restore()
             });
         }
 
-        qDebug() << "org.kde.latte ::: applet containers not ready yet, postponing restore..."
+        qCDebug(latteContainment) << "org.kde.latte ::: applet containers not ready yet, postponing restore..."
                  << "retry:" << m_restoreRetryCount;
         return;
     }
@@ -1205,13 +1206,13 @@ void LayoutManager::restoreOptions()
     restoreOption(ISCOLORINGBLOCKEDOPTION);
 }
 
-void LayoutManager::restoreOption(const char *option)
+void LayoutManager::restoreOption(const QString &option)
 {
     QList<int> applets = toIntList(readConfigValue(m_option[option], QString()).toString());
 
-    if (qstrcmp(option, ISAPPLETLOCKEDOPTION) == 0) {
+    if (option == ISAPPLETLOCKEDOPTION) {
         setLockedZoomApplets(applets);
-    } else if (qstrcmp(option, ISCOLORINGBLOCKEDOPTION) == 0) {
+    } else if (option == ISCOLORINGBLOCKEDOPTION) {
         setUserBlocksColorizingApplets(applets);
     }
 }
@@ -1307,19 +1308,19 @@ void LayoutManager::save()
 
     const QList<int> dedupedAppletIds = dedupeAppletIdsPreserveSplitters(appletIds);
     if (dedupedAppletIds != appletIds) {
-        qDebug() << "org.kde.latte ::: duplicate applet ids found while saving appletOrder, cleaned:"
+        qCDebug(latteContainment) << "org.kde.latte ::: duplicate applet ids found while saving appletOrder, cleaned:"
                  << appletIds << " -> " << dedupedAppletIds;
         appletIds = dedupedAppletIds;
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
+    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
 
     if (alignment == Latte::Types::Justify && usesLegacyJustifySplitters()) {
         setSplitterPosition(startChilds + 1);
         setSplitterPosition2(startChilds + 1 + mainChilds + 1);
     } else {
-        int splitterPosition = readConfigValue("splitterPosition", -1).toInt();
-        int splitterPosition2 = readConfigValue("splitterPosition2", -1).toInt();
+        int splitterPosition = readConfigValue(QStringLiteral("splitterPosition"), -1).toInt();
+        int splitterPosition2 = readConfigValue(QStringLiteral("splitterPosition2"), -1).toInt();
 
         setSplitterPosition(splitterPosition);
         setSplitterPosition2(splitterPosition2);
@@ -1328,7 +1329,7 @@ void LayoutManager::save()
     //! are not writing in config file for some cases mentioned in class header so they are not used
     //(*m_configuration)["splitterPosition"] = QVariant(startChilds + 1);
     //(*m_configuration)["splitterPosition2"] = QVariant(startChilds + 1 + mainChilds + 1);
-    //(*m_configuration)["appletOrder"] = appletIds.join(";");
+    //(*m_configuration)["appletOrder"] = appletIds.join(QLatin1Char(';'));
 
     setAppletOrder(appletIds);
 
@@ -1338,7 +1339,7 @@ void LayoutManager::save()
     //! save applet order
     QString appletsserialized = toStr(appletIds);
 
-    writeConfigValue("appletOrder", appletsserialized);
+    writeConfigValue(QStringLiteral("appletOrder"), appletsserialized);
 }
 
 void LayoutManager::saveOptions()
@@ -1349,9 +1350,9 @@ void LayoutManager::saveOptions()
     QString colorsserialized = toStr(m_userBlocksColorizingApplets);
     writeConfigValue(m_option[ISCOLORINGBLOCKEDOPTION], colorsserialized);
 
-    writeConfigValue("splitterPosition", m_splitterPosition);
+    writeConfigValue(QStringLiteral("splitterPosition"), m_splitterPosition);
 
-    writeConfigValue("splitterPosition2", m_splitterPosition2);
+    writeConfigValue(QStringLiteral("splitterPosition2"), m_splitterPosition2);
 }
 
 void LayoutManager::setOption(const int &appletId, const QString &property, const QVariant &value)
@@ -1643,7 +1644,7 @@ int LayoutManager::dndSpacerIndex()
         return -1;
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
+    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
     const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
     int index = -1;
 
@@ -1716,7 +1717,7 @@ void LayoutManager::requestAppletsOrder(const QList<int> &order)
         updateOrder();
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
+    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
     const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
     QQuickItem *nextlayout = useJustifySplitters ? m_startLayout : m_mainLayout;
     QQuickItem *previousitem = nullptr;
@@ -1724,7 +1725,7 @@ void LayoutManager::requestAppletsOrder(const QList<int> &order)
     int addedsplitters{0};
 
     for (int i=0; i<order.count(); ++i) {
-        QQuickItem *currentitem;
+        QQuickItem *currentitem = nullptr;
 
         if (!useJustifySplitters || order[i] != JUSTIFYSPLITTERID) {
             currentitem = appletItem(order[i]);
@@ -1791,7 +1792,7 @@ void LayoutManager::insertAtCoordinates(QQuickItem *item, const int &x, const in
         return;
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
+    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
     const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
 
     bool result{false};
@@ -1857,8 +1858,6 @@ void LayoutManager::insertAtCoordinates(QQuickItem *item, const int &x, const in
 
 bool LayoutManager::repairAppletContainers()
 {
-    static int repairCallCount = 0;
-    repairCallCount++;
     bool didWork = false;
     if (!m_startLayout || !m_mainLayout || !m_endLayout || !m_rootItem || !m_plasmoid) {
         return false;
@@ -2025,7 +2024,7 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
         index = m_appletRemovalIndexes.take(id);
     }
 
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
+    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
     const bool useJustifySplitters = (alignment == Latte::Types::Justify && usesLegacyJustifySplitters());
     QVariant appletItemVariant;
     QVariant appletVariant;
@@ -2035,7 +2034,7 @@ void LayoutManager::addAppletItem(QObject *applet, int index)
     QQuickItem *aitem = appletItemVariant.value<QQuickItem *>();
 
     if (!aitem) {
-        qDebug() << "org.kde.latte ::: failed to create applet container for applet:"
+        qCDebug(latteContainment) << "org.kde.latte ::: failed to create applet container for applet:"
                  << appletId(applet);
         return;
     }
@@ -2128,7 +2127,7 @@ void LayoutManager::addAppletItem(QObject *applet, int x, int y)
     QQuickItem *appletItem = appletItemVariant.value<QQuickItem *>();
 
     if (!appletItem) {
-        qDebug() << "org.kde.latte ::: failed to create dragged applet container for applet:"
+        qCDebug(latteContainment) << "org.kde.latte ::: failed to create dragged applet container for applet:"
                  << appletId(applet);
         return;
     }
@@ -2268,7 +2267,7 @@ void LayoutManager::destroyAppletContainer(QObject *applet)
 
     const int id = appletId(applet);
     if (id <= 0) {
-        qDebug() << "org.kde.latte ::: destroying applet could not succeed, applet id unresolved";
+        qCDebug(latteContainment) << "org.kde.latte ::: destroying applet could not succeed, applet id unresolved";
         return;
     }
 
@@ -2328,7 +2327,7 @@ void LayoutManager::destroyAppletContainer(QObject *applet)
 
 void LayoutManager::reorderSplitterInStartLayout()
 {
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
+    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
 
     if (alignment != Latte::Types::Justify || !usesLegacyJustifySplitters()) {
         return;
@@ -2357,7 +2356,7 @@ void LayoutManager::reorderSplitterInStartLayout()
 
 void LayoutManager::reorderSplitterInEndLayout()
 {
-    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue("alignment", (int)Latte::Types::Center).toInt());
+    Latte::Types::Alignment alignment = static_cast<Latte::Types::Alignment>(readConfigValue(QStringLiteral("alignment"), (int)Latte::Types::Center).toInt());
 
     if (alignment != Latte::Types::Justify || !usesLegacyJustifySplitters()) {
         return;
@@ -2397,8 +2396,8 @@ void LayoutManager::addJustifySplittersInMainLayout()
 
     destroyJustifySplitters();
 
-    int splitterPosition = readConfigValue("splitterPosition", -1).toInt();
-    int splitterPosition2 = readConfigValue("splitterPosition2", -1).toInt();
+    int splitterPosition = readConfigValue(QStringLiteral("splitterPosition"), -1).toInt();
+    int splitterPosition2 = readConfigValue(QStringLiteral("splitterPosition2"), -1).toInt();
     int appletsCount = m_mainLayout->childItems().count() - 2; // exclude parabolic spacers
 
     if (appletsCount <= 0 && (m_startLayout->childItems().count() > 0 || m_endLayout->childItems().count() > 0)) {
@@ -2432,8 +2431,8 @@ void LayoutManager::addJustifySplittersInMainLayout()
         recalculateSplitters(splitterPosition, splitterPosition2);
         setSplitterPosition(splitterPosition);
         setSplitterPosition2(splitterPosition2);
-        writeConfigValue("splitterPosition", splitterPosition);
-        writeConfigValue("splitterPosition2", splitterPosition2);
+        writeConfigValue(QStringLiteral("splitterPosition"), splitterPosition);
+        writeConfigValue(QStringLiteral("splitterPosition2"), splitterPosition2);
     }
 
     int splitterIndex = (splitterPosition >= 1 ? splitterPosition - 1 : -1);
@@ -2599,7 +2598,6 @@ void LayoutManager::moveAppletsBasedOnJustifyAlignment()
 
     for(int i=0; i<appletlist.count(); ++i) {
         bool issplitter = appletlist[i]->property("isInternalViewSplitter").toBool();
-        bool isparabolicspacer = appletlist[i]->property("isParabolicEdgeSpacer").toBool();
 
         if (!firstSplitterFound) {
             this->insertAtLayoutIndex(m_startLayout, appletlist[i], i);
@@ -2626,7 +2624,7 @@ void LayoutManager::moveAppletsBasedOnJustifyAlignment()
 QList<int> LayoutManager::toIntList(const QString &serialized)
 {
     QList<int> list;
-    QStringList items = serialized.split(";");
+    QStringList items = serialized.split(QLatin1Char(';'));
     items.removeAll(QString());
 
     for(const auto &item: items) {
@@ -2645,7 +2643,7 @@ QString LayoutManager::toStr(const QList<int> &list)
         strlist << QString::number(num);
     }
 
-    return strlist.join(";");
+    return strlist.join(QLatin1Char(';'));
 }
 
 }

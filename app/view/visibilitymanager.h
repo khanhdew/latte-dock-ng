@@ -7,6 +7,7 @@
 #ifndef VISIBILITYMANAGER_H
 #define VISIBILITYMANAGER_H
 
+#include <QStringList>
 #include <array>
 
 // local

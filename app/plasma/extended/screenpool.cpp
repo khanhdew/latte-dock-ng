@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "screenpool.h"
 
 // local
@@ -20,7 +21,7 @@
 #include <KDirWatch>
 #include <KSharedConfig>
 
-#define PLASMARC "plasmashellrc"
+#define PLASMARC QStringLiteral("plasmashellrc")
 
 namespace Latte {
 namespace PlasmaExtended {
@@ -30,11 +31,11 @@ ScreenPool::ScreenPool(QObject *parent)
       m_primaryWatcher(new PrimaryOutputWatcher(this))
 {
     m_plasmarcConfig = KSharedConfig::openConfig(PLASMARC);
-    m_screensGroup = KConfigGroup(m_plasmarcConfig, "ScreenConnectors");
+    m_screensGroup = KConfigGroup(m_plasmarcConfig, QStringLiteral("ScreenConnectors"));
 
     load();
 
-    QString plasmaSettingsFile = Latte::configPath() + "/" + PLASMARC;
+    QString plasmaSettingsFile = Latte::configPath() + QLatin1String("/") + PLASMARC;
 
     KDirWatch::self()->addFile(plasmaSettingsFile);
 
@@ -86,11 +87,11 @@ void ScreenPool::load()
     }
 
     if (updated) {
-        qDebug() << "---------------- Plasma Screen Ids ------------------";
+        qCDebug(lattePlasma) << "---------------- Plasma Screen Ids ------------------";
         for (const auto &id : m_connectorForId.keys()) {
-            qDebug() << id << "  __  " << m_connectorForId[id];
+            qCDebug(lattePlasma) << id << "  __  " << m_connectorForId[id];
         }
-        qDebug() << "----------------  ---------------  ------------------";
+        qCDebug(lattePlasma) << "----------------  ---------------  ------------------";
 
         Q_EMIT idsChanged();
     }
@@ -98,7 +99,7 @@ void ScreenPool::load()
 
 void ScreenPool::insertScreenMapping(int id, const QString &connector)
 {
-    if (id==0 || connector.isEmpty() || connector.startsWith(":")) {
+    if (id==0 || connector.isEmpty() || connector.startsWith(QLatin1Char(':'))) {
         return;
     }
 

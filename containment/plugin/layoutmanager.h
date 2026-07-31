@@ -113,10 +113,10 @@ public Q_SLOTS:
     Q_INVOKABLE int masquearadedIndex(const int &x, const int &y);
     Q_INVOKABLE QPoint indexToMasquearadedPoint(const int &index);
 
-    void requestAppletsOrder(const QList<int> &order);
-    void requestAppletsInLockedZoom(const QList<int> &applets);
-    void requestAppletsDisabledColoring(const QList<int> &applets);
-    void setAppletInScheduledDestruction(const int &id, const bool &enabled);
+    Q_INVOKABLE void requestAppletsOrder(const QList<int> &order);
+    Q_INVOKABLE void requestAppletsInLockedZoom(const QList<int> &applets);
+    Q_INVOKABLE void requestAppletsDisabledColoring(const QList<int> &applets);
+    Q_INVOKABLE void setAppletInScheduledDestruction(const int &id, const bool &enabled);
 
 
 Q_SIGNALS:
@@ -157,7 +157,7 @@ private Q_SLOTS:
 
 private:
     void restoreOptions();
-    void restoreOption(const char *option);
+    void restoreOption(const QString &option);
     void saveOption(const char *option);
 
     void destroyAppletContainer(QObject *applet);

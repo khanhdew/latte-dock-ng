@@ -72,7 +72,7 @@ void CheckBox::paint(QPainter *painter, const QStyleOptionViewItem &option, cons
     if (currentChecked) {
         adjustedOption.text = isChanged ? HeavyCheckMark : CheckMark;
     } else {
-        adjustedOption.text = "";
+        adjustedOption.text = QString();
     }
 
 

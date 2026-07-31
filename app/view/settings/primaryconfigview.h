@@ -8,6 +8,7 @@
 #define PRIMARYCONFIGVIEW_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 #include "subconfigview.h"
 #include "../../wm/windowinfowrap.h"
@@ -22,7 +23,7 @@
 // Plasma
 #include <Plasma/package.h>
 #include <Plasma/Plasma>
-#include <Plasma/FrameSvg>
+#include <KSvg/FrameSvg>
 
 namespace Plasma {
 class Applet;
@@ -144,7 +145,7 @@ private:
     Config::IndicatorUiManager *m_indicatorUiManager{nullptr};
 
     //only for the mask on disabled compositing, not to actually paint
-    Plasma::FrameSvg *m_background{nullptr};
+    KSvg::FrameSvg *m_background{nullptr};
 };
 
 }

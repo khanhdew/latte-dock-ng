@@ -7,6 +7,7 @@
 #define POSITIONER_H
 
 //local
+#include <QStringList>
 #include <coretypes.h>
 #include "../wm/abstractwindowinterface.h"
 #include "../wm/windowinfowrap.h"

@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "syncedlaunchers.h"
 
 // local
@@ -146,14 +147,14 @@ QList<QQuickItem *> SyncedLaunchers::clients(QString layoutName, uint senderId, 
 void SyncedLaunchers::addLauncher(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher)
 {
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
-    QString lName = (group == Types::LayoutLaunchers) ? layoutName : "";
+    QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
     for(const auto c : clients(lName, senderId, group, launcherGroupId)) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("addSyncedLauncher(QVariant,QVariant)");
 
             if (methodIndex == -1) {
-                qDebug() << "Launchers Syncer Ability: addSyncedLauncher(QVariant,QVariant) was NOT found...";
+                qCDebug(latteLayout) << "Launchers Syncer Ability: addSyncedLauncher(QVariant,QVariant) was NOT found...";
                 continue;
             }
 
@@ -166,14 +167,14 @@ void SyncedLaunchers::addLauncher(QString layoutName, uint senderId, int launche
 void SyncedLaunchers::removeLauncher(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher)
 {
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
-    QString lName = (group == Types::LayoutLaunchers) ? layoutName : "";
+    QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
     for(const auto c : clients(lName, senderId, group, launcherGroupId)) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("removeSyncedLauncher(QVariant,QVariant)");
 
             if (methodIndex == -1) {
-                qDebug() << "Launchers Syncer Ability: removeSyncedLauncher(QVariant,QVariant) was NOT found...";
+                qCDebug(latteLayout) << "Launchers Syncer Ability: removeSyncedLauncher(QVariant,QVariant) was NOT found...";
                 continue;
             }
 
@@ -186,14 +187,14 @@ void SyncedLaunchers::removeLauncher(QString layoutName, uint senderId, int laun
 void SyncedLaunchers::addLauncherToActivity(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, QString activity)
 {
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
-    QString lName = (group == Types::LayoutLaunchers) ? layoutName : "";
+    QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
     for(const auto c : clients(lName, senderId, group, launcherGroupId)) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("addSyncedLauncherToActivity(QVariant,QVariant,QVariant)");
 
             if (methodIndex == -1) {
-                qDebug() << "Launchers Syncer Ability: addSyncedLauncherToActivity(QVariant,QVariant,QVariant) was NOT found...";
+                qCDebug(latteLayout) << "Launchers Syncer Ability: addSyncedLauncherToActivity(QVariant,QVariant,QVariant) was NOT found...";
                 continue;
             }
 
@@ -206,14 +207,14 @@ void SyncedLaunchers::addLauncherToActivity(QString layoutName, uint senderId, i
 void SyncedLaunchers::removeLauncherFromActivity(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, QString activity)
 {
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
-    QString lName = (group == Types::LayoutLaunchers) ? layoutName : "";
+    QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
     for(const auto c : clients(lName, senderId, group, launcherGroupId)) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("removeSyncedLauncherFromActivity(QVariant,QVariant,QVariant)");
 
             if (methodIndex == -1) {
-                qDebug() << "Launchers Syncer Ability: removeSyncedLauncherFromActivity(QVariant,QVariant,QVariant) was NOT found...";
+                qCDebug(latteLayout) << "Launchers Syncer Ability: removeSyncedLauncherFromActivity(QVariant,QVariant,QVariant) was NOT found...";
                 continue;
             }
 
@@ -226,14 +227,14 @@ void SyncedLaunchers::removeLauncherFromActivity(QString layoutName, uint sender
 void SyncedLaunchers::urlsDropped(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QStringList urls)
 {
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
-    QString lName = (group == Types::LayoutLaunchers) ? layoutName : "";
+    QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
     for(const auto c : clients(lName, senderId, group, launcherGroupId)) {
         if (auto *metaObject = c->metaObject()) {
             int methodIndex = metaObject->indexOfMethod("dropSyncedUrls(QVariant,QVariant)");
 
             if (methodIndex == -1) {
-                qDebug() << "Launchers Syncer Ability: dropSyncedUrls(QVariant,QVariant) was NOT found...";
+                qCDebug(latteLayout) << "Launchers Syncer Ability: dropSyncedUrls(QVariant,QVariant) was NOT found...";
                 continue;
             }
 
@@ -246,7 +247,7 @@ void SyncedLaunchers::urlsDropped(QString layoutName, uint senderId, int launche
 void SyncedLaunchers::validateLaunchersOrder(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QStringList launchers)
 {
     Types::LaunchersGroup group = static_cast<Types::LaunchersGroup>(launcherGroup);
-    QString lName = (group == Types::LayoutLaunchers) ? layoutName : "";
+    QString lName = (group == Types::LayoutLaunchers) ? layoutName : QString();
 
     for(const auto c : clients(lName, senderId, group, launcherGroupId)) {
         auto tc = client(senderId);
@@ -256,7 +257,7 @@ void SyncedLaunchers::validateLaunchersOrder(QString layoutName, uint senderId, 
                 int methodIndex = metaObject->indexOfMethod("validateSyncedLaunchersOrder(QVariant,QVariant)");
 
                 if (methodIndex == -1) {
-                    qDebug() << "Launchers Syncer Ability: validateSyncedLaunchersOrder(QVariant,QVariant) was NOT found...";
+                    qCDebug(latteLayout) << "Launchers Syncer Ability: validateSyncedLaunchersOrder(QVariant,QVariant) was NOT found...";
                     continue;
                 }
 

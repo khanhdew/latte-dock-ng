@@ -784,7 +784,7 @@ void SourceContractTest::layerShellSetScreenGuardPreventsBuildRegression()
     QFile cmakeFile(QStringLiteral(LATTE_SOURCE_DIR "/CMakeLists.txt"));
     QVERIFY(cmakeFile.open(QFile::ReadOnly));
     const QString cmake = QString::fromUtf8(cmakeFile.readAll());
-    QVERIFY(cmake.contains(QStringLiteral("try_compile")));
+    QVERIFY(cmake.contains(QStringLiteral("check_cxx_source_compiles")));
     QVERIFY(cmake.contains(QStringLiteral("LATTE_LAYERSHELL_HAS_SET_SCREEN")));
     QVERIFY(cmake.contains(QStringLiteral("CheckLayerShellSetScreen.cpp")));
 }
@@ -1301,12 +1301,12 @@ void SourceContractTest::autostartDefaultEnabledContracts()
     //! First-run chain: when the user never configured autostart and it is
     //! disabled, enable it exactly once and remember the decision.
     const int userSetRead = universalSource.indexOf(
-        QStringLiteral("bool autostartUserSet = m_universalGroup.readEntry(\"userConfiguredAutostart\", false);"));
+        QStringLiteral("bool autostartUserSet = m_universalGroup.readEntry(QStringLiteral(\"userConfiguredAutostart\"), false);"));
     const int firstRunGuard = universalSource.indexOf(
         QStringLiteral("if (!autostartUserSet && !autostart()) {"), userSetRead);
     const int enableCall = universalSource.indexOf(QStringLiteral("setAutostart(true);"), firstRunGuard);
     const int rememberDecision = universalSource.indexOf(
-        QStringLiteral("m_universalGroup.writeEntry(\"userConfiguredAutostart\", true);"), enableCall);
+        QStringLiteral("m_universalGroup.writeEntry(QStringLiteral(\"userConfiguredAutostart\"), true);"), enableCall);
     QVERIFY(userSetRead >= 0);
     QVERIFY(firstRunGuard > userSetRead);
     QVERIFY(enableCall > firstRunGuard);
@@ -1318,7 +1318,7 @@ void SourceContractTest::autostartDefaultEnabledContracts()
     QVERIFY(importer.open(QFile::ReadOnly));
     const QString importerSource = QString::fromUtf8(importer.readAll());
     QVERIFY(importerSource.contains(QStringLiteral("\"/autostart/org.kde.latte-dock.desktop\"")));
-    QVERIFY(importerSource.contains(QStringLiteral("standardPath(\"applications/org.kde.latte-dock.desktop\", true)")));
+    QVERIFY(importerSource.contains(QStringLiteral("standardPath(QStringLiteral(\"applications/org.kde.latte-dock.desktop\"), true)")));
 }
 
 void SourceContractTest::desktopFileHasAutostartPhaseKey()
@@ -1405,22 +1405,16 @@ void SourceContractTest::autoSizeLoopsUseInequalityNotStrictEquality()
 
 void SourceContractTest::cmakeWarningRelaxationLivesInModule()
 {
+    // The relaxed-warning-flags module has been removed: KDECompilerSettings
+    // warning flags must stay enabled so regressions surface as warnings.
     QFile module(QStringLiteral(LATTE_SOURCE_DIR "/cmake/LatteCompilerWarnings.cmake"));
-    QVERIFY(module.open(QFile::ReadOnly));
-    const QString moduleSource = QString::fromUtf8(module.readAll());
-    QVERIFY(moduleSource.contains(QStringLiteral("function(latte_apply_relaxed_warning_flags)")));
-    QVERIFY(moduleSource.contains(QStringLiteral("set(LATTE_RELAXED_WARNING_FLAGS")));
-    QVERIFY(moduleSource.contains(QStringLiteral("string(REPLACE \"${_latte_warning_flag}\" \"\" CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS}\")")));
-    QVERIFY(moduleSource.contains(QStringLiteral("set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS}\" PARENT_SCOPE)")));
-    QVERIFY(moduleSource.contains(QStringLiteral("message(STATUS \"Latte relaxed warning flags pending cleanup: ${LATTE_RELAXED_WARNING_FLAGS}\")")));
+    QVERIFY(!module.exists());
 
     QFile cmake(QStringLiteral(LATTE_SOURCE_DIR "/CMakeLists.txt"));
     QVERIFY(cmake.open(QFile::ReadOnly));
     const QString cmakeSource = QString::fromUtf8(cmake.readAll());
-    QVERIFY(cmakeSource.contains(QStringLiteral("include(LatteCompilerWarnings)")));
-    QVERIFY(cmakeSource.contains(QStringLiteral("latte_apply_relaxed_warning_flags()")));
-    QVERIFY(!cmakeSource.contains(QStringLiteral("set(LATTE_RELAXED_WARNING_FLAGS")));
-    QVERIFY(!cmakeSource.contains(QStringLiteral("foreach(_latte_warning_flag IN LISTS LATTE_RELAXED_WARNING_FLAGS)")));
+    QVERIFY(!cmakeSource.contains(QStringLiteral("include(LatteCompilerWarnings)")));
+    QVERIFY(!cmakeSource.contains(QStringLiteral("latte_apply_relaxed_warning_flags()")));
 }
 
 void SourceContractTest::cmakeFindsQtCoreToolsBeforeKdeInstallDirs()

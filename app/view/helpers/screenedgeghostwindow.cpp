@@ -24,7 +24,7 @@ namespace Latte {
 namespace ViewPart {
 
 ScreenEdgeGhostWindow::ScreenEdgeGhostWindow(Latte::View *view) :
-    SubWindow(view, QString("Screen Ghost Window"))
+    SubWindow(view, QStringLiteral("Screen Ghost Window"))
 {
     if (m_debugMode) {
         m_showColor = QColor("purple");
@@ -63,7 +63,7 @@ ScreenEdgeGhostWindow::~ScreenEdgeGhostWindow()
 
 QString ScreenEdgeGhostWindow::validTitlePrefix() const
 {
-    return QString("#subghostedge#");
+    return QStringLiteral("#subghostedge#");
 }
 
 void ScreenEdgeGhostWindow::updateGeometry()

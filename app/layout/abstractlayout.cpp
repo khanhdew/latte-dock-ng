@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "abstractlayout.h"
 
 // local
@@ -24,7 +25,7 @@ namespace Layout {
 AbstractLayout::AbstractLayout(QObject *parent, QString layoutFile, QString assignedName)
     : QObject(parent)
 {
-    qDebug() << "Layout file to create object: " << layoutFile << " with name: " << assignedName;
+    qCDebug(latteLayout) << "Layout file to create object: " << layoutFile << " with name: " << assignedName;
 
     if (QFile(layoutFile).exists()) {
         if (assignedName.isEmpty()) {
@@ -139,12 +140,12 @@ void AbstractLayout::setFile(QString file)
         return;
     }
 
-    qDebug() << "Layout file:" << file;
+    qCDebug(latteLayout) << "Layout file:" << file;
 
     m_layoutFile = file;
 
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(m_layoutFile);
-    m_layoutGroup = KConfigGroup(filePtr, "LayoutSettings");
+    m_layoutGroup = KConfigGroup(filePtr, QStringLiteral("LayoutSettings"));
 
     Q_EMIT fileChanged();
 }
@@ -160,7 +161,7 @@ void AbstractLayout::setName(QString name)
         return;
     }
 
-    qDebug() << "Layout name:" << name;
+    qCDebug(latteLayout) << "Layout name:" << name;
 
     m_layoutName = name;
 
@@ -189,7 +190,7 @@ QString AbstractLayout::lastUsedActivity() const
 
 void AbstractLayout::clearLastUsedActivity()
 {
-    m_lastUsedActivity = "";
+    m_lastUsedActivity = QString();
     Q_EMIT lastUsedActivityChanged();
 }
 
@@ -243,11 +244,11 @@ QList<Plasma::Types::Location> AbstractLayout::combinedFreeEdges(const QList<Pla
 
 QString AbstractLayout::layoutName(const QString &fileName)
 {
-    int lastSlash = fileName.lastIndexOf("/");
+    int lastSlash = fileName.lastIndexOf(QLatin1Char('/'));
     QString tempLayoutFile = fileName;
     QString layoutName = tempLayoutFile.remove(0, lastSlash + 1);
 
-    int ext = layoutName.lastIndexOf(".layout.latte");
+    int ext = layoutName.lastIndexOf(QStringLiteral(".layout.latte"));
     layoutName = layoutName.remove(ext, 13);
 
     return layoutName;
@@ -262,15 +263,15 @@ void AbstractLayout::syncSettings()
 
 void AbstractLayout::loadConfig()
 {
-    m_version = m_layoutGroup.readEntry("version", 2);
-    m_launchers = m_layoutGroup.readEntry("launchers", QStringList());
-    m_lastUsedActivity = m_layoutGroup.readEntry("lastUsedActivity", QString());
-    m_preferredForShortcutsTouched = m_layoutGroup.readEntry("preferredForShortcutsTouched", false);
-    m_popUpMargin = m_layoutGroup.readEntry("popUpMargin", -1);
+    m_version = m_layoutGroup.readEntry(QStringLiteral("version"), 2);
+    m_launchers = m_layoutGroup.readEntry(QStringLiteral("launchers"), QStringList());
+    m_lastUsedActivity = m_layoutGroup.readEntry(QStringLiteral("lastUsedActivity"), QString());
+    m_preferredForShortcutsTouched = m_layoutGroup.readEntry(QStringLiteral("preferredForShortcutsTouched"), false);
+    m_popUpMargin = m_layoutGroup.readEntry(QStringLiteral("popUpMargin"), -1);
 
-    m_schemeFile = m_layoutGroup.readEntry("schemeFile", QString(Data::Layout::DEFAULTSCHEMEFILE));
+    m_schemeFile = m_layoutGroup.readEntry(QStringLiteral("schemeFile"), QString(Data::Layout::DEFAULTSCHEMEFILE));
 
-    if (m_schemeFile.startsWith("~")) {
+    if (m_schemeFile.startsWith(QStringLiteral("~"))) {
         m_schemeFile.remove(0, 1);
         m_schemeFile = QDir::homePath() + m_schemeFile;
     }
@@ -279,27 +280,27 @@ void AbstractLayout::loadConfig()
 
     Q_EMIT schemeFileChanged();
 
-    m_customTextColor = m_layoutGroup.readEntry("customTextColor", QString());
-    m_icon = m_layoutGroup.readEntry("icon", QString());
+    m_customTextColor = m_layoutGroup.readEntry(QStringLiteral("customTextColor"), QString());
+    m_icon = m_layoutGroup.readEntry(QStringLiteral("icon"), QString());
 }
 
 void AbstractLayout::saveConfig()
 {
-    qDebug() << "abstract layout is saving... for layout:" << m_layoutName;
-    m_layoutGroup.writeEntry("version", m_version);
-    m_layoutGroup.writeEntry("launchers", m_launchers);
-    m_layoutGroup.writeEntry("icon", m_icon);
-    m_layoutGroup.writeEntry("lastUsedActivity", m_lastUsedActivity);
-    m_layoutGroup.writeEntry("popUpMargin", m_popUpMargin);
-    m_layoutGroup.writeEntry("preferredForShortcutsTouched", m_preferredForShortcutsTouched);
+    qCDebug(latteLayout) << "abstract layout is saving... for layout:" << m_layoutName;
+    m_layoutGroup.writeEntry(QStringLiteral("version"), m_version);
+    m_layoutGroup.writeEntry(QStringLiteral("launchers"), m_launchers);
+    m_layoutGroup.writeEntry(QStringLiteral("icon"), m_icon);
+    m_layoutGroup.writeEntry(QStringLiteral("lastUsedActivity"), m_lastUsedActivity);
+    m_layoutGroup.writeEntry(QStringLiteral("popUpMargin"), m_popUpMargin);
+    m_layoutGroup.writeEntry(QStringLiteral("preferredForShortcutsTouched"), m_preferredForShortcutsTouched);
 
     QString scmfile = m_schemeFile;
 
     if (scmfile.startsWith(QDir::homePath())) {
         scmfile.remove(0, QDir::homePath().size());
-        scmfile = "~" + scmfile;
+        scmfile = QLatin1Char('~') + scmfile;
     }
-    m_layoutGroup.writeEntry("schemeFile", scmfile == Data::Layout::DEFAULTSCHEMEFILE ? "" : scmfile);
+    m_layoutGroup.writeEntry(QStringLiteral("schemeFile"), scmfile == Data::Layout::DEFAULTSCHEMEFILE ? QString() : scmfile);
 
     m_layoutGroup.sync();
 }

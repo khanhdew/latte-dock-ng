@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "actionsdialog.h"
 
 // local
@@ -48,19 +49,19 @@ void ActionsDialog::init()
 
 void ActionsDialog::accept()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     //close();
 }
 
 void ActionsDialog::onCancel()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     close();
 }
 
 void ActionsDialog::onReset()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     close();
 }
 

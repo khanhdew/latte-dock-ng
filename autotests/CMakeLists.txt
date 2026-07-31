@@ -922,6 +922,12 @@ add_executable(importerlogictest EXCLUDE_FROM_ALL ${importerlogictest_SRCS})
 target_link_libraries(importerlogictest Qt6::Core Qt6::Test KF6::ConfigCore)
 latte_add_test(importerlogictest)
 
+# Some tests compile app sources directly, so they need the shared logging
+# categories (latte_debug.h) just like the application targets.
+foreach(_latte_test_target IN LISTS latte_autotest_targets)
+    target_link_libraries(${_latte_test_target} latteLogging)
+endforeach()
+
 add_custom_target(latte-autotests
     DEPENDS ${latte_autotest_targets}
 )

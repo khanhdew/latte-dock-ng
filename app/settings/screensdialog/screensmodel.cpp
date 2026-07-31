@@ -97,7 +97,7 @@ void Screens::clear()
 
 void Screens::deselectAll()
 {
-    QVector<int> roles;
+    QList<int> roles;
     roles << Qt::CheckStateRole;
 
     for(int i=0; i<c_screens.rowCount(); ++i) {
@@ -112,7 +112,7 @@ void Screens::reset()
 {
     c_screens = o_screens;
 
-    QVector<int> roles;
+    QList<int> roles;
     roles << Qt::CheckStateRole;
 
     Q_EMIT dataChanged(index(0, SCREENCOLUMN), index(c_screens.rowCount()-1, SCREENCOLUMN), roles);
@@ -140,15 +140,15 @@ QString Screens::sortableText(const int &priority, const QString &text) const
     QString numberPart;
 
     if (priority < 10) {
-        numberPart = "00000" + QString::number(priority);
+        numberPart = QStringLiteral("00000") + QString::number(priority);
     } else if (priority < 100) {
-        numberPart = "0000" + QString::number(priority);
+        numberPart = QStringLiteral("0000") + QString::number(priority);
     } else if (priority < 1000) {
-        numberPart = "000" + QString::number(priority);
+        numberPart = QStringLiteral("000") + QString::number(priority);
     } else if (priority < 10000) {
-        numberPart = "00" + QString::number(priority);
+        numberPart = QStringLiteral("00") + QString::number(priority);
     } else if (priority < 100000) {
-        numberPart = "0" + QString::number(priority);
+        numberPart = QStringLiteral("0") + QString::number(priority);
     }
 
     return (numberPart + text);
@@ -177,7 +177,7 @@ void Screens::setSelected(const Latte::Data::ScreensTable &screens)
         int pos = c_screens.indexOf(screens[i].id);
 
         if (pos>=0 && screens[i].isSelected != c_screens[pos].isSelected) {
-            QVector<int> roles;
+            QList<int> roles;
             roles << Qt::CheckStateRole;
 
             c_screens[pos].isSelected = screens[i].isSelected;
@@ -284,7 +284,7 @@ QVariant Screens::data(const QModelIndex &index, int role) const
     if (role == IDROLE) {
         return c_screens[row].id;
     } else if (role == Qt::DisplayRole) {
-        QString display = "{" + c_screens[row].id + "} " + c_screens[row].name;
+        QString display = QLatin1Char('{') + c_screens[row].id + QLatin1String("} ") + c_screens[row].name;
         return display;
     } else if (role == Qt::CheckStateRole) {
         return (c_screens[row].isSelected ? Qt::Checked : Qt::Unchecked);

@@ -21,13 +21,13 @@ Layout::Layout(Layout &&o)
       icon(o.icon),
       textColor(o.textColor),
       lastUsedActivity(o.lastUsedActivity),
+      schemeFile(o.schemeFile),
       isActive(o.isActive),
       isConsideredActive(o.isConsideredActive),
       isLocked(o.isLocked),
       isShownInMenu(o.isShownInMenu),
       isTemplate(o.isTemplate),
       popUpMargin(o.popUpMargin),
-      schemeFile(o.schemeFile),
       activities(o.activities),
       errors(o.errors),
       warnings(o.warnings),
@@ -40,13 +40,13 @@ Layout::Layout(const Layout &o)
       icon(o.icon),
       textColor(o.textColor),
       lastUsedActivity(o.lastUsedActivity),
+      schemeFile(o.schemeFile),
       isActive(o.isActive),
       isConsideredActive(o.isConsideredActive),
       isLocked(o.isLocked),
       isShownInMenu(o.isShownInMenu),
       isTemplate(o.isTemplate),
       popUpMargin(o.popUpMargin),
-      schemeFile(o.schemeFile),
       activities(o.activities),
       errors(o.errors),
       warnings(o.warnings),
@@ -135,7 +135,7 @@ bool Layout::isForFreeActivities() const
 
 bool Layout::isTemporary() const
 {
-    return id.startsWith("/tmp");
+    return id.startsWith(QStringLiteral("/tmp"));
 }
 
 bool Layout::isEmpty() const

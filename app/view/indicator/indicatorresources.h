@@ -7,6 +7,7 @@
 #define VIEWINDICATORRESOURCES_H
 
 // Qt
+#include <QStringList>
 #include <QObject>
 
 namespace Latte {

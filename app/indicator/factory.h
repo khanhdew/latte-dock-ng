@@ -10,6 +10,7 @@
 #include "../apptypes.h"
 
 // Qt
+#include <QStringList>
 #include <QHash>
 #include <QObject>
 #include <QWidget>

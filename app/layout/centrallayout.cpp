@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "centrallayout.h"
 
 // local
@@ -160,17 +161,17 @@ void CentralLayout::onSchemeFileChanged()
 
 void CentralLayout::loadConfig()
 {
-    m_showInMenu = m_layoutGroup.readEntry("showInMenu", false);
-    m_activities = m_layoutGroup.readEntry("activities", QStringList());
+    m_showInMenu = m_layoutGroup.readEntry(QStringLiteral("showInMenu"), false);
+    m_activities = m_layoutGroup.readEntry(QStringLiteral("activities"), QStringList());
 
     Q_EMIT activitiesChanged();
 }
 
 void CentralLayout::saveConfig()
 {
-    qDebug() << "CENTRAL layout is saving... for layout:" << m_layoutName;
-    m_layoutGroup.writeEntry("showInMenu", m_showInMenu);
-    m_layoutGroup.writeEntry("activities", m_activities);
+    qCDebug(latteLayout) << "CENTRAL layout is saving... for layout:" << m_layoutName;
+    m_layoutGroup.writeEntry(QStringLiteral("showInMenu"), m_showInMenu);
+    m_layoutGroup.writeEntry(QStringLiteral("activities"), m_activities);
     m_layoutGroup.sync();
 }
 
@@ -194,7 +195,7 @@ const QStringList CentralLayout::appliedActivities()
 Types::ViewType CentralLayout::latteViewType(uint containmentId) const
 {
     for (const auto view : m_latteViews) {
-        if (view->containment() && view->containment()->id() == (uint)containmentId) {
+        if (view->containment() && view->containment()->id() == static_cast<uint>(containmentId)) {
             return view->type();
         }
     }

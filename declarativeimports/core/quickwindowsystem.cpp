@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "quickwindowsystem.h"
 
 // Qt
@@ -21,7 +22,7 @@ QuickWindowSystem::QuickWindowSystem(QObject *parent)
 
 QuickWindowSystem::~QuickWindowSystem()
 {
-    qDebug() << staticMetaObject.className() << "destructed";
+    qCDebug(latteQml) << staticMetaObject.className() << "destructed";
 }
 
 bool QuickWindowSystem::compositingActive() const

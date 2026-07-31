@@ -125,17 +125,17 @@ void IconItem::setSource(const QVariant &source)
             m_svgIcon.reset();
         } else {
             if (!m_svgIcon) {
-                m_svgIcon = std::make_unique<Plasma::Svg>(this);
+                m_svgIcon = std::make_unique<KSvg::Svg>(this);
                 m_svgIcon->setColorSet(toSvgColorSet(m_colorGroup));
-                m_svgIcon->setStatus(Plasma::Svg::Normal);
+                m_svgIcon->setStatus(KSvg::Svg::Normal);
                 m_svgIcon->setUsingRenderingCache(false);
                 m_svgIcon->setDevicePixelRatio(itemDevicePixelRatio(this));
-                connect(m_svgIcon.get(), &Plasma::Svg::repaintNeeded, this, &IconItem::schedulePixmapUpdate);
+                connect(m_svgIcon.get(), &KSvg::Svg::repaintNeeded, this, &IconItem::schedulePixmapUpdate);
             }
 
             if (m_usesPlasmaTheme) {
                 //try as a svg icon from plasma theme
-                m_svgIcon->setImagePath(QLatin1String("icons/") + sourceString.split('-').first());
+                m_svgIcon->setImagePath(QLatin1String("icons/") + sourceString.split(QLatin1Char('-')).first());
                 m_svgIcon->setContainsMultipleImages(true);
                 //invalidate the image path to recalculate it later
             } else {
@@ -148,7 +148,7 @@ void IconItem::setSource(const QVariant &source)
                 m_svgIconName = sourceString;
                 //ok, svg not available from the plasma theme
             } else {
-                //try to load from iconloader an svg with Plasma::Svg
+                //try to load from iconloader an svg with KSvg::Svg
                 const auto *iconTheme = KIconLoader::global()->theme();
                 QString iconPath;
 
@@ -187,7 +187,7 @@ void IconItem::setSource(const QVariant &source)
     } else if (source.canConvert<QIcon>()) {
         m_icon = source.value<QIcon>();
         m_iconCounter++;
-        setLastLoadedSourceId("_icon_"+QString::number(m_iconCounter));
+        setLastLoadedSourceId(QStringLiteral("_icon_") + QString::number(m_iconCounter));
 
         m_imageIcon = QImage();
         m_svgIconName.clear();
@@ -195,7 +195,7 @@ void IconItem::setSource(const QVariant &source)
     } else if (source.canConvert<QImage>()) {
         m_imageIcon = source.value<QImage>();
         m_iconCounter++;
-        setLastLoadedSourceId("_image_"+QString::number(m_iconCounter));
+        setLastLoadedSourceId(QStringLiteral("_image_") + QString::number(m_iconCounter));
 
         m_icon = QIcon();
         m_svgIconName.clear();

@@ -14,7 +14,7 @@
 // KDE
 #include <KLocalizedString>
 
-#define TEMPIDDISPLAY "#"
+#define TEMPIDDISPLAY QStringLiteral("#")
 
 namespace Latte {
 namespace Settings {
@@ -159,15 +159,15 @@ QString Views::sortableText(const int &priority, const QString &text) const
     QString numberPart;
 
     if (priority < 10) {
-        numberPart = "00000" + QString::number(priority);
+        numberPart = QStringLiteral("00000") + QString::number(priority);
     } else if (priority < 100) {
-        numberPart = "0000" + QString::number(priority);
+        numberPart = QStringLiteral("0000") + QString::number(priority);
     } else if (priority < 1000) {
-        numberPart = "000" + QString::number(priority);
+        numberPart = QStringLiteral("000") + QString::number(priority);
     } else if (priority < 10000) {
-        numberPart = "00" + QString::number(priority);
+        numberPart = QStringLiteral("000") + QString::number(priority);
     } else if (priority < 100000) {
-        numberPart = "0" + QString::number(priority);
+        numberPart = QStringLiteral("000") + QString::number(priority);
     }
 
     return (numberPart + text);
@@ -396,7 +396,7 @@ void Views::updateActiveStatesBasedOn(const CentralLayout *layout)
         return;
     }
 
-    QVector<int> roles;
+    QList<int> roles;
     roles << Qt::DisplayRole;
     roles << Qt::UserRole;
     roles << ISCHANGEDROLE;
@@ -484,7 +484,7 @@ void Views::clearErrorsAndWarnings()
         m_viewsTable[i].warnings = 0;
     }
 
-    QVector<int> roles;
+    QList<int> roles;
     roles << Qt::DisplayRole;
     roles << Qt::UserRole;
     roles << ERRORSROLE;
@@ -532,7 +532,7 @@ void Views::updateCurrentView(QString currentViewId, Latte::Data::View &view)
     int currentrow = m_viewsTable.indexOf(currentViewId);
     m_viewsTable[currentrow] = view;
 
-    QVector<int> roles;
+    QList<int> roles;
     roles << Qt::DisplayRole;
     roles << Qt::UserRole;
     roles << ISCHANGEDROLE;
@@ -555,7 +555,7 @@ void Views::setOriginalView(QString currentViewId, Latte::Data::View &view)
     o_viewsTable << view;
     m_viewsTable[currentrow] = view;
 
-    QVector<int> roles;
+    QList<int> roles;
     roles << Qt::DisplayRole;
     roles << Qt::UserRole;
     roles << ISCHANGEDROLE;
@@ -592,7 +592,7 @@ QVariant Views::headerData(int section, Qt::Orientation orientation, int role) c
     switch(section) {
     case IDCOLUMN:
         if (role == Qt::DisplayRole) {
-            return QString("#");
+            return QStringLiteral("#");
         }
         break;
     case NAMECOLUMN:
@@ -605,7 +605,7 @@ QVariant Views::headerData(int section, Qt::Orientation orientation, int role) c
             return QString(i18n("Screen"));
         }
         /*  } else if (role == Qt::DecorationRole) {
-            return QIcon::fromTheme("desktop");
+            return QIcon::fromTheme(QStringLiteral("desktop"));
         }*/
         break;
     case EDGECOLUMN:
@@ -613,7 +613,7 @@ QVariant Views::headerData(int section, Qt::Orientation orientation, int role) c
             return QString(i18nc("screen edge", "Edge"));
         }
         /*  } else if (role == Qt::DecorationRole) {
-            return QIcon::fromTheme("transform-move");
+            return QIcon::fromTheme(QStringLiteral("transform-move"));
         }*/
         break;
     case ALIGNMENTCOLUMN:
@@ -621,7 +621,7 @@ QVariant Views::headerData(int section, Qt::Orientation orientation, int role) c
             return QString(i18n("Alignment"));
         }
         /*} else if (role == Qt::DecorationRole) {
-            return QIcon::fromTheme("format-justify-center");
+            return QIcon::fromTheme(QStringLiteral("format-justify-center"));
         }*/
         break;
     case SUBCONTAINMENTSCOLUMN:
@@ -661,7 +661,7 @@ bool Views::setData(const QModelIndex &index, const QVariant &value, int role)
         return false;
     }
 
-    QVector<int> roles;
+    QList<int> roles;
     roles << role;
     roles << ISCHANGEDROLE;
     roles << HASCHANGEDVIEWROLE;
@@ -778,10 +778,10 @@ QVariant Views::data(const QModelIndex &index, int role) const
     }
 
     bool isNewView = !o_viewsTable.containsId(m_viewsTable[row].id);
-    QString origviewid = !isNewView ? m_viewsTable[row].id : "";
+    QString origviewid = !isNewView ? m_viewsTable[row].id : QString();
 
     if (role == IDROLE) {
-        return (m_viewsTable[row].state() == Data::View::IsCreated ? m_viewsTable[row].id : "#");
+        return (m_viewsTable[row].state() == Data::View::IsCreated ? m_viewsTable[row].id : QStringLiteral("#"));
     } else if (role == ISACTIVEROLE) {
         return m_viewsTable[row].isActive;
     } else if (role == CHOICESROLE) {
@@ -839,7 +839,7 @@ QVariant Views::data(const QModelIndex &index, int role) const
     switch (column) {
     case IDCOLUMN:
         if (role == Qt::DisplayRole){
-            return (m_viewsTable[row].state() == Data::View::IsCreated ? m_viewsTable[row].id : "#");
+            return (m_viewsTable[row].state() == Data::View::IsCreated ? m_viewsTable[row].id : QStringLiteral("#"));
         } else if (role == Qt::UserRole) {
             return m_viewsTable[row].id;
         } else if (role == ISCHANGEDROLE) {
@@ -974,20 +974,20 @@ QVariant Views::data(const QModelIndex &index, int role) const
     case SUBCONTAINMENTSCOLUMN:
         if (role == Qt::DisplayRole){
             if (m_viewsTable[row].subcontainments.rowCount()>0) {
-                QString result = "{";
+                QString result = QStringLiteral("{");
 
                 for (int i=0; i<m_viewsTable[row].subcontainments.rowCount(); ++i) {
                     if (i>0) {
-                        result += " ";
+                        result += QLatin1Char(' ');
                     }
                     result += (m_viewsTable[row].state() == Data::View::IsCreated ? m_viewsTable[row].subcontainments[i].id : TEMPIDDISPLAY);
 
                     if (i<m_viewsTable[row].subcontainments.rowCount()-1) {
-                        result += ",";
+                        result += QLatin1Char(',');
                     }
                 }
 
-                result += "}";
+                result += QLatin1Char('}');
                 return result;
             }
 

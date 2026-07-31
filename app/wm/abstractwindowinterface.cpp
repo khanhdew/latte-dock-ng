@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "abstractwindowinterface.h"
 
 // local
@@ -26,8 +27,8 @@ namespace WindowSystem {
 #define MAXPLASMAPANELTHICKNESS 96
 #define MAXSIDEPANELTHICKNESS 512
 
-#define KWINSERVICE "org.kde.KWin"
-#define KWINVIRTUALDESKTOPMANAGERNAMESPACE "org.kde.KWin.VirtualDesktopManager"
+#define KWINSERVICE QStringLiteral("org.kde.KWin")
+#define KWINVIRTUALDESKTOPMANAGERNAMESPACE QStringLiteral("org.kde.KWin.VirtualDesktopManager")
 
 AbstractWindowInterface::AbstractWindowInterface(QObject *parent)
     : QObject(parent),
@@ -54,7 +55,7 @@ AbstractWindowInterface::AbstractWindowInterface(QObject *parent)
     connect(this, &AbstractWindowInterface::windowRemoved, this, &AbstractWindowInterface::windowRemovedSlot);
 
     // connect(this, &AbstractWindowInterface::windowChanged, this, [this](WindowId wid) {
-    //     qDebug() << "WINDOW CHANGED ::: " << wid;
+    //     qCDebug(latteWm) << "WINDOW CHANGED ::: " << wid;
     // });
 
     connect(m_activities.data(), &KActivities::Consumer::currentActivityChanged, this, [this](const QString &id) {
@@ -68,7 +69,7 @@ AbstractWindowInterface::AbstractWindowInterface(QObject *parent)
     m_kwinServiceWatcher->setConnection(QDBusConnection::sessionBus());
     m_kwinServiceWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration
                                        | QDBusServiceWatcher::WatchForUnregistration);
-    m_kwinServiceWatcher->setWatchedServices(QStringList({KWINSERVICE}));
+    m_kwinServiceWatcher->setWatchedServices(QStringList{KWINSERVICE});
     connect(m_kwinServiceWatcher, &QDBusServiceWatcher::serviceRegistered, this, [this](const QString & serviceName) {
         if (serviceName == KWINSERVICE && !m_isKWinInterfaceAvailable) {
             initKWinInterface();
@@ -257,11 +258,11 @@ void AbstractWindowInterface::initKWinInterface()
     // delivered via QDBusPendingCallWatcher when the DBus daemon responds.
     if (!m_isKWinInterfaceAvailable) {
         QDBusMessage msg = QDBusMessage::createMethodCall(
-            QStringLiteral(KWINSERVICE),
+            KWINSERVICE,
             QStringLiteral("/VirtualDesktopManager"),
             QStringLiteral("org.freedesktop.DBus.Properties"),
             QStringLiteral("Get"));
-        msg.setArguments({QStringLiteral(KWINVIRTUALDESKTOPMANAGERNAMESPACE),
+        msg.setArguments({KWINVIRTUALDESKTOPMANAGERNAMESPACE,
                           QStringLiteral("navigationWrappingAround")});
 
         auto *watcher = new QDBusPendingCallWatcher(
@@ -276,7 +277,7 @@ void AbstractWindowInterface::initKWinInterface()
             }
 
             m_isKWinInterfaceAvailable = true;
-            qDebug() << " KWIN SERVICE :: is available...";
+            qCDebug(latteWm) << " KWIN SERVICE :: is available...";
 
             if (!reply.arguments().isEmpty()) {
                 QVariant arg = reply.arguments().first();
@@ -285,15 +286,15 @@ void AbstractWindowInterface::initKWinInterface()
             }
 
             bool signalconnected = QDBusConnection::sessionBus().connect(
-                QStringLiteral(KWINSERVICE),
+                KWINSERVICE,
                 QStringLiteral("/VirtualDesktopManager"),
-                QStringLiteral(KWINVIRTUALDESKTOPMANAGERNAMESPACE),
+                KWINVIRTUALDESKTOPMANAGERNAMESPACE,
                 QStringLiteral("navigationWrappingAroundChanged"),
                 this,
                 SLOT(onVirtualDesktopNavigationWrappingAroundChanged(bool)));
 
             if (!signalconnected) {
-                qDebug() << " KWIN SERVICE :: Virtual Desktop Manager ::"
+                qCDebug(latteWm) << " KWIN SERVICE :: Virtual Desktop Manager ::"
                          << "navigationsWrappingSignal is not connected...";
             }
         });

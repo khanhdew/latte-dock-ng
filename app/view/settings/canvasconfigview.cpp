@@ -24,7 +24,7 @@ namespace Latte {
 namespace ViewPart {
 
 CanvasConfigView::CanvasConfigView(Latte::View *view, PrimaryConfigView *parent)
-    : SubConfigView(view, QString("#canvasconfigview#"), false),
+    : SubConfigView(view, QStringLiteral("#canvasconfigview#"), false),
       m_parent(parent)
 {
     setResizeMode(QQuickView::SizeRootObjectToView);
@@ -198,23 +198,23 @@ void CanvasConfigView::updateEnabledBorders()
         return;
     }
 
-    Plasma::FrameSvg::EnabledBorders borders = Plasma::FrameSvg::TopBorder;
+    KSvg::FrameSvg::EnabledBorders borders = KSvg::FrameSvg::TopBorder;
 
     switch (m_latteView->location()) {
     case Plasma::Types::TopEdge:
-        borders = Plasma::FrameSvg::BottomBorder;
+        borders = KSvg::FrameSvg::BottomBorder;
         break;
 
     case Plasma::Types::LeftEdge:
-        borders = Plasma::FrameSvg::RightBorder;
+        borders = KSvg::FrameSvg::RightBorder;
         break;
 
     case Plasma::Types::RightEdge:
-        borders = Plasma::FrameSvg::LeftBorder;
+        borders = KSvg::FrameSvg::LeftBorder;
         break;
 
     case Plasma::Types::BottomEdge:
-        borders = Plasma::FrameSvg::TopBorder;
+        borders = KSvg::FrameSvg::TopBorder;
         break;
 
     default:

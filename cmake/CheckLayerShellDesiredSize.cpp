@@ -11,6 +11,7 @@
 */
 
 #include <LayerShellQt/window.h>
+#include <QSize>
 
 int main()
 {

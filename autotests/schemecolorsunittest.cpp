@@ -25,33 +25,33 @@ QString writeScheme(const QString &path, const QString &name)
     QDir().mkpath(QFileInfo(path).absolutePath());
 
     KSharedConfigPtr config = KSharedConfig::openConfig(path);
-    KConfigGroup general(config, "General");
-    general.writeEntry("Name", name);
+    KConfigGroup general(config, QStringLiteral("General"));
+    general.writeEntry(QStringLiteral("Name"), name);
 
-    KConfigGroup wm(config, "WM");
-    wm.writeEntry("activeBackground", QColor(1, 2, 3));
-    wm.writeEntry("activeForeground", QColor(4, 5, 6));
-    wm.writeEntry("inactiveBackground", QColor(7, 8, 9));
-    wm.writeEntry("inactiveForeground", QColor(10, 11, 12));
+    KConfigGroup wm(config, QStringLiteral("WM"));
+    wm.writeEntry(QStringLiteral("activeBackground"), QColor(1, 2, 3));
+    wm.writeEntry(QStringLiteral("activeForeground"), QColor(4, 5, 6));
+    wm.writeEntry(QStringLiteral("inactiveBackground"), QColor(7, 8, 9));
+    wm.writeEntry(QStringLiteral("inactiveForeground"), QColor(10, 11, 12));
 
-    KConfigGroup selection(config, "Colors:Selection");
-    selection.writeEntry("BackgroundNormal", QColor(13, 14, 15));
-    selection.writeEntry("ForegroundNormal", QColor(16, 17, 18));
+    KConfigGroup selection(config, QStringLiteral("Colors:Selection"));
+    selection.writeEntry(QStringLiteral("BackgroundNormal"), QColor(13, 14, 15));
+    selection.writeEntry(QStringLiteral("ForegroundNormal"), QColor(16, 17, 18));
 
-    KConfigGroup window(config, "Colors:Window");
-    window.writeEntry("BackgroundNormal", QColor(19, 20, 21));
-    window.writeEntry("ForegroundNormal", QColor(22, 23, 24));
-    window.writeEntry("BackgroundAlternate", QColor(25, 26, 27));
-    window.writeEntry("ForegroundInactive", QColor(28, 29, 30));
-    window.writeEntry("ForegroundPositive", QColor(31, 32, 33));
-    window.writeEntry("ForegroundNeutral", QColor(34, 35, 36));
-    window.writeEntry("ForegroundNegative", QColor(37, 38, 39));
+    KConfigGroup window(config, QStringLiteral("Colors:Window"));
+    window.writeEntry(QStringLiteral("BackgroundNormal"), QColor(19, 20, 21));
+    window.writeEntry(QStringLiteral("ForegroundNormal"), QColor(22, 23, 24));
+    window.writeEntry(QStringLiteral("BackgroundAlternate"), QColor(25, 26, 27));
+    window.writeEntry(QStringLiteral("ForegroundInactive"), QColor(28, 29, 30));
+    window.writeEntry(QStringLiteral("ForegroundPositive"), QColor(31, 32, 33));
+    window.writeEntry(QStringLiteral("ForegroundNeutral"), QColor(34, 35, 36));
+    window.writeEntry(QStringLiteral("ForegroundNegative"), QColor(37, 38, 39));
 
-    KConfigGroup button(config, "Colors:Button");
-    button.writeEntry("ForegroundNormal", QColor(40, 41, 42));
-    button.writeEntry("BackgroundNormal", QColor(43, 44, 45));
-    button.writeEntry("DecorationHover", QColor(46, 47, 48));
-    button.writeEntry("DecorationFocus", QColor(49, 50, 51));
+    KConfigGroup button(config, QStringLiteral("Colors:Button"));
+    button.writeEntry(QStringLiteral("ForegroundNormal"), QColor(40, 41, 42));
+    button.writeEntry(QStringLiteral("BackgroundNormal"), QColor(43, 44, 45));
+    button.writeEntry(QStringLiteral("DecorationHover"), QColor(46, 47, 48));
+    button.writeEntry(QStringLiteral("DecorationFocus"), QColor(49, 50, 51));
 
     config->sync();
     return path;

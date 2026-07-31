@@ -4,6 +4,7 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "screenpool.h"
 
 // local
@@ -54,11 +55,11 @@ void ScreenPool::load()
         QString serialized = m_configGroup.readEntry(key, QString());
 
         Data::Screen screenRecord(key, serialized);
-        //qDebug() << "org.kde.latte ::: " << screenRecord.id << ":" << screenRecord.serialize();
+        //qCDebug(latteApp) << "org.kde.latte ::: " << screenRecord.id << ":" << screenRecord.serialize();
 
         if (!key.isEmpty() && !serialized.isEmpty() && !m_screensTable.containsId(key)) {
             m_screensTable << screenRecord;
-            qDebug() << "org.kde.latte :: Known Screen - " << screenRecord.id << " : " << screenRecord.name << " : " << screenRecord.geometry;
+            qCDebug(latteApp) << "org.kde.latte :: Known Screen - " << screenRecord.id << " : " << screenRecord.name << " : " << screenRecord.geometry;
         }
     }
 
@@ -135,10 +136,10 @@ Latte::Data::ScreensTable ScreenPool::screensTable()
 
 void ScreenPool::reload(QString path)
 {
-    QFile rcfile(QString(path + "/lattedockrc"));
+    QFile rcfile(path + QLatin1String("/lattedockrc"));
 
     if (rcfile.exists()) {
-        qDebug() << "load screen connectors from ::: " << rcfile.fileName();
+        qCDebug(latteApp) << "load screen connectors from ::: " << rcfile.fileName();
         KSharedConfigPtr newFile = KSharedConfig::openConfig(rcfile.fileName());
         m_configGroup = KConfigGroup(newFile, QStringLiteral("ScreenConnectors"));
         load();
@@ -200,11 +201,11 @@ void ScreenPool::insertScreenMapping(const QString &connector)
     //there are case that the QScreen instead of the correct screen name
     //returns "0:0", this check prevents from breaking the screens database
     //from garbage ids
-    if (connector.isEmpty() || m_screensTable.containsName(connector) || connector.startsWith(":")) {
+    if (connector.isEmpty() || m_screensTable.containsName(connector) || connector.startsWith(QLatin1Char(':'))) {
         return;
     }
 
-    qDebug() << "add connector..." << connector;
+    qCDebug(latteApp) << "add connector..." << connector;
 
     Data::Screen screenRecord;
     screenRecord.id = QString::number(firstAvailableId());

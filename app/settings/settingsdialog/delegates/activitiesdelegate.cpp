@@ -137,7 +137,7 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
                 action->setFont(font);
             }
 
-            connect(action, &QAction::toggled, this, [this, menu, button, action, i, allActivitiesTable]() {
+            connect(action, &QAction::toggled, this, [this, menu, button, action, allActivitiesTable]() {
                 if (action->isChecked()) {
                     menu->setMasterIndex(-1);
                 }
@@ -189,14 +189,14 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
 
     menu->addAction(menuDialogButtonsWidgetAction);
 
-    connect(menuDialogButtons->button(QDialogButtonBox::Ok), &QPushButton::clicked,  [this, menu, button]() {
+    connect(menuDialogButtons->button(QDialogButtonBox::Ok), &QPushButton::clicked,  [menu, button]() {
         button->setProperty(OKPRESSED, true);
         menu->hide();
     });
 
     connect(menuDialogButtons->button(QDialogButtonBox::Cancel), &QPushButton::clicked,  menu, &QMenu::hide);
 
-    connect(menuDialogButtons->button(QDialogButtonBox::Reset), &QPushButton::clicked,  [this, menu, originalChecked]() {
+    connect(menuDialogButtons->button(QDialogButtonBox::Reset), &QPushButton::clicked,  [menu, originalChecked]() {
         for (int i=0; i<menu->actions().count(); ++i) {
             if (!originalChecked.contains(i)) {
                 menu->actions().at(i)->setChecked(false);
@@ -314,7 +314,7 @@ void Activities::paint(QPainter *painter, const QStyleOptionViewItem &option, co
     if (assignedActivities.count() > 0) {
         myOptions.text = joinedActivities(assignedActivities, assignedOriginalIds, isLayoutActive);
     } else {
-        myOptions.text = "";
+        myOptions.text = QString();
     }
 
     Latte::drawBackground(painter, option);
@@ -325,7 +325,6 @@ QString Activities::joinedActivities(const QList<Latte::Data::Activity> &activit
 {
     QString finalText;
 
-    int i = 0;
 
     for (int i=0; i<activities.count(); ++i) {
         bool bold{false};
@@ -338,17 +337,17 @@ QString Activities::joinedActivities(const QList<Latte::Data::Activity> &activit
         }
 
         if (i > 0) {
-            finalText += ", ";
+            finalText += QLatin1String(", ");
         }
 
         QString styledText = activities[i].name;
 
         if (bold && formatText) {
-            styledText = "<b>" + styledText + "</b>";
+            styledText = QStringLiteral("<b>") + styledText + QStringLiteral("</b>");
         }
 
         if (italic && formatText) {
-            styledText = "<i>" + styledText + "</i>";
+            styledText = QStringLiteral("<i>") + styledText + QStringLiteral("</i>");
         }
 
         finalText += styledText;

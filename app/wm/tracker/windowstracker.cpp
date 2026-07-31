@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "windowstracker.h"
 
 // local
@@ -781,7 +782,7 @@ void Windows::cleanupFaultyWindows()
 
         //! garbage windows removing
         if (winfo.wid().isEmpty() || winfo.geometry() == QRect(0, 0, 0, 0)) {
-            //qDebug() << "Faulty Geometry ::: " << winfo.wid();
+            //qCDebug(latteWm) << "Faulty Geometry ::: " << winfo.wid();
             m_windows.remove(key);
         }
     }
@@ -912,7 +913,7 @@ void Windows::updateExtraViewHints()
                 }
             }
 
-            //qDebug() << " Touching Busy Vertical View :: " << horView->location() << " - " << horView->positioner()->currentScreenId() << " :: " << touchingBusyVerticalView;
+            //qCDebug(latteWm) << " Touching Busy Vertical View :: " << horView->location() << " - " << horView->positioner()->currentScreenId() << " :: " << touchingBusyVerticalView;
 
             setIsTouchingBusyVerticalView(horView, touchingBusyVerticalView);
         }
@@ -946,7 +947,7 @@ void Windows::updateHints(Latte::View *view)
     WindowId activeTouchWinId;
     WindowId activeTouchEdgeWinId;
 
-    //qDebug() << " -- TRACKING REPORT (SCREEN)--";
+    //qCDebug(latteWm) << " -- TRACKING REPORT (SCREEN)--";
 
     //! First Pass
     for (const auto &winfo : m_windows) {
@@ -1128,7 +1129,7 @@ void Windows::updateHints(Latte::Layout::GenericLayout *layout) {
             maxWinId = winfo.wid();
         }
 
-        //qDebug() << "window geometry ::: " << winfo.geometry();
+        //qCDebug(latteWm) << "window geometry ::: " << winfo.geometry();
     }
 
     if (existsFaultyWindow) {

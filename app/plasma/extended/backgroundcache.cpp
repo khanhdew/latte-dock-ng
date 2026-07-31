@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "backgroundcache.h"
 
 // local
@@ -29,8 +30,8 @@
 
 #define MAXHASHSIZE 300
 
-#define PLASMACONFIG "plasma-org.kde.plasma.desktop-appletsrc"
-#define DEFAULTWALLPAPER "wallpapers/Next/contents/images/1920x1080.png"
+#define PLASMACONFIG QStringLiteral("plasma-org.kde.plasma.desktop-appletsrc")
+#define DEFAULTWALLPAPER QStringLiteral("wallpapers/Next/contents/images/1920x1080.png")
 
 namespace Latte{
 namespace PlasmaExtended {
@@ -46,7 +47,7 @@ BackgroundCache::BackgroundCache(QObject *parent)
 
     m_defaultWallpaperPath = Latte::standardPath(DEFAULTWALLPAPER);
 
-    qDebug() << "Default Wallpaper path ::: " << m_defaultWallpaperPath;
+    qCDebug(lattePlasma) << "Default Wallpaper path ::: " << m_defaultWallpaperPath;
 
     KDirWatch::self()->addFile(configFile);
 
@@ -87,19 +88,19 @@ void BackgroundCache::settingsFileChanged(const QString &file) {
 
 QString BackgroundCache::backgroundFromConfig(const KConfigGroup &config, QString wallpaperPlugin) const
 {
-    auto wallpaperConfig = config.group("Wallpaper").group(wallpaperPlugin).group("General");
+    auto wallpaperConfig = config.group(QStringLiteral("Wallpaper")).group(wallpaperPlugin).group(QStringLiteral("General"));
 
-    if (wallpaperConfig.hasKey("Image")) {
+    if (wallpaperConfig.hasKey(QStringLiteral("Image"))) {
         // Trying for the wallpaper
-        auto wallpaper = wallpaperConfig.readEntry("Image", QString());
+        auto wallpaper = wallpaperConfig.readEntry(QStringLiteral("Image"), QString());
 
         if (!wallpaper.isEmpty()) {
             return wallpaper;
         }
     }
 
-    if (wallpaperConfig.hasKey("Color")) {
-        auto backgroundColor = wallpaperConfig.readEntry("Color", QColor(0, 0, 0));
+    if (wallpaperConfig.hasKey(QStringLiteral("Color"))) {
+        auto backgroundColor = wallpaperConfig.readEntry(QStringLiteral("Color"), QColor(0, 0, 0));
         return backgroundColor.name();
     }
 
@@ -108,7 +109,7 @@ QString BackgroundCache::backgroundFromConfig(const KConfigGroup &config, QStrin
 
 bool BackgroundCache::isDesktopContainment(const KConfigGroup &containment) const
 {
-    const auto type = containment.readEntry("plugin", QString());
+    const auto type = containment.readEntry(QStringLiteral("plugin"), QString());
 
     if (type == QLatin1String(Latte::PluginId::kDesktopContainment) || type == QLatin1String(Latte::PluginId::kFolder) ) {
         return true;
@@ -121,16 +122,16 @@ void BackgroundCache::reload()
 {
     // Traversing through all containments in search for
     // containments that define activities in plasma
-    KConfigGroup plasmaConfigContainments = m_plasmaConfig->group("Containments");
+    KConfigGroup plasmaConfigContainments = m_plasmaConfig->group(QStringLiteral("Containments"));
 
     //!activityId and screen names for which their background was updated
     QHash<QString, QList<QString>> updates;
 
     for (const auto &containmentId : plasmaConfigContainments.groupList()) {
         const auto containment = plasmaConfigContainments.group(containmentId);
-        const auto wallpaperPlugin = containment.readEntry("wallpaperplugin", QString());
-        const auto lastScreen  = containment.readEntry("lastScreen", 0);
-        const auto activity    = containment.readEntry("activityId", QString());
+        const auto wallpaperPlugin = containment.readEntry(QStringLiteral("wallpaperplugin"), QString());
+        const auto lastScreen  = containment.readEntry(QStringLiteral("lastScreen"), 0);
+        const auto activity    = containment.readEntry(QStringLiteral("activityId"), QString());
 
         //! Ignore the containment if the activity is not defined or
         //! the containment is not a plasma desktop
@@ -140,7 +141,7 @@ void BackgroundCache::reload()
 
         QString background = returnedBackground;
 
-        if (background.startsWith("file://")) {
+        if (background.startsWith(QStringLiteral("file://"))) {
             background = returnedBackground.mid(7);
         }
 
@@ -301,9 +302,9 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
 
         QList<float> subBrightness;
 
-        qDebug() << "------------   -- Image Calculations --  --------------" ;
-        qDebug() << "Hints for Background image | " << imageFile;
-        qDebug() << "Hints for Background image | Edge: " << location << ", Image size: " << image.width() << "x" << image.height() << ", Tiles: " << tiles << ", subsize: " << tileWidth << "x" << tileHeight;
+        qCDebug(lattePlasma) << "------------   -- Image Calculations --  --------------" ;
+        qCDebug(lattePlasma) << "Hints for Background image | " << imageFile;
+        qCDebug(lattePlasma) << "Hints for Background image | Edge: " << location << ", Image size: " << image.width() << "x" << image.height() << ", Tiles: " << tiles << ", subsize: " << tileWidth << "x" << tileHeight;
 
         //! Iterating algorigthm
         int firstRow = 0; int firstColumn = 0; int endRow = 0; int endColumn = 0;
@@ -330,7 +331,7 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
                 endColumn = qMin(endColumn, imageLength);
 
                 int tempBrightness = normalizedBrightness(firstRow, firstColumn, endRow, endColumn);
-                qDebug() << " Tile considering horizontal << (" << firstColumn << "," << firstRow << ") - (" << endColumn << "," << endRow << "), subfactor: " << subFactor
+                qCDebug(lattePlasma) << " Tile considering horizontal << (" << firstColumn << "," << firstRow << ") - (" << endColumn << "," << endRow << "), subfactor: " << subFactor
                          << ", brightness: " << tempBrightness;
 
                 subBrightness.append(tempBrightness);
@@ -358,7 +359,7 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
                 endRow = qMin(endRow, imageLength);
 
                 int tempBrightness = normalizedBrightness(firstRow, firstColumn, endRow, endColumn);
-                qDebug() << " Tile considering vertical << (" << firstColumn << "," << firstRow << ") - (" << endColumn << "," << endRow << "), subfactor: " << subFactor
+                qCDebug(lattePlasma) << " Tile considering vertical << (" << firstColumn << "," << firstRow << ") - (" << endColumn << "," << endRow << "), subfactor: " << subFactor
                          << ", brightness: " << tempBrightness;
 
                 subBrightness.append(tempBrightness);
@@ -382,7 +383,7 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
 
         bool areaBusy = areaIsBusy(minBrightness, maxBrightness);
 
-        qDebug() << "Hints for Background image | Brightness: " << brightness << ", Busy: " << areaBusy << ", minBright:" << minBrightness << ", maxBright:" << maxBrightness;
+        qCDebug(lattePlasma) << "Hints for Background image | Brightness: " << brightness << ", Busy: " << areaBusy << ", minBright:" << minBrightness << ", maxBright:" << maxBrightness;
 
         if (!m_hintsCache.keys().contains(imageFile)) {
             m_hintsCache[imageFile] = EdgesHash();
@@ -408,7 +409,7 @@ float BackgroundCache::brightnessForFile(QString imageFile, Plasma::Types::Locat
     }
 
     //! if it is a color
-    if (imageFile.startsWith("#")) {
+    if (imageFile.startsWith(QLatin1Char('#'))) {
         return Latte::colorBrightness(QColor(imageFile));
     }
 
@@ -430,7 +431,7 @@ bool BackgroundCache::busyForFile(QString imageFile, Plasma::Types::Location loc
     }
 
     //! if it is a color
-    if (imageFile.startsWith("#")) {
+    if (imageFile.startsWith(QLatin1Char('#'))) {
         return false;
     }
 

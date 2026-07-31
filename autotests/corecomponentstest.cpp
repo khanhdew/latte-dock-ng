@@ -123,10 +123,10 @@ void CoreComponentsTest::screenPoolLoadsStoredConnectorsAndIgnoresInvalidIds()
     displayPort.name = QStringLiteral("DP-1");
     displayPort.geometry = QRect(1920, 0, 1920, 1080);
 
-    group.writeEntry("0", QStringLiteral("ignored-primary"));
-    group.writeEntry("-1", QStringLiteral("ignored-negative"));
-    group.writeEntry("10", hdmi.serialize());
-    group.writeEntry("11", displayPort.serialize());
+    group.writeEntry(QStringLiteral("0"), QStringLiteral("ignored-primary"));
+    group.writeEntry(QStringLiteral("-1"), QStringLiteral("ignored-negative"));
+    group.writeEntry(QStringLiteral("10"), hdmi.serialize());
+    group.writeEntry(QStringLiteral("11"), displayPort.serialize());
     group.sync();
 
     TestScreenPool pool(config);

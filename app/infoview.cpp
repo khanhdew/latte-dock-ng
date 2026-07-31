@@ -5,6 +5,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
+#include <latte_debug.h>
 #include "infoview.h"
 
 // local
@@ -23,9 +25,7 @@
 #include <QScreen>
 
 // KDE
-#include <KLocalizedContext>
 #include <KPackage/Package>
-#include <KDeclarative/KDeclarative>
 #include <KWindowSystem>
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
@@ -67,7 +67,7 @@ InfoView::~InfoView()
         m_corona->wm()->unregisterIgnoredWindow(m_trackedWindowId);
     }
 
-    qDebug() << "InfoView deleting ...";
+    qCDebug(latteApp) << "InfoView deleting ...";
 
     if (m_shellSurface) {
         delete m_shellSurface;
@@ -81,12 +81,6 @@ void InfoView::init()
 
     addLatteQmlImportPaths(engine());
 
-    KDeclarative::KDeclarative kdeclarative;
-    kdeclarative.setDeclarativeEngine(engine());
-    kdeclarative.setTranslationDomain(QString::fromLatin1(App::TRANSLATIONDOMAIN));
-    kdeclarative.setupContext();
-    kdeclarative.setupEngine(engine());
-
     auto source = QUrl::fromLocalFile(m_corona->kPackage().filePath("infoviewui"));
     setSource(source);
 
@@ -97,10 +91,10 @@ void InfoView::init()
 
 QString InfoView::validTitle() const
 {
-    return "#layoutinfowindow#" + m_id;
+    return QStringLiteral("#layoutinfowindow#") + m_id;
 }
 
-Plasma::FrameSvg::EnabledBorders InfoView::enabledBorders() const
+KSvg::FrameSvg::EnabledBorders InfoView::enabledBorders() const
 {
     return m_borders;
 }
@@ -185,7 +179,7 @@ void InfoView::setupWaylandIntegration()
             return;
         }
 
-        qDebug() << "wayland dock window surface was created...";
+        qCDebug(latteApp) << "wayland dock window surface was created...";
 
         m_shellSurface = interface->createSurface(s, this);
         m_corona->wm()->setViewExtraFlags(m_shellSurface);
@@ -223,7 +217,7 @@ bool InfoView::event(QEvent *e)
 
 void InfoView::setOnActivities(QStringList activities)
 {
-    const QString allActivitiesId = QString::fromLatin1(Latte::Data::Layout::ALLACTIVITIESID);
+    const QString allActivitiesId = Latte::Data::Layout::ALLACTIVITIESID;
 
     if (activities.isEmpty() || activities.contains(allActivitiesId) || activities.contains(QStringLiteral("0"))) {
         m_activities.clear();

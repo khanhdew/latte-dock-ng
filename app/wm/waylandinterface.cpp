@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "waylandinterface.h"
 
 // local
@@ -67,9 +68,9 @@ QList<QRect> plasmaPanelGeometriesFromConfig()
 
     for (const QString &containmentId : containmentsGroup.groupList()) {
         const KConfigGroup containment = containmentsGroup.group(containmentId);
-        if (containment.readEntry("plugin") != QLatin1String("org.kde.panel")) continue;
+        if (containment.readEntry(QStringLiteral("plugin")) != QLatin1String("org.kde.panel")) continue;
 
-        const int screenIndex = containment.readEntry("lastScreen", -1);
+        const int screenIndex = containment.readEntry(QStringLiteral("lastScreen"), -1);
         if (screenIndex < 0 || screenIndex >= screens.count()) continue;
 
         const KConfigGroup panelGroup = plasmaViewsGroup.group(QStringLiteral("Panel %1").arg(containmentId));
@@ -77,11 +78,11 @@ QList<QRect> plasmaPanelGeometriesFromConfig()
         if (!containment.hasGroup(QStringLiteral("Applets"))) continue;
 
         const KConfigGroup defaultsGroup = panelGroup.group(QStringLiteral("Defaults"));
-        const int thickness = defaultsGroup.readEntry("thickness", 0);
+        const int thickness = defaultsGroup.readEntry(QStringLiteral("thickness"), 0);
         if (thickness <= 0) continue;
 
         const auto location = static_cast<Plasma::Types::Location>(
-            containment.readEntry("location", int(Plasma::Types::Floating)));
+            containment.readEntry(QStringLiteral("location"), int(Plasma::Types::Floating)));
 
         panels.append({screenIndex, location, thickness});
     }
@@ -248,7 +249,7 @@ public:
         m_validGeometry = rect;
 
         if (!isVisible()) {
-            qDebug() << "wayland ghost window surface was created...";
+            qCDebug(latteWm) << "wayland ghost window surface was created...";
             show();
         }
     }

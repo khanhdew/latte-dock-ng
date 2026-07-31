@@ -16,7 +16,7 @@
 #include <QRect>
 
 // Plasma
-#include <Plasma/FrameSvg>
+#include <KSvg/FrameSvg>
 #include <Plasma/Theme>
 
 namespace Latte {
@@ -51,7 +51,7 @@ class Effects: public QObject
     Q_PROPERTY(QRect inputMask READ inputMask WRITE setInputMask NOTIFY inputMaskChanged)
     Q_PROPERTY(QRect appletsLayoutGeometry READ appletsLayoutGeometry WRITE setAppletsLayoutGeometry NOTIFY appletsLayoutGeometryChanged)
 
-    Q_PROPERTY(Plasma::FrameSvg::EnabledBorders enabledBorders READ enabledBorders NOTIFY enabledBordersChanged)
+    Q_PROPERTY(KSvg::FrameSvg::EnabledBorders enabledBorders READ enabledBorders NOTIFY enabledBordersChanged)
 
     Q_PROPERTY(QQuickItem *panelBackgroundSvg READ panelBackgroundSvg WRITE setPanelBackgroundSvg NOTIFY panelBackgroundSvgChanged)
 
@@ -106,7 +106,7 @@ public:
     QRect appletsLayoutGeometry() const;
     void setAppletsLayoutGeometry(const QRect &geom);
 
-    Plasma::FrameSvg::EnabledBorders enabledBorders() const;
+    KSvg::FrameSvg::EnabledBorders enabledBorders() const;
 
     QQuickItem *panelBackgroundSvg() const;
     void setPanelBackgroundSvg(QQuickItem *quickitem);
@@ -199,7 +199,7 @@ private:
     Plasma::Theme m_theme;
 
     //only for the mask, not to actually paint
-    Plasma::FrameSvg::EnabledBorders m_enabledBorders{Plasma::FrameSvg::AllBorders};
+    KSvg::FrameSvg::EnabledBorders m_enabledBorders{KSvg::FrameSvg::AllBorders};
 
     //assigned from qml side in order to access the official panel background svg
     QQuickItem *m_panelBackgroundSvg{nullptr};
@@ -211,7 +211,7 @@ private:
     //! Cache enabledBorders inputs to avoid redundant recomputation and
     //! shadow removal IPC on every geometry sync.
     bool m_bordersCacheValid{false};
-    Plasma::FrameSvg::EnabledBorders m_cachedEnabledBorders{Plasma::FrameSvg::AllBorders};
+    KSvg::FrameSvg::EnabledBorders m_cachedEnabledBorders{KSvg::FrameSvg::AllBorders};
     //! Inputs that produced m_cachedEnabledBorders
     int m_cacheLocation{0};
     int m_cacheAlignment{0};

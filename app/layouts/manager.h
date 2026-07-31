@@ -17,6 +17,7 @@
 #include "../settings/settingsdialog/settingsdialog.h"
 
 // Qt
+#include <QStringList>
 #include <QAction>
 #include <QObject>
 #include <QPointer>
@@ -71,7 +72,7 @@ public:
     void loadLayoutOnStartup(QString layoutName);
     void setOnAllActivities(QString layoutName);
     void setOnActivities(QString layoutName, QStringList activities);
-    void showInfoWindow(QString info, int duration, QStringList activities = {"{0}"});
+    void showInfoWindow(QString info, int duration, QStringList activities = {QStringLiteral("{0}")});
     void unload();
 
     QStringList currentLayoutsNames() const;

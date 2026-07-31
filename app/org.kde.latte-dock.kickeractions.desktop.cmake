@@ -4,7 +4,7 @@ Actions=addToLatteDock
 
 [Desktop Action addToLatteDock]
 Exec=@CMAKE_INSTALL_PREFIX@/bin/latte-dock-ng-add-launcher %u
-Icon=latte-dock
+Icon=apps-latte-dock
 Name=Add to Latte Dock
 Name[ca]=Afegeix a l'acoblador Latte
 Name[ca@valencia]=Afig a l'acoblador Latte

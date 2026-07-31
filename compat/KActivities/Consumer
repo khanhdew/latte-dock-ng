@@ -18,6 +18,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QDebug>
 #include <KActivities/Info>
 
 namespace KActivities {
@@ -33,6 +34,7 @@ public:
     explicit Consumer(QObject *parent = nullptr)
         : QObject(parent)
     {
+        qWarning() << "KActivities Consumer stub activated: real PlasmaActivities headers are unavailable, activities integration is degraded.";
     }
 
     QString currentActivity() const

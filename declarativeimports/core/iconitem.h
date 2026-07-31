@@ -22,7 +22,7 @@
 #include <QPixmap>
 
 // Plasma
-#include <Plasma/Svg>
+#include <KSvg/Svg>
 
 // this file is based on PlasmaCore::IconItem class, thanks to KDE
 namespace Latte {
@@ -185,7 +185,7 @@ private:
     QIcon m_icon;
     QPixmap m_iconPixmap;
     QImage m_imageIcon;
-    std::unique_ptr<Plasma::Svg> m_svgIcon;
+    std::unique_ptr<KSvg::Svg> m_svgIcon;
     QString m_svgIconName;
 
     //! can be used to track changes during source "changes" independent

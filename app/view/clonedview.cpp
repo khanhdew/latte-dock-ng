@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "clonedview.h"
 #include "containmentinterface.h"
 #include "visibilitymanager.h"
@@ -29,9 +30,9 @@ namespace Latte {
 const int ClonedView::ERRORAPPLETID;
 
 QStringList ClonedView::CONTAINMENTMANUALSYNCEDPROPERTIES = QStringList()
-        << QString("appletOrder")
-        << QString("lockedZoomApplets")
-        << QString("userBlocksColorizingApplets");  
+        << QStringLiteral("appletOrder")
+        << QStringLiteral("lockedZoomApplets")
+        << QStringLiteral("userBlocksColorizingApplets");  
 
 ClonedView::ClonedView(Plasma::Corona *corona, Latte::OriginalView *originalView, QScreen *targetScreen)
     : View(corona, targetScreen),
@@ -452,7 +453,7 @@ bool ClonedView::structuralSyncReady() const
 
 void ClonedView::debugSyncState(const QString &where) const
 {
-    qDebug() << "org.kde.sync"
+    qCDebug(latteView) << "org.kde.sync"
              << where
              << "originalContainment" << (m_originalView && m_originalView->containment() ? m_originalView->containment()->id() : 0)
              << "cloneContainment" << (containment() ? containment()->id() : 0)
@@ -558,7 +559,7 @@ void ClonedView::updateContainmentConfigProperty(const QString &key, const QVari
     if (!CONTAINMENTMANUALSYNCEDPROPERTIES.contains(key)) {
         extendedInterface()->updateContainmentConfigProperty(key, value);
     } else {
-        //qDebug() << "org.kde.sync :: containment config value syncing blocked :: " << key;
+        //qCDebug(latteView) << "org.kde.sync :: containment config value syncing blocked :: " << key;
     }
 }
 

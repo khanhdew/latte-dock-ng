@@ -10,25 +10,24 @@ add_custom_target(fake-target
     SOURCES ${QML_SRCS})
 
 # qmllint: qml static syntax checker
-if(${CMAKE_BUILD_TYPE} MATCHES "Debug" AND NOT DEFINED ECM_ENABLE_SANITIZERS)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT DEFINED ECM_ENABLE_SANITIZERS)
     find_program(QMLLINT qmllint)
 
     if(EXISTS "${QMLLINT}")
-        message("-- Found qmllint: ${QMLLINT}")
+        message(STATUS "Found qmllint: ${QMLLINT}")
         add_custom_command(TARGET latte-dock-ng PRE_BUILD
             COMMAND ${QMLLINT} ${QML_SRCS}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             COMMENT "Running qmllint")
     else()
-        message("-- qmllint: QML Syntax verifier not found")
+        message(STATUS "qmllint: QML Syntax verifier not found")
     endif()
 
-    message("-- Enabling QML debugging and profiling")
-    add_definitions(-DQT_QML_DEBUG)
-    add_definitions(-DQT_FATAL_WARNINGS)
+    message(STATUS "Enabling QML debugging and profiling")
+    target_compile_definitions(latte-dock-ng PRIVATE QT_QML_DEBUG QT_FATAL_WARNINGS)
 
-elseif(${CMAKE_BUILD_TYPE} MATCHES "Release")
-    message("-- Disabling debug info")
-    add_definitions(-DQT_NO_DEBUG)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    message(STATUS "Disabling debug info")
+    target_compile_definitions(latte-dock-ng PRIVATE QT_NO_DEBUG)
 
 endif()

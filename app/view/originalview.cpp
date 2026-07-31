@@ -167,7 +167,7 @@ void OriginalView::setNextLocationForClones(const QString layoutName, int edge, 
     }
 
     for (const auto clone : m_clones) {
-        clone->positioner()->setNextLocation(layoutName, Latte::Types::SingleScreenGroup, "", edge, alignment);
+        clone->positioner()->setNextLocation(layoutName, Latte::Types::SingleScreenGroup, QString(), edge, alignment);
     }
 }
 
@@ -268,7 +268,7 @@ void OriginalView::saveConfig()
     }
 
     auto config = this->containment()->config();
-    config.writeEntry("screensGroup", (int)m_screensGroup);
+    config.writeEntry(QStringLiteral("screensGroup"), (int)m_screensGroup);
     config.sync();
 }
 
@@ -279,7 +279,7 @@ void OriginalView::restoreConfig()
     }
 
     auto config = this->containment()->config();
-    m_screensGroup = static_cast<Latte::Types::ScreensGroup>(config.readEntry("screensGroup", (int)Latte::Types::SingleScreenGroup));
+    m_screensGroup = static_cast<Latte::Types::ScreensGroup>(config.readEntry(QStringLiteral("screensGroup"), (int)Latte::Types::SingleScreenGroup));
 
     //! Send changed signals at the end in order to be sure that saveConfig
     //! wont rewrite default/invalid values

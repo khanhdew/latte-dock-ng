@@ -4,11 +4,11 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-import QtQuick 2.7
-import QtQuick.Window 2.2
+import QtQuick 2.15
+import QtQuick.Window 2.15
 import QtQuick.Templates 2.2 as T
 import QtQuick.Controls 2.2 as Controls
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts 1.15
 import QtQuick.Effects
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents

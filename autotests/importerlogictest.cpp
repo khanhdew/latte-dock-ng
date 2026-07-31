@@ -35,12 +35,12 @@ FileVersion fileVersion(const QString &file, KSharedConfig::Ptr config = {})
 
     if (file.endsWith(QStringLiteral(".layout.latte"))) {
         KConfigGroup lg(cfg, QStringLiteral("LayoutSettings"));
-        int v = lg.readEntry("version", 1);
+        int v = lg.readEntry(QStringLiteral("version"), 1);
         return (v == 2) ? LayoutV2 : Unknown;
     }
     if (file.endsWith(QStringLiteral(".latterc"))) {
         KConfigGroup lg(cfg, QStringLiteral("LayoutSettings"));
-        int v = lg.readEntry("version", 1);
+        int v = lg.readEntry(QStringLiteral("version"), 1);
         return (v == 2) ? ConfigV2 : Unknown;
     }
     return Unknown;
@@ -174,7 +174,7 @@ void ImporterLogicTest::layoutV2Recognized()
     QTemporaryDir dir;
     const QString path = dir.path() + QStringLiteral("/v2.layout.latte");
     auto cfg = KSharedConfig::openConfig(path);
-    KConfigGroup(cfg, QStringLiteral("LayoutSettings")).writeEntry("version", 2);
+    KConfigGroup(cfg, QStringLiteral("LayoutSettings")).writeEntry(QStringLiteral("version"), 2);
     cfg->sync();
     QCOMPARE(ImporterLogic::fileVersion(path, cfg), ImporterLogic::LayoutV2);
 }
@@ -184,7 +184,7 @@ void ImporterLogicTest::layoutV1IsUnknown()
     QTemporaryDir dir;
     const QString path = dir.path() + QStringLiteral("/v1.layout.latte");
     auto cfg = KSharedConfig::openConfig(path);
-    KConfigGroup(cfg, QStringLiteral("LayoutSettings")).writeEntry("version", 1);
+    KConfigGroup(cfg, QStringLiteral("LayoutSettings")).writeEntry(QStringLiteral("version"), 1);
     cfg->sync();
     QCOMPARE(ImporterLogic::fileVersion(path, cfg), ImporterLogic::Unknown);
 }

@@ -68,7 +68,7 @@ namespace Latte {
 namespace App {
 
 inline constexpr const char TRANSLATIONDOMAIN[] = "latte-dock";
-inline constexpr const char ICONNAME[] = "latte-dock";
+inline const QString ICONNAME = QStringLiteral("apps-latte-dock");
 inline constexpr const char DESKTOPFILENAME[] = "org.kde.latte-dock";
 inline constexpr const char QMLURI[] = "latte-dock";
 inline constexpr const char PRIVATEQMLURI[] = "org.kde.latte.private.app";

@@ -44,8 +44,8 @@ unique_ptr<T> make_unique(Args &&... args)
  */
 inline QString qRectToStr(const QRect &r)
 {
-    return "(" % QString::number(r.x()) % ", " % QString::number(r.y()) % ") "
-           % QString::number(r.width()) % "x" % QString::number(r.height());
+    return QStringLiteral("(") % QString::number(r.x()) % QStringLiteral(", ") % QString::number(r.y()) % QStringLiteral(") ")
+           % QString::number(r.width()) % QLatin1Char('x') % QString::number(r.height());
 }
 
 /*!

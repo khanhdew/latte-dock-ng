@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "detailsdialog.h"
 
 // local
@@ -19,7 +20,7 @@ DetailsDialog::DetailsDialog(SettingsDialog *parent, Controller::Layouts *contro
       m_parentDlg(parent),
       m_ui(new Ui::DetailsDialog),
       m_layoutsController(controller),
-      m_storage(KConfigGroup(KSharedConfig::openConfig(),"LatteSettingsDialog").group("DetailsDialog"))
+      m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("DetailsDialog")))
 {
     setAttribute(Qt::WA_DeleteOnClose, true);
     loadConfig();
@@ -78,36 +79,36 @@ void DetailsDialog::updateApplyButtonsState()
 
 void DetailsDialog::accept()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 }
 
 void DetailsDialog::onOk()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     m_handler->save();
     close();
 }
 
 void DetailsDialog::onCancel()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     close();
 }
 
 void DetailsDialog::onReset()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     m_handler->reset();
 }
 
 void DetailsDialog::loadConfig()
 {
-    m_windowSize = m_storage.readEntry("windowSize", QSize(560, 640));
+    m_windowSize = m_storage.readEntry(QStringLiteral("windowSize"), QSize(560, 640));
 }
 
 void DetailsDialog::saveConfig()
 {
-    m_storage.writeEntry("windowSize", size());
+    m_storage.writeEntry(QStringLiteral("windowSize"), size());
     m_storage.sync();
 }
 

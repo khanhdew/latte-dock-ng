@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "actionshandler.h"
 
 // local
@@ -57,63 +58,63 @@ void ActionsHandler::initItems()
 
     QString itemid = Latte::Data::ContextMenu::LAYOUTSACTION;
     int itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme("user-identity"),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("user-identity")),
                                                               i18n("Layouts"),
                                                               itemindex,
                                                               itemid);
 
     itemid = Latte::Data::ContextMenu::PREFERENCESACTION;
     itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme("configure"),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("configure")),
                                                               i18nc("global settings window", "Configure Latte..."),
                                                               itemindex,
                                                               itemid);
 
     itemid = Latte::Data::ContextMenu::QUITLATTEACTION;
     itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme("application-exit"),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("application-exit")),
                                                               i18nc("quit application", "Quit Latte"),
                                                               itemindex,
                                                               itemid);
 
     itemid = Latte::Data::ContextMenu::SEPARATOR1ACTION;
     itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(""),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("")),
                                                               i18n(" --- separator --- "),
                                                               itemindex,
                                                               itemid);
 
     itemid = Latte::Data::ContextMenu::ADDWIDGETSACTION;
     itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme("list-add"),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("list-add")),
                                                               i18n("Add Widgets..."),
                                                               itemindex,
                                                               itemid);
 
     itemid = Latte::Data::ContextMenu::ADDVIEWACTION;
     itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme("list-add"),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("list-add")),
                                                               i18n("Add Dock"),
                                                               itemindex,
                                                               itemid);
 
     itemid = Latte::Data::ContextMenu::MOVEVIEWACTION;
     itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme("transform-move-horizontal"),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("transform-move-horizontal")),
                                                               i18n("Move Dock To Layout"),
                                                               itemindex,
                                                               itemid);
 
     itemid = Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION;
     itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme("document-export"),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("document-export")),
                                                               i18n("Export Dock as Template..."),
                                                               itemindex,
                                                               itemid);
 
     itemid = Latte::Data::ContextMenu::REMOVEVIEWACTION;
     itemindex = Latte::Data::ContextMenu::ACTIONSEDITORDER.indexOf(itemid);
-    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme("delete"),
+    m_items[itemid] = new ActionsDialog::ActionListWidgetItem(QIcon::fromTheme(QStringLiteral("delete")),
                                                               i18n("Remove Dock"),
                                                               itemindex,
                                                               itemid);
@@ -167,7 +168,7 @@ Data::GenericTable<Data::Generic> ActionsHandler::table(const QStringList &ids)
     Data::GenericTable<Data::Generic> bastable;
 
     for(int i=0; i<ids.count(); ++i) {
-        bastable << Data::Generic(ids[i], "");
+        bastable << Data::Generic(ids[i], QString());
     }
 
     return bastable;
@@ -205,13 +206,13 @@ void ActionsHandler::updateButtonEnablement()
 
 void ActionsHandler::onCancel()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     m_dialog->close();
 }
 
 void ActionsHandler::save()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
     m_dialog->preferencesHandler()->setContextMenuAlwaysActions(currentAlwaysData());
     m_dialog->close();
 }

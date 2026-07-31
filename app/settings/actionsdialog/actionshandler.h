@@ -12,6 +12,7 @@
 #include "../../data/generictable.h"
 
 // Qt
+#include <QStringList>
 #include <QHash>
 #include <QObject>
 

@@ -61,7 +61,7 @@ void TemplatesKeeper::clear()
 
 QString TemplatesKeeper::viewKeeperId(const QString &layoutCurrentId, const QString &viewId)
 {
-    return QString(layoutCurrentId + "#" + viewId);
+    return layoutCurrentId + QLatin1Char('#') + viewId;
 
 }
 

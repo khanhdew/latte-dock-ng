@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "environment.h"
 
 // Qt
@@ -52,7 +53,7 @@ Environment::Environment(QObject *parent)
             QIcon::setThemeName(currentIconTheme());
 
             QPixmapCache::clear();
-            qDebug() << "Environment::kdeglobals changed => reconfigure icon loader" << QIcon::themeName();
+            qCDebug(latteQml) << "Environment::kdeglobals changed => reconfigure icon loader" << QIcon::themeName();
             KIconLoader::global()->reconfigure(QString());
             markIconThemeChanged();
         };
@@ -144,7 +145,7 @@ void Environment::markIconThemeChanged()
 void Environment::emitIconThemeVersionChanged()
 {
     ++m_iconThemeVersion;
-    qDebug() << "Environment::iconThemeVersionChanged" << m_iconThemeVersion;
+    qCDebug(latteQml) << "Environment::iconThemeVersionChanged" << m_iconThemeVersion;
     Q_EMIT iconThemeVersionChanged();
 }
 

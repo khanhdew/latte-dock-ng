@@ -77,8 +77,8 @@ QSize CustomMenuItemWidget::sizeHint() const
     const int radioWidth = rowHeight; // matches paintEvent's radiosize = opt.rect.height()
 
     int screenTotal = 0;
+
     if (!m_screen.id.isEmpty()) {
-        const int iconLength = qMin(rowHeight, kMaxIconSize);
         QStyleOptionMenuItem screenOpt = opt;
         const int scrMaxLength = Latte::screenMaxLength(screenOpt, kMaxIconSize);
         screenTotal = scrMaxLength + kMargin * 2 + 1;
@@ -135,7 +135,7 @@ void CustomMenuItemWidget::paintEvent(QPaintEvent *)
     opt.rect = remained;
 
     //! text
-    opt.text = opt.text.remove("&");
+    opt.text = opt.text.remove(QLatin1Char('&'));
     if (qApp->layoutDirection() == Qt::LeftToRight) {
         //! add spacing
         remained = QRect(opt.rect.x() + kMargin , opt.rect.y(), opt.rect.width() - kMargin, opt.rect.height());
@@ -147,7 +147,7 @@ void CustomMenuItemWidget::paintEvent(QPaintEvent *)
     opt.rect = remained;
 
     if (m_screen.isActive && inScreensColumn) {
-        opt.text = "<b>" + opt.text + "</b>";
+        opt.text = QStringLiteral("<b>") + opt.text + QStringLiteral("</b>");
     }
 
     //style()->drawControl(QStyle::CE_MenuItem, &opt, &painter, this);

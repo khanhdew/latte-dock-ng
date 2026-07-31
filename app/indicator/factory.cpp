@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "factory.h"
 
 // local
@@ -65,7 +66,7 @@ Factory::Factory(QObject *parent)
     m_mainPaths = Latte::Layouts::Importer::standardPaths();
 
     for(int i=0; i<m_mainPaths.count(); ++i) {
-        m_mainPaths[i] = m_mainPaths[i] + "/latte/indicators";
+        m_mainPaths[i] = m_mainPaths[i] + QLatin1String("/latte/indicators");
         discoverNewIndicators(m_mainPaths[i]);
     }
 
@@ -91,7 +92,7 @@ Factory::Factory(QObject *parent)
         }
     });
 
-    qDebug() << m_plugins["org.kde.latte.default"].name();
+    qCDebug(latteIndicator) << m_plugins[QStringLiteral("org.kde.latte.default")].name();
 }
 
 Factory::~Factory()
@@ -137,7 +138,7 @@ void Factory::reload(const QString &indicatorPath)
 {
     QString pluginChangedId;
 
-    if (!indicatorPath.isEmpty() && indicatorPath != "." && indicatorPath != "..") {
+    if (!indicatorPath.isEmpty() && indicatorPath != QStringLiteral(".") && indicatorPath != QStringLiteral("..")) {
         QString metadataFile = metadataFileAbsolutePath(indicatorPath);
 
         if(QFileInfo(metadataFile).exists()) {
@@ -145,7 +146,7 @@ void Factory::reload(const QString &indicatorPath)
 
             if (metadataAreValid(metadata)) {
                 pluginChangedId = metadata.pluginId();
-                QString uiFile = indicatorPath + "/package/" + metadata.value("X-Latte-MainScript");
+                QString uiFile = indicatorPath + QLatin1String("/package/") + metadata.value(QStringLiteral("X-Latte-MainScript"));
 
                 // User-local installs (under $HOME) always take precedence over system-wide
                 // installs so a development override at ~/.local/share/latte/indicators wins
@@ -162,9 +163,9 @@ void Factory::reload(const QString &indicatorPath)
                     m_pluginUiPaths[metadata.pluginId()] = QFileInfo(uiFile).absolutePath();
                 }
 
-                if ((metadata.pluginId() != "org.kde.latte.default")
-                        && (metadata.pluginId() != "org.kde.latte.plasma")
-                        && (metadata.pluginId() != "org.kde.latte.plasmatabstyle")) {
+                if ((metadata.pluginId() != QStringLiteral("org.kde.latte.default"))
+                        && (metadata.pluginId() != QStringLiteral("org.kde.latte.plasma"))
+                        && (metadata.pluginId() != QStringLiteral("org.kde.latte.plasmatabstyle"))) {
 
                     //! find correct alphabetical position
                     int newPos = -1;
@@ -200,13 +201,13 @@ void Factory::reload(const QString &indicatorPath)
                 }
             }
 
-            qDebug() << " Indicator Package Loaded ::: " << metadata.name() << " [" << metadata.pluginId() << "]" << " - [" << indicatorPath <<"]";
+            qCDebug(latteIndicator) << " Indicator Package Loaded ::: " << metadata.name() << " [" << metadata.pluginId() << "]" << " - [" << indicatorPath <<"]";
 
-            /*qDebug() << " Indicator value ::: " << metadata.pluginId();
-                            qDebug() << " Indicator value ::: " << metadata.fileName();
-                            qDebug() << " Indicator value ::: " << metadata.value("X-Latte-MainScript");
-                            qDebug() << " Indicator value ::: " << metadata.value("X-Latte-ConfigUi");
-                            qDebug() << " Indicator value ::: " << metadata.value("X-Latte-ConfigXml");*/
+            /*qCDebug(latteIndicator) << " Indicator value ::: " << metadata.pluginId();
+                            qCDebug(latteIndicator) << " Indicator value ::: " << metadata.fileName();
+                            qCDebug(latteIndicator) << " Indicator value ::: " << metadata.value(QStringLiteral("X-Latte-MainScript"));
+                            qCDebug(latteIndicator) << " Indicator value ::: " << metadata.value("X-Latte-ConfigUi");
+                            qCDebug(latteIndicator) << " Indicator value ::: " << metadata.value("X-Latte-ConfigXml");*/
         }
     }
 
@@ -238,7 +239,7 @@ void Factory::discoverNewIndicators(const QString &main)
 void Factory::removeIndicatorRecords(const QString &path)
 {
     if (m_indicatorsPaths.contains(path)) {
-        QString pluginId =  path.section('/',-1);
+        QString pluginId =  path.section(QLatin1Char('/'), -1);
         m_plugins.remove(pluginId);
         m_pluginUiPaths.remove(pluginId);
 
@@ -267,14 +268,14 @@ void Factory::removeIndicatorRecords(const QString &path)
 
 bool Factory::isCustomType(const QString &id) const
 {
-    return ((id != "org.kde.latte.default") && (id != "org.kde.latte.plasma") && (id != "org.kde.latte.plasmatabstyle"));
+    return ((id != QStringLiteral("org.kde.latte.default")) && (id != QStringLiteral("org.kde.latte.plasma")) && (id != QStringLiteral("org.kde.latte.plasmatabstyle")));
 }
 
 bool Factory::metadataAreValid(KPluginMetaData &metadata)
 {
     return metadata.isValid()
             && metadata.category() == QLatin1String("Latte Indicator")
-            && !metadata.value("X-Latte-MainScript").isEmpty();
+            && !metadata.value(QStringLiteral("X-Latte-MainScript")).isEmpty();
 }
 
 bool Factory::metadataAreValid(QString &file)
@@ -290,7 +291,7 @@ bool Factory::metadataAreValid(QString &file)
 QString Factory::uiPath(QString pluginName) const
 {
     if (!m_pluginUiPaths.contains(pluginName)) {
-        return "";
+        return QString();
     }
 
     return m_pluginUiPaths[pluginName];
@@ -298,13 +299,13 @@ QString Factory::uiPath(QString pluginName) const
 
 QString Factory::metadataFileAbsolutePath(const QString &directoryPath)
 {
-    QString metadataFile = directoryPath + "/metadata.json";
+    QString metadataFile = directoryPath + QLatin1String("/metadata.json");
 
     if(QFileInfo(metadataFile).exists()) {
         return metadataFile;
     }
 
-    metadataFile = directoryPath + "/metadata.desktop";
+    metadataFile = directoryPath + QLatin1String("/metadata.desktop");
 
     if(QFileInfo(metadataFile).exists()) {
         return metadataFile;
@@ -316,13 +317,13 @@ QString Factory::metadataFileAbsolutePath(const QString &directoryPath)
 Latte::ImportExport::State Factory::importIndicatorFile(QString compressedFile)
 {
     auto showNotificationError = []() {
-        auto notification = new KNotification("import-fail", KNotification::CloseOnTimeout);
+        auto notification = new KNotification(QStringLiteral("import-fail"), KNotification::CloseOnTimeout);
         notification->setText(i18n("Failed to import indicator"));
         notification->sendEvent();
     };
 
     auto showNotificationSucceed = [](QString name, bool updated) {
-        auto notification = new KNotification("import-done", KNotification::CloseOnTimeout);
+        auto notification = new KNotification(QStringLiteral("import-done"), KNotification::CloseOnTimeout);
         notification->setText(updated ? i18nc("indicator_name, imported updated","%1 indicator updated successfully", name) :
                                         i18nc("indicator_name, imported success","%1 indicator installed successfully", name));
         notification->sendEvent();
@@ -381,7 +382,7 @@ Latte::ImportExport::State Factory::importIndicatorFile(QString compressedFile)
 
     if (metadataAreValid(metadata)) {
         QStringList standardPaths = Latte::Layouts::Importer::standardPaths();
-        QString installPath = standardPaths[0] + "/latte/indicators/" + metadata.pluginId();
+        QString installPath = standardPaths[0] + QLatin1String("/latte/indicators/") + metadata.pluginId();
 
         bool updated{QDir(installPath).exists()};
 
@@ -408,7 +409,7 @@ void Factory::removeIndicator(QString id)
 
         QDialog* dialog = new QDialog(nullptr);
         dialog->setWindowTitle(i18n("Remove Indicator Confirmation"));
-        dialog->setObjectName("warning");
+        dialog->setObjectName(QStringLiteral("warning"));
         dialog->setAttribute(Qt::WA_DeleteOnClose);
 
         auto buttonbox = new QDialogButtonBox(QDialogButtonBox::Yes | QDialogButtonBox::No);
@@ -425,17 +426,17 @@ void Factory::removeIndicator(QString id)
 
         connect(buttonbox, &QDialogButtonBox::accepted, [&, id, pluginName]() {
             auto showRemovedSucceed = [](QString name) {
-                auto notification = new KNotification("remove-done", KNotification::CloseOnTimeout);
+                auto notification = new KNotification(QStringLiteral("remove-done"), KNotification::CloseOnTimeout);
                 notification->setText(i18nc("indicator_name, removed success","<b>%1</b> indicator removed successfully", name));
                 notification->sendEvent();
             };
             auto showRemovedError = [](QString name) {
-                auto notification = new KNotification("remove-failed", KNotification::CloseOnTimeout);
+                auto notification = new KNotification(QStringLiteral("remove-failed"), KNotification::CloseOnTimeout);
                 notification->setText(i18nc("indicator_name, removed failure","Failed to remove <b>%1</b> indicator", name));
                 notification->sendEvent();
             };
 
-            qDebug() << "Trying to remove indicator :: " << id;
+            qCDebug(latteIndicator) << "Trying to remove indicator :: " << id;
 
             const QString kpackagetool = kPackageToolExecutable();
             if (kpackagetool.isEmpty()) {

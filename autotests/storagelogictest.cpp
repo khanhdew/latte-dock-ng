@@ -24,12 +24,12 @@ bool isValid(int id) { return id >= IDBASE; }
 bool appletGroupIsValid(const KConfigGroup &g) {
     return !(g.keyList().count()==0 && g.groupList().count()==1
              && g.groupList().at(0)==QLatin1String("Configuration")
-             && g.group("Configuration").keyList().count()==1
-             && g.group("Configuration").hasKey("PreloadWeight"));
+             && g.group(QStringLiteral("Configuration")).keyList().count()==1
+             && g.group(QStringLiteral("Configuration")).hasKey("PreloadWeight"));
 }
 
 bool isLatteContainmentGroup(const KConfigGroup &g) {
-    return g.readEntry("plugin", QString()) == QLatin1String(Latte::PluginId::kContainment);
+    return g.readEntry(QStringLiteral("plugin"), QString()) == QLatin1String(Latte::PluginId::kContainment);
 }
 
 QStringList containmentIds(KSharedConfigPtr c) {
@@ -102,65 +102,65 @@ void StorageLogicTest::idNullAndBaseConstants() {
 }
 
 void StorageLogicTest::normalAppletGroupIsValid() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Applets"); g.group(QStringLiteral("42")).group(QStringLiteral("Configuration")).writeEntry("plugin","x");
+    KConfigGroup g(c, QStringLiteral("Applets")); g.group(QStringLiteral("42")).group(QStringLiteral("Configuration")).writeEntry(QStringLiteral("plugin"), QStringLiteral("x"));
     QVERIFY(StorageLogic::appletGroupIsValid(g.group(QStringLiteral("42"))));
 }
 void StorageLogicTest::emptyShellWithPreloadWeightIsInvalid() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Applets"); g.group(QStringLiteral("99")).group(QStringLiteral("Configuration")).writeEntry("PreloadWeight",42);
+    KConfigGroup g(c, QStringLiteral("Applets")); g.group(QStringLiteral("99")).group(QStringLiteral("Configuration")).writeEntry(QStringLiteral("PreloadWeight"),42);
     QVERIFY(!StorageLogic::appletGroupIsValid(g.group(QStringLiteral("99"))));
 }
 void StorageLogicTest::groupWithKeysOrMultipleSubgroupsIsValid() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Applets"); g.group(QStringLiteral("1")).writeEntry("immutability",1);
+    KConfigGroup g(c, QStringLiteral("Applets")); g.group(QStringLiteral("1")).writeEntry(QStringLiteral("immutability"),1);
     QVERIFY(StorageLogic::appletGroupIsValid(g.group(QStringLiteral("1"))));
 }
 void StorageLogicTest::completelyEmptyGroupIsValid() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Applets"); g.group(QStringLiteral("77"));
+    KConfigGroup g(c, QStringLiteral("Applets")); g.group(QStringLiteral("77"));
     QVERIFY(StorageLogic::appletGroupIsValid(g.group(QStringLiteral("77"))));
 }
 
 void StorageLogicTest::latteContainmentPluginRecognized() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Containments"); g.group(QStringLiteral("1")).writeEntry("plugin",Latte::PluginId::kContainment);
+    KConfigGroup g(c, QStringLiteral("Containments")); g.group(QStringLiteral("1")).writeEntry(QStringLiteral("plugin"),Latte::PluginId::kContainment);
     QVERIFY(StorageLogic::isLatteContainmentGroup(g.group(QStringLiteral("1"))));
 }
 void StorageLogicTest::nonLattePluginsNotRecognized() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Containments"); g.group(QStringLiteral("1")).writeEntry("plugin","org.kde.panel");
+    KConfigGroup g(c, QStringLiteral("Containments")); g.group(QStringLiteral("1")).writeEntry(QStringLiteral("plugin"),"org.kde.panel");
     QVERIFY(!StorageLogic::isLatteContainmentGroup(g.group(QStringLiteral("1"))));
 }
 void StorageLogicTest::emptyPluginEntryNotRecognized() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Containments"); g.group(QStringLiteral("1"));
+    KConfigGroup g(c, QStringLiteral("Containments")); g.group(QStringLiteral("1"));
     QVERIFY(!StorageLogic::isLatteContainmentGroup(g.group(QStringLiteral("1"))));
 }
 
 void StorageLogicTest::containmentAndAppletIdExtraction() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Containments");
-    g.group(QStringLiteral("12")).writeEntry("plugin","x");
-    g.group(QStringLiteral("12")).group(QStringLiteral("Applets")).group(QStringLiteral("30")).writeEntry("plugin","a");
-    g.group(QStringLiteral("12")).group(QStringLiteral("Applets")).group(QStringLiteral("31")).writeEntry("plugin","b");
-    g.group(QStringLiteral("42")).writeEntry("plugin","y");
+    KConfigGroup g(c, QStringLiteral("Containments"));
+    g.group(QStringLiteral("12")).writeEntry(QStringLiteral("plugin"), QStringLiteral("x"));
+    g.group(QStringLiteral("12")).group(QStringLiteral("Applets")).group(QStringLiteral("30")).writeEntry(QStringLiteral("plugin"),"a");
+    g.group(QStringLiteral("12")).group(QStringLiteral("Applets")).group(QStringLiteral("31")).writeEntry(QStringLiteral("plugin"),"b");
+    g.group(QStringLiteral("42")).writeEntry(QStringLiteral("plugin"),"y");
     c->sync();
     QCOMPARE(StorageLogic::containmentIds(c).size(),2);
     QCOMPARE(StorageLogic::appletIds(c).size(),2);
 }
 void StorageLogicTest::containmentWithoutAppletsReturnsNoAppletIds() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Containments"); g.group(QStringLiteral("42")).writeEntry("plugin","x"); c->sync();
+    KConfigGroup g(c, QStringLiteral("Containments")); g.group(QStringLiteral("42")).writeEntry(QStringLiteral("plugin"), QStringLiteral("x")); c->sync();
     QVERIFY(StorageLogic::appletIds(c).isEmpty());
 }
 
@@ -190,13 +190,13 @@ void StorageLogicTest::nonBuiltInsNotRecognized() {
 }
 
 void StorageLogicTest::layoutFileWithContainmentsAndApplets() {
-    QTemporaryFile f(m_tmp.path()+"/t"); QVERIFY(f.open()); f.close();
+    QTemporaryFile f(m_tmp.path() + QLatin1String("/t")); QVERIFY(f.open()); f.close();
     auto c = KSharedConfig::openConfig(f.fileName());
-    KConfigGroup g(c,"Containments");
-    KConfigGroup c12=g.group(QStringLiteral("12")); c12.writeEntry("plugin",Latte::PluginId::kContainment);
-    c12.group(QStringLiteral("Applets")).group(QStringLiteral("30")).writeEntry("plugin","org.kde.plasma.analogclock");
-    KConfigGroup c42=g.group(QStringLiteral("42")); c42.writeEntry("plugin",Latte::PluginId::kContainment);
-    c42.group(QStringLiteral("Applets")).group(QStringLiteral("50")).writeEntry("plugin",Latte::PluginId::kSpacer);
+    KConfigGroup g(c, QStringLiteral("Containments"));
+    KConfigGroup c12=g.group(QStringLiteral("12")); c12.writeEntry(QStringLiteral("plugin"),Latte::PluginId::kContainment);
+    c12.group(QStringLiteral("Applets")).group(QStringLiteral("30")).writeEntry(QStringLiteral("plugin"),"org.kde.plasma.analogclock");
+    KConfigGroup c42=g.group(QStringLiteral("42")); c42.writeEntry(QStringLiteral("plugin"),Latte::PluginId::kContainment);
+    c42.group(QStringLiteral("Applets")).group(QStringLiteral("50")).writeEntry(QStringLiteral("plugin"),Latte::PluginId::kSpacer);
     c->sync();
     QCOMPARE(StorageLogic::containmentIds(c).size(),2);
     QCOMPARE(StorageLogic::appletIds(c).size(),2);

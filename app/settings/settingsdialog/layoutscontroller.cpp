@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "layoutscontroller.h"
 
 // local
@@ -53,7 +54,7 @@ Layouts::Layouts(Settings::Handler::TabLayouts *parent)
       m_proxyModel(new QSortFilterProxyModel(this)),
       m_view(m_handler->ui()->layoutsView),
       m_headerView(new Settings::Layouts::HeaderView(Qt::Horizontal, m_handler->dialog())),
-      m_storage(KConfigGroup(KSharedConfig::openConfig(),"LatteSettingsDialog").group("TabLayouts"))
+      m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("TabLayouts")))
 {   
     m_templatesKeeper = new Settings::Part::TemplatesKeeper(this, m_handler->corona());
 
@@ -91,7 +92,7 @@ Layouts::~Layouts()
     for (const auto &tempDir : m_tempDirectories) {
         QDir tDir(tempDir);
 
-        if (tDir.exists() && tempDir.startsWith("/tmp/")) {
+        if (tDir.exists() && tempDir.startsWith(QStringLiteral("/tmp/"))) {
             tDir.removeRecursively();
         }
     }
@@ -130,16 +131,16 @@ void Layouts::initView()
     m_view->sortByColumn(m_viewSortColumn, m_viewSortOrder);
 
     //!find the available colors
-    m_iconsPath = m_handler->corona()->kPackage().path() + "../../shells/org.kde.latte.shell/contents/images/canvas/";
+    m_iconsPath = m_handler->corona()->kPackage().path() + QLatin1String("../../shells/org.kde.latte.shell/contents/images/canvas/");
 
     QDir layoutDir(m_iconsPath);
     QStringList filter;
-    filter.append(QString("*print.jpg"));
+    filter.append(QStringLiteral("*print.jpg"));
     QStringList files = layoutDir.entryList(filter, QDir::Files | QDir::NoSymLinks);
     QStringList colors;
 
     for (auto &file : files) {
-        int colorEnd = file.lastIndexOf("print.jpg");
+        int colorEnd = file.lastIndexOf(QStringLiteral("print.jpg"));
         QString color = file.remove(colorEnd, 9);
         colors.append(color);
     }
@@ -199,10 +200,10 @@ bool Layouts::isSelectedLayoutOriginal() const
 
 QString Layouts::colorPath(const QString color) const
 {
-    QString path = m_iconsPath + color + "print.jpg";
+    QString path = m_iconsPath + color + QLatin1String("print.jpg");
 
     if (!QFileInfo(path).exists()) {
-        return m_iconsPath + "blueprint.jpg";
+        return m_iconsPath + QLatin1String("blueprint.jpg");
     }
 
     return path;
@@ -346,7 +347,7 @@ const Latte::Data::ScreensTable Layouts::screensData()
     //! Print no-removable screens
     /*for (int i=0; i<scrtable.rowCount(); ++i) {
         if (!scrtable[i].isRemovable) {
-            qDebug() <<"org.kde.latte NO REMOVABLE EXP SCREEN ::: " << scrtable[i].id;
+            qCDebug(latteSettings) <<"org.kde.latte NO REMOVABLE EXP SCREEN ::: " << scrtable[i].id;
         }
     }*/
 
@@ -468,14 +469,14 @@ QString Layouts::uniqueLayoutName(QString name)
     QString namePart = name;
 
     while (m_model->containsCurrentName(name) && i < 10000) {
-        name = namePart + " - " + QString::number(i);
+        name = namePart + QLatin1String(" - ") + QString::number(i);
         i++;
     }
 
     if (m_model->containsCurrentName(name)) {
         //! All numbered suffixes are taken — fall back to a random
         //! suffix instead of returning a name that still exists.
-        name = namePart + " - " + QString::number(QRandomGenerator::global()->generate(), 16);
+        name = namePart + QLatin1String(" - ") + QString::number(QRandomGenerator::global()->generate(), 16);
     }
 
     return name;
@@ -616,7 +617,7 @@ void Layouts::messageForErroredLayout(const Data::Layout &layout)
 {
     //! add actions
     QAction *examineaction = new QAction(i18n("Examine..."), this);
-    examineaction->setIcon(QIcon::fromTheme("document-preview"));
+    examineaction->setIcon(QIcon::fromTheme(QStringLiteral("document-preview")));
     examineaction->setData(layout.id);
     QList<QAction *> actions;
     actions << examineaction;
@@ -642,11 +643,11 @@ void Layouts::messageForErroredLayout(const Data::Layout &layout)
                                      actions);
     } else if (layout.hasErrors() && !layout.hasWarnings()) {
         //! add errors in the end in order to be read by the user
-        m_handler->showInlineMessage(i18nc("settings:named layout with errors",
-                                           "<b>Error: %2</b> layout has reported <b>1 error</b> that you need to repair.",
-                                           "<b>Error: %2</b> layout has reported <b>%1 errors</b> that you need to repair.",
-                                           layout.errors,
-                                           layout.name),
+        m_handler->showInlineMessage(i18ncp("settings:named layout with errors",
+                                            "<b>Error: %2</b> layout has reported <b>1 error</b> that you need to repair.",
+                                            "<b>Error: %2</b> layout has reported <b>%1 errors</b> that you need to repair.",
+                                            layout.errors,
+                                            layout.name),
                                      KMessageWidget::Error,
                                      true,
                                      actions);
@@ -749,7 +750,7 @@ const Latte::Data::Layout Layouts::addLayoutForFile(QString file, QString layout
     Latte::Data::Layout copied;
 
     if (newTempDirectory) {
-        copied.id = uniqueTempDirectory() + "/" + layoutName + ".layout.latte";
+        copied.id = uniqueTempDirectory() + QLatin1String("/") + layoutName + QStringLiteral(".layout.latte");
         QFile(file).copy(copied.id);
     } else {
         copied.id = file;
@@ -821,7 +822,7 @@ void Layouts::duplicateSelectedLayout()
     Latte::Data::Layout copied = selectedLayoutCurrent;
 
     copied.name = uniqueLayoutName(selectedLayoutCurrent.name);
-    copied.id = uniqueTempDirectory() + "/" + copied.name + ".layout.latte";;
+    copied.id = uniqueTempDirectory() + QLatin1String("/") + copied.name + QStringLiteral(".layout.latte");;
     copied.isActive = false;
     copied.isConsideredActive = false;
     copied.isLocked = false;
@@ -859,20 +860,20 @@ bool Layouts::importLayoutsFromV1ConfigFile(QString file)
 
         QString name = Latte::Layouts::Importer::nameOfConfigFile(file);
 
-        QString applets(tempDir.absolutePath() + "/" + "lattedock-appletsrc");
+        QString applets(tempDir.absolutePath() + QLatin1String("/lattedock-appletsrc"));
 
         if (QFile(applets).exists()) {
             QStringList importedlayouts;
 
             if (m_handler->corona()->layoutsManager()->importer()->importOldLayout(applets, name, false, tempDir.absolutePath())) {
-                Latte::Data::Layout imported = addLayoutForFile(tempDir.absolutePath() + "/" + name + ".layout.latte", name);
+                Latte::Data::Layout imported = addLayoutForFile(tempDir.absolutePath() + QLatin1String("/") + name + QStringLiteral(".layout.latte"), name);
                 importedlayouts << imported.name;
             }
 
-            QString alternativeName = name + "-" + i18nc("layout", "Alternative");
+            QString alternativeName = name + QLatin1Char('-') + i18nc("layout", "Alternative");
 
             if (m_handler->corona()->layoutsManager()->importer()->importOldLayout(applets, alternativeName, false, tempDir.absolutePath())) {
-                Latte::Data::Layout imported = addLayoutForFile(tempDir.absolutePath() + "/" + alternativeName + ".layout.latte", alternativeName, false);
+                Latte::Data::Layout imported = addLayoutForFile(tempDir.absolutePath() + QLatin1String("/") + alternativeName + QStringLiteral(".layout.latte"), alternativeName, false);
                 importedlayouts << imported.name;
             }
 
@@ -880,7 +881,7 @@ bool Layouts::importLayoutsFromV1ConfigFile(QString file)
                 m_handler->showInlineMessage(i18np("Layout <b>%2</b> imported successfully...",
                                                    "Layouts <b>%2</b> imported successfully...",
                                                    importedlayouts.count(),
-                                                   importedlayouts.join(",")),
+                                                   importedlayouts.join(QLatin1Char(','))),
                         KMessageWidget::Positive);
 
                 return true;
@@ -910,7 +911,7 @@ void Layouts::save()
 
     QTemporaryDir layoutTempDir;
 
-    qDebug() << "Temporary Directory ::: " << layoutTempDir.path();
+    qCDebug(latteSettings) << "Temporary Directory ::: " << layoutTempDir.path();
 
     QString switchToLayout;
 
@@ -934,7 +935,7 @@ void Layouts::save()
         Latte::Data::Layout iLayoutOriginalData = m_model->originalData(iLayoutCurrentData.id);
         iLayoutOriginalData = iLayoutOriginalData.isEmpty() ? iLayoutCurrentData : iLayoutOriginalData;
 
-        //qDebug() << i << ". " << id << " - " << color << " - " << name << " - " << menu << " - " << lActivities;
+        //qCDebug(latteSettings) << i << ". " << id << " - " << color << " - " << name << " - " << menu << " - " << lActivities;
         //! update the generic parts of the layouts
         bool isOriginalLayout = m_model->originalLayoutsData().containsId(iLayoutCurrentData.id);
         Latte::CentralLayout *centralActive= isOriginalLayout ? m_handler->corona()->layoutsManager()->synchronizer()->centralLayout(iLayoutOriginalData.name) : nullptr;
@@ -963,12 +964,12 @@ void Layouts::save()
         if ((iLayoutCurrentData.name != iLayoutOriginalData.name) || iLayoutCurrentData.isTemporary()) {
             //! If the layout is Active in MultipleLayouts
             if (central->isActive()) {
-                qDebug() << " Active Layout Should Be Renamed From : " << central->name() << " TO :: " << iLayoutCurrentData.name;
+                qCDebug(latteSettings) << " Active Layout Should Be Renamed From : " << central->name() << " TO :: " << iLayoutCurrentData.name;
                 activeLayoutsToRename[iLayoutCurrentData.name] = central;
             }
 
-            QString tempFile = layoutTempDir.path() + "/" + QString(central->name() + ".layout.latte");
-            qDebug() << "new temp file ::: " << tempFile;
+            QString tempFile = layoutTempDir.path() + QLatin1String("/") + central->name() + QStringLiteral(".layout.latte");
+            qCDebug(latteSettings) << "new temp file ::: " << tempFile;
 
             QFile(iLayoutCurrentData.id).rename(tempFile);
 
@@ -1005,7 +1006,7 @@ void Layouts::save()
     if (m_handler->corona()->layoutsManager()->memoryUsage() == MemoryUsage::MultipleLayouts) {
         for (const auto &newLayoutName : activeLayoutsToRename.keys()) {
             Latte::CentralLayout *layoutPtr = activeLayoutsToRename[newLayoutName];
-            qDebug() << " Active Layout of Type: " << layoutPtr->type() << " Is Renamed From : " << activeLayoutsToRename[newLayoutName]->name() << " TO :: " << newLayoutName;
+            qCDebug(latteSettings) << " Active Layout of Type: " << layoutPtr->type() << " Is Renamed From : " << activeLayoutsToRename[newLayoutName]->name() << " TO :: " << newLayoutName;
             layoutPtr->renameLayout(newLayoutName);
         }
     }
@@ -1045,7 +1046,7 @@ void Layouts::save()
 
         m_handler->corona()->layoutsManager()->switchToLayout(nextSingleLayoutName, MemoryUsage::SingleLayout);
     }  else {
-        m_handler->corona()->layoutsManager()->switchToLayout("", MemoryUsage::MultipleLayouts);
+        m_handler->corona()->layoutsManager()->switchToLayout(QString(), MemoryUsage::MultipleLayouts);
     }
 
     m_model->applyData();
@@ -1059,7 +1060,7 @@ void Layouts::save()
 void Layouts::storeColumnWidths(bool inMultipleMode)
 {   
     if (m_viewColumnWidths.isEmpty()) {
-        m_viewColumnWidths << "" << "" << "";
+        m_viewColumnWidths << QString() << QString() << QString();
     }
 
     m_viewColumnWidths[0] = QString::number(m_view->columnWidth(Model::Layouts::BACKGROUNDCOLUMN));
@@ -1113,16 +1114,16 @@ void Layouts::loadConfig()
     defaultcolumnwidths << QString::number(48) << QString::number(508) << QString::number(129) << QString::number(104);
 
     //! new storage
-    m_viewColumnWidths = m_storage.readEntry("columnWidths", defaultcolumnwidths);
-    m_viewSortColumn = m_storage.readEntry("sortColumn", static_cast<int>(Model::Layouts::NAMECOLUMN));
-    m_viewSortOrder = static_cast<Qt::SortOrder>(m_storage.readEntry("sortOrder", (int)Qt::AscendingOrder));
+    m_viewColumnWidths = m_storage.readEntry(QStringLiteral("columnWidths"), defaultcolumnwidths);
+    m_viewSortColumn = m_storage.readEntry(QStringLiteral("sortColumn"), static_cast<int>(Model::Layouts::NAMECOLUMN));
+    m_viewSortOrder = static_cast<Qt::SortOrder>(m_storage.readEntry(QStringLiteral("sortOrder"), static_cast<int>(Qt::AscendingOrder)));
 }
 
 void Layouts::saveConfig()
 {
-    m_storage.writeEntry("columnWidths", m_viewColumnWidths);
-    m_storage.writeEntry("sortColumn", m_viewSortColumn);
-    m_storage.writeEntry("sortOrder", static_cast<int>(m_viewSortOrder));
+    m_storage.writeEntry(QStringLiteral("columnWidths"), m_viewColumnWidths);
+    m_storage.writeEntry(QStringLiteral("sortColumn"), m_viewSortColumn);
+    m_storage.writeEntry(QStringLiteral("sortOrder"), static_cast<int>(m_viewSortOrder));
     m_storage.sync();
 }
 

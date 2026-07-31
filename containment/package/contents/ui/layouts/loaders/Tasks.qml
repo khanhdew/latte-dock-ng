@@ -3,7 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.7
+import QtQuick 2.15
 
 import org.kde.taskmanager 0.1 as TaskManager
 

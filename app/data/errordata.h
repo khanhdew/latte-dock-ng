@@ -23,10 +23,10 @@ class Error : public Data::Generic
 {
 public:
     //!errors and warnings use a step of four between them
-    static constexpr const char* APPLETSWITHSAMEID = "E103";
-    static constexpr const char* ORPHANEDPARENTAPPLETOFSUBCONTAINMENT = "E107";
-    static constexpr const char* ORPHANEDSUBCONTAINMENT = "W201";
-    static constexpr const char* APPLETANDCONTAINMENTWITHSAMEID = "W205";
+    static inline const QString APPLETSWITHSAMEID = QStringLiteral("E103");
+    static inline const QString ORPHANEDPARENTAPPLETOFSUBCONTAINMENT = QStringLiteral("E107");
+    static inline const QString ORPHANEDSUBCONTAINMENT = QStringLiteral("W201");
+    static inline const QString APPLETANDCONTAINMENTWITHSAMEID = QStringLiteral("W205");
 
     Error();
     Error(Error &&o);

@@ -29,12 +29,11 @@ void SingleText::paint(QPainter *painter, const QStyleOptionViewItem &option, co
 
     bool isActive = index.data(Model::Views::ISACTIVEROLE).toBool();
     bool isMoveOrigin = index.data(Model::Views::ISMOVEORIGINROLE).toBool();
-    bool isChanged = isMoveOrigin;
 
     float textopacity = 1.0;
 
     if (isActive) {
-        myOptions.text = "<b>" + myOptions.text + "</b>";
+        myOptions.text = QStringLiteral("<b>") + myOptions.text + QStringLiteral("</b>");
     }
 
     if (isMoveOrigin) {

@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "positioner.h"
 
 // local
@@ -28,7 +29,7 @@
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
 
-#define RELOCATIONSHOWINGEVENT "viewInRelocationShowing"
+#define RELOCATIONSHOWINGEVENT QStringLiteral("viewInRelocationShowing")
 
 namespace Latte {
 namespace ViewPart {
@@ -298,7 +299,7 @@ WindowSystem::AbstractWindowInterface::Slide Positioner::slideLocation(Plasma::T
         break;
 
     default:
-        qDebug() << staticMetaObject.className() << "wrong location";
+        qCDebug(latteView) << staticMetaObject.className() << "wrong location";
         break;
     }
 
@@ -372,7 +373,7 @@ void Positioner::setScreenToFollow(QScreen *scr, bool updateScreenId)
         return;
     }
 
-    qDebug() << "setScreenToFollow() called for screen:" << scr->name() << " update:" << updateScreenId;
+    qCDebug(latteView) << "setScreenToFollow() called for screen:" << scr->name() << " update:" << updateScreenId;
 
     m_screenToFollow = scr;
 
@@ -380,7 +381,7 @@ void Positioner::setScreenToFollow(QScreen *scr, bool updateScreenId)
         m_screenNameToFollow = scr->name();
     }
 
-    qDebug() << "adapting to screen...";
+    qCDebug(latteView) << "adapting to screen...";
     m_view->setScreen(scr);
 
     updateContainmentScreen();
@@ -388,7 +389,7 @@ void Positioner::setScreenToFollow(QScreen *scr, bool updateScreenId)
     connect(scr, &QScreen::geometryChanged, this, &Positioner::screenGeometryChanged);
     syncGeometry();
     m_view->updateAbsoluteGeometry(true);
-    qDebug() << "setScreenToFollow() ended...";
+    qCDebug(latteView) << "setScreenToFollow() ended...";
 
     Q_EMIT screenGeometryChanged();
     Q_EMIT currentScreenChanged();
@@ -402,11 +403,11 @@ void Positioner::reconsiderScreen()
         return;
     }
 
-    qDebug() << "reconsiderScreen() called...";
-    qDebug() << "  Delayer  ";
+    qCDebug(latteView) << "reconsiderScreen() called...";
+    qCDebug(latteView) << "  Delayer  ";
 
     for (const auto scr : qGuiApp->screens()) {
-        qDebug() << "      D, found screen: " << scr->name();
+        qCDebug(latteView) << "      D, found screen: " << scr->name();
     }
 
     bool screenExists{false};
@@ -420,7 +421,7 @@ void Positioner::reconsiderScreen()
         }
     }
 
-    qDebug() << "dock screen exists  ::: " << screenExists;
+    qCDebug(latteView) << "dock screen exists  ::: " << screenExists;
 
     //! 1.a primary dock must be always on the primary screen.
     //! Skip this check during an active relocation animation (screen
@@ -431,7 +432,7 @@ void Positioner::reconsiderScreen()
             || m_screenToFollow != primaryScreen
             || m_view->screen() != primaryScreen)) {
         //! case 1
-        qDebug() << "reached case 1: of updating dock primary screen...";
+        qCDebug(latteView) << "reached case 1: of updating dock primary screen...";
         setScreenToFollow(primaryScreen);
     } else if (!m_view->onPrimary()) {
         //! 2.an explicit dock must be always on the correct associated screen
@@ -439,7 +440,7 @@ void Positioner::reconsiderScreen()
         //! ensures that this dock will return at its correct screen
         for (const auto scr : qGuiApp->screens()) {
             if (scr && scr->name() == m_screenNameToFollow) {
-                qDebug() << "reached case 2: updating the explicit screen for dock...";
+                qCDebug(latteView) << "reached case 2: updating the explicit screen for dock...";
                 setScreenToFollow(scr);
                 break;
             }
@@ -447,7 +448,7 @@ void Positioner::reconsiderScreen()
     }
 
     syncGeometry();
-    qDebug() << "reconsiderScreen() ended...";
+    qCDebug(latteView) << "reconsiderScreen() ended...";
 }
 
 void Positioner::onScreenChanged(QScreen *scr)
@@ -470,7 +471,7 @@ void Positioner::syncGeometry()
         return;
     }
 
-    qDebug() << "syncGeometry() called...";
+    qCDebug(latteView) << "syncGeometry() called...";
 
     if (!m_syncGeometryTimer.isActive()) {
         m_syncGeometryTimer.start();
@@ -481,15 +482,15 @@ void Positioner::immediateSyncGeometry()
 {
     bool found{false};
 
-    qDebug() << "immediateSyncGeometry() called...";
+    qCDebug(latteView) << "immediateSyncGeometry() called...";
 
     //! before updating the positioning and geometry of the dock
     //! we make sure that the dock is at the correct screen
     if (m_view->screen() != m_screenToFollow) {
-        qDebug() << "Sync Geometry screens inconsistent!!!! ";
+        qCDebug(latteView) << "Sync Geometry screens inconsistent!!!! ";
 
         if (m_screenToFollow) {
-            qDebug() << "Sync Geometry screens inconsistent for m_screenToFollow:" << m_screenToFollow->name() << " dock screen:" << m_view->screen()->name();
+            qCDebug(latteView) << "Sync Geometry screens inconsistent for m_screenToFollow:" << m_screenToFollow->name() << " dock screen:" << m_view->screen()->name();
         }
 
         if (!m_screenSyncTimer.isActive()) {
@@ -595,13 +596,13 @@ void Positioner::immediateSyncGeometry()
         updatePosition(availableScreenRect);
         updateCanvasGeometry(availableScreenRect);
 
-        qDebug() << "syncGeometry() calculations for screen: " << m_view->screen()->name() << " _ " << m_view->screen()->geometry();
-        qDebug() << "syncGeometry() calculations for edge: " << m_view->location();
+        qCDebug(latteView) << "syncGeometry() calculations for screen: " << m_view->screen()->name() << " _ " << m_view->screen()->geometry();
+        qCDebug(latteView) << "syncGeometry() calculations for edge: " << m_view->location();
     }
 
-    qDebug() << "syncGeometry() ended...";
+    qCDebug(latteView) << "syncGeometry() ended...";
 
-    // qDebug() << "dock geometry:" << qRectToStr(geometry());
+    // qCDebug(latteView) << "dock geometry:" << qRectToStr(geometry());
 }
 
 void Positioner::validateDockGeometry()
@@ -747,7 +748,7 @@ void Positioner::updateCanvasGeometry(QRect availableScreenRect)
                                               && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
 
         if (transientDesktopLocation) {
-            qDebug() << "transient desktop/floating location while updating canvas geometry"
+            qCDebug(latteView) << "transient desktop/floating location while updating canvas geometry"
                      << m_view->location()
                      << " containment location:" << containmentLocation;
         } else {
@@ -795,7 +796,7 @@ void Positioner::updatePosition(QRect availableScreenRect)
                                               && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
 
         if (transientDesktopLocation) {
-            qDebug() << "transient desktop/floating location while updating panel position"
+            qCDebug(latteView) << "transient desktop/floating location while updating panel position"
                      << m_view->location()
                      << " containment location:" << containmentLocation;
         } else {
@@ -889,7 +890,7 @@ void Positioner::updateFormFactor()
                                               && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
 
         if (transientDesktopLocation) {
-            qDebug() << "transient desktop/floating location while updating form factor"
+            qCDebug(latteView) << "transient desktop/floating location while updating form factor"
                      << m_view->location()
                      << " containment location:" << containmentLocation;
         } else {
@@ -949,7 +950,7 @@ void Positioner::initSignalingForLocationChangeSliding()
                 && confirmedgeometry) {
             bool isrelocationlastevent = isLastHidingRelocationEvent();
             m_nextScreen = nullptr;
-            m_nextScreenName = "";
+            m_nextScreenName = QString();
 
             //! make sure that View has been repositioned properly in next screen and show view afterwards
             if (isrelocationlastevent) {
@@ -964,7 +965,7 @@ void Positioner::initSignalingForLocationChangeSliding()
     connect(m_view, &View::layoutChanged, this, [this]() {
         if (!m_nextLayoutName.isEmpty() && m_view->layout()) {
             bool isrelocationlastevent = isLastHidingRelocationEvent();
-            m_nextLayoutName = "";
+            m_nextLayoutName = QString();
 
             //! make sure that View has been repositioned properly in next layout and show view afterwards
             if (isrelocationlastevent) {

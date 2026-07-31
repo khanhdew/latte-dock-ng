@@ -7,6 +7,7 @@
 #define VIEWSCONTROLLER_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 #include "viewsmodel.h"
 #include "../../lattecorona.h"

@@ -13,6 +13,7 @@ set(lattecoreplugin_SRCS
 add_library(lattecoreplugin SHARED ${lattecoreplugin_SRCS})
 
 target_link_libraries(lattecoreplugin
+    latteLogging
     Qt6::Quick
     Qt6::Qml
     KF6::CoreAddons

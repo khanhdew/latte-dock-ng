@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "viewstable.h"
 
 #include <QDebug>
@@ -10,7 +11,7 @@
 namespace Latte {
 namespace Data {
 
-const char *TEMPIDPREFIX = "temp:";
+const QString TEMPIDPREFIX = QStringLiteral("temp:");
 
 ViewsTable::ViewsTable()
     : GenericTable<View>()
@@ -110,7 +111,7 @@ void ViewsTable::appendTemporaryView(const Data::View &view)
     for(int i=0; i<rowCount(); ++i) {
         if ((*this)[i].id.startsWith(TEMPIDPREFIX)) {
             QString tid = (*this)[i].id;
-            tid.remove(0, QString(TEMPIDPREFIX).size());
+            tid.remove(0, TEMPIDPREFIX.size());
             if (tid.toInt() > maxTempId) {
                 maxTempId = tid.toInt();
             }
@@ -118,17 +119,17 @@ void ViewsTable::appendTemporaryView(const Data::View &view)
     }
 
     Data::View newview = view;
-    newview.id =  QString(TEMPIDPREFIX + QString::number(maxTempId+1));
+    newview.id =  TEMPIDPREFIX + QString::number(maxTempId + 1);
     m_list << newview;
 }
 
 void ViewsTable::print()
 {
-    qDebug().noquote() << "Views initialized : " + (isInitialized ? QString("true") : QString("false"));
-    qDebug().noquote() << "aa | id | active | primary | screen | edge | alignment | maxlength | subcontainments";
+    qCDebug(latteApp).noquote() << QStringLiteral("Views initialized : ") + (isInitialized ? QStringLiteral("true") : QStringLiteral("false"));
+    qCDebug(latteApp).noquote() << "aa | id | active | primary | screen | edge | alignment | maxlength | subcontainments";
 
     for(int i=0; i<rowCount(); ++i) {
-        qDebug().noquote() << QString::number(i+1) << " | " << m_list[i];
+        qCDebug(latteApp).noquote() << QString::number(i+1) << " | " << m_list[i];
     }
 }
 

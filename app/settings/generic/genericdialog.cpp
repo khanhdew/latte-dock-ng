@@ -97,7 +97,7 @@ void GenericDialog::showInlineMessage(const QString &msg, const KMessageWidget::
 
     if (actions.count() > 0) {
         QAction *cancelaction = new QAction(i18n("Hide"), this);
-        cancelaction->setIcon(QIcon::fromTheme("dialog-cancel"));
+        cancelaction->setIcon(QIcon::fromTheme(QStringLiteral("dialog-cancel")));
         actions << cancelaction;
     }
 

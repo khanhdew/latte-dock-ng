@@ -208,7 +208,7 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
             }
         }
 
-        if (data.id.endsWith(".desktop")) {
+        if (data.id.endsWith(QStringLiteral(".desktop"))) {
             data.id = data.id.left(data.id.length() - 8);
         }
     } else if (url.scheme() == QLatin1String("preferred")) {
@@ -293,12 +293,12 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
 
     if (!(appId.isEmpty() && xWindowsWMClassName.isEmpty())) {
         // Check to see if this wmClass matched a saved one ...
-        KConfigGroup grp(rulesConfig, "Mapping");
-        KConfigGroup set(rulesConfig, "Settings");
+        KConfigGroup grp(rulesConfig, QStringLiteral("Mapping"));
+        KConfigGroup set(rulesConfig, QStringLiteral("Settings"));
 
         // Evaluate MatchCommandLineFirst directives from config first.
         // Some apps have different launchers depending upon command line ...
-        QStringList matchCommandLineFirst = set.readEntry("MatchCommandLineFirst", QStringList());
+        QStringList matchCommandLineFirst = set.readEntry(QStringLiteral("MatchCommandLineFirst"), QStringList());
 
         if (!appId.isEmpty() && matchCommandLineFirst.contains(appId)) {
             triedPid = true;
@@ -306,14 +306,14 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
         }
 
         // Try to match using xWindowsWMClassName also.
-        if (!xWindowsWMClassName.isEmpty() && matchCommandLineFirst.contains("::" + xWindowsWMClassName)) {
+        if (!xWindowsWMClassName.isEmpty() && matchCommandLineFirst.contains(QStringLiteral("::") + xWindowsWMClassName)) {
             triedPid = true;
             services = servicesFromPid(pid, rulesConfig);
         }
 
         if (!appId.isEmpty()) {
             // Evaluate any mapping rules that map to a specific .desktop file.
-            QString mapped(grp.readEntry(appId + "::" + xWindowsWMClassName, QString()));
+            QString mapped(grp.readEntry(appId + QLatin1String("::") + xWindowsWMClassName, QString()));
 
             if (mapped.endsWith(QLatin1String(".desktop"))) {
                 url = QUrl(mapped);
@@ -331,7 +331,7 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
 
             // Some apps, such as Wine, cannot use xWindowsWMClassName to map to launcher name - as Wine itself is not a GUI app
             // So, Settings/ManualOnly lists window classes where the user will always have to manually set the launcher ...
-            QStringList manualOnly = set.readEntry("ManualOnly", QStringList());
+            QStringList manualOnly = set.readEntry(QStringLiteral("ManualOnly"), QStringList());
 
             if (!appId.isEmpty() && manualOnly.contains(appId)) {
                 return url;
@@ -461,7 +461,7 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
             // This config key allows listing the bogus metadata, and the matching window
             // tasks are hidden until they perform a metadate update that stops them from
             // matching.
-            QStringList skipTaskbar = set.readEntry("SkipTaskbar", QStringList());
+            QStringList skipTaskbar = set.readEntry(QStringLiteral("SkipTaskbar"), QStringList());
 
             if (skipTaskbar.contains(appId)) {
                 QUrlQuery query(url);
@@ -499,7 +499,7 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
         QMutableListIterator<KService::Ptr> it(matchingServices);
         while (it.hasNext()) {
             auto service = it.next();
-            if (!service->desktopEntryName().endsWith("." + appId)) {
+            if (!service->desktopEntryName().endsWith(QStringLiteral(".") + appId)) {
                 it.remove();
             }
         }
@@ -550,7 +550,7 @@ KService::List servicesFromPid(quint32 pid, KSharedConfig::Ptr rulesConfig)
     }
 
     // Read the BAMF_DESKTOP_FILE_HINT environment variable which contains the actual desktop file path for Snaps.
-    QFile environFile(QStringLiteral("/proc/%1/environ").arg(QString::number(pid)));
+    QFile environFile(QStringLiteral("/proc/%1/environ").arg(pid));
     if (environFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         const QByteArray bamfDesktopFileHint = QByteArrayLiteral("BAMF_DESKTOP_FILE_HINT");
 
@@ -598,14 +598,14 @@ KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &proce
         return services;
     }
 
-    const int firstSpace = cmdLine.indexOf(' ');
+    const int firstSpace = cmdLine.indexOf(QLatin1Char(' '));
     int slash = 0;
 
     services = KApplicationTrader::query([cmdLine](const KService::Ptr &s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
 
     if (services.isEmpty()) {
         // Could not find with complete command line, so strip out the path part ...
-        slash = cmdLine.lastIndexOf('/', firstSpace);
+        slash = cmdLine.lastIndexOf(QLatin1Char('/'), firstSpace);
 
         if (slash > 0) {
             services =
@@ -620,7 +620,7 @@ KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &proce
         services = KApplicationTrader::query([cmdLine](const KService::Ptr &s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
 
         if (services.isEmpty()) {
-            slash = cmdLine.lastIndexOf('/');
+            slash = cmdLine.lastIndexOf(QLatin1Char('/'));
 
             if (slash > 0) {
                 services = KApplicationTrader::query([&cmdLine, slash](const KService::Ptr &s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine.mid(slash + 1)); });
@@ -629,8 +629,8 @@ KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &proce
     }
 
     if (services.isEmpty()) {
-        KConfigGroup set(rulesConfig, "Settings");
-        const QStringList &runtimes = set.readEntry("TryIgnoreRuntimes", QStringList());
+        KConfigGroup set(rulesConfig, QStringLiteral("Settings"));
+        const QStringList &runtimes = set.readEntry(QStringLiteral("TryIgnoreRuntimes"), QStringList());
 
         bool ignore = runtimes.contains(cmdLine);
 
@@ -687,7 +687,7 @@ QString defaultApplication(const QUrl &url)
             }
 
             if (settings.getSetting(KEMailSettings::ClientTerminal) == QLatin1String("true")) {
-                KConfigGroup confGroup(KSharedConfig::openConfig(), "General");
+                KConfigGroup confGroup(KSharedConfig::openConfig(), QStringLiteral("General"));
                 const QString preferredTerminal = confGroup.readPathEntry("TerminalApplication", QStringLiteral("konsole"));
                 command = preferredTerminal + QLatin1String(" -e ") + command;
             }
@@ -695,7 +695,7 @@ QString defaultApplication(const QUrl &url)
             return command;
         }
     } else if (application.compare(QLatin1String("browser"), Qt::CaseInsensitive) == 0) {
-        KConfigGroup config(KSharedConfig::openConfig(), "General");
+        KConfigGroup config(KSharedConfig::openConfig(), QStringLiteral("General"));
         QString browserApp = config.readPathEntry("BrowserApplication", QString());
 
         if (browserApp.isEmpty()) {
@@ -704,13 +704,13 @@ QString defaultApplication(const QUrl &url)
             if (htmlApp) {
                 browserApp = htmlApp->storageId();
             }
-        } else if (browserApp.startsWith('!')) {
+        } else if (browserApp.startsWith(QLatin1Char('!'))) {
             browserApp.remove(0, 1);
         }
 
         return browserApp;
     } else if (application.compare(QLatin1String("terminal"), Qt::CaseInsensitive) == 0) {
-        KConfigGroup confGroup(KSharedConfig::openConfig(), "General");
+        KConfigGroup confGroup(KSharedConfig::openConfig(), QStringLiteral("General"));
         const QString terminal = confGroup.readPathEntry("TerminalApplication", QStringLiteral("konsole"));
 
         if (KService::Ptr service = serviceFromIdOrDesktopEntry(terminal)) {

@@ -7,6 +7,7 @@
 #define GENERICLAYOUT_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 #include "abstractlayout.h"
 #include "../data/errordata.h"

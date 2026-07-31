@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "lattecorona.h"
 
 // local
@@ -375,7 +376,7 @@ Corona::Corona(bool defaultLayoutOnStartup, QString layoutNameOnStartUp, QString
                    << "the package" << package.metadata().rawData() << "is invalid!";
         return;
     } else {
-        qDebug() << staticMetaObject.className()
+        qCDebug(latteApp) << staticMetaObject.className()
                  << "the package" << package.metadata().rawData() << "is valid!";
     }
 
@@ -446,7 +447,7 @@ Corona::~Corona()
     // Flush any deferred deletes posted by m_activitiesConsumer destructor.
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 
-    qDebug() << "Latte Corona - deleted...";
+    qCDebug(latteApp) << "Latte Corona - deleted...";
 
     if (!m_importFullConfigurationFile.isEmpty()) {
         const QString program = QString::fromLatin1(App::BINARYNAME);
@@ -487,7 +488,7 @@ void Corona::onAboutToQuit()
             m_layoutsManager->synchronizer()->hideAllViews();
         }
 
-        qDebug() << "Latte Corona - fast shutdown path for session logout.";
+        qCDebug(latteApp) << "Latte Corona - fast shutdown path for session logout.";
         return;
     }
 
@@ -505,7 +506,7 @@ void Corona::onAboutToQuit()
         m_layoutsManager->importer()->setMultipleLayoutsStatus(Latte::MultipleLayouts::Paused);
     }
 
-    qDebug() << "Latte Corona - unload: containments ...";
+    qCDebug(latteApp) << "Latte Corona - unload: containments ...";
     m_layoutsManager->unload();
 }
 
@@ -529,7 +530,7 @@ void Corona::load()
         connect(this, &Corona::availableScreenRegionChangedFrom, this, [this](Latte::View *) { m_availableCacheValid = false; Q_EMIT availableScreenRegionChanged(-1); });
         connect(m_screenPool, &ScreenPool::primaryScreenChanged, this, &Corona::onScreenCountChanged, Qt::UniqueConnection);
 
-        QString loadLayoutName = "";
+        QString loadLayoutName;
 
         if (m_userSetMemoryUsage != -1) {
             MemoryUsage::LayoutsMemory usage = static_cast<MemoryUsage::LayoutsMemory>(m_userSetMemoryUsage);
@@ -538,7 +539,7 @@ void Corona::load()
 
         if (!m_defaultLayoutOnStartup && m_layoutNameOnStartUp.isEmpty()) {
             if (m_universalSettings->layoutsMemoryUsage() == MemoryUsage::MultipleLayouts) {
-                loadLayoutName = "";
+                loadLayoutName = QString();
             } else {
                 loadLayoutName = m_universalSettings->singleModeLayoutName();
 
@@ -549,14 +550,14 @@ void Corona::load()
 
                     if (!m_layoutsManager->synchronizer()->layoutExists(defaultLayoutTemplateName)) {
                         //! If Default layout does not exist at all, create it
-                        QString path = m_templatesManager->newLayout("", defaultLayoutTemplateName);
+                        QString path = m_templatesManager->newLayout(QString(), defaultLayoutTemplateName);
                         m_layoutsManager->setOnAllActivities(Layout::AbstractLayout::layoutName(path));
                     }
                 }
             }
         } else if (m_defaultLayoutOnStartup) {
             //! force loading a NEW default layout even though a default layout may already exists
-            QString newDefaultLayoutPath = m_templatesManager->newLayout("", i18n(Templates::DEFAULTLAYOUTTEMPLATENAME));
+            QString newDefaultLayoutPath = m_templatesManager->newLayout(QString(), i18n(Templates::DEFAULTLAYOUTTEMPLATENAME));
             loadLayoutName = Layout::AbstractLayout::layoutName(newDefaultLayoutPath);
             m_universalSettings->setLayoutsMemoryUsage(MemoryUsage::SingleLayout);
         } else {
@@ -577,7 +578,7 @@ void Corona::load()
                 //! user requested through cmd startup to add view from specific view template and we can add it after the startup
                 //! sequence has loaded all required layouts properly
                 addView(0, m_startupAddViewTemplateName);
-                m_startupAddViewTemplateName = "";
+                m_startupAddViewTemplateName = QString();
             }
         });
 
@@ -590,7 +591,7 @@ void Corona::load()
 
 void Corona::unload()
 {
-    qDebug() << "unload: removing containments...";
+    qCDebug(latteApp) << "unload: removing containments...";
 
     // Delete from the live list: Plasma removes destroyed containments
     // from its internal list through the QObject::destroyed connection,
@@ -658,7 +659,7 @@ KWayland::Client::PlasmaShell *Corona::waylandCoronaInterface() const
 
 void Corona::cleanConfig()
 {
-    auto containmentsEntries = config()->group("Containments");
+    auto containmentsEntries = config()->group(QStringLiteral("Containments"));
     bool changed = false;
 
     for(const auto &cId : containmentsEntries.groupList()) {
@@ -666,16 +667,16 @@ void Corona::cleanConfig()
             //cleanup obsolete containments
             containmentsEntries.group(cId).deleteGroup();
             changed = true;
-            qDebug() << "obsolete containment configuration deleted:" << cId;
+            qCDebug(latteApp) << "obsolete containment configuration deleted:" << cId;
         } else {
             //cleanup obsolete applets of running containments
-            auto appletsEntries = containmentsEntries.group(cId).group("Applets");
+            auto appletsEntries = containmentsEntries.group(cId).group(QStringLiteral("Applets"));
 
             for(const auto &appletId : appletsEntries.groupList()) {
                 if (!appletExists(cId.toUInt(), appletId.toUInt())) {
                     appletsEntries.group(appletId).deleteGroup();
                     changed = true;
-                    qDebug() << "obsolete applet configuration deleted:" << appletId;
+                    qCDebug(latteApp) << "obsolete applet configuration deleted:" << appletId;
                 }
             }
         }
@@ -683,7 +684,7 @@ void Corona::cleanConfig()
 
     if (changed) {
         config()->sync();
-        qDebug() << "configuration file cleaned...";
+        qCDebug(latteApp) << "configuration file cleaned...";
     }
 }
 
@@ -988,13 +989,13 @@ QRegion Corona::availableScreenRegionWithCriteria(int id,
         }
     }
 
-    /*qDebug() << "::::: FREE AREAS :::::";
+    /*qCDebug(latteApp) << "::::: FREE AREAS :::::";
 
     for (int i = 0; i < available.rectCount(); ++i) {
-        qDebug() << available.rects().at(i);
+        qCDebug(latteApp) << available.rects().at(i);
     }
 
-    qDebug() << "::::: END OF FREE AREAS :::::";*/
+    qCDebug(latteApp) << "::::: END OF FREE AREAS :::::";*/
 
     if (m_availableCacheValid && activityid.isEmpty() && !desktopUse && ignoreModes.isEmpty() && ignoreEdges.isEmpty()) {
         m_availableRegionCache[id] = available;
@@ -1340,7 +1341,7 @@ QStringList Corona::appletsIds()
     QStringList ids;
 
     for(const auto containment : containments()) {
-        auto applets = containment->config().group("Applets");
+        auto applets = containment->config().group(QStringLiteral("Applets"));
         ids << applets.groupList();
     }
 
@@ -1372,7 +1373,7 @@ bool Corona::removeLauncher(QString launcherUrl, QString screenName)
 
 void Corona::windowColorScheme(QString windowIdAndScheme)
 {
-    const int firstSlash = windowIdAndScheme.indexOf("-");
+    const int firstSlash = windowIdAndScheme.indexOf(QLatin1Char('-'));
 
     if (firstSlash < 0 || firstSlash + 1 >= windowIdAndScheme.length()) {
         qWarning() << "Invalid windowColorScheme payload:" << windowIdAndScheme;
@@ -1401,7 +1402,7 @@ void Corona::setAutostart(const bool &enabled)
 
 void Corona::switchToLayout(QString layout)
 {
-    if ((layout.startsWith("file:/") || layout.startsWith("/")) && layout.endsWith(".layout.latte")) {
+    if ((layout.startsWith(QStringLiteral("file:/")) || layout.startsWith(QStringLiteral("/"))) && layout.endsWith(QStringLiteral(".layout.latte"))) {
         importLayoutFile(layout);
     } else {
         m_layoutsManager->switchToLayout(layout);
@@ -1410,10 +1411,10 @@ void Corona::switchToLayout(QString layout)
 
 void Corona::importLayoutFile(const QString &filepath, const QString &suggestedLayoutName)
 {
-    bool isFilepathValid = (filepath.startsWith("file:/") || filepath.startsWith("/")) && filepath.endsWith(".layout.latte");
+    bool isFilepathValid = (filepath.startsWith(QStringLiteral("file:/")) || filepath.startsWith(QStringLiteral("/"))) && filepath.endsWith(QStringLiteral(".layout.latte"));
 
     if (!isFilepathValid) {
-        qDebug() << i18n("The layout cannot be imported from file :: ") << filepath;
+        qCDebug(latteApp) << i18n("The layout cannot be imported from file :: ") << filepath;
         return;
     }
 
@@ -1423,25 +1424,25 @@ void Corona::importLayoutFile(const QString &filepath, const QString &suggestedL
     QString layoutPath = filepath;
 
     //! cleanup layout path
-    if (layoutPath.startsWith("file:///")) {
-        layoutPath = layoutPath.remove("file://");
-    } else if (layoutPath.startsWith("file://")) {
-        layoutPath = layoutPath.remove("file:/");
+    if (layoutPath.startsWith(QStringLiteral("file:///"))) {
+        layoutPath = layoutPath.remove(QStringLiteral("file://"));
+    } else if (layoutPath.startsWith(QStringLiteral("file://"))) {
+        layoutPath = layoutPath.remove(QStringLiteral("file:/"));
     }
 
     //! check out layoutpath existence
     if (QFileInfo(layoutPath).exists()) {
-        qDebug() << " Layout is going to be imported and loaded from file :: " << layoutPath << " with suggested name :: " << suggestedLayoutName;
+        qCDebug(latteApp) << " Layout is going to be imported and loaded from file :: " << layoutPath << " with suggested name :: " << suggestedLayoutName;
 
         QString importedLayout = m_layoutsManager->importer()->importLayout(layoutPath, suggestedLayoutName);
 
         if (importedLayout.isEmpty()) {
-            qDebug() << i18n("The layout cannot be imported from file :: ") << layoutPath;
+            qCDebug(latteApp) << i18n("The layout cannot be imported from file :: ") << layoutPath;
         } else {
            m_layoutsManager->switchToLayout(importedLayout, MemoryUsage::SingleLayout);
         }
     } else {
-        qDebug() << " Layout from missing file can not be imported and loaded :: " << layoutPath;
+        qCDebug(latteApp) << " Layout from missing file can not be imported and loaded :: " << layoutPath;
     }
 }
 
@@ -1471,9 +1472,9 @@ QStringList Corona::contextMenuData(const uint &containmentId)
     }
 
     data << QString::number(static_cast<int>(m_layoutsManager->memoryUsage())); // Memory Usage
-    data << m_layoutsManager->centralLayoutsNames().join(";;"); // All Active layouts
-    data << m_layoutsManager->synchronizer()->currentLayoutsNames().join(";;"); // All Current layouts
-    data << m_universalSettings->contextMenuActionsAlwaysShown().join(";;");
+    data << m_layoutsManager->centralLayoutsNames().join(QStringLiteral(";;")); // All Active layouts
+    data << m_layoutsManager->synchronizer()->currentLayoutsNames().join(QStringLiteral(";;")); // All Current layouts
+    data << m_universalSettings->contextMenuActionsAlwaysShown().join(QStringLiteral(";;"));
 
     QStringList layoutsmenu;
 
@@ -1485,11 +1486,11 @@ QStringList Corona::contextMenuData(const uint &containmentId)
             layoutdata << layoutName;
             layoutdata << QString::number(layouticon.isBackgroundFile);
             layoutdata << layouticon.name;
-            layoutsmenu << layoutdata.join("**");
+            layoutsmenu << layoutdata.join(QStringLiteral("**"));
         }
     }
 
-    data << layoutsmenu.join(";;");
+    data << layoutsmenu.join(QStringLiteral(";;"));
     data << (view ? view->layout()->name() : QString());   //Selected View layout*/
 
     QStringList viewtype;
@@ -1497,17 +1498,17 @@ QStringList Corona::contextMenuData(const uint &containmentId)
 
     if (view && view->isOriginal()) { /*View*/
         auto originalview = qobject_cast<Latte::OriginalView *>(view);
-        viewtype << "0";              //original view
+        viewtype << QStringLiteral("0");              //original view
         viewtype <<  QString::number(originalview->clonesCount());
     } else if (view && view->isCloned()) {
-        viewtype << "1";              //cloned view
-        viewtype << "0";              //has no clones
+        viewtype << QStringLiteral("1");              //cloned view
+        viewtype << QStringLiteral("0");              //has no clones
     } else {
-        viewtype << "0";              //original view
-        viewtype << "0";              //has no clones
+        viewtype << QStringLiteral("0");              //original view
+        viewtype << QStringLiteral("0");              //has no clones
     }
 
-    data << viewtype.join(";;");
+    data << viewtype.join(QStringLiteral(";;"));
 
     return data;
 }
@@ -1568,7 +1569,7 @@ void Corona::moveViewToLayout(const uint &containmentId, const QString &layoutNa
             screensgroup = originalview->screensGroup();
         }
 
-        view->positioner()->setNextLocation(layoutName, screensgroup, "", Plasma::Types::Floating, Latte::Types::NoneAlignment);
+        view->positioner()->setNextLocation(layoutName, screensgroup, QString(), Plasma::Types::Floating, Latte::Types::NoneAlignment);
     }
 }
 
@@ -1582,7 +1583,7 @@ void Corona::removeView(const uint &containmentId)
 
 void Corona::setBackgroundFromBroadcast(QString activity, QString screenName, QString filename)
 {
-    if (filename.startsWith("file://")) {
+    if (filename.startsWith(QStringLiteral("file://"))) {
         filename = filename.remove(0,7);
     }
 
@@ -1621,7 +1622,7 @@ inline void Corona::qmlRegisterTypes() const
                                      App::PRIVATEQMLURI,                   // import statement
                                      0, 1,                                 // major and minor version of the import
                                      "Settings",                           // name in QML
-                                     "Error: only enums of latte app settings");
+                                     QStringLiteral("Error: only enums of latte app settings"));
 
     qmlRegisterType<Latte::BackgroundTracker>(App::PRIVATEQMLURI, 0, 1, "BackgroundTracker");
     qmlRegisterType<Latte::Interfaces>(App::PRIVATEQMLURI, 0, 1, "Interfaces");

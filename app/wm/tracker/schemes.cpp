@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "schemes.h"
 
 // local
@@ -34,7 +35,7 @@ Schemes::~Schemes()
 {
     m_windowScheme.clear();
     //! it is just a reference to a real scheme file
-    m_schemes.take("kdeglobals");
+    m_schemes.take(QStringLiteral("kdeglobals"));
     qDeleteAll(m_schemes.values());
     m_schemes.clear();
 }
@@ -54,7 +55,7 @@ void Schemes::init()
     });
 
     //! track for changing default scheme
-    QString kdeSettingsFile = Latte::configPath() + "/kdeglobals";
+    QString kdeSettingsFile = Latte::configPath() + QLatin1String("/kdeglobals");
 
     KDirWatch::self()->addFile(kdeSettingsFile);
 
@@ -74,9 +75,9 @@ void Schemes::init()
 //! Scheme support for windows
 void Schemes::updateDefaultScheme()
 {
-    QString defaultSchemePath = SchemeColors::possibleSchemeFile("kdeglobals");
+    QString defaultSchemePath = SchemeColors::possibleSchemeFile(QStringLiteral("kdeglobals"));
 
-    qDebug() << " Windows default color scheme :: " << defaultSchemePath;
+    qCDebug(latteWm) << " Windows default color scheme :: " << defaultSchemePath;
 
     SchemeColors *dScheme;
 
@@ -87,8 +88,8 @@ void Schemes::updateDefaultScheme()
         dScheme = m_schemes[defaultSchemePath];
     }
 
-    if (!m_schemes.contains("kdeglobals") || m_schemes["kdeglobals"]->schemeFile() != defaultSchemePath) {
-        m_schemes["kdeglobals"] = dScheme;
+    if (!m_schemes.contains(QStringLiteral("kdeglobals")) || m_schemes[QStringLiteral("kdeglobals")]->schemeFile() != defaultSchemePath) {
+        m_schemes[QStringLiteral("kdeglobals")] = dScheme;
     }
 
     //! Clean up scheme files no longer referenced by any window or the default.
@@ -125,7 +126,7 @@ SchemeColors *Schemes::schemeForFile(const QString &scheme)
 SchemeColors *Schemes::schemeForWindow(WindowId wid)
 {
     if (!m_windowScheme.contains(wid)) {
-        return m_schemes["kdeglobals"];
+        return m_schemes[QStringLiteral("kdeglobals")];
     } else {
         return m_schemes[m_windowScheme[wid]];
     }

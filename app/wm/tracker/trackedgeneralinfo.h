@@ -11,6 +11,7 @@
 #include "../windowinfowrap.h"
 
 // Qt
+#include <QStringList>
 #include <QObject>
 
 namespace Latte {

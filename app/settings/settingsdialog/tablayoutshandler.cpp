@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "tablayoutshandler.h"
 
 //! local
@@ -49,7 +50,7 @@ TabLayouts::TabLayouts(Settings::Dialog::SettingsDialog *parent)
       m_parentDialog(parent),
       m_corona(m_parentDialog->corona()),
       m_ui(m_parentDialog->ui()),
-      m_storage(KConfigGroup(KSharedConfig::openConfig(),"LatteSettingsDialog").group("TabLayouts"))
+      m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("TabLayouts")))
 {
     //! load first the layouts view column widths
     loadConfig();
@@ -116,14 +117,14 @@ void TabLayouts::initLayoutMenu()
 
     m_switchLayoutAction = m_layoutMenu->addAction(i18nc("switch layout","Switch"));
     m_switchLayoutAction->setToolTip(i18n("Switch to selected layout"));
-    m_switchLayoutAction->setIcon(QIcon::fromTheme("user-identity"));
+    m_switchLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("user-identity")));
     m_switchLayoutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Tab));
     connectActionWithButton(m_ui->switchButton, m_switchLayoutAction);
     connect(m_switchLayoutAction, &QAction::triggered, this, &TabLayouts::switchLayout);
 
     m_activitiesManagerAction = m_layoutMenu->addAction(i18n("&Activities"));
     m_activitiesManagerAction->setToolTip(i18n("Show Plasma Activities manager"));
-    m_activitiesManagerAction->setIcon(QIcon::fromTheme("activities"));
+    m_activitiesManagerAction->setIcon(QIcon::fromTheme(QStringLiteral("activities")));
     m_activitiesManagerAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_A));
     connectActionWithButton(m_ui->activitiesButton, m_activitiesManagerAction);
     connect(m_activitiesManagerAction, &QAction::triggered, this, &TabLayouts::toggleActivitiesManager);
@@ -132,7 +133,7 @@ void TabLayouts::initLayoutMenu()
 
     m_newLayoutAction = m_layoutMenu->addAction(i18nc("new layout", "&New"));
     m_newLayoutAction->setToolTip(i18n("New layout"));
-    m_newLayoutAction->setIcon(QIcon::fromTheme("add"));
+    m_newLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("add")));
     m_newLayoutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_N));
     connectActionWithButton(m_ui->newButton, m_newLayoutAction);
     connect(m_newLayoutAction, &QAction::triggered, m_ui->newButton, &QPushButton::showMenu);
@@ -145,14 +146,14 @@ void TabLayouts::initLayoutMenu()
 
     m_duplicateLayoutAction = m_layoutMenu->addAction(i18nc("duplicate layout", "&Duplicate"));
     m_duplicateLayoutAction->setToolTip(i18n("Duplicate selected layout"));
-    m_duplicateLayoutAction->setIcon(QIcon::fromTheme("edit-copy"));
+    m_duplicateLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("edit-copy")));
     m_duplicateLayoutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_D));
     connectActionWithButton(m_ui->duplicateButton, m_duplicateLayoutAction);
     connect(m_duplicateLayoutAction, &QAction::triggered, this, &TabLayouts::duplicateLayout);
 
     m_removeLayoutAction = m_layoutMenu->addAction(i18nc("remove layout", "Remove"));
     m_removeLayoutAction->setToolTip(i18n("Remove selected layout"));
-    m_removeLayoutAction->setIcon(QIcon::fromTheme("delete"));
+    m_removeLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("delete")));
     m_removeLayoutAction->setShortcut(QKeySequence(Qt::Key_Delete));
     connectActionWithButton(m_ui->removeButton, m_removeLayoutAction);
     connect(m_removeLayoutAction, &QAction::triggered, this, &TabLayouts::removeLayout);
@@ -162,7 +163,7 @@ void TabLayouts::initLayoutMenu()
 
     m_enabledLayoutAction = m_layoutMenu->addAction(i18n("Ena&bled"));
     m_enabledLayoutAction->setToolTip(i18n("Assign in activities in order to be activated through Plasma Activities"));
-    m_enabledLayoutAction->setIcon(QIcon::fromTheme("edit-link"));
+    m_enabledLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("edit-link")));
     m_enabledLayoutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_B));
     m_enabledLayoutAction->setCheckable(true);
     connectActionWithButton(m_ui->enabledButton, m_enabledLayoutAction);
@@ -170,7 +171,7 @@ void TabLayouts::initLayoutMenu()
 
     m_readOnlyLayoutAction = m_layoutMenu->addAction(i18nc("read only layout", "&Read Only"));
     m_readOnlyLayoutAction->setToolTip(i18n("Make selected layout read-only"));
-    m_readOnlyLayoutAction->setIcon(QIcon::fromTheme("object-locked"));
+    m_readOnlyLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("object-locked")));
     m_readOnlyLayoutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
     m_readOnlyLayoutAction->setCheckable(true);
     connectActionWithButton(m_ui->readOnlyButton, m_readOnlyLayoutAction);
@@ -178,14 +179,14 @@ void TabLayouts::initLayoutMenu()
 
     m_viewsAction = m_layoutMenu->addAction(i18nc("layout docks", "&Docks..."));
     m_viewsAction->setToolTip(i18n("Show selected layout docks"));
-    m_viewsAction->setIcon(QIcon::fromTheme("window"));
+    m_viewsAction->setIcon(QIcon::fromTheme(QStringLiteral("window")));
     m_viewsAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_P));
     connectActionWithButton(m_ui->viewsBtn, m_viewsAction);
     connect(m_viewsAction, &QAction::triggered, this, &TabLayouts::showViewsDialog);
 
     m_detailsAction = m_layoutMenu->addAction(i18nc("layout details", "De&tails..."));
     m_detailsAction->setToolTip(i18n("Show selected layout details"));
-    m_detailsAction->setIcon(QIcon::fromTheme("view-list-details"));
+    m_detailsAction->setIcon(QIcon::fromTheme(QStringLiteral("view-list-details")));
     m_detailsAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_T));
     connectActionWithButton(m_ui->detailsButton, m_detailsAction);
     connect(m_detailsAction, &QAction::triggered, this, &TabLayouts::showDetailsDialog);
@@ -196,7 +197,7 @@ void TabLayouts::initLayoutMenu()
     //! Import
     m_importLayoutAction = m_layoutMenu->addAction(i18nc("import layout", "&Import"));
     m_importLayoutAction->setToolTip(i18n("Import layout from various resources"));
-    m_importLayoutAction->setIcon(QIcon::fromTheme("document-import"));
+    m_importLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("document-import")));
     m_importLayoutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
     connectActionWithButton(m_ui->importButton, m_importLayoutAction);
     connect(m_importLayoutAction, &QAction::triggered, m_ui->importButton, &QPushButton::showMenu);
@@ -208,7 +209,7 @@ void TabLayouts::initLayoutMenu()
     //! Export
     m_exportLayoutAction = m_layoutMenu->addAction(i18nc("export layout", "&Export"));
     m_exportLayoutAction->setToolTip(i18n("Export selected layout at your system"));
-    m_exportLayoutAction->setIcon(QIcon::fromTheme("document-export"));
+    m_exportLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("document-export")));
     m_exportLayoutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
     connectActionWithButton(m_ui->exportButton, m_exportLayoutAction);
     connect(m_exportLayoutAction, &QAction::triggered, m_ui->exportButton, &QPushButton::showMenu);
@@ -228,12 +229,12 @@ void TabLayouts::initImportLayoutSubMenu()
     }
 
     QAction *importLayoutAction = m_layoutImportSubMenu->addAction(i18nc("import layout", "&Import From Local File..."));
-    importLayoutAction->setIcon(QIcon::fromTheme("document-import"));
+    importLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("document-import")));
     importLayoutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_I));
     connect(importLayoutAction, &QAction::triggered, this, &TabLayouts::importLayout);
 
     QAction *downloadLayoutAction = m_layoutImportSubMenu->addAction(i18nc("download layout", "Import From K&DE Online Store..."));
-    downloadLayoutAction->setIcon(QIcon::fromTheme("get-hot-new-stuff"));
+    downloadLayoutAction->setIcon(QIcon::fromTheme(QStringLiteral("get-hot-new-stuff")));
     downloadLayoutAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_D));
     connect(downloadLayoutAction, &QAction::triggered, this, &TabLayouts::downloadLayout);
 }
@@ -248,12 +249,12 @@ void TabLayouts::initExportLayoutSubMenu()
     }
 
     QAction *exportForBackup = m_layoutExportSubMenu->addAction(i18nc("export for backup","&Export For Backup..."));
-    exportForBackup->setIcon(QIcon::fromTheme("document-export"));
+    exportForBackup->setIcon(QIcon::fromTheme(QStringLiteral("document-export")));
     exportForBackup->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_E));
     connect(exportForBackup, &QAction::triggered, this, &TabLayouts::exportLayoutForBackup);
 
     QAction *exportAsTemplate = m_layoutExportSubMenu->addAction(i18nc("export as template","Export As &Template..."));
-    exportAsTemplate->setIcon(QIcon::fromTheme("document-export"));
+    exportAsTemplate->setIcon(QIcon::fromTheme(QStringLiteral("document-export")));
     exportAsTemplate->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_T));
     connect(exportAsTemplate, &QAction::triggered, this, &TabLayouts::exportLayoutAsTemplate);
 }
@@ -279,7 +280,7 @@ void TabLayouts::initLayoutTemplatesSubMenu()
         }
 
         QAction *newlayout = m_layoutTemplatesSubMenu->addAction(templates[i].name);
-        newlayout->setIcon(QIcon::fromTheme("document-new"));
+        newlayout->setIcon(QIcon::fromTheme(QStringLiteral("document-new")));
         QString templatename = templates[i].name;
 
         connect(newlayout, &QAction::triggered, this, [&, templatename]() {
@@ -290,10 +291,10 @@ void TabLayouts::initLayoutTemplatesSubMenu()
     if (templates.rowCount() > 0) {
         QAction *openTemplatesDirectory = m_layoutTemplatesSubMenu->addAction(i18n("Templates..."));
         openTemplatesDirectory->setToolTip(i18n("Open templates directory"));
-        openTemplatesDirectory->setIcon(QIcon::fromTheme("edit"));
+        openTemplatesDirectory->setIcon(QIcon::fromTheme(QStringLiteral("edit")));
 
         connect(openTemplatesDirectory, &QAction::triggered, this, [this]() {
-            KIO::highlightInFileManager(QList<QUrl>({QUrl::fromLocalFile(QString(Latte::configPath() + "/latte/templates/Dock.layout.latte"))}));
+            KIO::highlightInFileManager(QList<QUrl>({QUrl::fromLocalFile(Latte::configPath() + QLatin1String("/latte/templates/Dock.layout.latte"))}));
         });
     }
 }
@@ -388,7 +389,7 @@ void TabLayouts::toggleActivitiesManager()
 
 void TabLayouts::toggleEnabledLayout()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_layoutsController->inMultipleMode()) {
         return;
@@ -402,34 +403,34 @@ void TabLayouts::toggleEnabledLayout()
 void TabLayouts::updatePerLayoutButtonsState()
 {
     //! UI Elements that need to be shown/hidden
-    setTwinProperty(m_switchLayoutAction, TWINVISIBLE, !m_layoutsController->inMultipleMode());
-    setTwinProperty(m_activitiesManagerAction, TWINVISIBLE, m_layoutsController->inMultipleMode());
-    setTwinProperty(m_enabledLayoutAction, TWINVISIBLE, m_layoutsController->inMultipleMode());
+    setTwinProperty(m_switchLayoutAction, QLatin1String(TWINVISIBLE), !m_layoutsController->inMultipleMode());
+    setTwinProperty(m_activitiesManagerAction, QLatin1String(TWINVISIBLE), m_layoutsController->inMultipleMode());
+    setTwinProperty(m_enabledLayoutAction, QLatin1String(TWINVISIBLE), m_layoutsController->inMultipleMode());
 
     if (!m_layoutsController->hasSelectedLayout()) {
-        setTwinProperty(m_enabledLayoutAction, TWINENABLED, false);
+        setTwinProperty(m_enabledLayoutAction, QLatin1String(TWINENABLED), false);
         return;
     }
 
     Latte::Data::Layout selectedLayout = m_layoutsController->selectedLayoutCurrentData();
 
     //! Switch Button
-    setTwinProperty(m_switchLayoutAction, TWINENABLED, true);
+    setTwinProperty(m_switchLayoutAction, QLatin1String(TWINENABLED), true);
 
     //! Enabled Button
-    setTwinProperty(m_enabledLayoutAction, TWINENABLED, true);
-    setTwinProperty(m_enabledLayoutAction, TWINCHECKED, !selectedLayout.activities.isEmpty());
+    setTwinProperty(m_enabledLayoutAction, QLatin1String(TWINENABLED), true);
+    setTwinProperty(m_enabledLayoutAction, QLatin1String(TWINCHECKED), !selectedLayout.activities.isEmpty());
 
     //! Layout Read-Only Button
-    setTwinProperty(m_readOnlyLayoutAction, TWINCHECKED, selectedLayout.isLocked);
+    setTwinProperty(m_readOnlyLayoutAction, QLatin1String(TWINCHECKED), selectedLayout.isLocked);
 
     //! Details Button
-    setTwinProperty(m_detailsAction, TWINENABLED, true);
+    setTwinProperty(m_detailsAction, QLatin1String(TWINENABLED), true);
 }
 
 void TabLayouts::newLayout(const QString &templateName)
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_newLayoutAction->isEnabled()) {
         return;
@@ -450,7 +451,7 @@ void TabLayouts::newLayout(const QString &templateName)
 
 void TabLayouts::duplicateLayout()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_duplicateLayoutAction->isEnabled()) {
         return;
@@ -461,7 +462,7 @@ void TabLayouts::duplicateLayout()
 
 void TabLayouts::downloadLayout()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab()) {
         return;
@@ -492,7 +493,7 @@ void TabLayouts::downloadLayout()
 
 void TabLayouts::removeLayout()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_removeLayoutAction->isEnabled()) {
         return;
@@ -521,7 +522,7 @@ void TabLayouts::removeLayout()
 
 void TabLayouts::lockLayout()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_readOnlyLayoutAction->isEnabled()) {
         return;
@@ -534,7 +535,7 @@ void TabLayouts::lockLayout()
 
 void TabLayouts::importLayout()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_importLayoutAction->isEnabled()) {
         return;
@@ -542,22 +543,22 @@ void TabLayouts::importLayout()
 
     QFileDialog *importFileDialog = new QFileDialog(m_parentDialog, i18nc("import layout", "Import Layout"), QDir::homePath(), QStringLiteral("layout.latte"));
 
-    importFileDialog->setWindowIcon(QIcon::fromTheme("document-import"));
+    importFileDialog->setWindowIcon(QIcon::fromTheme(QStringLiteral("document-import")));
     importFileDialog->setLabelText(QFileDialog::Accept, i18nc("import layout","Import"));
     importFileDialog->setFileMode(QFileDialog::AnyFile);
     importFileDialog->setAcceptMode(QFileDialog::AcceptOpen);
-    importFileDialog->setDefaultSuffix("layout.latte");
+    importFileDialog->setDefaultSuffix(QStringLiteral("layout.latte"));
 
     QStringList filters;
-    filters << QString(i18nc("import latte layout", "Latte Dock NG Layout file v0.2") + "(*.layout.latte)")
-            << QString(i18nc("import older latte layout", "Latte Dock NG Layout file v0.1") + "(*.latterc)");
+    filters << i18nc("import latte layout", "Latte Dock NG Layout file v0.2") + QStringLiteral("(*.layout.latte)")
+            << i18nc("import older latte layout", "Latte Dock NG Layout file v0.1") + QStringLiteral("(*.latterc)");
     importFileDialog->setNameFilters(filters);
 
     connect(importFileDialog, &QFileDialog::finished, importFileDialog, &QFileDialog::deleteLater);
 
     connect(importFileDialog, &QFileDialog::fileSelected, this, [this](const QString & file) {
         Latte::Layouts::Importer::LatteFileVersion version = Latte::Layouts::Importer::fileVersion(file);
-        qDebug() << "VERSION :::: " << version;
+        qCDebug(latteSettings) << "VERSION :::: " << version;
 
         if (version == Latte::Layouts::Importer::LayoutVersion2) {
             Latte::Data::Layout importedlayout = m_layoutsController->addLayoutForFile(file);
@@ -577,7 +578,7 @@ void TabLayouts::importLayout()
 
 void TabLayouts::exportLayoutAsTemplate()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_exportLayoutAction->isEnabled()) {
         return;
@@ -605,7 +606,7 @@ void TabLayouts::exportLayoutAsTemplate()
 
 void TabLayouts::exportLayoutForBackup()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_exportLayoutAction->isEnabled()) {
         return;
@@ -626,10 +627,10 @@ void TabLayouts::exportLayoutForBackup()
     exportFileDialog->setLabelText(QFileDialog::Accept, i18nc("export layout","Export"));
     exportFileDialog->setFileMode(QFileDialog::AnyFile);
     exportFileDialog->setAcceptMode(QFileDialog::AcceptSave);
-    exportFileDialog->setDefaultSuffix("layout.latte");
+    exportFileDialog->setDefaultSuffix(QStringLiteral("layout.latte"));
 
     QStringList filters;
-    QString filter1(i18nc("export layout", "Latte Dock NG Layout file v0.2") + "(*.layout.latte)");
+    QString filter1(i18nc("export layout", "Latte Dock NG Layout file v0.2") + QStringLiteral("(*.layout.latte)"));
 
     filters << filter1;
 
@@ -649,7 +650,7 @@ void TabLayouts::exportLayoutForBackup()
             return;
         }
 
-        if (file.endsWith(".layout.latte")) {
+        if (file.endsWith(QStringLiteral(".layout.latte"))) {
             if (!QFile(selectedLayout.id).copy(file)) {
                 showExportLayoutError(selectedLayout);
                 return;
@@ -685,7 +686,7 @@ void TabLayouts::exportLayoutForBackup()
                               KMessageWidget::Positive,
                               false,
                               actions);
-        } else if (file.endsWith(".latterc")) {
+        } else if (file.endsWith(QStringLiteral(".latterc"))) {
             auto showExportConfigurationError = [this]() {
                 showInlineMessage(i18n("Full configuration export <b>failed</b>..."),
                                   KMessageWidget::Error,
@@ -694,7 +695,7 @@ void TabLayouts::exportLayoutForBackup()
 
             if (m_corona->layoutsManager()->importer()->exportFullConfiguration(file)) {
                 QAction *openUrlAction = new QAction(i18n("Open Location..."), this);
-                openUrlAction->setIcon(QIcon::fromTheme("document-open"));
+                openUrlAction->setIcon(QIcon::fromTheme(QStringLiteral("document-open")));
                 openUrlAction->setData(file);
                 QList<QAction *> actions;
                 actions << openUrlAction;
@@ -718,12 +719,12 @@ void TabLayouts::exportLayoutForBackup()
     });
 
     exportFileDialog->open();
-    exportFileDialog->selectFile(selectedLayout.name + ".layout.latte");
+    exportFileDialog->selectFile(selectedLayout.name + QStringLiteral(".layout.latte"));
 }
 
 void TabLayouts::showDetailsDialog()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_detailsAction->isEnabled()) {
         return;
@@ -741,7 +742,7 @@ void TabLayouts::showDetailsDialog()
 
 void TabLayouts::showViewsDialog()
 {
-    qDebug() << Q_FUNC_INFO;
+    qCDebug(latteSettings) << Q_FUNC_INFO;
 
     if (!isCurrentTab() || !m_viewsAction->isEnabled()) {
         return;
@@ -764,7 +765,7 @@ void TabLayouts::onLayoutFilesDropped(const QStringList &paths)
     QStringList layoutNames;
 
     for (int i=0; i<paths.count(); ++i) {
-        if (paths[i].endsWith(".layout.latte")) {
+        if (paths[i].endsWith(QStringLiteral(".layout.latte"))) {
             Latte::Data::Layout importedlayout = m_layoutsController->addLayoutForFile(paths[i]);
             layoutNames << importedlayout.name;
         }
@@ -775,7 +776,7 @@ void TabLayouts::onLayoutFilesDropped(const QStringList &paths)
                                  "Layout <b>%2</b> imported successfully...",
                                  "Layouts <b>%2</b> imported successfully...",
                                  layoutNames.count(),
-                                 layoutNames.join(", ")),
+                                 layoutNames.join(QStringLiteral(", "))),
                 KMessageWidget::Positive);
     }
 }
@@ -859,7 +860,7 @@ void TabLayouts::onDropEvent(QDropEvent *event)
         for (int i = 0; i < qMin(urlList.size(), 20); ++i) {
             QString layoutPath = urlList[i].path();
 
-            if (layoutPath.endsWith(".layout.latte")) {
+            if (layoutPath.endsWith(QStringLiteral(".layout.latte"))) {
                 paths << layoutPath;
             }
         }
@@ -872,10 +873,10 @@ void TabLayouts::onDropEvent(QDropEvent *event)
     } else if (event->mimeData()->hasText()){
         if(!event->mimeData()->text().isEmpty()){
             onRawLayoutDropped(event->mimeData()->text());
-        } else if(!event->mimeData()->data("text/plain").isEmpty()) {
-            onRawLayoutDropped(event->mimeData()->data("text/plain"));
+        } else if(!event->mimeData()->data(QStringLiteral("text/plain")).isEmpty()) {
+            onRawLayoutDropped(QString::fromUtf8(event->mimeData()->data(QStringLiteral("text/plain"))));
         } else {
-            qDebug() << "Data from drag could not be retrieved!";
+            qCDebug(latteSettings) << "Data from drag could not be retrieved!";
         }
         m_ui->layoutsView->dragLeft();
     }

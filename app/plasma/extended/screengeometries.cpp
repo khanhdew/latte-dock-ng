@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "screengeometries.h"
 
 //!local
@@ -18,9 +19,9 @@
 #include <QtDBus>
 
 
-#define LATTESERVICE "org.kde.lattedock"
-#define PLASMASERVICE "org.kde.plasmashell"
-#define PLASMASTRUTNAMESPACE "org.kde.PlasmaShell.StrutManager"
+#define LATTESERVICE QStringLiteral("org.kde.lattedock")
+#define PLASMASERVICE QStringLiteral("org.kde.plasmashell")
+#define PLASMASTRUTNAMESPACE QStringLiteral("org.kde.PlasmaShell.StrutManager")
 
 #define PUBLISHINTERVAL 1000
 
@@ -56,12 +57,12 @@ ScreenGeometries::ScreenGeometries(Latte::Corona *parent)
 
 ScreenGeometries::~ScreenGeometries()
 {
-    qDebug() << "Plasma Extended Screen Geometries :: Deleted...";
+    qCDebug(lattePlasma) << "Plasma Extended Screen Geometries :: Deleted...";
 }
 
 void ScreenGeometries::init()
 {
-    qDebug() << " PLASMA STRUTS MANAGER :: checking availability....";
+    qCDebug(lattePlasma) << " PLASMA STRUTS MANAGER :: checking availability....";
 
     // Use asyncCall() to avoid blocking the event loop.
     QDBusMessage ping = QDBusMessage::createMethodCall(
@@ -69,7 +70,7 @@ void ScreenGeometries::init()
         QStringLiteral("/"),
         QStringLiteral("org.freedesktop.DBus"),
         QStringLiteral("NameHasOwner"));
-    ping.setArguments({QStringLiteral(PLASMASERVICE)});
+    ping.setArguments({PLASMASERVICE});
 
     auto *watcher = new QDBusPendingCallWatcher(
         QDBusConnection::sessionBus().asyncCall(ping), this);
@@ -82,7 +83,7 @@ void ScreenGeometries::init()
                                  && !reply.arguments().isEmpty()
                                  && reply.arguments().first().toBool());
 
-        qDebug() << "PLASMA STRUTS MANAGER :: interface availability :: " << serviceavailable;
+        qCDebug(lattePlasma) << "PLASMA STRUTS MANAGER :: interface availability :: " << serviceavailable;
 
         connect(m_corona->universalSettings(),
                 &Latte::UniversalSettings::isAvailableGeometryBroadcastedToPlasmaChanged,
@@ -97,7 +98,7 @@ void ScreenGeometries::init()
 
 void ScreenGeometries::onPlasmaInterfaceAvailable()
 {
-    qDebug() << " PLASMA STRUTS MANAGER :: is available...";
+    qCDebug(lattePlasma) << " PLASMA STRUTS MANAGER :: is available...";
 
     connect(m_corona, &Latte::Corona::availableScreenRectChangedFrom, this, &ScreenGeometries::availableScreenGeometryChangedFrom);
     connect(m_corona, &Latte::Corona::availableScreenRegionChangedFrom, this, &ScreenGeometries::availableScreenGeometryChangedFrom);
@@ -140,9 +141,9 @@ void ScreenGeometries::onBroadcastToPlasmaChanged()
 void ScreenGeometries::setPlasmaAvailableScreenRect(const QString &screenName, const QRect &rect)
 {
     QDBusMessage message = QDBusMessage::createMethodCall(PLASMASERVICE,
-                                                          "/StrutManager",
+                                                          QStringLiteral("/StrutManager"),
                                                           PLASMASTRUTNAMESPACE,
-                                                          "setAvailableScreenRect");
+                                                          QStringLiteral("setAvailableScreenRect"));
     QVariantList args;
 
     args << LATTESERVICE
@@ -156,9 +157,9 @@ void ScreenGeometries::setPlasmaAvailableScreenRect(const QString &screenName, c
 void ScreenGeometries::setPlasmaAvailableScreenRegion(const QString &screenName, const QRegion &region)
 {
     QDBusMessage message = QDBusMessage::createMethodCall(PLASMASERVICE,
-                                                          "/StrutManager",
+                                                          QStringLiteral("/StrutManager"),
                                                           PLASMASTRUTNAMESPACE,
-                                                          "setAvailableScreenRegion");
+                                                          QStringLiteral("setAvailableScreenRegion"));
 
     QVariant regionvariant;
 
@@ -211,7 +212,7 @@ void ScreenGeometries::updateGeometries()
 
     QStringList availableScreenNames;
 
-    qDebug() << " PLASMA SCREEN GEOMETRIES, LAST AVAILABLE SCREEN RECTS :: " << m_lastAvailableRect;
+    qCDebug(lattePlasma) << " PLASMA SCREEN GEOMETRIES, LAST AVAILABLE SCREEN RECTS :: " << m_lastAvailableRect;
 
     QStringList clearedScreenNames;
 
@@ -220,7 +221,7 @@ void ScreenGeometries::updateGeometries()
         QString scrName = screen->name();
         int scrId = m_corona->screenPool()->id(screen->name());
 
-        qDebug() << " PLASMA SCREEN GEOMETRIES, SCREEN :: " << scrId << " - " << scrName;
+        qCDebug(lattePlasma) << " PLASMA SCREEN GEOMETRIES, SCREEN :: " << scrId << " - " << scrName;
 
         if (m_corona->screenPool()->hasScreenId(scrId)) {
             QRect availableRect = m_corona->availableScreenRectWithCriteria(scrId,
@@ -244,13 +245,13 @@ void ScreenGeometries::updateGeometries()
                 if (!m_lastAvailableRect.contains(scrName) || m_lastAvailableRect[scrName] != availableRect) {
                     m_lastAvailableRect[scrName] = availableRect;
                     setPlasmaAvailableScreenRect(scrName, availableRect);
-                    qDebug() << " PLASMA SCREEN GEOMETRIES, AVAILABLE RECT :: " << screen->name() << " : " << availableRect;
+                    qCDebug(lattePlasma) << " PLASMA SCREEN GEOMETRIES, AVAILABLE RECT :: " << screen->name() << " : " << availableRect;
                 }
 
                 if (!m_lastAvailableRegion.contains(scrName) || m_lastAvailableRegion[scrName] != availableRegion) {
                     m_lastAvailableRegion[scrName] = availableRegion;
                     setPlasmaAvailableScreenRegion(scrName, availableRegion);
-                    qDebug() << " PLASMA SCREEN GEOMETRIES, AVAILABLE REGION :: " << screen->name() << " : " << availableRegion;
+                    qCDebug(lattePlasma) << " PLASMA SCREEN GEOMETRIES, AVAILABLE REGION :: " << screen->name() << " : " << availableRegion;
                 }
             } else {
                 clearedScreenNames << scrName;
@@ -274,9 +275,9 @@ void ScreenGeometries::updateGeometries()
         }
 
         if (!scractive) {
-            qDebug() << " PLASMA SCREEN GEOMETRIES, INACTIVE SCREEN :: " << lastScrName;
+            qCDebug(lattePlasma) << " PLASMA SCREEN GEOMETRIES, INACTIVE SCREEN :: " << lastScrName;
         } else if (clearedScreenNames.contains(lastScrName)) {
-            qDebug() << " PLASMA SCREEN GEOMETRIES, CLEARED SCREEN :: " << lastScrName;
+            qCDebug(lattePlasma) << " PLASMA SCREEN GEOMETRIES, CLEARED SCREEN :: " << lastScrName;
         }
     }
 

@@ -1,4 +1,5 @@
 {
+    "KPackageStructure": "Latte/Indicator",
     "KPlugin": {
         "Authors": [
             {
@@ -68,9 +69,9 @@
         "Description[zh_CN]": "Latte 的 Plasma 标签页风格指示器",
         "Description[zh_TW]": "適用於 Latte 的 Plasma 分頁樣式指示器",
         "EnabledByDefault": true,
-        "Icon": "latte-dock",
+        "Icon": "apps-latte-dock",
         "Id": "org.kde.latte.plasmatabstyle",
-        "License": "GPL v2+",
+        "License": "GPL-2.0-or-later",
         "Name": "Plasma Tab Style",
         "Name[ar]": "نمط ألسنة بلازما",
         "Name[az]": "Plasma Vərəq Üslubu",

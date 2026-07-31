@@ -67,9 +67,17 @@ ecm_add_qtwayland_client_protocol(lattedock-app_SRCS
 add_executable(latte-dock-ng ${lattedock-app_SRCS})
 add_executable(latte-dock-ng-add-launcher launcherhelper.cpp)
 
+if(LATTE_LAYERSHELL_HAS_SET_SCREEN)
+    target_compile_definitions(latte-dock-ng PRIVATE LATTE_LAYERSHELL_HAS_SET_SCREEN)
+endif()
+if(LATTE_LAYERSHELL_HAS_DESIRED_SIZE)
+    target_compile_definitions(latte-dock-ng PRIVATE LATTE_LAYERSHELL_HAS_DESIRED_SIZE)
+endif()
+
 include(FakeTarget.cmake)
 
 target_link_libraries(latte-dock-ng
+    latteLogging
     Qt6::DBus
     Qt6::Widgets
     Qt6::Quick

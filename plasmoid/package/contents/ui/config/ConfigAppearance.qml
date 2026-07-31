@@ -4,9 +4,9 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.0
+import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.15
 import QtQuick.Effects
 
 import org.kde.plasma.core 2.0 as PlasmaCore

@@ -67,6 +67,7 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
     }
 
     if (m_currentParabolicItem) {
+        // The method is defined in QML, so the string-based form is the only one available.
         QMetaObject::invokeMethod(m_currentParabolicItem, "parabolicExited", Qt::QueuedConnection);
     }
 

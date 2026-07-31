@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "manager.h"
 
 // local
@@ -74,7 +75,7 @@ void Manager::init()
     bool firstRun = !layoutsDir.exists();
 
     int configVer = m_corona->universalSettings()->version();
-    qDebug() << "Universal Settings version : " << configVer;
+    qCDebug(latteLayout) << "Universal Settings version : " << configVer;
 
     if (firstRun) {
         m_corona->universalSettings()->setVersion(2);
@@ -82,7 +83,7 @@ void Manager::init()
 
         //startup create what is necessary....
         if (!layoutsDir.exists()) {
-            QDir(Latte::configPath()).mkdir("latte");
+            QDir(Latte::configPath()).mkdir(QStringLiteral("latte"));
         }
 
         QString defpath = m_corona->templatesManager()->newLayout(i18n("My Layout"), i18n(Templates::DEFAULTLAYOUTTEMPLATENAME));
@@ -94,7 +95,7 @@ void Manager::init()
 
         bool isOlderVersion = m_importer->updateOldConfiguration();
         if (isOlderVersion) {
-            qDebug() << "Latte is updating its older configuration...";
+            qCDebug(latteLayout) << "Latte is updating its older configuration...";
             m_corona->templatesManager()->importSystemLayouts();
         } else {
             m_corona->universalSettings()->setSingleModeLayoutName(i18n("My Layout"));
@@ -102,18 +103,18 @@ void Manager::init()
     }
 
     //! Custom Templates path creation
-    QDir localTemplatesDir(Latte::configPath() + "/latte/templates");
+    QDir localTemplatesDir(Latte::configPath() + QLatin1String("/latte/templates"));
 
     if (!localTemplatesDir.exists()) {
-        QDir(Latte::configPath() + "/latte").mkdir("templates");
+        QDir(Latte::configPath() + QLatin1String("/latte")).mkdir(QStringLiteral("templates"));
     }
 
     //! Check if the multiple-layouts hidden file is present, add it if it isnt
     if (!QFile(Layouts::Importer::layoutUserFilePath(Layout::MULTIPLELAYOUTSHIDDENNAME)).exists()) {
-        m_corona->templatesManager()->newLayout("", Layout::MULTIPLELAYOUTSHIDDENNAME);
+        m_corona->templatesManager()->newLayout(QString(), Layout::MULTIPLELAYOUTSHIDDENNAME);
     }
 
-    qDebug() << "Latte is loading  its layouts...";
+    qCDebug(latteLayout) << "Latte is loading  its layouts...";
 
     m_synchronizer->initLayouts();
 }
@@ -205,7 +206,7 @@ Latte::Data::LayoutIcon Manager::iconForLayout(const Data::Layout &layout) const
         return _icon;
     }
 
-    _icon.name = "user-desktop";
+    _icon.name = QStringLiteral("user-desktop");
     _icon.isBackgroundFile = false;
     return _icon;
 }
@@ -228,7 +229,7 @@ void Manager::loadLayoutOnStartup(QString layoutName)
     if (layouts.size() > 0) {
         QDialog* dialog = new QDialog(nullptr);
         dialog->setWindowTitle(i18n("Multiple Layouts Startup Warning"));
-        dialog->setObjectName("sorry");
+        dialog->setObjectName(QStringLiteral("sorry"));
         dialog->setAttribute(Qt::WA_DeleteOnClose);
 
         auto buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok);
@@ -284,16 +285,16 @@ void Manager::moveView(QString originLayoutName, uint originViewId, QString dest
 
 void Manager::loadLatteLayout(QString layoutPath)
 {
-    qDebug() << " -------------------------------------------------------------------- ";
-    qDebug() << " -------------------------------------------------------------------- ";
+    qCDebug(latteLayout) << " -------------------------------------------------------------------- ";
+    qCDebug(latteLayout) << " -------------------------------------------------------------------- ";
 
     if (m_corona->containments().size() > 0) {
-        qDebug() << "LOAD LATTE LAYOUT ::: There are still containments present !!!! :: " << m_corona->containments().size();
+        qCDebug(latteLayout) << "LOAD LATTE LAYOUT ::: There are still containments present !!!! :: " << m_corona->containments().size();
     }
 
     if (!layoutPath.isEmpty() && m_corona->containments().size() == 0) {
         cleanupOnStartup(layoutPath);
-        qDebug() << "LOADING CORONA LAYOUT:" << layoutPath;
+        qCDebug(latteLayout) << "LOADING CORONA LAYOUT:" << layoutPath;
         m_corona->loadLayout(layoutPath);
     }
 }
@@ -328,12 +329,12 @@ void Manager::cleanupOnStartup(QString path)
 
     KSharedConfigPtr filePtr = KSharedConfig::openConfig(path);
 
-    KConfigGroup actionGroups = KConfigGroup(filePtr, "ActionPlugins");
+    KConfigGroup actionGroups = KConfigGroup(filePtr, QStringLiteral("ActionPlugins"));
 
     QStringList deprecatedActionGroup;
 
     for (const auto &actId : actionGroups.groupList()) {
-        QString pluginId = actionGroups.group(actId).readEntry("RightButton;NoModifier", "");
+        QString pluginId = actionGroups.group(actId).readEntry(QStringLiteral("RightButton;NoModifier"), "");
 
         if (pluginId == QStringLiteral("org.kde.contextmenu")) {
             deprecatedActionGroup << actId;
@@ -341,17 +342,17 @@ void Manager::cleanupOnStartup(QString path)
     }
 
     for (const auto &pId : deprecatedActionGroup) {
-        qDebug() << "!!!!!!!!!!!!!!!!  !!!!!!!!!!!! !!!!!!! REMOVING :::: " << pId;
+        qCDebug(latteLayout) << "!!!!!!!!!!!!!!!!  !!!!!!!!!!!! !!!!!!! REMOVING :::: " << pId;
         actionGroups.group(pId).deleteGroup();
     }
 
-    KConfigGroup containmentGroups = KConfigGroup(filePtr, "Containments");
+    KConfigGroup containmentGroups = KConfigGroup(filePtr, QStringLiteral("Containments"));
 
     QStringList removeContaimentsList;
 
     for (const auto &cId : containmentGroups.groupList()) {
         KConfigGroup containment = containmentGroups.group(cId);
-        QString pluginId = containment.readEntry("plugin", "");
+        QString pluginId = containment.readEntry(QStringLiteral("plugin"), "");
 
         if (pluginId == QLatin1String(Latte::PluginId::kDesktopContainment)) { //!must remove ghost containments first
             removeContaimentsList << cId;
@@ -359,9 +360,9 @@ void Manager::cleanupOnStartup(QString path)
         }
 
         if (pluginId == QStringLiteral("org.kde.latte.containment")) {
-            KConfigGroup general = containment.group("General");
-            const QString appletOrder = general.readEntry("appletOrder", QString());
-            KConfigGroup applets = containment.group("Applets");
+            KConfigGroup general = containment.group(QStringLiteral("General"));
+            const QString appletOrder = general.readEntry(QStringLiteral("appletOrder"), QString());
+            KConfigGroup applets = containment.group(QStringLiteral("Applets"));
 
             if (appletOrder.isEmpty()) {
                 QStringList appletIds = applets.groupList();
@@ -380,21 +381,21 @@ void Manager::cleanupOnStartup(QString path)
                         return lhs < rhs;
                     });
 
-                    const QString rebuiltOrder = appletIds.join(";");
-                    general.writeEntry("appletOrder", rebuiltOrder);
+                    const QString rebuiltOrder = appletIds.join(QStringLiteral(";"));
+                    general.writeEntry(QStringLiteral("appletOrder"), rebuiltOrder);
                     general.sync();
                     qWarning() << "Repaired missing appletOrder for containment" << cId << ":" << rebuiltOrder;
                 }
             }
 
-            const QStringList orderedAppletIds = general.readEntry("appletOrder", QString()).split(';', Qt::SkipEmptyParts);
+            const QStringList orderedAppletIds = general.readEntry(QStringLiteral("appletOrder"), QString()).split(QLatin1Char(';'), Qt::SkipEmptyParts);
 
             if (orderedAppletIds.size() == 2) {
                 QString tasksAppletId;
                 QString analogClockAppletId;
 
                 for (const auto &aId : orderedAppletIds) {
-                    const QString appletPluginId = applets.group(aId).readEntry("plugin", QString());
+                    const QString appletPluginId = applets.group(aId).readEntry(QStringLiteral("plugin"), QString());
 
                     if (appletPluginId == QLatin1String(Latte::PluginId::kPlasmoid)) {
                         tasksAppletId = aId;
@@ -409,7 +410,7 @@ void Manager::cleanupOnStartup(QString path)
                         && tasksAppletId == QStringLiteral("2") && analogClockAppletId == QStringLiteral("3")) {
                     applets.group(analogClockAppletId).deleteGroup();
                     applets.sync();
-                    general.writeEntry("appletOrder", tasksAppletId);
+                    general.writeEntry(QStringLiteral("appletOrder"), tasksAppletId);
                     general.sync();
                     qWarning() << "Removed legacy analog clock from default dock containment" << cId;
                 }
@@ -437,10 +438,10 @@ void Manager::clearUnloadedContainmentsFromLinkedFile(QStringList containmentsId
         return;
     }
 
-    auto containments = m_corona->config()->group("Containments");
+    auto containments = m_corona->config()->group(QStringLiteral("Containments"));
 
     for (const auto &conId : containmentsIds) {
-        qDebug() << "unloads ::: " << conId;
+        qCDebug(latteLayout) << "unloads ::: " << conId;
         KConfigGroup containment = containments.group(conId);
         containment.deleteGroup();
         containment.sync();
@@ -452,6 +453,9 @@ void Manager::clearUnloadedContainmentsFromLinkedFile(QStringList containmentsId
 void Manager::showLatteSettingsDialog(int firstPage, bool toggleCurrentPage)
 {
     if (!m_latteSettingsDialog) {
+        // The dialog is intentionally a parentless singleton that is reused
+        // across opens; it is destroyed via deleteLater() in
+        // hideLatteSettingsDialog() during application quit.
         m_latteSettingsDialog = new Latte::Settings::Dialog::SettingsDialog(nullptr, m_corona);
     }
     m_latteSettingsDialog->show();

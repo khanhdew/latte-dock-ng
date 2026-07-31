@@ -7,6 +7,7 @@
 #define ABSTRACTLAYOUT_H
 
 // Qt
+#include <QStringList>
 #include <QObject>
 
 // KDE
@@ -41,7 +42,7 @@ Q_ENUM_NS(Type);
 namespace Latte {
 namespace Layout {
 
-const char MULTIPLELAYOUTSHIDDENNAME[] = ".multiple-layouts_hidden";
+const QString MULTIPLELAYOUTSHIDDENNAME = QStringLiteral(".multiple-layouts_hidden");
 
 class AbstractLayout : public QObject
 {

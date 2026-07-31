@@ -113,7 +113,6 @@ Q_SIGNALS:
 
 private:
     ContainmentViewPrivate *const d;
-    Q_PRIVATE_SLOT(d, void updateDestroyed(bool))
     friend class ContainmentViewPrivate;
 };
 

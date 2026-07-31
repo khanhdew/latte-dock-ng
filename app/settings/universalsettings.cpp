@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "universalsettings.h"
 
 // local
@@ -26,7 +27,7 @@
 #include <KActivities/Consumer>
 #include <KDirWatch>
 
-#define KWINCOLORSSCRIPT "kwin/scripts/lattewindowcolors"
+#define KWINCOLORSSCRIPT QStringLiteral("kwin/scripts/lattewindowcolors")
 
 namespace Latte {
 
@@ -67,18 +68,18 @@ UniversalSettings::~UniversalSettings()
 void UniversalSettings::load()
 {
     //! check if user has set the autostart option
-    bool autostartUserSet = m_universalGroup.readEntry("userConfiguredAutostart", false);
+    bool autostartUserSet = m_universalGroup.readEntry(QStringLiteral("userConfiguredAutostart"), false);
 
     if (!autostartUserSet && !autostart()) {
         //! the first time the application is running and autostart is not set, autostart is enabled
         //! and from now own it will not be recreated in the beginning
 
         setAutostart(true);
-        m_universalGroup.writeEntry("userConfiguredAutostart", true);
+        m_universalGroup.writeEntry(QStringLiteral("userConfiguredAutostart"), true);
     }
 
     //! init screen scales
-    m_screenScalesGroup = m_universalGroup.group("ScreenScales");
+    m_screenScalesGroup = m_universalGroup.group(QStringLiteral("ScreenScales"));
 
     //! load configuration
     loadConfig();
@@ -156,7 +157,7 @@ void UniversalSettings::setVersion(int ver)
     }
 
     m_version = ver;
-    qDebug() << "Universal Settings version updated to : " << m_version;
+    qCDebug(latteSettings) << "Universal Settings version updated to : " << m_version;
 
     Q_EMIT versionChanged();
 }
@@ -305,7 +306,7 @@ void UniversalSettings::setColorsScriptIsPresent(bool present)
 
 void UniversalSettings::updateColorsScriptIsPresent()
 {
-    qDebug() << "Updating Latte Colors Script presence...";
+    qCDebug(latteSettings) << "Updating Latte Colors Script presence...";
 
     setColorsScriptIsPresent(!Layouts::Importer::standardPath(KWINCOLORSSCRIPT).isEmpty());
 }
@@ -394,8 +395,8 @@ void UniversalSettings::upgrade_v010()
 {
     if (m_singleModeLayoutName.isEmpty()) {
         //!Upgrading path for v0.9 to v0.10
-        QString lastNonAssigned = m_universalGroup.readEntry("lastNonAssignedLayout", QString());
-        QString currentLayout = m_universalGroup.readEntry("currentLayout", QString());
+        QString lastNonAssigned = m_universalGroup.readEntry(QStringLiteral("lastNonAssignedLayout"), QString());
+        QString currentLayout = m_universalGroup.readEntry(QStringLiteral("currentLayout"), QString());
 
         if (!lastNonAssigned.isEmpty()) {
             m_singleModeLayoutName = lastNonAssigned;
@@ -405,7 +406,7 @@ void UniversalSettings::upgrade_v010()
 
         if (!m_singleModeLayoutName.isEmpty() && Layouts::Importer::layoutExists(m_singleModeLayoutName)) {
             //! it is executed only after the upgrade path
-            m_universalGroup.writeEntry("singleModeLayoutName", m_singleModeLayoutName);
+            m_universalGroup.writeEntry(QStringLiteral("singleModeLayoutName"), m_singleModeLayoutName);
             CentralLayout storage(this, Layouts::Importer::layoutUserFilePath(m_singleModeLayoutName));
             if (m_singleModeLayoutName == lastNonAssigned) {
                 storage.setActivities(QStringList(Data::Layout::FREEACTIVITIESID));
@@ -418,19 +419,19 @@ void UniversalSettings::upgrade_v010()
 
 void UniversalSettings::loadConfig()
 {
-    m_version = m_universalGroup.readEntry("version", 1);
-    m_badges3DStyle = m_universalGroup.readEntry("badges3DStyle", false);
-    m_contextMenuActionsAlwaysShown = m_universalGroup.readEntry("contextMenuActionsAlwaysShown", Latte::Data::ContextMenu::ACTIONSALWAYSVISIBLE);
-    m_inAdvancedModeForEditSettings = m_universalGroup.readEntry("inAdvancedModeForEditSettings", false);
-    m_isAvailableGeometryBroadcastedToPlasma = m_universalGroup.readEntry("isAvailableGeometryBroadcastedToPlasma", true);
-    m_launchers = m_universalGroup.readEntry("launchers", QStringList());
-    m_metaPressAndHoldEnabled = m_universalGroup.readEntry("metaPressAndHoldEnabled", true);
-    m_screenTrackerInterval = m_universalGroup.readEntry("screenTrackerInterval", 2500);
-    m_showInfoWindow = m_universalGroup.readEntry("showInfoWindow", true);
-    m_singleModeLayoutName = m_universalGroup.readEntry("singleModeLayoutName", QString());
-    m_parabolicSpread = m_universalGroup.readEntry("parabolicSpread", Data::Preferences::PARABOLICSPREAD);
-    m_thicknessMarginInfluence = m_universalGroup.readEntry("parabolicThicknessMarginInfluence", Data::Preferences::THICKNESSMARGININFLUENCE);
-    m_memoryUsage = static_cast<MemoryUsage::LayoutsMemory>(m_universalGroup.readEntry("memoryUsage", (int)MemoryUsage::SingleLayout));
+    m_version = m_universalGroup.readEntry(QStringLiteral("version"), 1);
+    m_badges3DStyle = m_universalGroup.readEntry(QStringLiteral("badges3DStyle"), false);
+    m_contextMenuActionsAlwaysShown = m_universalGroup.readEntry(QStringLiteral("contextMenuActionsAlwaysShown"), Latte::Data::ContextMenu::ACTIONSALWAYSVISIBLE);
+    m_inAdvancedModeForEditSettings = m_universalGroup.readEntry(QStringLiteral("inAdvancedModeForEditSettings"), false);
+    m_isAvailableGeometryBroadcastedToPlasma = m_universalGroup.readEntry(QStringLiteral("isAvailableGeometryBroadcastedToPlasma"), true);
+    m_launchers = m_universalGroup.readEntry(QStringLiteral("launchers"), QStringList());
+    m_metaPressAndHoldEnabled = m_universalGroup.readEntry(QStringLiteral("metaPressAndHoldEnabled"), true);
+    m_screenTrackerInterval = m_universalGroup.readEntry(QStringLiteral("screenTrackerInterval"), 2500);
+    m_showInfoWindow = m_universalGroup.readEntry(QStringLiteral("showInfoWindow"), true);
+    m_singleModeLayoutName = m_universalGroup.readEntry(QStringLiteral("singleModeLayoutName"), QString());
+    m_parabolicSpread = m_universalGroup.readEntry(QStringLiteral("parabolicSpread"), Data::Preferences::PARABOLICSPREAD);
+    m_thicknessMarginInfluence = m_universalGroup.readEntry(QStringLiteral("parabolicThicknessMarginInfluence"), Data::Preferences::THICKNESSMARGININFLUENCE);
+    m_memoryUsage = static_cast<MemoryUsage::LayoutsMemory>(m_universalGroup.readEntry(QStringLiteral("memoryUsage"), static_cast<int>(MemoryUsage::SingleLayout)));
 
     loadScalesConfig();
 
@@ -441,19 +442,19 @@ void UniversalSettings::loadConfig()
 
 void UniversalSettings::saveConfig()
 {
-    m_universalGroup.writeEntry("version", m_version);
-    m_universalGroup.writeEntry("badges3DStyle", m_badges3DStyle);
-    m_universalGroup.writeEntry("contextMenuActionsAlwaysShown", m_contextMenuActionsAlwaysShown);
-    m_universalGroup.writeEntry("inAdvancedModeForEditSettings", m_inAdvancedModeForEditSettings);
-    m_universalGroup.writeEntry("isAvailableGeometryBroadcastedToPlasma", m_isAvailableGeometryBroadcastedToPlasma);
-    m_universalGroup.writeEntry("launchers", m_launchers);
-    m_universalGroup.writeEntry("metaPressAndHoldEnabled", m_metaPressAndHoldEnabled);
-    m_universalGroup.writeEntry("screenTrackerInterval", m_screenTrackerInterval);
-    m_universalGroup.writeEntry("showInfoWindow", m_showInfoWindow);
-    m_universalGroup.writeEntry("singleModeLayoutName", m_singleModeLayoutName);
-    m_universalGroup.writeEntry("parabolicSpread", m_parabolicSpread);
-    m_universalGroup.writeEntry("parabolicThicknessMarginInfluence", m_thicknessMarginInfluence);
-    m_universalGroup.writeEntry("memoryUsage", static_cast<int>(m_memoryUsage));
+    m_universalGroup.writeEntry(QStringLiteral("version"), m_version);
+    m_universalGroup.writeEntry(QStringLiteral("badges3DStyle"), m_badges3DStyle);
+    m_universalGroup.writeEntry(QStringLiteral("contextMenuActionsAlwaysShown"), m_contextMenuActionsAlwaysShown);
+    m_universalGroup.writeEntry(QStringLiteral("inAdvancedModeForEditSettings"), m_inAdvancedModeForEditSettings);
+    m_universalGroup.writeEntry(QStringLiteral("isAvailableGeometryBroadcastedToPlasma"), m_isAvailableGeometryBroadcastedToPlasma);
+    m_universalGroup.writeEntry(QStringLiteral("launchers"), m_launchers);
+    m_universalGroup.writeEntry(QStringLiteral("metaPressAndHoldEnabled"), m_metaPressAndHoldEnabled);
+    m_universalGroup.writeEntry(QStringLiteral("screenTrackerInterval"), m_screenTrackerInterval);
+    m_universalGroup.writeEntry(QStringLiteral("showInfoWindow"), m_showInfoWindow);
+    m_universalGroup.writeEntry(QStringLiteral("singleModeLayoutName"), m_singleModeLayoutName);
+    m_universalGroup.writeEntry(QStringLiteral("parabolicSpread"), m_parabolicSpread);
+    m_universalGroup.writeEntry(QStringLiteral("parabolicThicknessMarginInfluence"), m_thicknessMarginInfluence);
+    m_universalGroup.writeEntry(QStringLiteral("memoryUsage"), static_cast<int>(m_memoryUsage));
     syncSettings();
 }
 
@@ -501,7 +502,7 @@ void UniversalSettings::loadScalesConfig()
 {
     for (const auto &screenName : m_screenScalesGroup.keyList()) {
         QString scalesStr = m_screenScalesGroup.readEntry(screenName, QString());
-        QStringList scales = scalesStr.split(";");
+        QStringList scales = scalesStr.split(QLatin1Char(';'));
         if (scales.count() == 2) {
             m_screenScales[screenName] = qMakePair(scales[0].toFloat(), scales[1].toFloat());
         }
@@ -513,7 +514,7 @@ void UniversalSettings::saveScalesConfig()
     for (const auto &screenName : m_screenScales.keys()) {
         QStringList scales;
         scales << QString::number(m_screenScales[screenName].first) << QString::number(m_screenScales[screenName].second);
-        m_screenScalesGroup.writeEntry(screenName, scales.join(";"));
+        m_screenScalesGroup.writeEntry(screenName, scales.join(QLatin1Char(';')));
     }
 
     m_screenScalesGroup.sync();

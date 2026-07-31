@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "synchronizer.h"
 
 //! local
@@ -38,7 +39,7 @@ namespace Layouts {
 
 Synchronizer::Synchronizer(QObject *parent)
     : QObject(parent),
-      m_activitiesController(new KActivities::Controller)
+      m_activitiesController(new KActivities::Controller(this))
 {
     m_manager = qobject_cast<Manager *>(parent);
 
@@ -65,7 +66,6 @@ Synchronizer::Synchronizer(QObject *parent)
 
 Synchronizer::~Synchronizer()
 {
-    m_activitiesController->deleteLater();
 }
 
 KActivities::Controller *Synchronizer::activitiesController() const
@@ -121,7 +121,7 @@ QString Synchronizer::layoutPath(QString layoutName)
     QString path = Layouts::Importer::layoutUserFilePath(layoutName);
 
     if (!QFile(path).exists()) {
-        path = "";
+        path = QString();
     }
 
     return path;
@@ -547,7 +547,7 @@ void Synchronizer::unloadCentralLayout(CentralLayout *layout)
             m_manager->clearUnloadedContainmentsFromLinkedFile(central->unloadedContainmentsIds(), true);
         }
 
-        delete central;
+        central->deleteLater();
     }
 }
 
@@ -557,7 +557,7 @@ void Synchronizer::initLayouts()
 
     QDir layoutDir(Layouts::Importer::layoutUserDir());
     QStringList filter;
-    filter.append(QString("*.layout.latte"));
+    filter.append(QStringLiteral("*.layout.latte"));
     QStringList files = layoutDir.entryList(filter, QDir::Files | QDir::NoSymLinks);
 
     for (const auto &layout : files) {
@@ -566,7 +566,7 @@ void Synchronizer::initLayouts()
             continue;
         }
 
-        QString layoutpath = layoutDir.absolutePath() + "/" + layout;
+        QString layoutpath = layoutDir.absolutePath() + QLatin1String("/") + layout;
         onLayoutAdded(layoutpath);
     }
 
@@ -650,7 +650,7 @@ bool Synchronizer::initSingleMode(QString layoutName)
     QString layoutpath = layoutName.isEmpty() ? layoutPath(m_manager->corona()->universalSettings()->singleModeLayoutName()) : layoutPath(layoutName);
 
     if (layoutpath.isEmpty()) {
-        qDebug() << "Layout : " << layoutName << " was not found...";
+        qCDebug(latteLayout) << "Layout : " << layoutName << " was not found...";
         return false;
     }
 
@@ -661,7 +661,7 @@ bool Synchronizer::initSingleMode(QString layoutName)
     //! this code must be called asynchronously because it can create crashes otherwise.
     //! Tasks plasmoid case that triggers layouts switching through its context menu
     QTimer::singleShot(LAYOUTSINITINTERVAL, [this, layoutName, layoutpath]() {
-        qDebug() << " ... initializing layout in single mode : " << layoutName << " - " << layoutpath;
+        qCDebug(latteLayout) << " ... initializing layout in single mode : " << layoutName << " - " << layoutpath;
         unloadPreloadedLayouts();
         unloadLayouts();
 
@@ -686,7 +686,7 @@ bool Synchronizer::initSingleMode(QString layoutName)
             QString deprecatedlayoutpath = layoutPath(m_manager->corona()->universalSettings()->singleModeLayoutName());
 
             if (!deprecatedlayoutpath.isEmpty()) {
-                qDebug() << "Removing Deprecated single layout after renaming:: " << m_manager->corona()->universalSettings()->singleModeLayoutName();
+                qCDebug(latteLayout) << "Removing Deprecated single layout after renaming:: " << m_manager->corona()->universalSettings()->singleModeLayoutName();
                 QFile(deprecatedlayoutpath).remove();
             }
 
@@ -714,11 +714,11 @@ bool Synchronizer::initMultipleMode(QString layoutName)
     //! this code must be called asynchronously because it can create crashes otherwise.
     //! Tasks plasmoid case that triggers layouts switching through its context menu
     QTimer::singleShot(LAYOUTSINITINTERVAL, [this, layoutName]() {
-        qDebug() << " ... initializing layout in multiple mode : " << layoutName ;
+        qCDebug(latteLayout) << " ... initializing layout in multiple mode : " << layoutName ;
         unloadLayouts();
 
         QStringList layoutsinmultiplestorage = Layouts::Storage::self()->storedLayoutsInMultipleFile();
-        qDebug() << "Preloaded Multiple Layouts in Storage :: " << layoutsinmultiplestorage;
+        qCDebug(latteLayout) << "Preloaded Multiple Layouts in Storage :: " << layoutsinmultiplestorage;
 
         m_manager->loadLatteLayout(layoutPath(QString(Layout::MULTIPLELAYOUTSHIDDENNAME)));
 
@@ -891,7 +891,7 @@ bool Synchronizer::switchToLayoutInMultipleMode(QString layoutName)
 
 bool Synchronizer::switchToLayout(QString layoutName, MemoryUsage::LayoutsMemory newMemoryUsage)
 {
-    qDebug() << " >>>>> SWITCHING >> " << layoutName << " __ from memory: " << m_manager->memoryUsage() << " to memory: " << newMemoryUsage;
+    qCDebug(latteLayout) << " >>>>> SWITCHING >> " << layoutName << " __ from memory: " << m_manager->memoryUsage() << " to memory: " << newMemoryUsage;
 
     if (newMemoryUsage == MemoryUsage::Current) {
         newMemoryUsage = m_manager->memoryUsage();
@@ -913,8 +913,8 @@ bool Synchronizer::switchToLayout(QString layoutName, MemoryUsage::LayoutsMemory
 
 void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
 {
-    qDebug() << "   ----  --------- ------    syncMultipleLayoutsToActivities       -------   ";
-    qDebug() << "   ----  --------- ------    -------------------------------       -------   ";
+    qCDebug(latteLayout) << "   ----  --------- ------    syncMultipleLayoutsToActivities       -------   ";
+    qCDebug(latteLayout) << "   ----  --------- ------    -------------------------------       -------   ";
 
     QStringList layoutNamesToUnload;
     QStringList layoutNamesToLoad;
@@ -955,7 +955,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
     //! Safety
     if (layoutNamesToLoad.isEmpty()) {
         //! If no layout is found then force loading Default Layout
-        QString layoutPath = m_manager->corona()->templatesManager()->newLayout("", i18n(Templates::DEFAULTLAYOUTTEMPLATENAME));
+        QString layoutPath = m_manager->corona()->templatesManager()->newLayout(QString(), i18n(Templates::DEFAULTLAYOUTTEMPLATENAME));
         layoutNamesToLoad << Layout::AbstractLayout::layoutName(layoutPath);
         m_manager->setOnAllActivities(layoutNamesToLoad[0]);
         defaultForcedLayout = layoutNamesToLoad[0];
@@ -969,7 +969,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
             CentralLayout *newLayout = new CentralLayout(this, QString(layoutPath(layoutname)), layoutname);
 
             if (newLayout) {
-                qDebug() << "ACTIVATING LAYOUT ::::: " << layoutname;
+                qCDebug(latteLayout) << "ACTIVATING LAYOUT ::::: " << layoutname;
 
                 //! Order of initialization steps is very important and guarantees correct startup initialization
                 //! Step1: corona is set for the layout
@@ -998,7 +998,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
         m_manager->showInfoWindow(i18np("Activating layout: <b>%2</b> ...",
                                         "Activating layouts: <b>%2</b> ...",
                                         newlyActivatedLayouts.count(),
-                                        newlyActivatedLayouts.join(", ")),
+                                        newlyActivatedLayouts.join(QStringLiteral(", "))),
                                   4000, QStringList(Data::Layout::ALLACTIVITIESID));
     }
 
@@ -1035,7 +1035,7 @@ void Synchronizer::unloadLayouts(const QStringList &layoutNames, const QStringLi
         int posLayout = centralLayoutPos(layoutname);
 
         if (posLayout >= 0) {
-            qDebug() << "REMOVING LAYOUT ::::: " << layoutname;
+            qCDebug(latteLayout) << "REMOVING LAYOUT ::::: " << layoutname;
             m_centralLayouts.removeAt(posLayout);
 
             if (!m_manager->corona()->inQuit()) {
@@ -1047,7 +1047,7 @@ void Synchronizer::unloadLayouts(const QStringList &layoutNames, const QStringLi
             if (!m_manager->corona()->inQuit()) {
                 m_manager->clearUnloadedContainmentsFromLinkedFile(layout->unloadedContainmentsIds());
             }
-            delete layout;
+            layout->deleteLater();
         } else if (preloadedLayouts.contains(layoutname)) {
             Layouts::Storage::self()->moveToLayoutFile(layoutname);
             //! just make sure that

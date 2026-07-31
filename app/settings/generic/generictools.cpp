@@ -294,9 +294,7 @@ QRect remainedFromColorSchemeIcon(const QStyleOption &option, Qt::AlignmentFlag 
 
 void drawColorSchemeIcon(QPainter *painter, const QStyleOption &option, const QColor &textColor, const QColor &backgroundColor, Qt::AlignmentFlag alignment, int lengthMargin, int thickMargin)
 {
-    bool active = Latte::isActive(option);
     bool selected = Latte::isSelected(option);
-    bool focused = Latte::isFocused(option);
 
     int lenmargin = (lengthMargin == -1 ? kIconMargin + kMargin : lengthMargin);
     int thickmargin = (thickMargin == -1 ? kIconMargin : thickMargin);
@@ -339,7 +337,6 @@ void drawColorSchemeIcon(QPainter *painter, const QStyleOption &option, const QC
     painter->setPen(pen);
 
     int rectsize = 0.7 * backTarget.width();
-    int gap = backTarget.width() - rectsize;
 
     painter->drawRect(backTarget.right() - rectsize, backTarget.bottom() - rectsize, rectsize, rectsize);
 
@@ -354,7 +351,6 @@ void drawColorSchemeIcon(QPainter *painter, const QStyleOption &option, const QC
 QRect remainedFromIcon(const QStyleOption &option, Qt::AlignmentFlag alignment, int lengthMargin, int thickMargin)
 {
     int lenmargin = (lengthMargin == -1 ? kIconMargin + kMargin : lengthMargin);
-    int thickmargin = (thickMargin == -1 ? kIconMargin : thickMargin);
 
     int iconsize = option.rect.height() - 2*thickMargin;
     int total = iconsize + 2*lenmargin;
@@ -467,7 +463,6 @@ void drawChangesIndicator(QPainter *painter, const QStyleOptionViewItem &option)
 {
     //! draw changes circle indicator
     int csize{kIndicatorChangesLength};
-    int tsize{kIndicatorChangesLength + kIndicatorChangesMargin*2};
 
     painter->save();
 
@@ -521,7 +516,6 @@ QRect drawScreen(QPainter *painter, const QStyleOption &option, bool drawMultipl
     int scr_maxlength = screenMaxLength(option, maxIconSize);
     int scr_maxthickness = maxIconSize >= 0 ? qMin(maxIconSize, option.rect.height() - kMargin * 2) : option.rect.height() - kMargin * 2;
 
-    int total_length = scr_maxlength + kMargin * 2;
     int pen_width = 2;
 
     painter->save();
@@ -574,7 +568,6 @@ QRect drawScreen(QPainter *painter, const QStyleOption &option, bool drawMultipl
     //! draw multiple
     if (drawMultipleScreens) {
         int multiplemargin = 3;
-        int curx = screenRect.x()-multiplemargin;
         painter->drawLine(screenRect.x() - multiplemargin, screenRect.y() - multiplemargin,
                           screenRect.x() - multiplemargin, screenRect.y() - multiplemargin + screenRect.height());
         painter->drawLine(screenRect.x() - multiplemargin, screenRect.y() - multiplemargin,

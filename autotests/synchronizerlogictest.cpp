@@ -51,7 +51,11 @@ inline QStringList menuLayouts(const LayoutsTable &t, const QStringList &active)
     r.sort(Qt::CaseInsensitive); return r;
 }
 inline bool lookupData(const LayoutsTable &t, const QString &n, LayoutInfo &o) {
-    if(!t.containsName(n)) return false; o=t[t.idForName(n)]; return true;
+    if (!t.containsName(n)) {
+        return false;
+    }
+    o = t[t.idForName(n)];
+    return true;
 }
 inline bool hasIdConflict(const QStringList &c, const QStringList &a) {
     for(auto &x:c) if(a.contains(x)) return true;

@@ -21,10 +21,10 @@ namespace Data {
 class Layout : public Generic
 {
 public:
-    static constexpr const char* ALLACTIVITIESID = "{0}";
-    static constexpr const char* FREEACTIVITIESID = "{free-activities}";
-    static constexpr const char* CURRENTACTIVITYID = "{current-activity}";
-    static constexpr const char* DEFAULTSCHEMEFILE = "kdeglobals";
+    static inline const QString ALLACTIVITIESID = QStringLiteral("{0}");
+    static inline const QString FREEACTIVITIESID = QStringLiteral("{free-activities}");
+    static inline const QString CURRENTACTIVITYID = QStringLiteral("{current-activity}");
+    static inline const QString DEFAULTSCHEMEFILE = QStringLiteral("kdeglobals");
 
     Layout();
     Layout(Layout &&o);

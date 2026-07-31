@@ -7,6 +7,7 @@
 #define SETTINGSLAYOUTSCONTROLLER_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 #include "layoutsheaderview.h"
 #include "layoutsmodel.h"

@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "layoutstableview.h"
 
 //! Qt
@@ -59,10 +60,10 @@ LayoutsTableView::LayoutsTableView(QWidget *parent)
     backgroundColor.setAlphaF(0.8);
     foregroundColor.setAlphaF(0.5);
 
-    qDebug() << borderColor.name() << " _ " << backgroundColor.name();
+    qCDebug(latteSettings) << borderColor.name() << " _ " << backgroundColor.name();
 
-    QString css = "QLabel{border: 1px solid "+borderColor.name(QColor::HexArgb)+"; border-radius: 15px;";
-    css += "background:"+backgroundColor.name(QColor::HexArgb)+"; color:" +foregroundColor.name(QColor::HexArgb)+ ";}";
+    QString css = QStringLiteral("QLabel{border: 1px solid ") + borderColor.name(QColor::HexArgb) + QStringLiteral("; border-radius: 15px;");
+    css += QStringLiteral("background:") + backgroundColor.name(QColor::HexArgb) + QStringLiteral("; color:") + foregroundColor.name(QColor::HexArgb) + QLatin1String(";}");
 
     m_overlayDropMessage->setStyleSheet(css);
 }

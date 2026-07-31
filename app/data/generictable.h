@@ -10,6 +10,7 @@
 #include "genericdata.h"
 
 // Qt
+#include <QStringList>
 #include <QList>
 
 namespace Latte {

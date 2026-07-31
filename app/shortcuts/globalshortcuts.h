@@ -39,7 +39,7 @@ class GlobalShortcuts : public QObject
     Q_OBJECT
 
 public:
-    static constexpr const char* SHORTCUTBLOCKHIDINGTYPE  = "globalshortcuts::blockHiding()";
+    static inline const QString SHORTCUTBLOCKHIDINGTYPE = QStringLiteral("globalshortcuts::blockHiding()");
 
     GlobalShortcuts(QObject *parent = nullptr);
     ~GlobalShortcuts() override;

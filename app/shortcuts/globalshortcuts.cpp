@@ -5,6 +5,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "globalshortcuts.h"
 
 // local
@@ -111,12 +112,12 @@ void GlobalShortcuts::init()
         const Qt::Key key = static_cast<Qt::Key>(Qt::Key_0 + i);
         const QKeySequence metaShortcut(QKeyCombination(Qt::MetaModifier, key));
 
-        QAction *action = taskbarActions->addAction(QStringLiteral("activate entry %1").arg(QString::number(entryNumber)));
+        QAction *action = taskbarActions->addAction(QStringLiteral("activate entry %1").arg(entryNumber));
         action->setText(i18n("Activate Entry %1", entryNumber));
         action->setShortcut(metaShortcut);
         KGlobalAccel::setGlobalShortcut(action, metaShortcut);
         connect(action, &QAction::triggered, this, [this, i] {
-            // qDebug() << "meta action...";
+            // qCDebug(latteLayout) << "meta action...";
             m_modifierTracker->cancelMetaPressed();
             activateEntry(i, static_cast<Qt::Key>(Qt::META));
         });
@@ -128,7 +129,7 @@ void GlobalShortcuts::init()
     //activate actions [10-19]
     for (int i = 10; i < 20; ++i) {
         const QKeySequence metaShortcut(QKeyCombination(Qt::MetaModifier, keysAboveTen[i - 10]));
-        QAction *action = taskbarActions->addAction(QStringLiteral("activate entry %1").arg(QString::number(i)));
+        QAction *action = taskbarActions->addAction(QStringLiteral("activate entry %1").arg(i));
         action->setText(i18n("Activate Entry %1", i));
         action->setShortcut(metaShortcut);
         KGlobalAccel::setGlobalShortcut(action, metaShortcut);
@@ -144,11 +145,11 @@ void GlobalShortcuts::init()
         const Qt::Key key = static_cast<Qt::Key>(Qt::Key_0 + i);
         const QKeySequence newInstanceShortcut(QKeyCombination(Qt::MetaModifier | Qt::ControlModifier, key));
 
-        QAction *action = taskbarActions->addAction(QStringLiteral("new instance for entry %1").arg(QString::number(entryNumber)));
+        QAction *action = taskbarActions->addAction(QStringLiteral("new instance for entry %1").arg(entryNumber));
         action->setText(i18n("New Instance for Entry %1", entryNumber));
         KGlobalAccel::setGlobalShortcut(action, newInstanceShortcut);
         connect(action, &QAction::triggered, this, [this, i] {
-            // qDebug() << "meta + ctrl + action...";
+            // qCDebug(latteLayout) << "meta + ctrl + action...";
             m_modifierTracker->cancelMetaPressed();
             activateEntry(i, static_cast<Qt::Key>(Qt::CTRL));
         });
@@ -157,7 +158,7 @@ void GlobalShortcuts::init()
     //new instance actions [10-19]
     for (int i = 10; i < 20; ++i) {
         const QKeySequence newInstanceShortcut(QKeyCombination(Qt::MetaModifier | Qt::ControlModifier, keysAboveTen[i - 10]));
-        QAction *action = taskbarActions->addAction(QStringLiteral("new instance for entry %1").arg(QString::number(i)));
+        QAction *action = taskbarActions->addAction(QStringLiteral("new instance for entry %1").arg(i));
         action->setText(i18n("New Instance for Entry %1", i));
         KGlobalAccel::setGlobalShortcut(action, newInstanceShortcut);
         connect(action, &QAction::triggered, this, [this, i] {
@@ -541,7 +542,7 @@ void GlobalShortcuts::hideViewsTimerSlot()
         m_metaShowedViews = false;
     };
 
-    // qDebug() << "MEMORY ::: " << m_hideViews.count() << " _ " << m_viewItemsCalled.count() << " _ " << m_showShortcutBadgesMethods.count();
+    // qCDebug(latteLayout) << "MEMORY ::: " << m_hideViews.count() << " _ " << m_viewItemsCalled.count() << " _ " << m_showShortcutBadgesMethods.count();
 
     // TODO: improve modifier release tracking for Wayland.
     initParameters();

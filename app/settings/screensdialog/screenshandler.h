@@ -11,6 +11,7 @@
 #include "../../data/screendata.h"
 
 // Qt
+#include <QStringList>
 #include <QButtonGroup>
 #include <QSortFilterProxyModel>
 

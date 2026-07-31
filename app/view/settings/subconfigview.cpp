@@ -3,12 +3,16 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <latte_debug.h>
 #include "subconfigview.h"
 
 //local
 #include <config-latte.h>
 #include "../../apptypes.h"
 #include "../view.h"
+
+// Qt
+#include <QQmlEngine>
 #include "../../lattecorona.h"
 #include "../../layouts/manager.h"
 #include "../../plasma/extended/theme.h"
@@ -19,8 +23,6 @@
 #include "../../knscompat.h"
 
 // KDE
-#include <KLocalizedContext>
-#include <KDeclarative/KDeclarative>
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/surface.h>
 
@@ -97,7 +99,7 @@ SubConfigView::SubConfigView(Latte::View *view, const QString &title, const bool
 
 SubConfigView::~SubConfigView()
 {
-    qDebug() << validTitle() << " deleting...";
+    qCDebug(latteView) << validTitle() << " deleting...";
 
     // Unload QML content before the base QQuickView destructor runs.
     // The PlasmaShell.WidgetExplorer component holds a KIO-backed model
@@ -124,7 +126,7 @@ SubConfigView::~SubConfigView()
 
 void SubConfigView::init()
 {
-    qDebug() << validTitle() << " : initialization started...";
+    qCDebug(latteView) << validTitle() << " : initialization started...";
 
     addLatteQmlImportPaths(engine());
 
@@ -139,13 +141,6 @@ void SubConfigView::init()
         rootContext()->setContextProperty(QStringLiteral("layoutsManager"), m_corona->layoutsManager());
         rootContext()->setContextProperty(QStringLiteral("themeExtended"), m_corona->themeExtended());
     }
-
-    KDeclarative::KDeclarative kdeclarative;
-    kdeclarative.setDeclarativeEngine(engine());
-    kdeclarative.setTranslationDomain(QString::fromLatin1(App::TRANSLATIONDOMAIN));
-    kdeclarative.setupContext();
-    kdeclarative.setupEngine(engine());
-
 }
 
 Qt::WindowFlags SubConfigView::wFlags() const
@@ -228,7 +223,7 @@ void SubConfigView::syncPlasmoidContext()
 
     if (!m_loggedPlasmoidContext && plasmoidContextObject) {
         const QMetaObject *metaObj = plasmoidContextObject->metaObject();
-        qDebug() << "latte::config plasmoid context class:" << metaObj->className()
+        qCDebug(latteView) << "latte::config plasmoid context class:" << metaObj->className()
                  << "has configuration:" << (metaObj->indexOfProperty("configuration") >= 0)
                  << "has location:" << (metaObj->indexOfProperty("location") >= 0)
                  << "has formFactor:" << (metaObj->indexOfProperty("formFactor") >= 0);
@@ -237,7 +232,7 @@ void SubConfigView::syncPlasmoidContext()
 
     if (hasGraphicObject) {
         if (!m_hasGraphicPlasmoidContext) {
-            qDebug() << "latte::config switched plasmoid context to graphic object";
+            qCDebug(latteView) << "latte::config switched plasmoid context to graphic object";
             m_hasGraphicPlasmoidContext = true;
         }
         return;
@@ -248,7 +243,7 @@ void SubConfigView::syncPlasmoidContext()
     // to the real graphic object as soon as it is available.
     if (m_plasmoidContextSyncAttempts == 0) {
         const QMetaObject *metaObj = containmentObject->metaObject();
-        qDebug() << "latte::config containment context fallback class:" << metaObj->className()
+        qCDebug(latteView) << "latte::config containment context fallback class:" << metaObj->className()
                  << "has _plasma_graphicObject property:" << (metaObj->indexOfProperty("_plasma_graphicObject") >= 0)
                  << "has graphicObject property:" << (metaObj->indexOfProperty("graphicObject") >= 0);
     }
@@ -306,7 +301,7 @@ void SubConfigView::syncSlideEffect()
         break;
 
     default:
-        qDebug() << staticMetaObject.className() << "wrong location";
+        qCDebug(latteView) << staticMetaObject.className() << "wrong location";
         break;
     }
 
@@ -339,7 +334,7 @@ void SubConfigView::setupWaylandIntegration()
             return;
         }
 
-        qDebug() << "wayland " << title() <<  " surface was created...";
+        qCDebug(latteView) << "wayland " << title() <<  " surface was created...";
 
         m_shellSurface = interface->createSurface(s, this);
 
@@ -382,7 +377,7 @@ bool SubConfigView::event(QEvent *e)
                 if (m_shellSurface) {
                     delete m_shellSurface;
                     m_shellSurface = nullptr;
-                    qDebug() << "WAYLAND " << title() <<  " window surface was deleted...";
+                    qCDebug(latteView) << "WAYLAND " << title() <<  " window surface was deleted...";
                 }
 
                 break;
@@ -407,7 +402,7 @@ void SubConfigView::updateWaylandId()
     }
 }
 
-Plasma::FrameSvg::EnabledBorders SubConfigView::enabledBorders() const
+KSvg::FrameSvg::EnabledBorders SubConfigView::enabledBorders() const
 {
     return m_enabledBorders;
 }

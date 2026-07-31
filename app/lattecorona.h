@@ -9,6 +9,7 @@
 #define LATTECORONA_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 #include "plasma/quick/configview.h"
 #include "layouts/storage.h"

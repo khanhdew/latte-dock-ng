@@ -8,6 +8,7 @@
 #define VIEW_H
 
 // local
+#include <QStringList>
 #include <coretypes.h>
 #include "containmentinterface.h"
 #include "effects.h"

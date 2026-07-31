@@ -10,6 +10,7 @@
 #include "../../../data/activitydata.h"
 
 // Qt
+#include <QStringList>
 #include <QMenu>
 #include <QStyledItemDelegate>
 

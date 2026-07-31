@@ -25,12 +25,12 @@ Preferences::Preferences(Preferences &&o)
     : badgeStyle3D(o.badgeStyle3D),
       layoutsInformationWindow(o.layoutsInformationWindow),
       autostart(o.autostart),
-      contextMenuAlwaysActions(o.contextMenuAlwaysActions),
       isAvailableGeometryBroadcastedToPlasma(o.isAvailableGeometryBroadcastedToPlasma),
       metaHoldForBadges(o.metaHoldForBadges),
       parabolicSpread(o.parabolicSpread),
+      screensDelay(o.screensDelay),
       thicknessMarginInfluence(o.thicknessMarginInfluence),
-      screensDelay(o.screensDelay)
+      contextMenuAlwaysActions(o.contextMenuAlwaysActions)
 {
 }
 
@@ -38,12 +38,12 @@ Preferences::Preferences(const Preferences &o)
     : badgeStyle3D(o.badgeStyle3D),
       layoutsInformationWindow(o.layoutsInformationWindow),
       autostart(o.autostart),
-      contextMenuAlwaysActions(o.contextMenuAlwaysActions),
       isAvailableGeometryBroadcastedToPlasma(o.isAvailableGeometryBroadcastedToPlasma),
       metaHoldForBadges(o.metaHoldForBadges),
       parabolicSpread(o.parabolicSpread),
+      screensDelay(o.screensDelay),
       thicknessMarginInfluence(o.thicknessMarginInfluence),
-      screensDelay(o.screensDelay)
+      contextMenuAlwaysActions(o.contextMenuAlwaysActions)
 {
 }
 
