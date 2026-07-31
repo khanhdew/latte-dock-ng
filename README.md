@@ -1,8 +1,8 @@
 # <img src="logo.png" width="48"/> Latte Dock NG
 
-> **Fork notice**: This is an unofficial fork of [KDE Latte Dock](https://github.com/KDE/latte-dock) maintained by Ruizhi Zhong, targeting **KDE Plasma 6.5+ on Wayland only**. X11 support has been intentionally removed.
+> **Fork notice**: This is an unofficial fork of [KDE Latte Dock](https://github.com/KDE/latte-dock) maintained by Ruizhi Zhong, targeting **KDE Plasma 6.3+ on Wayland only**. Development happens on Plasma 6.5+ / Qt 6.11; Plasma 6.3 (Debian 13 trixie) is verified as the minimum supported version. X11 support has been intentionally removed.
 
-Latte Dock NG is a Wayland-first dock for KDE Plasma 6.5+ that provides an elegant and intuitive experience for your tasks and widgets. It animates its contents using a parabolic zoom effect and stays out of the way when not needed.
+Latte Dock NG is a Wayland-first dock for KDE Plasma 6.3+ that provides an elegant and intuitive experience for your tasks and widgets. It animates its contents using a parabolic zoom effect and stays out of the way when not needed.
 
 **"Art in Coffee"**
 
@@ -35,7 +35,7 @@ Installation
 
 We need to use at least:
 
-- **Plasma >= 6.5.0**
+- **Plasma >= 6.3.0** (developed and fully verified on Plasma 6.5+)
 - **PlasmaWaylandProtocols >= 1.6.0**
 - **Qt >= 6.6**
 - **Wayland session (X11 is not supported in this fork)**
@@ -59,11 +59,11 @@ Minimum requirements:
  Qt6Widgets >= 6.6.0
  Qt6WaylandClient >= 6.6.0
 
- Plasma >= 6.5.0
- PlasmaQuick >= 6.5.0
- PlasmaActivities >= 6.5.0
+ Plasma >= 6.3.0
+ PlasmaQuick >= 6.3.0
+ PlasmaActivities >= 6.3.0
  KWayland >= 6.0.0
- LibTaskManager >= 6.5.0
+ LibTaskManager >= 6.3.0
 
  KF6CoreAddons >= 6.0.0
  KF6GuiAddons >= 6.0.0

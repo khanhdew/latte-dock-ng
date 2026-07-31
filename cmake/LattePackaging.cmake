@@ -41,6 +41,11 @@ set(CPACK_DEBIAN_PACKAGE_SECTION "kde")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${WEBSITE}")
 set(CPACK_DEBIAN_PACKAGE_SHLIBS ON)
 set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS ON)
+# Versioned runtime library dependencies via dpkg-shlibdeps. The lower
+# bound is whatever the build machine ships, so the deb must be built on
+# the oldest supported distro (Debian 13 trixie) for the package to stay
+# installable on Debian stable/testing/sid and Ubuntu 26.04+.
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 # QML modules not captured by .so auto-detection
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "qml6-module-org-kde-kirigami, qml6-module-org-kde-kcmutils, qml6-module-org-kde-newstuff")
 

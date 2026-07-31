@@ -1,8 +1,10 @@
 Installation
 ============
 
-> This fork targets **KDE Plasma 6.5+ on Wayland only** (amd64/x86\_64 architecture). X11 and other architectures are not supported.
+> This fork targets **KDE Plasma 6.3+ on Wayland only** (amd64/x86\_64 architecture). Development happens on Plasma 6.5+ / Qt 6.11; Plasma 6.3 (Debian 13 trixie) is verified as the minimum supported version. X11 and other architectures are not supported.
 > All dependency packages below are Qt6 / KF6. Legacy Qt5/KF5 package names from upstream will not work.
+>
+> The release .deb package is built on **Debian 13 (trixie)** and therefore installs on the whole supported range: **Debian 13 (stable) / testing / sid and Ubuntu 26.04+**. Do not build the package on newer distros — versioned dependencies (`dpkg-shlibdeps`) would raise the lower bound and break installation on trixie.
 
 ## Kubuntu / KDE Neon (26.04+)
 
@@ -21,7 +23,9 @@ sudo apt install \
   gettext build-essential git pkgconf
 ```
 
-## Debian (Testing / Unstable)
+## Debian (13 trixie / Testing / Unstable)
+
+Debian 13 (trixie) ships Plasma 6.3.6 and is the minimum supported version; the same build instructions apply to testing and sid.
 
 ```bash
 sudo apt install \
