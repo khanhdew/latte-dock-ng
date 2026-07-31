@@ -147,6 +147,17 @@ private Q_SLOTS:
     void environmentActionsDoesNotAcceptMiddleButton();
     void upgraderQmlUsesPlasmoidConfiguration();
     void middleClickActionDefaultIsClose();
+
+    // Infinite-loop guard contracts
+    void tasktoolsServicesFromCmdLineGuardsFirstSpace();
+    void importerUniqueLayoutNameHasIterationCap();
+    void viewscontrollerUniqueViewNameHasIterationCap();
+    void layoutscontrollerUniqueLayoutNameHasIterationCap();
+    void lattecoronaUnloadDrainsFromLocalSnapshot();
+    void lattecoronaScreenForContainmentHasDepthGuard();
+    void originalViewCleanClonesDrainsFromLocalCopy();
+    void layoutManagerResolveAppletQuickItemUsesVisitedSet();
+    void levelOptionsHasIsBackgroundIsForegroundReentryGuards();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -2858,6 +2869,115 @@ void SourceContractTest::middleClickActionDefaultIsClose()
 	    // Mime split guard: prevents QML double-handling Widget Explorer drops
 	    QVERIFY(dndSource.contains(QStringLiteral("text/x-plasmoidservicename")));
 	}
+
+// ── Infinite-loop guard contracts ────────────────────────────────────
+
+void SourceContractTest::tasktoolsServicesFromCmdLineGuardsFirstSpace()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/tasktools.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // servicesFromCmdLine recursion must guard firstSpace >= 0 so a
+    // single-word cmdLine in TryIgnoreRuntimes does not infinitely
+    // recurse (firstSpace == -1 → mid(0) == identical string).
+    QVERIFY(src.contains(QStringLiteral("firstSpace >= 0")));
+}
+
+void SourceContractTest::importerUniqueLayoutNameHasIterationCap()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // uniqueLayoutName while-loop must have an iteration cap to prevent
+    // an unbounded walk when layoutExists() never returns false.
+    QVERIFY(src.contains(QStringLiteral("i < 10000")));
+}
+
+void SourceContractTest::viewscontrollerUniqueViewNameHasIterationCap()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR
+        "/app/settings/viewsdialog/viewscontroller.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // uniqueViewName while-loop must have an iteration cap.
+    QVERIFY(src.contains(QStringLiteral("i < 10000")));
+}
+
+void SourceContractTest::layoutscontrollerUniqueLayoutNameHasIterationCap()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR
+        "/app/settings/settingsdialog/layoutscontroller.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // uniqueLayoutName while-loop must have an iteration cap.
+    QVERIFY(src.contains(QStringLiteral("i < 10000")));
+}
+
+void SourceContractTest::lattecoronaUnloadDrainsFromLocalSnapshot()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // Corona::unload() must drain from a local snapshot rather than
+    // iterating the live containments() list, so a severed
+    // QObject::destroyed signal connection cannot cause an infinite loop.
+    QVERIFY(src.contains(QStringLiteral("snapshot = containments()")));
+}
+
+void SourceContractTest::lattecoronaScreenForContainmentHasDepthGuard()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // screenForContainment parent-applet chain walk must be
+    // depth-limited (max 16 hops) instead of unbounded recursion.
+    QVERIFY(src.contains(QStringLiteral("depth < 16")));
+}
+
+void SourceContractTest::originalViewCleanClonesDrainsFromLocalCopy()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/view/originalview.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // cleanClones() must drain from a local copy so that re-entrant
+    // signal chains during removeClone() cannot grow m_clones underneath
+    // the iteration.
+    QVERIFY(src.contains(QStringLiteral("snapshot = m_clones")));
+}
+
+void SourceContractTest::layoutManagerResolveAppletQuickItemUsesVisitedSet()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR
+        "/containment/plugin/layoutmanager.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // resolveAppletQuickItemObject must use a visited-set to detect
+    // cyclic property graphs and prevent infinite recursion.
+    QVERIFY(src.contains(QStringLiteral("visited")));
+    QVERIFY(src.contains(QStringLiteral("visited.contains(candidate)")));
+}
+
+void SourceContractTest::levelOptionsHasIsBackgroundIsForegroundReentryGuards()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR
+        "/declarativeimports/abilities/items/indicators/LevelOptions.qml"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // isBackground ↔ isForeground mutual-assignment handlers must have
+    // reentry guards to prevent flip-flopping when both are set to the
+    // same value simultaneously.
+    QVERIFY(src.contains(QStringLiteral("_updatingBackground")));
+    QVERIFY(src.contains(QStringLiteral("_updatingForeground")));
+}
 
 QTEST_MAIN(SourceContractTest)
 
