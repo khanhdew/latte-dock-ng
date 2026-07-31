@@ -77,24 +77,32 @@ namespace {
 QString actualQtQuickGraphicsApiName(QSGRendererInterface::GraphicsApi api)
 {
     switch (api) {
-    case QSGRendererInterface::Unknown:
-        return QStringLiteral("Unknown");
-    case QSGRendererInterface::Software:
-        return QStringLiteral("Software");
-    case QSGRendererInterface::OpenVG:
-        return QStringLiteral("OpenVG");
-    case QSGRendererInterface::OpenGL:
-        return QStringLiteral("OpenGL");
-    case QSGRendererInterface::Direct3D11:
-        return QStringLiteral("Direct3D11");
-    case QSGRendererInterface::Vulkan:
-        return QStringLiteral("Vulkan");
-    case QSGRendererInterface::Metal:
-        return QStringLiteral("Metal");
-    case QSGRendererInterface::Null:
-        return QStringLiteral("Null");
-    case QSGRendererInterface::Direct3D12:
-        return QStringLiteral("Direct3D12");
+        case QSGRendererInterface::Unknown:
+            return QStringLiteral("Unknown");
+
+        case QSGRendererInterface::Software:
+            return QStringLiteral("Software");
+
+        case QSGRendererInterface::OpenVG:
+            return QStringLiteral("OpenVG");
+
+        case QSGRendererInterface::OpenGL:
+            return QStringLiteral("OpenGL");
+
+        case QSGRendererInterface::Direct3D11:
+            return QStringLiteral("Direct3D11");
+
+        case QSGRendererInterface::Vulkan:
+            return QStringLiteral("Vulkan");
+
+        case QSGRendererInterface::Metal:
+            return QStringLiteral("Metal");
+
+        case QSGRendererInterface::Null:
+            return QStringLiteral("Null");
+
+        case QSGRendererInterface::Direct3D12:
+            return QStringLiteral("Direct3D12");
     }
 
     return QStringLiteral("Unknown(%1)").arg(static_cast<int>(api));
@@ -103,8 +111,8 @@ QString actualQtQuickGraphicsApiName(QSGRendererInterface::GraphicsApi api)
 bool isActualQtQuickGraphicsApiAccelerated(QSGRendererInterface::GraphicsApi api)
 {
     return api != QSGRendererInterface::Unknown
-            && api != QSGRendererInterface::Software
-            && api != QSGRendererInterface::Null;
+           && api != QSGRendererInterface::Software
+           && api != QSGRendererInterface::Null;
 }
 
 }
@@ -127,8 +135,8 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
         const QSGRendererInterface *renderer = rendererInterface();
         const QSGRendererInterface::GraphicsApi api = renderer ? renderer->graphicsApi() : QSGRendererInterface::Unknown;
         qInfo().noquote() << QStringLiteral("Latte Dock actual Qt Quick scene graph graphics API: %1 (GPU accelerated: %2)")
-                                     .arg(actualQtQuickGraphicsApiName(api),
-                                          isActualQtQuickGraphicsApiAccelerated(api) ? QStringLiteral("true") : QStringLiteral("false"));
+                          .arg(actualQtQuickGraphicsApiName(api),
+                               isActualQtQuickGraphicsApiAccelerated(api) ? QStringLiteral("true") : QStringLiteral("false"));
     }, Qt::DirectConnection);
 
     //! needs to be created after Effects because it catches some of its signals
@@ -140,13 +148,14 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
     setColor(QColor(Qt::transparent));
 
     const auto flags = Qt::FramelessWindowHint
-            | Qt::NoDropShadowWindowHint
-            | Qt::WindowDoesNotAcceptFocus;
+                       | Qt::NoDropShadowWindowHint
+                       | Qt::WindowDoesNotAcceptFocus;
 
     setFlags(flags);
 
     // Pin color scheme before screen assignment
     const QString appScheme = Latte::WindowSystem::SchemeColors::possibleSchemeFile(QStringLiteral("kdeglobals"));
+
     if (!appScheme.isEmpty()) {
         setProperty("KDE_COLOR_SCHEME_PATH", appScheme);
     }
@@ -172,7 +181,7 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
 
     connect(this, &View::containmentChanged, this, &View::groupIdChanged);
     connect(this, &View::containmentChanged
-            , this, [&]() {
+    , this, [&]() {
         qCDebug(latteView) << "dock view c++ containment changed 1...";
 
         if (!this->containment())
@@ -230,8 +239,8 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
         });
 
         if (m_corona->viewSettingsFactory()->hasOrphanSettings()
-                && m_corona->viewSettingsFactory()->hasVisibleSettings()
-                && m_corona->viewSettingsFactory()->lastContainment() == containment()) {
+            && m_corona->viewSettingsFactory()->hasVisibleSettings()
+            && m_corona->viewSettingsFactory()->lastContainment() == containment()) {
             //! used mostly from view recreations in order to inform config windows that view has been updated
             m_primaryConfigView = m_corona->viewSettingsFactory()->primaryConfigView();
             m_primaryConfigView->setParentView(this, true);
@@ -254,6 +263,7 @@ View::~View()
     //! clear Layout connections
     m_visibleHackTimer1.stop();
     m_visibleHackTimer2.stop();
+
     for (auto &c : connectionsLayout) {
         disconnect(c);
     }
@@ -315,14 +325,18 @@ void View::init(Plasma::Containment *plasma_containment)
     connect(this, &QQuickWindow::xChanged, this, &View::geometryChanged);
     connect(this, &QQuickWindow::yChanged, this, &View::geometryChanged);
     connect(this, &QQuickWindow::widthChanged, this, [this](int) { Q_EMIT geometryChanged(); });
+
     connect(this, &QQuickWindow::heightChanged, this, [this](int) { Q_EMIT geometryChanged(); });
 
     connect(this, &QQuickWindow::xChanged, this, &View::xChanged);
     connect(this, &QQuickWindow::xChanged, this, [this](int) { updateAbsoluteGeometry(); });
+
     connect(this, &QQuickWindow::yChanged, this, &View::yChanged);
     connect(this, &QQuickWindow::yChanged, this, [this](int) { updateAbsoluteGeometry(); });
+
     connect(this, &QQuickWindow::widthChanged, this, &View::widthChanged);
     connect(this, &QQuickWindow::widthChanged, this, [this](int) { updateAbsoluteGeometry(); });
+
     connect(this, &QQuickWindow::heightChanged, this, &View::heightChanged);
     connect(this, &QQuickWindow::heightChanged, this, [this](int) { updateAbsoluteGeometry(); });
 
@@ -341,7 +355,7 @@ void View::init(Plasma::Containment *plasma_containment)
         m_corona->wm()->setViewExtraFlags(this, onFrontLayer, mode);
     });
 
-    connect(this, &View::alignmentChanged, this, [this](){
+    connect(this, &View::alignmentChanged, this, [this]() {
         // inform neighbour vertical docks to adjust their positioning
         if (m_inDelete || formFactor() == Plasma::Types::Vertical) {
             return;
@@ -361,7 +375,7 @@ void View::init(Plasma::Containment *plasma_containment)
     });
 
     connect(this, &View::offsetChanged, this, [this]() {
-        if (m_inDelete ) {
+        if (m_inDelete) {
             return;
         }
 
@@ -372,6 +386,7 @@ void View::init(Plasma::Containment *plasma_containment)
     connect(this, &View::localGeometryChanged, this, [this]() {
         updateAbsoluteGeometry();
     });
+
     connect(this, &View::screenEdgeMarginEnabledChanged, this, [this]() {
         updateAbsoluteGeometry();
     });
@@ -394,6 +409,7 @@ void View::init(Plasma::Containment *plasma_containment)
     connect(m_effects, &ViewPart::Effects::innerShadowChanged, this, [this]() {
         Q_EMIT availableScreenRectChangedFrom(this);
     });
+
     connect(m_positioner, &ViewPart::Positioner::onHideWindowsForSlidingOut, this, &View::hideWindowsForSlidingOut);
     connect(m_positioner, &ViewPart::Positioner::screenGeometryChanged, this, &View::screenGeometryChanged);
     connect(m_positioner, &ViewPart::Positioner::windowSizeChanged, this, [this]() {
@@ -403,11 +419,11 @@ void View::init(Plasma::Containment *plasma_containment)
     connect(m_interface, &ViewPart::ContainmentInterface::hasExpandedAppletChanged, this, &View::verticalUnityViewHasFocus);
 
     //! View sends this signal in order to avoid crashes from ViewPart::Indicator when the view is recreated
-    connect(m_corona->indicatorFactory(), &Latte::Indicator::Factory::indicatorChanged, this, [this](const QString &indicatorId) {
+    connect(m_corona->indicatorFactory(), &Latte::Indicator::Factory::indicatorChanged, this, [this](const QString & indicatorId) {
         Q_EMIT indicatorPluginChanged(indicatorId);
     });
 
-    connect(this, &View::indicatorPluginChanged, this, [this](const QString &indicatorId) {
+    connect(this, &View::indicatorPluginChanged, this, [this](const QString & indicatorId) {
         if (m_indicator && m_indicator->isCustomIndicator() && m_indicator->type() == indicatorId) {
             reloadSource();
         }
@@ -416,7 +432,7 @@ void View::init(Plasma::Containment *plasma_containment)
     connect(m_corona->indicatorFactory(), &Latte::Indicator::Factory::indicatorRemoved, this, &View::indicatorPluginRemoved);
 
     //! Assign app interfaces so both containment object and its graphic item can expose them.
-    auto setLatteInterfaceProperties = [this](QObject *obj) {
+    auto setLatteInterfaceProperties = [this](QObject * obj) {
         if (!obj) {
             return;
         }
@@ -488,12 +504,12 @@ void View::availableScreenRectChangedFromSlot(View *origin)
     }
 
     if (formFactor() == Plasma::Types::Vertical
-            && origin->formFactor() == Plasma::Types::Horizontal //! accept only horizontal views
-            && !(origin->location() == Plasma::Types::TopEdge && m_positioner->isStickedOnTopEdge()) //! ignore signals in such case
-            && !(origin->location() == Plasma::Types::BottomEdge && m_positioner->isStickedOnBottomEdge()) //! ignore signals in such case
-            && origin->layout()
-            && m_layout
-            && origin->layout()->lastUsedActivity() == m_layout->lastUsedActivity()) {
+        && origin->formFactor() == Plasma::Types::Horizontal //! accept only horizontal views
+        && !(origin->location() == Plasma::Types::TopEdge && m_positioner->isStickedOnTopEdge()) //! ignore signals in such case
+        && !(origin->location() == Plasma::Types::BottomEdge && m_positioner->isStickedOnBottomEdge()) //! ignore signals in such case
+        && origin->layout()
+        && m_layout
+        && origin->layout()->lastUsedActivity() == m_layout->lastUsedActivity()) {
         //! must be in same activity
         m_positioner->syncGeometry();
     }
@@ -518,9 +534,11 @@ void View::setupWaylandIntegration()
 
         m_shellSurface = interface->createSurface(s, this);
         qCDebug(latteView) << "WAYLAND dock window surface was created...";
+
         if (m_visibility) {
             m_visibility->initViewFlags();
         }
+
         if (m_positioner) {
             m_positioner->updateWaylandId();
         }
@@ -590,7 +608,7 @@ void View::removeView()
 
 bool View::settingsWindowIsShown()
 {
-    return m_primaryConfigView && (m_primaryConfigView->parentView()==this) && m_primaryConfigView->isVisible();
+    return m_primaryConfigView && (m_primaryConfigView->parentView() == this) && m_primaryConfigView->isVisible();
 }
 
 void View::showSettingsWindow()
@@ -747,6 +765,7 @@ void View::statusChanged(Plasma::Types::ItemStatus status)
         m_visibility->addBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
         setFlags(flags() | Qt::WindowDoesNotAcceptFocus);
         m_visibility->initViewFlags();
+
         if (m_shellSurface) {
             m_shellSurface->setPanelTakesFocus(false);
         }
@@ -760,6 +779,7 @@ void View::statusChanged(Plasma::Types::ItemStatus status)
         m_visibility->removeBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
         setFlags(flags() & ~Qt::WindowDoesNotAcceptFocus);
         m_visibility->initViewFlags();
+
         if (m_shellSurface) {
             m_shellSurface->setPanelTakesFocus(true);
         }
@@ -768,6 +788,7 @@ void View::statusChanged(Plasma::Types::ItemStatus status)
         m_visibility->removeBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
         setFlags(flags() | Qt::WindowDoesNotAcceptFocus);
         m_visibility->initViewFlags();
+
         if (m_shellSurface) {
             m_shellSurface->setPanelTakesFocus(false);
         }
@@ -810,8 +831,8 @@ void View::removeTransientWindow(const bool &visible)
 
 void View::updateTransientWindowsTracking()
 {
-    for(QWindow *window: qApp->topLevelWindows()) {
-        if (window->transientParent() == this && window->isVisible()){
+    for (QWindow *window : qApp->topLevelWindows()) {
+        if (window->transientParent() == this && window->isVisible()) {
             addTransientWindow(window);
             break;
         }
@@ -1165,7 +1186,7 @@ QStringList View::activities() const
 
     QStringList runningAll = m_corona->activitiesConsumer()->activities();
 
-    for(int i=0; i<m_activities.count(); ++i) {
+    for (int i = 0; i < m_activities.count(); ++i) {
         if (runningAll.contains(m_activities[i])) {
             running << m_activities[i];
         }
@@ -1266,6 +1287,7 @@ void View::setLayout(Layout::GenericLayout *layout)
                 qCDebug(latteView) << "DOCK VIEW FROM LAYOUT ::: " << m_layout->name() << " - activities: " << m_activities;
             }
         });
+
         m_initLayoutTimer.start();
 
         connectionsLayout << connect(m_layout, &Layout::GenericLayout::preferredViewForShortcutsChanged, this, &View::preferredViewForShortcutsChangedSlot);
@@ -1287,7 +1309,7 @@ void View::setLayout(Layout::GenericLayout *layout)
                 if (m_layout && m_visibility) {
                     setActivities(m_layout->appliedActivities());
                     qCDebug(latteView) << "DOCK VIEW FROM LAYOUT (runningActivitiesChanged) ::: " << m_layout->name()
-                             << " - activities: " << m_activities;
+                                       << " - activities: " << m_activities;
                 }
             });
 
@@ -1383,6 +1405,7 @@ void View::updatePlasmoidDrag()
 
     QObject *lm = m_interface->layoutManager();
     QQuickItem *dndSpacer = lm->property("dndSpacerItem").value<QQuickItem *>();
+
     if (!dndSpacer) {
         return;
     }
@@ -1394,8 +1417,8 @@ void View::updatePlasmoidDrag()
     // Map from window coords to rootItem coords for accurate positioning
     QQuickItem *rootItem = lm->property("rootItem").value<QQuickItem *>();
     QPointF mappedPos = (rootItem && contentItem())
-        ? rootItem->mapFromItem(contentItem(), m_lastPlasmoidDragPos)
-        : m_lastPlasmoidDragPos;
+                        ? rootItem->mapFromItem(contentItem(), m_lastPlasmoidDragPos)
+                        : m_lastPlasmoidDragPos;
 
     QMetaObject::invokeMethod(lm, "insertAtCoordinates",
                               Q_ARG(QQuickItem *, dndSpacer),
@@ -1431,8 +1454,8 @@ void View::handlePlasmoidDrop(QDropEvent *de)
             // Map from window coords to rootItem coords for accurate positioning
             QQuickItem *rootItem = lm->property("rootItem").value<QQuickItem *>();
             QPointF mappedPos = (rootItem && contentItem())
-                ? rootItem->mapFromItem(contentItem(), QPointF(eventx, eventy))
-                : QPointF(eventx, eventy);
+                                ? rootItem->mapFromItem(contentItem(), QPointF(eventx, eventy))
+                                : QPointF(eventx, eventy);
 
             QMetaObject::invokeMethod(lm, "insertAtCoordinates",
                                       Q_ARG(QQuickItem *, dndSpacer),
@@ -1443,6 +1466,7 @@ void View::handlePlasmoidDrop(QDropEvent *de)
 
             // Reset dndSpacer — we will insert via addAppletItem(index) directly
             dndSpacer->setOpacity(0.0);
+
             if (rootItem) {
                 dndSpacer->setParentItem(rootItem);
             }
@@ -1462,6 +1486,7 @@ void View::handlePlasmoidDrop(QDropEvent *de)
     // in addAppletItem(QObject*,int,int) redirects to addAppletItem(index).
     const QString data = QString::fromUtf8(de->mimeData()->data(QStringLiteral("text/x-plasmoidservicename")));
     const QStringList names = data.split(QLatin1Char('\n'), Qt::SkipEmptyParts);
+
     for (const QString &name : names) {
         if (auto *cont = containment()) {
             cont->createApplet(name);
@@ -1477,9 +1502,11 @@ void View::cleanupDndSpacer()
 
     QObject *lm = m_interface->layoutManager();
     QQuickItem *dndSpacer = lm->property("dndSpacerItem").value<QQuickItem *>();
+
     if (dndSpacer) {
         dndSpacer->setOpacity(0.0);
         QQuickItem *rootItem = lm->property("rootItem").value<QQuickItem *>();
+
         if (rootItem) {
             dndSpacer->setParentItem(rootItem);
         }
@@ -1495,6 +1522,7 @@ Latte::Data::View View::data() const
     vdata.onPrimary = onPrimary();
 
     vdata.screen = containment()->screen();
+
     if (!Layouts::Storage::isValid(vdata.screen)) {
         vdata.screen = containment()->lastScreen();
     }
@@ -1502,7 +1530,7 @@ Latte::Data::View View::data() const
     vdata.screensGroup = screensGroup();
 
     //!screen edge margin can be more accurate in the config file
-    vdata.screenEdgeMargin = m_screenEdgeMargin > 0 ? m_screenEdgeMargin : containment()->config().group(QStringLiteral("General")).readEntry(QStringLiteral("screenEdgeMargin"), (int)-1);
+    vdata.screenEdgeMargin = m_screenEdgeMargin > 0 ? m_screenEdgeMargin : containment()->config().group(QStringLiteral("General")).readEntry(QStringLiteral("screenEdgeMargin"), (int) -1);
 
     vdata.edge = location();
     vdata.maxLength = m_maxLength * 100;
@@ -1614,17 +1642,21 @@ bool View::event(QEvent *e)
     // type that may carry middle-button state.
     if (inEditMode()) {
         const auto t = e->type();
+
         if (t == QEvent::MouseButtonPress || t == QEvent::MouseButtonRelease
-                || t == QEvent::MouseButtonDblClick || t == QEvent::MouseMove) {
+            || t == QEvent::MouseButtonDblClick || t == QEvent::MouseMove) {
             auto *me = static_cast<QMouseEvent *>(e);
+
             if (me->button() == Qt::MiddleButton
-                    || (t == QEvent::MouseMove && (me->buttons() & Qt::MiddleButton))) {
+                || (t == QEvent::MouseMove && (me->buttons() & Qt::MiddleButton))) {
                 e->accept();
                 return true;
             }
         }
+
         if (t == QEvent::Pointer) {
             auto *spt = dynamic_cast<QSinglePointEvent *>(e);
+
             if (spt && (spt->button() == Qt::MiddleButton
                         || (spt->buttons() & Qt::MiddleButton))) {
                 e->accept();
@@ -1641,126 +1673,137 @@ bool View::event(QEvent *e)
         bool sinkableevent{false};
 
         switch (e->type()) {
-        case QEvent::Close:
-            if (qApp->property("latte_session_ending").toBool()
+            case QEvent::Close:
+                if (qApp->property("latte_session_ending").toBool()
                     || qEnvironmentVariableIntValue("LATTE_SESSION_ENDING") == 1) {
-                qInfo() << "[shutdown] Latte view close requested by compositor; quitting session shell.";
-                QMetaObject::invokeMethod(qGuiApp, &QCoreApplication::quit, Qt::QueuedConnection);
-            }
-            break;
-
-        case QEvent::Enter:
-            m_containsMouse = true;
-            break;
-
-        case QEvent::Leave:
-            m_containsMouse = false;
-            setContainsDrag(false);
-            sinkableevent = true;
-            break;
-
-        case QEvent::DragEnter:
-            setContainsDrag(true);
-            sinkableevent = true;
-            break;
-
-        case QEvent::DragLeave:
-            if (m_plasmoidDragActive) {
-                m_plasmoidDragActive = false;
-                // Restart timer to trigger dndSpacer cleanup in updatePlasmoidDrag
-                if (!m_plasmoidDragTimer.isActive()) {
-                    m_plasmoidDragTimer.start();
+                    qInfo() << "[shutdown] Latte view close requested by compositor; quitting session shell.";
+                    QMetaObject::invokeMethod(qGuiApp, &QCoreApplication::quit, Qt::QueuedConnection);
                 }
-            }
-            setContainsDrag(false);
-            break;
 
-        case QEvent::DragMove:
-            if (auto de = dynamic_cast<QDragMoveEvent *>(e)) {
-                if (de->mimeData()->hasFormat(QStringLiteral("text/x-plasmoidservicename"))) {
-                    m_plasmoidDragActive = true;
-                    m_lastPlasmoidDragPos = de->position();
+                break;
+
+            case QEvent::Enter:
+                m_containsMouse = true;
+                break;
+
+            case QEvent::Leave:
+                m_containsMouse = false;
+                setContainsDrag(false);
+                sinkableevent = true;
+                break;
+
+            case QEvent::DragEnter:
+                setContainsDrag(true);
+                sinkableevent = true;
+                break;
+
+            case QEvent::DragLeave:
+                if (m_plasmoidDragActive) {
+                    m_plasmoidDragActive = false;
+
+                    // Restart timer to trigger dndSpacer cleanup in updatePlasmoidDrag
                     if (!m_plasmoidDragTimer.isActive()) {
                         m_plasmoidDragTimer.start();
                     }
                 }
-            }
-            sinkableevent = true;
-            break;
 
-        case QEvent::Drop:
-            if (auto de = dynamic_cast<QDropEvent *>(e)) {
-                if (de->mimeData()->hasFormat(QStringLiteral("text/x-plasmoidservicename"))) {
-                    m_plasmoidDragActive = false;
-                    handlePlasmoidDrop(de);
-                }
-            }
-            setContainsDrag(false);
-            sinkableevent = true;
-            break;
+                setContainsDrag(false);
+                break;
 
-        case QEvent::MouseMove:
-            sinkableevent = true;
-            break;
+            case QEvent::DragMove:
+                if (auto de = dynamic_cast<QDragMoveEvent *>(e)) {
+                    if (de->mimeData()->hasFormat(QStringLiteral("text/x-plasmoidservicename"))) {
+                        m_plasmoidDragActive = true;
+                        m_lastPlasmoidDragPos = de->position();
 
-        case QEvent::MouseButtonPress:
-            if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-                Q_EMIT mousePressed(me->pos(), me->button());
-                sinkableevent = true;
-                verticalUnityViewHasFocus();
-            }
-            break;
-
-        case QEvent::MouseButtonRelease:
-            if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-                Q_EMIT mouseReleased(me->pos(), me->button());
-                sinkableevent = true;
-            }
-            break;
-
-        case QEvent::PlatformSurface:
-            if (auto pe = dynamic_cast<QPlatformSurfaceEvent *>(e)) {
-                switch (pe->surfaceEventType()) {
-                case QPlatformSurfaceEvent::SurfaceCreated:
-                    setupWaylandIntegration();
-
-                    if (m_shellSurface) {
-                        //! immediateSyncGeometry helps avoiding binding loops from containment qml side
-                        m_positioner->immediateSyncGeometry();
-                        m_effects->updateShadows();
+                        if (!m_plasmoidDragTimer.isActive()) {
+                            m_plasmoidDragTimer.start();
+                        }
                     }
-
-                    break;
-
-                case QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed:
-                    if (m_shellSurface) {
-                        delete m_shellSurface;
-                        m_shellSurface = nullptr;
-                        qCDebug(latteView) << "WAYLAND dock window surface was deleted...";
-                        m_effects->clearShadows();
-                    }
-
-                    break;
                 }
-            }
 
-            break;
-
-        case QEvent::Show:
-            if (m_visibility) {
-                m_visibility->initViewFlags();
-            }
-            break;
-
-        case QEvent::Wheel:
-            if (auto we = dynamic_cast<QWheelEvent *>(e)) {
-                QPoint pos = we->position().toPoint();
-                Q_EMIT wheelScrolled(pos, we->angleDelta(), we->buttons());
                 sinkableevent = true;
-            }
-            break;
-        default:
-            break;
+                break;
+
+            case QEvent::Drop:
+                if (auto de = dynamic_cast<QDropEvent *>(e)) {
+                    if (de->mimeData()->hasFormat(QStringLiteral("text/x-plasmoidservicename"))) {
+                        m_plasmoidDragActive = false;
+                        handlePlasmoidDrop(de);
+                    }
+                }
+
+                setContainsDrag(false);
+                sinkableevent = true;
+                break;
+
+            case QEvent::MouseMove:
+                sinkableevent = true;
+                break;
+
+            case QEvent::MouseButtonPress:
+                if (auto me = dynamic_cast<QMouseEvent *>(e)) {
+                    Q_EMIT mousePressed(me->pos(), me->button());
+                    sinkableevent = true;
+                    verticalUnityViewHasFocus();
+                }
+
+                break;
+
+            case QEvent::MouseButtonRelease:
+                if (auto me = dynamic_cast<QMouseEvent *>(e)) {
+                    Q_EMIT mouseReleased(me->pos(), me->button());
+                    sinkableevent = true;
+                }
+
+                break;
+
+            case QEvent::PlatformSurface:
+                if (auto pe = dynamic_cast<QPlatformSurfaceEvent *>(e)) {
+                    switch (pe->surfaceEventType()) {
+                        case QPlatformSurfaceEvent::SurfaceCreated:
+                            setupWaylandIntegration();
+
+                            if (m_shellSurface) {
+                                //! immediateSyncGeometry helps avoiding binding loops from containment qml side
+                                m_positioner->immediateSyncGeometry();
+                                m_effects->updateShadows();
+                            }
+
+                            break;
+
+                        case QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed:
+                            if (m_shellSurface) {
+                                delete m_shellSurface;
+                                m_shellSurface = nullptr;
+                                qCDebug(latteView) << "WAYLAND dock window surface was deleted...";
+                                m_effects->clearShadows();
+                            }
+
+                            break;
+                    }
+                }
+
+                break;
+
+            case QEvent::Show:
+                if (m_visibility) {
+                    m_visibility->initViewFlags();
+                }
+
+                break;
+
+            case QEvent::Wheel:
+                if (auto we = dynamic_cast<QWheelEvent *>(e)) {
+                    QPoint pos = we->position().toPoint();
+                    Q_EMIT wheelScrolled(pos, we->angleDelta(), we->buttons());
+                    sinkableevent = true;
+                }
+
+                break;
+
+            default:
+                break;
         }
 
         if (sinkableevent && m_sink->isActive()) {
@@ -1845,7 +1888,8 @@ QVariantList View::containmentActions() const
     return actions;
 }
 
-bool View::isHighestPriorityView() {
+bool View::isHighestPriorityView()
+{
     if (m_layout) {
         return this == m_layout->highestPriorityView();
     }
@@ -1861,8 +1905,8 @@ void View::topViewAlwaysOnTop()
     }
 
     if (location() == Plasma::Types::TopEdge
-            && m_visibility->mode() != Latte::Types::WindowsCanCover
-            && m_visibility->mode() != Latte::Types::WindowsAlwaysCover) {
+        && m_visibility->mode() != Latte::Types::WindowsCanCover
+        && m_visibility->mode() != Latte::Types::WindowsAlwaysCover) {
         //! this is needed in order to preserve that the top dock will be above others.
         //! Unity layout paradigm is a good example for this. The top panel shadow
         //! should be always on top compared to left panel
@@ -1873,12 +1917,13 @@ void View::topViewAlwaysOnTop()
 void View::verticalUnityViewHasFocus()
 {
     if (formFactor() == Plasma::Types::Vertical
-            && (y() != screenGeometry().y())
-            && ( (m_alignment == Latte::Types::Justify && m_maxLength == 1.0)
-                 ||(m_alignment == Latte::Types::Top && m_offset == 0.0) )) {
+        && (y() != screenGeometry().y())
+        && ((m_alignment == Latte::Types::Justify && m_maxLength == 1.0)
+            || (m_alignment == Latte::Types::Top && m_offset == 0.0))) {
         Q_EMIT m_corona->verticalUnityViewHasFocus();
     }
 }
+
 //! END: WORKAROUND
 
 //!BEGIN configuration functions
@@ -1914,7 +1959,9 @@ void View::restoreConfig()
     Q_EMIT nameChanged();
     Q_EMIT onPrimaryChanged();
 }
+
 //!END configuration functions
 
 }
+
 //!END namespace

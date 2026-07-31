@@ -13,7 +13,7 @@
 #include <QJSEngine>
 
 
-namespace Latte{
+namespace Latte {
 
 class Tools final: public QObject
 {

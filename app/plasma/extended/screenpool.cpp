@@ -72,6 +72,7 @@ void ScreenPool::load()
     for (const auto &screenId : m_screensGroup.keyList()) {
         QString screenName =  m_screensGroup.readEntry(screenId, QString());
         int scrId = screenId.toInt();
+
         if (scrId != 0) {
             insertScreenMapping(scrId, screenName);
 
@@ -88,9 +89,11 @@ void ScreenPool::load()
 
     if (updated) {
         qCDebug(lattePlasma) << "---------------- Plasma Screen Ids ------------------";
+
         for (const auto &id : m_connectorForId.keys()) {
             qCDebug(lattePlasma) << id << "  __  " << m_connectorForId[id];
         }
+
         qCDebug(lattePlasma) << "----------------  ---------------  ------------------";
 
         Q_EMIT idsChanged();
@@ -99,7 +102,7 @@ void ScreenPool::load()
 
 void ScreenPool::insertScreenMapping(int id, const QString &connector)
 {
-    if (id==0 || connector.isEmpty() || connector.startsWith(QLatin1Char(':'))) {
+    if (id == 0 || connector.isEmpty() || connector.startsWith(QLatin1Char(':'))) {
         return;
     }
 

@@ -47,7 +47,7 @@ bool IndicatorUiManager::contains(const QString &type)
 
 int IndicatorUiManager::index(const QString &type)
 {
-    for (int i=0; i<m_uidata.count(); ++i) {
+    for (int i = 0; i < m_uidata.count(); ++i) {
         if (m_uidata[i].type == type) {
             return i;
         }
@@ -63,10 +63,11 @@ void IndicatorUiManager::setParentItem(QQuickItem *parentItem)
 
 void IndicatorUiManager::hideAllUi()
 {
-    for (int i=0; i<m_uidata.count(); ++i) {
+    for (int i = 0; i < m_uidata.count(); ++i) {
         if (m_uidata[i].ui) {
             //! config ui has already been created and can be provided again
-            QQuickItem *qmlItem = qobject_cast<QQuickItem*>(m_uidata[i].ui->rootObject());
+            QQuickItem *qmlItem = qobject_cast<QQuickItem *>(m_uidata[i].ui->rootObject());
+
             if (qmlItem) {
                 qmlItem->setVisible(false);
             }
@@ -106,11 +107,13 @@ void IndicatorUiManager::ui(const QString &type, Latte::View *view)
         m_uidata[typeIndex].view = view;
 
         //! config ui has already been created and can be provided again
-        QQuickItem *qmlItem = qobject_cast<QQuickItem*>(m_uidata[typeIndex].ui->rootObject());
+        QQuickItem *qmlItem = qobject_cast<QQuickItem *>(m_uidata[typeIndex].ui->rootObject());
+
         if (qmlItem) {
             qmlItem->setParentItem(m_parentItem);
             showNextIndicator();
         }
+
         return;
     }
 
@@ -139,7 +142,7 @@ void IndicatorUiManager::ui(const QString &type, Latte::View *view)
             int newTypeIndex = view->indicator()->index(type);
             int newPos = -1;
 
-            for (int i=0; i<m_uidata.count(); ++i) {
+            for (int i = 0; i < m_uidata.count(); ++i) {
                 int oldTypeIndex = view->indicator()->index(m_uidata[i].type);
 
                 if (oldTypeIndex > newTypeIndex) {
@@ -154,7 +157,8 @@ void IndicatorUiManager::ui(const QString &type, Latte::View *view)
                 m_uidata.insert(newPos, uidata);
             }
 
-            QQuickItem *qmlItem = qobject_cast<QQuickItem*>(uidata.ui->rootObject());
+            QQuickItem *qmlItem = qobject_cast<QQuickItem *>(uidata.ui->rootObject());
+
             if (qmlItem) {
                 qmlItem->setParentItem(m_parentItem);
                 showNextIndicator();
@@ -166,9 +170,9 @@ void IndicatorUiManager::ui(const QString &type, Latte::View *view)
 void IndicatorUiManager::addIndicator()
 {
     QFileDialog *fileDialog = new QFileDialog(nullptr
-                                              , i18nc("add indicator", "Add Indicator")
-                                              , QDir::homePath()
-                                              , QStringLiteral("indicator.latte"));
+        , i18nc("add indicator", "Add Indicator")
+        , QDir::homePath()
+        , QStringLiteral("indicator.latte"));
 
     fileDialog->setFileMode(QFileDialog::AnyFile);
     fileDialog->setAcceptMode(QFileDialog::AcceptOpen);
@@ -198,7 +202,8 @@ void IndicatorUiManager::downloadIndicator()
 }
 
 void IndicatorUiManager::removeIndicator(QString pluginId)
-{    //! call asynchronously in order to not crash when view settings window
+{
+    //! call asynchronously in order to not crash when view settings window
     //! loses focus and it closes
     QTimer::singleShot(0, [this, pluginId]() {
         m_primary->corona()->indicatorFactory()->removeIndicator(pluginId);

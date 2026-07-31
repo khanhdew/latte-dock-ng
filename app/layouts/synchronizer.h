@@ -21,9 +21,10 @@
 namespace Latte {
 class CentralLayout;
 class View;
-namespace Layout{
+namespace Layout {
 class GenericLayout;
 }
+
 namespace Layouts {
 class Manager;
 }
@@ -53,7 +54,8 @@ typedef QHash<QString, QStringList> AssignedLayoutsHash;
 //! phase" (e.g. startup/closing)
 //!
 
-class Synchronizer : public QObject {
+class Synchronizer : public QObject
+{
     Q_OBJECT
 
 public:

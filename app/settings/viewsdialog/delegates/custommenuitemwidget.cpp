@@ -65,6 +65,7 @@ QSize CustomMenuItemWidget::sizeHint() const
     // clipped on the right.
     QString textForMeasure = opt.text;
     bool inScreensColumn = !m_view.isValid();
+
     if (m_screen.isActive && inScreensColumn) {
         textForMeasure = QStringLiteral("<b>%1</b>").arg(textForMeasure);
     }
@@ -116,9 +117,9 @@ void CustomMenuItemWidget::paintEvent(QPaintEvent *)
     QRect remained;
 
     if (qApp->layoutDirection() == Qt::LeftToRight) {
-        remained = QRect(opt.rect.x() + radiosize , opt.rect.y(), opt.rect.width() - radiosize, opt.rect.height());
+        remained = QRect(opt.rect.x() + radiosize, opt.rect.y(), opt.rect.width() - radiosize, opt.rect.height());
     } else {
-        remained = QRect(opt.rect.x() , opt.rect.y(), opt.rect.width() - radiosize, opt.rect.height());
+        remained = QRect(opt.rect.x(), opt.rect.y(), opt.rect.width() - radiosize, opt.rect.height());
     }
 
     opt.rect = remained;
@@ -136,12 +137,13 @@ void CustomMenuItemWidget::paintEvent(QPaintEvent *)
 
     //! text
     opt.text = opt.text.remove(QLatin1Char('&'));
+
     if (qApp->layoutDirection() == Qt::LeftToRight) {
         //! add spacing
-        remained = QRect(opt.rect.x() + kMargin , opt.rect.y(), opt.rect.width() - kMargin, opt.rect.height());
+        remained = QRect(opt.rect.x() + kMargin, opt.rect.y(), opt.rect.width() - kMargin, opt.rect.height());
     } else {
         //! add spacing
-        remained = QRect(opt.rect.x() , opt.rect.y(), opt.rect.width() - kMargin, opt.rect.height());
+        remained = QRect(opt.rect.x(), opt.rect.y(), opt.rect.width() - kMargin, opt.rect.height());
     }
 
     opt.rect = remained;

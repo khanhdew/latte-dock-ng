@@ -86,6 +86,7 @@ SubWindow::~SubWindow()
     // clear mode
     m_visibleHackTimer1.stop();
     m_visibleHackTimer2.stop();
+
     for (auto &c : connectionsHack) {
         disconnect(c);
     }
@@ -137,8 +138,8 @@ KWayland::Client::PlasmaShellSurface *SubWindow::surface()
 void SubWindow::fixGeometry()
 {
     if (!m_calculatedGeometry.isEmpty()
-            && (m_calculatedGeometry.x() != x() || m_calculatedGeometry.y() != y()
-                || m_calculatedGeometry.width() != width() || m_calculatedGeometry.height() != height())) {
+        && (m_calculatedGeometry.x() != x() || m_calculatedGeometry.y() != y()
+            || m_calculatedGeometry.width() != width() || m_calculatedGeometry.height() != height())) {
         setMinimumSize(m_calculatedGeometry.size());
         setMaximumSize(m_calculatedGeometry.size());
         resize(m_calculatedGeometry.size());

@@ -48,7 +48,7 @@ ViewsDialog::ViewsDialog(SettingsDialog *parent, Controller::Layouts *controller
     connect(m_applyNowBtn, &QPushButton::clicked, this, &ViewsDialog::onApply);
 
     resize(m_windowSize);
-    updateApplyButtonsState();    
+    updateApplyButtonsState();
 }
 
 ViewsDialog::~ViewsDialog()

@@ -19,7 +19,7 @@
 #define LONGDURATION 240
 #define SHORTDURATION 40
 
-namespace Latte{
+namespace Latte {
 
 const int Environment::SeparatorLength;
 
@@ -45,7 +45,7 @@ Environment::Environment(QObject *parent)
     if (!kdeGlobalsFile.isEmpty()) {
         KDirWatch::self()->addFile(kdeGlobalsFile);
 
-        auto handleKdeGlobalsChange = [this, kdeGlobalsFile](const QString &path) {
+        auto handleKdeGlobalsChange = [this, kdeGlobalsFile](const QString & path) {
             if (path != kdeGlobalsFile) {
                 return;
             }
@@ -62,8 +62,8 @@ Environment::Environment(QObject *parent)
         connect(KDirWatch::self(), &KDirWatch::created, this, handleKdeGlobalsChange);
         connect(KDirWatch::self(), &KDirWatch::deleted, this, handleKdeGlobalsChange);
 
-    m_iconThemeChangedTimer.setSingleShot(true);
-    connect(&m_iconThemeChangedTimer, &QTimer::timeout, this, &Environment::emitIconThemeVersionChanged);
+        m_iconThemeChangedTimer.setSingleShot(true);
+        connect(&m_iconThemeChangedTimer, &QTimer::timeout, this, &Environment::emitIconThemeVersionChanged);
     }
 }
 
@@ -113,7 +113,7 @@ QString Environment::iconDescriptor(const QVariant &source) const
     if (source.canConvert<QIcon>()) {
         const QIcon icon = source.value<QIcon>();
         descriptor += QStringLiteral(" iconName=\"%1\" isNull=%2")
-                .arg(icon.name(), icon.isNull() ? QStringLiteral("true") : QStringLiteral("false"));
+                      .arg(icon.name(), icon.isNull() ? QStringLiteral("true") : QStringLiteral("false"));
     }
 
     if (source.canConvert<QString>()) {

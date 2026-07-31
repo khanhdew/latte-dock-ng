@@ -34,17 +34,22 @@ int computeEnabledBorders(
 
     if (!screenEdgeMarginEnabled) {
         switch (location) {
-        case Plasma::Types::TopEdge:    borders &= ~B_TOP; break;
-        case Plasma::Types::LeftEdge:   borders &= ~B_LEFT; break;
-        case Plasma::Types::RightEdge:  borders &= ~B_RIGHT; break;
-        case Plasma::Types::BottomEdge: borders &= ~B_BOTTOM; break;
-        default: break;
+            case Plasma::Types::TopEdge:    borders &= ~B_TOP; break;
+
+            case Plasma::Types::LeftEdge:   borders &= ~B_LEFT; break;
+
+            case Plasma::Types::RightEdge:  borders &= ~B_RIGHT; break;
+
+            case Plasma::Types::BottomEdge: borders &= ~B_BOTTOM; break;
+
+            default: break;
         }
     }
 
     if (location == Plasma::Types::LeftEdge || location == Plasma::Types::RightEdge) {
         if (verticalDockTouchesTopLengthEdge(alignment, maxLength, offset) && !forceTopBorder)
             borders &= ~B_TOP;
+
         if (verticalDockTouchesBottomLengthEdge(alignment, maxLength, offset) && !forceBottomBorder)
             borders &= ~B_BOTTOM;
     }
@@ -52,6 +57,7 @@ int computeEnabledBorders(
     if (location == Plasma::Types::TopEdge || location == Plasma::Types::BottomEdge) {
         if (horizontalDockTouchesLeftLengthEdge(alignment, maxLength, offset))
             borders &= ~B_LEFT;
+
         if (horizontalDockTouchesRightLengthEdge(alignment, maxLength, offset))
             borders &= ~B_RIGHT;
     }
@@ -69,27 +75,34 @@ int computeEnabledBorders(
 }
 
 QRegion combinedMask(const QRect &baseMask,
-                      const QHash<QString, QRegion> &subtracted,
-                      const QHash<QString, QRegion> &united)
+                     const QHash<QString, QRegion> &subtracted,
+                     const QHash<QString, QRegion> &united)
 {
     QRegion region(baseMask);
+
     for (auto &r : subtracted) region = region.subtracted(r);
+
     for (auto &r : united)     region = region.united(r);
+
     return region;
 }
 
 bool shouldApplyBlur(float backgroundOpacity, const QRect &rect, bool drawEffects)
 {
     if (!drawEffects) return false;
+
     if (rect.isNull() || rect.isEmpty()) return false;
+
     // Default (-1, theme-controlled) passes; custom values >= 0.95 are skipped
     if (backgroundOpacity >= 0.95f) return false;
+
     return true;
 }
 
 } // namespace EffectsLogic
 
-class EffectsLogicTest : public QObject {
+class EffectsLogicTest : public QObject
+{
     Q_OBJECT
 private Q_SLOTS:
     void screenEdgeMarginEnabledKeepsAllBorders();
@@ -172,53 +185,53 @@ void EffectsLogicTest::allCornersFalseWithJustifyRemovesSideBorders()
 
 void EffectsLogicTest::baseMaskWithoutSubtractionsIsIdentity()
 {
-    QCOMPARE(EffectsLogic::combinedMask(QRect(0,0,100,50), {}, {}), QRegion(QRect(0,0,100,50)));
+    QCOMPARE(EffectsLogic::combinedMask(QRect(0, 0, 100, 50), {}, {}), QRegion(QRect(0, 0, 100, 50)));
 }
 
 void EffectsLogicTest::subtractionsReduceMask()
 {
-    QHash<QString, QRegion> sub; sub[QStringLiteral("tl")] = QRegion(0,0,10,10);
-    QVERIFY(!EffectsLogic::combinedMask(QRect(0,0,100,50), sub, {}).contains(QPoint(5,5)));
+    QHash<QString, QRegion> sub; sub[QStringLiteral("tl")] = QRegion(0, 0, 10, 10);
+    QVERIFY(!EffectsLogic::combinedMask(QRect(0, 0, 100, 50), sub, {}).contains(QPoint(5, 5)));
 }
 
 void EffectsLogicTest::unionsExpandMask()
 {
-    QHash<QString, QRegion> uni; uni[QStringLiteral("x")] = QRegion(100,0,20,50);
-    QVERIFY(EffectsLogic::combinedMask(QRect(0,0,100,50), {}, uni).boundingRect().width() == 120);
+    QHash<QString, QRegion> uni; uni[QStringLiteral("x")] = QRegion(100, 0, 20, 50);
+    QVERIFY(EffectsLogic::combinedMask(QRect(0, 0, 100, 50), {}, uni).boundingRect().width() == 120);
 }
 
 void EffectsLogicTest::emptySubtractionIsNoOp()
 {
     QHash<QString, QRegion> sub; sub[QStringLiteral("e")] = QRegion();
-    QCOMPARE(EffectsLogic::combinedMask(QRect(0,0,100,50), sub, {}), QRegion(QRect(0,0,100,50)));
+    QCOMPARE(EffectsLogic::combinedMask(QRect(0, 0, 100, 50), sub, {}), QRegion(QRect(0, 0, 100, 50)));
 }
 
 void EffectsLogicTest::blurDisabledAboveThreshold()
 {
-    QVERIFY(!EffectsLogic::shouldApplyBlur(0.95f, QRect(0,0,100,50), true));
-    QVERIFY(!EffectsLogic::shouldApplyBlur(1.0f, QRect(0,0,100,50), true));
+    QVERIFY(!EffectsLogic::shouldApplyBlur(0.95f, QRect(0, 0, 100, 50), true));
+    QVERIFY(!EffectsLogic::shouldApplyBlur(1.0f, QRect(0, 0, 100, 50), true));
 }
 
 void EffectsLogicTest::blurEnabledBelowThreshold()
 {
-    QVERIFY(EffectsLogic::shouldApplyBlur(0.94f, QRect(0,0,100,50), true));
+    QVERIFY(EffectsLogic::shouldApplyBlur(0.94f, QRect(0, 0, 100, 50), true));
 }
 
 void EffectsLogicTest::blurEnabledAtDefaultOpacity()
 {
     // -1 is the default (theme-controlled transparency), should allow blur
-    QVERIFY(EffectsLogic::shouldApplyBlur(-1.0f, QRect(0,0,100,50), true));
+    QVERIFY(EffectsLogic::shouldApplyBlur(-1.0f, QRect(0, 0, 100, 50), true));
 }
 
 void EffectsLogicTest::blurDisabledWhenDrawEffectsFalse()
 {
-    QVERIFY(!EffectsLogic::shouldApplyBlur(0.5f, QRect(0,0,100,50), false));
+    QVERIFY(!EffectsLogic::shouldApplyBlur(0.5f, QRect(0, 0, 100, 50), false));
 }
 
 void EffectsLogicTest::blurDisabledWhenRectInvalid()
 {
     QVERIFY(!EffectsLogic::shouldApplyBlur(0.5f, QRect(), true));
-    QVERIFY(!EffectsLogic::shouldApplyBlur(0.5f, QRect(0,0,0,0), true));
+    QVERIFY(!EffectsLogic::shouldApplyBlur(0.5f, QRect(0, 0, 0, 0), true));
 }
 
 QTEST_APPLESS_MAIN(EffectsLogicTest)

@@ -53,7 +53,7 @@ void Schemes::initSchemes()
 
     QStringList registeredSchemes;
 
-    for(auto path : standardPaths) {
+    for (auto path : standardPaths) {
         QDir directory(path);
         QStringList tempSchemes = directory.entryList(QStringList() << QStringLiteral("*.colors") << QStringLiteral("*.COLORS"), QDir::Files);
 
@@ -114,22 +114,22 @@ QVariant Schemes::data(const QModelIndex &index, int role) const
     const WindowSystem::SchemeColors *d = m_schemes[index.row()];
 
     switch (role) {
-    case IDROLE:
-        return index.row() == 0 ? Data::Layout::DEFAULTSCHEMEFILE : d->schemeFile();
-        break;
+        case IDROLE:
+            return index.row() == 0 ? Data::Layout::DEFAULTSCHEMEFILE : d->schemeFile();
+            break;
 
-    case Qt::DisplayRole:
-    case NAMEROLE:
-        return index.row() == 0 ? i18n("System Colors") : d->schemeName();
-        break;
+        case Qt::DisplayRole:
+        case NAMEROLE:
+            return index.row() == 0 ? i18n("System Colors") : d->schemeName();
+            break;
 
-    case TEXTCOLORROLE:
-        return d->textColor();
-        break;
+        case TEXTCOLORROLE:
+            return d->textColor();
+            break;
 
-    case BACKGROUNDCOLORROLE:
-        return d->backgroundColor();
-        break;
+        case BACKGROUNDCOLORROLE:
+            return d->backgroundColor();
+            break;
     }
 
     return QVariant();

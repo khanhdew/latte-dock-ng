@@ -46,7 +46,7 @@ void Resources::setSvgImagePaths(QStringList paths)
         svg->deleteLater();
     }
 
-    for(const auto &relPath : paths) {
+    for (const auto &relPath : paths) {
         if (!relPath.isEmpty()) {
             KSvg::Svg *svg = new KSvg::Svg(this);
 
@@ -54,8 +54,8 @@ void Resources::setSvgImagePaths(QStringList paths)
 
             QString adjustedPath = isLocalFile ? m_indicator->uiPath() + QLatin1String("/") + relPath : relPath;
 
-            if ( !isLocalFile
-                 || (isLocalFile && QFileInfo(adjustedPath).exists()) ) {
+            if (!isLocalFile
+                || (isLocalFile && QFileInfo(adjustedPath).exists())) {
                 svg->setImagePath(adjustedPath);
                 m_svgs << svg;
             }

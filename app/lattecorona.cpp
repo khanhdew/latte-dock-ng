@@ -102,7 +102,7 @@ QUrl launcherUrlFromString(const QString &launcherUrl)
     const QUrl parsed(trimmed);
 
     if (parsed.scheme() == QLatin1String("applications")
-            || parsed.scheme() == QLatin1String("file")) {
+        || parsed.scheme() == QLatin1String("file")) {
         return parsed;
     }
 
@@ -245,8 +245,8 @@ bool invokeLauncherMethod(QObject *item, const QByteArray &methodName, const QUr
 
             if (method.returnMetaType().id() == QMetaType::Bool) {
                 const bool invoked = qurlParameter
-                        ? method.invoke(item, Q_RETURN_ARG(bool, boolResult), Q_ARG(QUrl, url))
-                        : method.invoke(item, Q_RETURN_ARG(bool, boolResult), Q_ARG(QVariant, variantUrl));
+                                     ? method.invoke(item, Q_RETURN_ARG(bool, boolResult), Q_ARG(QUrl, url))
+                                     : method.invoke(item, Q_RETURN_ARG(bool, boolResult), Q_ARG(QVariant, variantUrl));
 
                 if (invoked) {
                     *returnValue = boolResult;
@@ -256,8 +256,8 @@ bool invokeLauncherMethod(QObject *item, const QByteArray &methodName, const QUr
 
             QVariant variantResult;
             const bool invoked = qurlParameter
-                    ? method.invoke(item, Q_RETURN_ARG(QVariant, variantResult), Q_ARG(QUrl, url))
-                    : method.invoke(item, Q_RETURN_ARG(QVariant, variantResult), Q_ARG(QVariant, variantUrl));
+                                 ? method.invoke(item, Q_RETURN_ARG(QVariant, variantResult), Q_ARG(QUrl, url))
+                                 : method.invoke(item, Q_RETURN_ARG(QVariant, variantResult), Q_ARG(QVariant, variantUrl));
 
             if (invoked) {
                 *returnValue = variantResult.toBool();
@@ -265,8 +265,8 @@ bool invokeLauncherMethod(QObject *item, const QByteArray &methodName, const QUr
             }
         } else {
             const bool invoked = qurlParameter
-                    ? method.invoke(item, Q_ARG(QUrl, url))
-                    : method.invoke(item, Q_ARG(QVariant, variantUrl));
+                                 ? method.invoke(item, Q_ARG(QUrl, url))
+                                 : method.invoke(item, Q_ARG(QVariant, variantUrl));
 
             if (invoked) {
                 return true;
@@ -377,7 +377,7 @@ Corona::Corona(bool defaultLayoutOnStartup, QString layoutNameOnStartUp, QString
         return;
     } else {
         qCDebug(latteApp) << staticMetaObject.className()
-                 << "the package" << package.metadata().rawData() << "is valid!";
+                          << "the package" << package.metadata().rawData() << "is valid!";
     }
 
     setKPackage(package);
@@ -416,6 +416,7 @@ Corona::~Corona()
     // registration order, but LayoutsManager needs dependencies that
     // were registered BEFORE it — they'd be deleted first and crash.
     const QObjectList kids = children();
+
     for (QObject *kid : kids) {
         kid->setParent(nullptr);
     }
@@ -424,7 +425,7 @@ Corona::~Corona()
     // This ensures correct ordering (LayoutsManager before its deps)
     // while avoiding the double-free that occurs when manual delete is
     // mixed with DeferredDelete processing in main()'s post-exec loop.
-    auto flushDelete = [](QObject *obj) {
+    auto flushDelete = [](QObject * obj) {
         obj->deleteLater();
         QCoreApplication::sendPostedEvents(obj, QEvent::DeferredDelete);
     };
@@ -464,11 +465,12 @@ void Corona::onAboutToQuit()
 
     if (!sessionEnding) {
         QDBusMessage msg = QDBusMessage::createMethodCall(
-            QStringLiteral("org.kde.ksmserver"),
-            QStringLiteral("/KSMServer"),
-            QStringLiteral("org.kde.KSMServerInterface"),
-            QStringLiteral("isShuttingDown"));
+                               QStringLiteral("org.kde.ksmserver"),
+                               QStringLiteral("/KSMServer"),
+                               QStringLiteral("org.kde.KSMServerInterface"),
+                               QStringLiteral("isShuttingDown"));
         QDBusMessage reply = QDBusConnection::sessionBus().call(msg);
+
         if (reply.type() == QDBusMessage::ReplyMessage
             && !reply.arguments().isEmpty()
             && reply.arguments().first().toBool()) {
@@ -527,7 +529,9 @@ void Corona::load()
         m_layoutsManager->init();
 
         connect(this, &Corona::availableScreenRectChangedFrom, this, [this](Latte::View *) { m_availableCacheValid = false; Q_EMIT availableScreenRectChanged(-1); });
+
         connect(this, &Corona::availableScreenRegionChangedFrom, this, [this](Latte::View *) { m_availableCacheValid = false; Q_EMIT availableScreenRegionChanged(-1); });
+
         connect(m_screenPool, &ScreenPool::primaryScreenChanged, this, &Corona::onScreenCountChanged, Qt::UniqueConnection);
 
         QString loadLayoutName;
@@ -601,6 +605,7 @@ void Corona::unload()
     // iteration cap is a backstop against pathological re-entrant
     // additions that keep the list non-empty.
     int guard = 0;
+
     while (!containments().isEmpty() && guard++ < 10000) {
         delete containments().first();
     }
@@ -620,12 +625,12 @@ void Corona::setupWaylandIntegration()
     registry->create(connection);
 
     connect(registry, &Registry::plasmaShellAnnounced, this
-            , [this, registry](quint32 name, quint32 version) {
+    , [this, registry](quint32 name, quint32 version) {
         m_waylandCorona = registry->createPlasmaShell(name, version, this);
     });
 
     QObject::connect(registry, &KWayland::Client::Registry::plasmaWindowManagementAnnounced,
-                     [this, registry](quint32 name, quint32 version) {
+    [this, registry](quint32 name, quint32 version) {
         KWayland::Client::PlasmaWindowManagement *pwm = registry->createPlasmaWindowManagement(name, version, this);
 
         WindowSystem::WaylandInterface *wI = qobject_cast<WindowSystem::WaylandInterface *>(m_wm);
@@ -637,7 +642,7 @@ void Corona::setupWaylandIntegration()
 
 
     QObject::connect(registry, &KWayland::Client::Registry::plasmaVirtualDesktopManagementAnnounced,
-                     [this, registry] (quint32 name, quint32 version) {
+    [this, registry](quint32 name, quint32 version) {
         KWayland::Client::PlasmaVirtualDesktopManagement *vdm = registry->createPlasmaVirtualDesktopManagement(name, version, this);
 
         WindowSystem::WaylandInterface *wI = qobject_cast<WindowSystem::WaylandInterface *>(m_wm);
@@ -662,7 +667,7 @@ void Corona::cleanConfig()
     auto containmentsEntries = config()->group(QStringLiteral("Containments"));
     bool changed = false;
 
-    for(const auto &cId : containmentsEntries.groupList()) {
+    for (const auto &cId : containmentsEntries.groupList()) {
         if (!containmentExists(cId.toUInt())) {
             //cleanup obsolete containments
             containmentsEntries.group(cId).deleteGroup();
@@ -672,7 +677,7 @@ void Corona::cleanConfig()
             //cleanup obsolete applets of running containments
             auto appletsEntries = containmentsEntries.group(cId).group(QStringLiteral("Applets"));
 
-            for(const auto &appletId : appletsEntries.groupList()) {
+            for (const auto &appletId : appletsEntries.groupList()) {
                 if (!appletExists(cId.toUInt(), appletId.toUInt())) {
                     appletsEntries.group(appletId).deleteGroup();
                     changed = true;
@@ -690,7 +695,7 @@ void Corona::cleanConfig()
 
 bool Corona::containmentExists(uint id) const
 {
-    for(const auto containment : containments()) {
+    for (const auto containment : containments()) {
         if (id == containment->id()) {
             return true;
         }
@@ -703,7 +708,7 @@ bool Corona::appletExists(uint containmentId, uint appletId) const
 {
     Plasma::Containment *containment = nullptr;
 
-    for(const auto cont : containments()) {
+    for (const auto cont : containments()) {
         if (containmentId == cont->id()) {
             containment = cont;
             break;
@@ -714,7 +719,7 @@ bool Corona::appletExists(uint containmentId, uint appletId) const
         return false;
     }
 
-    for(const auto applet : containment->applets()) {
+    for (const auto applet : containment->applets()) {
         if (applet->id() == appletId) {
             return true;
         }
@@ -804,7 +809,7 @@ QRect Corona::screenGeometry(int id) const
         screenName = m_screenPool->connector(id);
     }
 
-    for(const auto scr : screens) {
+    for (const auto scr : screens) {
         if (scr->name() == screenName) {
             screen = scr;
             break;
@@ -837,7 +842,7 @@ Layout::GenericLayout *Corona::layout(QString name) const
 }
 
 QRegion Corona::availableScreenRegion(int id) const
-{   
+{
     //! ignore modes are added in order for notifications to be placed
     //! in better positioning and not overlap with sidebars or usually hidden views
     QList<Types::Visibility> ignoremodes({Latte::Types::AutoHide,
@@ -846,21 +851,22 @@ QRegion Corona::availableScreenRegion(int id) const
 
 
     return availableScreenRegionWithCriteria(id,
-                                             QString(),
-                                             ignoremodes);
+            QString(),
+            ignoremodes);
 }
 
 QRegion Corona::availableScreenRegionWithCriteria(int id,
-                                                  QString activityid,
-                                                  QList<Types::Visibility> ignoreModes,
-                                                  QList<Plasma::Types::Location> ignoreEdges,
-                                                  bool ignoreExternalPanels,
-                                                  bool desktopUse) const
+        QString activityid,
+        QList<Types::Visibility> ignoreModes,
+        QList<Plasma::Types::Location> ignoreEdges,
+        bool ignoreExternalPanels,
+        bool desktopUse) const
 {
     //! Use cached value when available for simple/common queries.
     if (m_availableCacheValid && activityid.isEmpty() && !desktopUse
         && ignoreModes.isEmpty() && ignoreEdges.isEmpty()) {
         auto it = m_availableRegionCache.constFind(id);
+
         if (it != m_availableRegionCache.constEnd()) {
             return *it;
         }
@@ -902,55 +908,59 @@ QRegion Corona::availableScreenRegionWithCriteria(int id,
         bool inDesktopOffScreenStartup = desktopUse && view && view->positioner() && view->positioner()->isOffScreen();
 
         if (view && view->containment() && view->screen() == screen && !inDesktopOffScreenStartup
-                && ((allEdges || !ignoreEdges.contains(view->location()))
-                    && (view->visibility() && !ignoreModes.contains(view->visibility()->mode())))) {
+            && ((allEdges || !ignoreEdges.contains(view->location()))
+                && (view->visibility() && !ignoreModes.contains(view->visibility()->mode())))) {
             int realThickness = view->normalThickness();
 
             int x = 0; int y = 0; int w = 0; int h = 0;
 
             switch (view->formFactor()) {
-            case Plasma::Types::Horizontal: {
-                w = view->maxLength() * view->width();
-                int offsetW = view->offset() * view->width();
+                case Plasma::Types::Horizontal: {
+                    w = view->maxLength() * view->width();
+                    int offsetW = view->offset() * view->width();
 
-                switch (view->alignment()) {
-                case Latte::Types::Left:
-                    x = view->x() + offsetW;
-                    break;
+                    switch (view->alignment()) {
+                        case Latte::Types::Left:
+                            x = view->x() + offsetW;
+                            break;
 
-                case Latte::Types::Center:
-                case Latte::Types::Justify:
-                    x = (view->geometry().center().x() - w/2) + 1 + offsetW;
-                    break;
+                        case Latte::Types::Center:
+                        case Latte::Types::Justify:
+                            x = (view->geometry().center().x() - w / 2) + 1 + offsetW;
+                            break;
 
-                case Latte::Types::Right:
-                    x = view->geometry().right() + 1 - w - offsetW;
-                    break;
-                }
-                break;
-            }
-            case Plasma::Types::Vertical: {
-                h = view->maxLength() * view->height();
-                int offsetH = view->offset() * view->height();
+                        case Latte::Types::Right:
+                            x = view->geometry().right() + 1 - w - offsetW;
+                            break;
+                    }
 
-                switch (view->alignment()) {
-                case Latte::Types::Top:
-                    y = view->y() + offsetH;
-                    break;
-
-                case Latte::Types::Center:
-                case Latte::Types::Justify:
-                    y = (view->geometry().center().y() - h/2) + 1 + offsetH;
-                    break;
-
-                case Latte::Types::Bottom:
-                    y = view->geometry().bottom() - h - offsetH;
                     break;
                 }
-                break;
-            }
-            default:
-                continue;
+
+                case Plasma::Types::Vertical: {
+                    h = view->maxLength() * view->height();
+                    int offsetH = view->offset() * view->height();
+
+                    switch (view->alignment()) {
+                        case Latte::Types::Top:
+                            y = view->y() + offsetH;
+                            break;
+
+                        case Latte::Types::Center:
+                        case Latte::Types::Justify:
+                            y = (view->geometry().center().y() - h / 2) + 1 + offsetH;
+                            break;
+
+                        case Latte::Types::Bottom:
+                            y = view->geometry().bottom() - h - offsetH;
+                            break;
+                    }
+
+                    break;
+                }
+
+                default:
+                    continue;
             }
 
             // Usually availableScreenRect is used by the desktop,
@@ -958,33 +968,33 @@ QRegion Corona::availableScreenRegionWithCriteria(int id,
             // need calculate available space for top and bottom location,
             // because the left and right are those who dodge others views
             switch (view->location()) {
-            case Plasma::Types::TopEdge:
-                y = view->y();
-                available -= QRect(x, y, w, realThickness);
+                case Plasma::Types::TopEdge:
+                    y = view->y();
+                    available -= QRect(x, y, w, realThickness);
 
-                break;
+                    break;
 
-            case Plasma::Types::BottomEdge:
-                y = view->geometry().bottom() - realThickness + 1;
-                available -= QRect(x, y, w, realThickness);
+                case Plasma::Types::BottomEdge:
+                    y = view->geometry().bottom() - realThickness + 1;
+                    available -= QRect(x, y, w, realThickness);
 
-                break;
+                    break;
 
-            case Plasma::Types::LeftEdge:
-                x = view->x();
-                available -= QRect(x, y, realThickness, h);
+                case Plasma::Types::LeftEdge:
+                    x = view->x();
+                    available -= QRect(x, y, realThickness, h);
 
-                break;
+                    break;
 
-            case Plasma::Types::RightEdge:
-                x = view->geometry().right() - realThickness + 1;
-                available -= QRect(x, y, realThickness, h);
+                case Plasma::Types::RightEdge:
+                    x = view->geometry().right() - realThickness + 1;
+                    available -= QRect(x, y, realThickness, h);
 
-                break;
+                    break;
 
-            default:
-                //! bypass clang warnings
-                break;
+                default:
+                    //! bypass clang warnings
+                    break;
             }
         }
     }
@@ -1018,16 +1028,17 @@ QRect Corona::availableScreenRect(int id) const
 }
 
 QRect Corona::availableScreenRectWithCriteria(int id,
-                                              QString activityid,
-                                              QList<Types::Visibility> ignoreModes,
-                                              QList<Plasma::Types::Location> ignoreEdges,
-                                              bool ignoreExternalPanels,
-                                              bool desktopUse) const
+        QString activityid,
+        QList<Types::Visibility> ignoreModes,
+        QList<Plasma::Types::Location> ignoreEdges,
+        bool ignoreExternalPanels,
+        bool desktopUse) const
 {
     //! Use cached value when available and inputs are "simple"
     //! (current activity, default ignore modes). Most callers use this path.
     if (m_availableCacheValid && activityid.isEmpty() && !desktopUse) {
         auto it = m_availableRectCache.constFind(id);
+
         if (it != m_availableRectCache.constEnd()) {
             return *it;
         }
@@ -1069,8 +1080,8 @@ QRect Corona::availableScreenRectWithCriteria(int id,
         bool inDesktopOffScreenStartup = desktopUse && view && view->positioner() && view->positioner()->isOffScreen();
 
         if (view && view->containment() && view->screen() == screen && !inDesktopOffScreenStartup
-                && ((allEdges || !ignoreEdges.contains(view->location()))
-                    && (view->visibility() && !ignoreModes.contains(view->visibility()->mode())))) {
+            && ((allEdges || !ignoreEdges.contains(view->location()))
+                && (view->visibility() && !ignoreModes.contains(view->visibility()->mode())))) {
 
             int appliedThickness = view->normalThickness();
 
@@ -1079,25 +1090,25 @@ QRect Corona::availableScreenRectWithCriteria(int id,
             // need calculate available space for top and bottom location,
             // because the left and right are those who dodge others docks
             switch (view->location()) {
-            case Plasma::Types::TopEdge:
-                available.setTop(qMax(available.top(), view->y() + appliedThickness));
-                break;
+                case Plasma::Types::TopEdge:
+                    available.setTop(qMax(available.top(), view->y() + appliedThickness));
+                    break;
 
-            case Plasma::Types::BottomEdge:
-                available.setBottom(qMin(available.bottom(), view->y() + view->height() - appliedThickness));
-                break;
+                case Plasma::Types::BottomEdge:
+                    available.setBottom(qMin(available.bottom(), view->y() + view->height() - appliedThickness));
+                    break;
 
-            case Plasma::Types::LeftEdge:
-                available.setLeft(qMax(available.left(), view->x() + appliedThickness));
-                break;
+                case Plasma::Types::LeftEdge:
+                    available.setLeft(qMax(available.left(), view->x() + appliedThickness));
+                    break;
 
-            case Plasma::Types::RightEdge:
-                available.setRight(qMin(available.right(), view->x() + view->width() - appliedThickness));
-                break;
+                case Plasma::Types::RightEdge:
+                    available.setRight(qMin(available.right(), view->x() + view->width() - appliedThickness));
+                    break;
 
-            default:
-                //! bypass clang warnings
-                break;
+                default:
+                    //! bypass clang warnings
+                    break;
             }
         }
     }
@@ -1204,7 +1215,7 @@ void Corona::aboutApplication()
 
 void Corona::loadDefaultLayout()
 {
-  //disabled
+    //disabled
 }
 
 int Corona::screenForContainment(const Plasma::Containment *containment) const
@@ -1225,6 +1236,7 @@ int Corona::screenForContainment(const Plasma::Containment *containment) const
         if (Plasma::Containment *cont = parentApplet->containment()) {
             // Walk parent containment chain with a depth guard.
             const Plasma::Containment *walker = cont;
+
             for (int depth = 0; depth < 16 && walker; ++depth) {
                 if (Plasma::Applet *a = qobject_cast<Plasma::Applet *>(walker->parent())) {
                     walker = a->containment();
@@ -1232,6 +1244,7 @@ int Corona::screenForContainment(const Plasma::Containment *containment) const
                     break;
                 }
             }
+
             return walker ? screenForContainment(walker) : -1;
         } else {
             return -1;
@@ -1282,6 +1295,7 @@ void Corona::showAlternativesForApplet(Plasma::Applet *applet)
     });
 
     QWindow *rootWindow = qobject_cast<QWindow *>(qmlObj->rootObject());
+
     if (rootWindow) {
         connect(rootWindow, &QWindow::visibleChanged,
                 this, &Corona::alternativesVisibilityChanged);
@@ -1329,7 +1343,7 @@ QStringList Corona::containmentsIds()
 {
     QStringList ids;
 
-    for(const auto containment : containments()) {
+    for (const auto containment : containments()) {
         ids << QString::number(containment->id());
     }
 
@@ -1340,7 +1354,7 @@ QStringList Corona::appletsIds()
 {
     QStringList ids;
 
-    for(const auto containment : containments()) {
+    for (const auto containment : containments()) {
         auto applets = containment->config().group(QStringLiteral("Applets"));
         ids << applets.groupList();
     }
@@ -1439,7 +1453,7 @@ void Corona::importLayoutFile(const QString &filepath, const QString &suggestedL
         if (importedLayout.isEmpty()) {
             qCDebug(latteApp) << i18n("The layout cannot be imported from file :: ") << layoutPath;
         } else {
-           m_layoutsManager->switchToLayout(importedLayout, MemoryUsage::SingleLayout);
+            m_layoutsManager->switchToLayout(importedLayout, MemoryUsage::SingleLayout);
         }
     } else {
         qCDebug(latteApp) << " Layout from missing file can not be imported and loaded :: " << layoutPath;
@@ -1478,9 +1492,9 @@ QStringList Corona::contextMenuData(const uint &containmentId)
 
     QStringList layoutsmenu;
 
-    for(const auto &layoutName : m_layoutsManager->synchronizer()->menuLayouts()) {
+    for (const auto &layoutName : m_layoutsManager->synchronizer()->menuLayouts()) {
         if (m_layoutsManager->synchronizer()->centralLayout(layoutName)
-                || m_layoutsManager->memoryUsage() == Latte::MemoryUsage::SingleLayout) {
+            || m_layoutsManager->memoryUsage() == Latte::MemoryUsage::SingleLayout) {
             QStringList layoutdata;
             Data::LayoutIcon layouticon = m_layoutsManager->iconForLayout(layoutName);
             layoutdata << layoutName;
@@ -1519,7 +1533,7 @@ QStringList Corona::viewTemplatesData()
 
     Latte::Data::GenericTable<Data::Generic> viewtemplates = m_templatesManager->viewTemplates();
 
-    for(int i=0; i<viewtemplates.rowCount(); ++i) {
+    for (int i = 0; i < viewtemplates.rowCount(); ++i) {
         data << viewtemplates[i].name;
         data << viewtemplates[i].id;
     }
@@ -1531,11 +1545,13 @@ void Corona::addView(const uint &containmentId, const QString &templateId)
 {
     if (containmentId <= 0) {
         auto currentlayouts = m_layoutsManager->currentLayouts();
+
         if (currentlayouts.count() > 0) {
             currentlayouts[0]->newView(templateId);
         }
     } else {
         auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
+
         if (view) {
             view->newView(templateId);
         }
@@ -1545,6 +1561,7 @@ void Corona::addView(const uint &containmentId, const QString &templateId)
 void Corona::duplicateView(const uint &containmentId)
 {
     auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
+
     if (view) {
         view->duplicateView();
     }
@@ -1553,6 +1570,7 @@ void Corona::duplicateView(const uint &containmentId)
 void Corona::exportViewTemplate(const uint &containmentId)
 {
     auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
+
     if (view) {
         view->exportTemplate();
     }
@@ -1561,6 +1579,7 @@ void Corona::exportViewTemplate(const uint &containmentId)
 void Corona::moveViewToLayout(const uint &containmentId, const QString &layoutName)
 {
     auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
+
     if (view && !layoutName.isEmpty() && view->layout()->name() != layoutName) {
         Latte::Types::ScreensGroup screensgroup{Latte::Types::SingleScreenGroup};
 
@@ -1576,6 +1595,7 @@ void Corona::moveViewToLayout(const uint &containmentId, const QString &layoutNa
 void Corona::removeView(const uint &containmentId)
 {
     auto view = m_layoutsManager->synchronizer()->viewForContainment(static_cast<int>(containmentId));
+
     if (view) {
         view->removeView();
     }
@@ -1584,7 +1604,7 @@ void Corona::removeView(const uint &containmentId)
 void Corona::setBackgroundFromBroadcast(QString activity, QString screenName, QString filename)
 {
     if (filename.startsWith(QStringLiteral("file://"))) {
-        filename = filename.remove(0,7);
+        filename = filename.remove(0, 7);
     }
 
     PlasmaExtended::BackgroundCache::self()->setBackgroundFromBroadcast(activity, screenName, filename);
@@ -1598,7 +1618,7 @@ void Corona::setBroadcastedBackgroundsEnabled(QString activity, QString screenNa
 void Corona::toggleHiddenState(QString layoutName, QString viewName, QString screenName, int screenEdge)
 {
     if (layoutName.isEmpty()) {
-        for(auto layout : m_layoutsManager->currentLayouts()) {
+        for (auto layout : m_layoutsManager->currentLayouts()) {
             layout->toggleHiddenState(viewName, screenName, (Plasma::Types::Location)screenEdge);
         }
     } else {
@@ -1617,7 +1637,7 @@ void Corona::importFullConfiguration(const QString &file)
 }
 
 inline void Corona::qmlRegisterTypes() const
-{   
+{
     qmlRegisterUncreatableMetaObject(Latte::Settings::staticMetaObject,
                                      App::PRIVATEQMLURI,                   // import statement
                                      0, 1,                                 // major and minor version of the import

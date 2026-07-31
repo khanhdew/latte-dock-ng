@@ -66,17 +66,17 @@ void ScreenGeometries::init()
 
     // Use asyncCall() to avoid blocking the event loop.
     QDBusMessage ping = QDBusMessage::createMethodCall(
-        QStringLiteral("org.freedesktop.DBus"),
-        QStringLiteral("/"),
-        QStringLiteral("org.freedesktop.DBus"),
-        QStringLiteral("NameHasOwner"));
+                            QStringLiteral("org.freedesktop.DBus"),
+                            QStringLiteral("/"),
+                            QStringLiteral("org.freedesktop.DBus"),
+                            QStringLiteral("NameHasOwner"));
     ping.setArguments({PLASMASERVICE});
 
     auto *watcher = new QDBusPendingCallWatcher(
         QDBusConnection::sessionBus().asyncCall(ping), this);
 
     connect(watcher, &QDBusPendingCallWatcher::finished, this,
-            [this](QDBusPendingCallWatcher *w) {
+    [this](QDBusPendingCallWatcher *w) {
         w->deleteLater();
         QDBusMessage reply = w->reply();
         bool serviceavailable = (reply.type() == QDBusMessage::ReplyMessage
@@ -118,9 +118,9 @@ void ScreenGeometries::onPlasmaInterfaceAvailable()
     }
 }
 
-bool ScreenGeometries::screenIsActive(const QString &screenName) const
-{
-    for (QScreen *screen : qGuiApp->screens()) {
+bool ScreenGeometries::screenIsActive(const QString &screenName) const {
+    for (QScreen *screen : qGuiApp->screens())
+    {
         if (screen->name() == screenName) {
             return true;
         }
@@ -134,6 +134,7 @@ void ScreenGeometries::onBroadcastToPlasmaChanged()
     if (m_corona->universalSettings()->isAvailableGeometryBroadcastedToPlasma()) {
         m_publishTimer.start();
     } else {
+
         clearGeometries();
     }
 }
@@ -141,9 +142,9 @@ void ScreenGeometries::onBroadcastToPlasmaChanged()
 void ScreenGeometries::setPlasmaAvailableScreenRect(const QString &screenName, const QRect &rect)
 {
     QDBusMessage message = QDBusMessage::createMethodCall(PLASMASERVICE,
-                                                          QStringLiteral("/StrutManager"),
-                                                          PLASMASTRUTNAMESPACE,
-                                                          QStringLiteral("setAvailableScreenRect"));
+                           QStringLiteral("/StrutManager"),
+                           PLASMASTRUTNAMESPACE,
+                           QStringLiteral("setAvailableScreenRect"));
     QVariantList args;
 
     args << LATTESERVICE
@@ -157,13 +158,14 @@ void ScreenGeometries::setPlasmaAvailableScreenRect(const QString &screenName, c
 void ScreenGeometries::setPlasmaAvailableScreenRegion(const QString &screenName, const QRegion &region)
 {
     QDBusMessage message = QDBusMessage::createMethodCall(PLASMASERVICE,
-                                                          QStringLiteral("/StrutManager"),
-                                                          PLASMASTRUTNAMESPACE,
-                                                          QStringLiteral("setAvailableScreenRegion"));
+                           QStringLiteral("/StrutManager"),
+                           PLASMASTRUTNAMESPACE,
+                           QStringLiteral("setAvailableScreenRegion"));
 
     QVariant regionvariant;
 
     QList<QRect> rects;
+
     if (!region.isNull()) {
         //! transform QRegion to QList<QRect> in order to be sent through dbus
         for (const auto &rect : region) {
@@ -172,6 +174,7 @@ void ScreenGeometries::setPlasmaAvailableScreenRegion(const QString &screenName,
     } else {
         rects << QRect();
     }
+
     regionvariant = QVariant::fromValue(rects);
 
     QVariantList args;
@@ -225,18 +228,18 @@ void ScreenGeometries::updateGeometries()
 
         if (m_corona->screenPool()->hasScreenId(scrId)) {
             QRect availableRect = m_corona->availableScreenRectWithCriteria(scrId,
-                                                                            QString(),
-                                                                            m_ignoreModes,
-                                                                            QList<Plasma::Types::Location>(),
-                                                                            true,
-                                                                            true);
+                                  QString(),
+                                  m_ignoreModes,
+                                  QList<Plasma::Types::Location>(),
+                                  true,
+                                  true);
 
             QRegion availableRegion = m_corona->availableScreenRegionWithCriteria(scrId,
-                                                                                  QString(),
-                                                                                  m_ignoreModes,
-                                                                                  QList<Plasma::Types::Location>(),
-                                                                                  true,
-                                                                                  true);
+                                      QString(),
+                                      m_ignoreModes,
+                                      QList<Plasma::Types::Location>(),
+                                      true,
+                                      true);
 
             bool clearedScreen = (availableRect == screen->geometry());
 

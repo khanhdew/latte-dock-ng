@@ -28,14 +28,14 @@ void ContainmentLayoutUnitTest::tracksRequestedAppletOptionLists()
     QSignalSpy lockedSpy(&manager, &Latte::Containment::LayoutManager::lockedZoomAppletsChanged);
     QSignalSpy coloringSpy(&manager, &Latte::Containment::LayoutManager::userBlocksColorizingAppletsChanged);
 
-    manager.requestAppletsInLockedZoom(QList<int>{3, 5});
-    manager.requestAppletsInLockedZoom(QList<int>{3, 5});
-    QCOMPARE(manager.lockedZoomApplets(), (QList<int>{3, 5}));
+    manager.requestAppletsInLockedZoom(QList<int> {3, 5});
+    manager.requestAppletsInLockedZoom(QList<int> {3, 5});
+    QCOMPARE(manager.lockedZoomApplets(), (QList<int> {3, 5}));
     QCOMPARE(lockedSpy.count(), 1);
 
-    manager.requestAppletsDisabledColoring(QList<int>{7});
-    manager.requestAppletsDisabledColoring(QList<int>{7});
-    QCOMPARE(manager.userBlocksColorizingApplets(), (QList<int>{7}));
+    manager.requestAppletsDisabledColoring(QList<int> {7});
+    manager.requestAppletsDisabledColoring(QList<int> {7});
+    QCOMPARE(manager.userBlocksColorizingApplets(), (QList<int> {7}));
     QCOMPARE(coloringSpy.count(), 1);
 }
 
@@ -59,21 +59,21 @@ void ContainmentLayoutUnitTest::restoresScheduledDestructionAppletAtOriginalInde
 {
     Latte::Containment::LayoutManager manager;
 
-    manager.requestAppletsOrder(QList<int>{1, 2, 3, 4});
+    manager.requestAppletsOrder(QList<int> {1, 2, 3, 4});
 
     QVERIFY(QMetaObject::invokeMethod(&manager,
                                       "rememberAppletRemovalIndex",
                                       Qt::DirectConnection,
                                       Q_ARG(int, 2)));
 
-    manager.requestAppletsOrder(QList<int>{1, 3, 4});
+    manager.requestAppletsOrder(QList<int> {1, 3, 4});
 
     QVERIFY(QMetaObject::invokeMethod(&manager,
                                       "restoreAppletOrderForApplet",
                                       Qt::DirectConnection,
                                       Q_ARG(int, 2)));
 
-    QCOMPARE(manager.appletOrder(), (QList<int>{1, 2, 3, 4}));
+    QCOMPARE(manager.appletOrder(), (QList<int> {1, 2, 3, 4}));
 }
 
 void ContainmentLayoutUnitTest::roundTripsMasqueradedIndexes()

@@ -113,15 +113,17 @@ bool CanvasConfigView::event(QEvent *e)
     bool result = SubConfigView::event(e);
 
     switch (e->type()) {
-    case QEvent::Enter:
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
-        if (m_parent) {
-            m_parent->requestActivate();
-        }
-        break;
-    default:
-        break;
+        case QEvent::Enter:
+        case QEvent::MouseButtonPress:
+        case QEvent::MouseButtonRelease:
+            if (m_parent) {
+                m_parent->requestActivate();
+            }
+
+            break;
+
+        default:
+            break;
     }
 
     return result;
@@ -170,7 +172,7 @@ void CanvasConfigView::focusOutEvent(QFocusEvent *ev)
     const auto *focusWindow = qGuiApp->focusWindow();
 
     if (focusWindow && (focusWindow->flags().testFlag(Qt::Popup)
-                         || focusWindow->flags().testFlag(Qt::ToolTip))) {
+                        || focusWindow->flags().testFlag(Qt::ToolTip))) {
         return;
     }
 
@@ -201,24 +203,24 @@ void CanvasConfigView::updateEnabledBorders()
     KSvg::FrameSvg::EnabledBorders borders = KSvg::FrameSvg::TopBorder;
 
     switch (m_latteView->location()) {
-    case Plasma::Types::TopEdge:
-        borders = KSvg::FrameSvg::BottomBorder;
-        break;
+        case Plasma::Types::TopEdge:
+            borders = KSvg::FrameSvg::BottomBorder;
+            break;
 
-    case Plasma::Types::LeftEdge:
-        borders = KSvg::FrameSvg::RightBorder;
-        break;
+        case Plasma::Types::LeftEdge:
+            borders = KSvg::FrameSvg::RightBorder;
+            break;
 
-    case Plasma::Types::RightEdge:
-        borders = KSvg::FrameSvg::LeftBorder;
-        break;
+        case Plasma::Types::RightEdge:
+            borders = KSvg::FrameSvg::LeftBorder;
+            break;
 
-    case Plasma::Types::BottomEdge:
-        borders = KSvg::FrameSvg::TopBorder;
-        break;
+        case Plasma::Types::BottomEdge:
+            borders = KSvg::FrameSvg::TopBorder;
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     if (m_enabledBorders != borders) {

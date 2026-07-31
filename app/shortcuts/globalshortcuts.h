@@ -26,7 +26,7 @@ class Containment;
 namespace Latte {
 class Corona;
 class View;
-namespace ShortcutsPart{
+namespace ShortcutsPart {
 class ModifierTracker;
 class ShortcutsTracker;
 }

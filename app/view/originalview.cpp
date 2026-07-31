@@ -100,6 +100,7 @@ void OriginalView::removeClone(Latte::ClonedView *view)
     if (!cloned->layout()) {
         return;
     }
+
     cloned->positioner()->slideOutDuringExit();
     //! Use removeViewWithoutDestroyingContainment to avoid triggering
     //! Plasma containment->destroy(), which can cascade into the original
@@ -126,7 +127,7 @@ void OriginalView::createClone(int screenId)
     }
 
     Data::View nextdata = templateviews[0];
-    nextdata.name = i18nc("clone of original dock, name","Clone of %1", name());
+    nextdata.name = i18nc("clone of original dock, name", "Clone of %1", name());
     nextdata.onPrimary = false;
     nextdata.screensGroup = Latte::Types::SingleScreenGroup;
     nextdata.isClonedFrom = containment()->id();
@@ -142,13 +143,14 @@ void OriginalView::createClone(int screenId)
 
 void OriginalView::cleanClones()
 {
-    if (m_clones.count()==0) {
+    if (m_clones.count() == 0) {
         return;
     }
 
     // Drain from a local copy — removeClone() may synchronously trigger
     // signal chains that re-enter and push new entries into m_clones.
     const QList<ClonedView *> snapshot = m_clones;
+
     for (ClonedView *clone : snapshot) {
         removeClone(clone);
     }
@@ -162,7 +164,7 @@ void OriginalView::reconsiderScreen()
 
 void OriginalView::setNextLocationForClones(const QString layoutName, int edge, int alignment)
 {
-    if (m_clones.count()==0) {
+    if (m_clones.count() == 0) {
         return;
     }
 
@@ -181,7 +183,7 @@ void OriginalView::addApplet(const QString &pluginId, const int &excludecloneid)
     extendedInterface()->addApplet(pluginId);
 
     // add applet in clones and exclude the one that probably produced this triggering
-    for(const auto clone: m_clones) {
+    for (const auto clone : m_clones) {
         if (excludecloneid >= 0 && clone->containment()->id() == static_cast<uint>(excludecloneid)) {
             // this way we make sure that an applet will not be double added
             continue;
@@ -201,7 +203,7 @@ void OriginalView::addApplet(QObject *mimedata, const int &x, const int &y, cons
     extendedInterface()->addApplet(mimedata, x, y);
 
     // add applet in clones and exclude the one that probably produced this triggering
-    for(const auto clone: m_clones) {
+    for (const auto clone : m_clones) {
         if (excludecloneid >= 0 && clone->containment()->id() == static_cast<uint>(excludecloneid)) {
             // this way we make sure that an applet will not be double added
             continue;

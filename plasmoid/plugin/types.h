@@ -22,8 +22,7 @@ public:
     Types() = delete;
     ~Types() {}
 
-    enum Modifier
-    {
+    enum Modifier {
         Shift = 0,
         Ctrl,
         Alt,
@@ -31,16 +30,14 @@ public:
     };
     Q_ENUM(Modifier);
 
-    enum ClickAction
-    {
+    enum ClickAction {
         LeftClick = 0,
         MiddleClick,
         RightClick
     };
     Q_ENUM(ClickAction);
 
-    enum TaskAction
-    {
+    enum TaskAction {
         NoneAction = 0,
         Close,
         NewInstance,
@@ -54,16 +51,14 @@ public:
     };
     Q_ENUM(TaskAction);
 
-    enum TaskScrollAction
-    {
+    enum TaskScrollAction {
         ScrollNone = 0,
         ScrollTasks,
         ScrollToggleMinimized
     };
     Q_ENUM(TaskScrollAction);
 
-    enum ManualScrollType
-    {
+    enum ManualScrollType {
         ManualScrollDisabled = 0,
         ManualScrollOnlyParallel,
         ManualScrollVerticalHorizontal

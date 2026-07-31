@@ -45,7 +45,7 @@ Generic &Generic::operator=(Generic &&rhs)
 bool Generic::operator==(const Generic &rhs) const
 {
     return (id == rhs.id)
-            && (name == rhs.name);
+           && (name == rhs.name);
 }
 
 bool Generic::operator!=(const Generic &rhs) const

@@ -29,7 +29,8 @@ namespace Latte {
 namespace WindowSystem {
 namespace Tracker {
 
-class TrackedViewInfo : public TrackedGeneralInfo {
+class TrackedViewInfo : public TrackedGeneralInfo
+{
     Q_OBJECT
 
 public:

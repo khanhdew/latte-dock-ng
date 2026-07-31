@@ -181,7 +181,7 @@ const Data::ViewsTable Views::selectedViewsCurrentData() const
 
     QModelIndexList layoutidindexes = m_view->selectionModel()->selectedRows(Model::Views::IDCOLUMN);
 
-    for(int i=0; i<layoutidindexes.count(); ++i) {
+    for (int i = 0; i < layoutidindexes.count(); ++i) {
         QString selectedid = layoutidindexes[i].data(Qt::UserRole).toString();
         selectedviews <<  m_model->currentData(selectedid);
     }
@@ -205,6 +205,7 @@ const Latte::Data::View Views::currentData(const QString &id)
 Data::ViewsTable Views::selectedViewsForClipboard()
 {
     Data::ViewsTable clipboardviews;
+
     if (!hasSelectedView()) {
         return clipboardviews;
     }
@@ -212,7 +213,7 @@ Data::ViewsTable Views::selectedViewsForClipboard()
     Data::ViewsTable selectedviews = selectedViewsCurrentData();
     Latte::Data::Layout currentlayout = m_handler->currentData();
 
-    for(int i=0; i<selectedviews.rowCount(); ++i) {
+    for (int i = 0; i < selectedviews.rowCount(); ++i) {
         if (selectedviews[i].state() == Data::View::IsInvalid) {
             continue;
         }
@@ -246,7 +247,8 @@ void Views::copySelectedViews()
 
     //! reset cut substates for views
     Data::ViewsTable currentviews = m_model->currentViewsData();
-    for (int i=0; i<currentviews.rowCount(); ++i) {
+
+    for (int i = 0; i < currentviews.rowCount(); ++i) {
         Data::View cview = currentviews[i];
         cview.isMoveOrigin = false;
         m_model->updateCurrentView(cview.id, cview);
@@ -255,7 +257,7 @@ void Views::copySelectedViews()
     Data::ViewsTable clipboardviews = selectedViewsForClipboard();
 
     //! reset cut substates for views
-    for (int i=0; i<clipboardviews.rowCount(); ++i) {
+    for (int i = 0; i < clipboardviews.rowCount(); ++i) {
         clipboardviews[i].isMoveOrigin = false;
 
         /*   Data::View tempview = m_model->currentData(clipboardviews[i].id);
@@ -276,7 +278,8 @@ void Views::cutSelectedViews()
 
     //! reset previous move records
     Data::ViewsTable currentviews = m_model->currentViewsData();
-    for (int i=0; i<currentviews.rowCount(); ++i) {
+
+    for (int i = 0; i < currentviews.rowCount(); ++i) {
         Data::View cview = currentviews[i];
         cview.isMoveOrigin = false;
         m_model->updateCurrentView(cview.id, cview);
@@ -285,7 +288,7 @@ void Views::cutSelectedViews()
     Data::ViewsTable clipboardviews = selectedViewsForClipboard();
 
     //! activate cut substates for views
-    for (int i=0; i<clipboardviews.rowCount(); ++i) {
+    for (int i = 0; i < clipboardviews.rowCount(); ++i) {
         clipboardviews[i].isMoveOrigin = true;
 
         Data::View tempview = m_model->currentData(clipboardviews[i].id);
@@ -303,7 +306,7 @@ void Views::pasteSelectedViews()
 
     bool hascurrentlayoutcuttedviews{false};
 
-    for(int i=0; i<clipboardviews.rowCount(); ++i) {
+    for (int i = 0; i < clipboardviews.rowCount(); ++i) {
         if (clipboardviews[i].isMoveOrigin && clipboardviews[i].originLayout() == currentlayout.id) {
             hascurrentlayoutcuttedviews = true;
             continue;
@@ -335,7 +338,7 @@ void Views::duplicateSelectedViews()
     Data::ViewsTable selectedviews = selectedViewsCurrentData();
     Latte::Data::Layout currentlayout = m_handler->currentData();
 
-    for(int i=0; i<selectedviews.rowCount(); ++i) {
+    for (int i = 0; i < selectedviews.rowCount(); ++i) {
         if (selectedviews[i].state() == Data::View::IsCreated) {
             QString storedviewpath = m_handler->layoutsController()->templatesKeeper()->storedView(currentlayout.id, selectedviews[i].id);
             Latte::Data::View duplicatedview = selectedviews[i];
@@ -361,11 +364,11 @@ void Views::removeSelectedViews()
 
     int selectionheadrow = m_model->rowForId(selectedviews[0].id);
 
-    for (int i=0; i<selectedviews.rowCount(); ++i) {
+    for (int i = 0; i < selectedviews.rowCount(); ++i) {
         m_model->removeView(selectedviews[i].id);
     }
 
-    m_view->selectRow(qBound(0, selectionheadrow, m_model->rowCount()-1));
+    m_view->selectRow(qBound(0, selectionheadrow, m_model->rowCount() - 1));
 }
 
 void Views::selectRow(const QString &id)
@@ -374,14 +377,14 @@ void Views::selectRow(const QString &id)
 }
 
 void Views::onCurrentLayoutChanged()
-{   
+{
     Data::Layout currentlayoutdata = m_handler->currentData();
 
     Data::ViewsTable clipboardviews = m_handler->layoutsController()->templatesKeeper()->clipboardContents();
 
     if (!clipboardviews.isEmpty()) {
         //! clipboarded views needs to update the relevant flags to loaded views
-        for (int i=0; i<currentlayoutdata.views.rowCount(); ++i) {
+        for (int i = 0; i < currentlayoutdata.views.rowCount(); ++i) {
             QString vid = currentlayoutdata.views[i].id;
 
             if (!clipboardviews.containsId(vid)) {
@@ -404,7 +407,7 @@ void Views::onCurrentLayoutChanged()
     Latte::CentralLayout *currentlayout = m_handler->layoutsController()->centralLayout(currentlayoutdata.id);
 
     if (currentlayout && currentlayout->isActive()) {
-        m_currentLayoutConnections << connect(currentlayout, &Layout::GenericLayout::viewsCountChanged, this, [&, currentlayout](){
+        m_currentLayoutConnections << connect(currentlayout, &Layout::GenericLayout::viewsCountChanged, this, [ &, currentlayout]() {
             m_model->updateActiveStatesBasedOn(currentlayout);
         });
     }
@@ -441,7 +444,7 @@ bool Views::hasValidOriginView(const Data::View &view)
     int vid_int = view.originView().toInt(&viewidisinteger);
     QString vid_str = view.originView();
 
-    if (vid_str.isEmpty() || !viewidisinteger || vid_int<=0) {
+    if (vid_str.isEmpty() || !viewidisinteger || vid_int <= 0) {
         return false;
     }
 
@@ -454,31 +457,32 @@ CentralLayout *Views::originLayout(const Data::View &view)
     Data::Layout originlayoutdata = m_handler->layoutsController()->originalData(origincurrentid);
 
     Latte::CentralLayout *originactive = m_handler->layoutsController()->isLayoutOriginal(origincurrentid) ?
-                m_handler->corona()->layoutsManager()->synchronizer()->centralLayout(originlayoutdata.name) : nullptr;
+                                         m_handler->corona()->layoutsManager()->synchronizer()->centralLayout(originlayoutdata.name) : nullptr;
 
     return originactive;
 }
 
-void Views::updateDoubledMoveDestinationRows() {
+void Views::updateDoubledMoveDestinationRows()
+{
     //! only one isMoveDestination should exist for each unique move isMoveOrigin case
     //! all the rest that have been created through Cut/Paste or Duplicate options should become
     //! simple OriginFromViewTemplate cases
 
-    for (int i=0; i<m_model->rowCount(); ++i) {
+    for (int i = 0; i < m_model->rowCount(); ++i) {
         Data::View baseview = m_model->at(i);
 
-        if (!baseview.isMoveDestination || baseview.state()!=Data::View::OriginFromLayout) {
+        if (!baseview.isMoveDestination || baseview.state() != Data::View::OriginFromLayout) {
             continue;
         }
 
-        for (int j=i+1; j<m_model->rowCount(); ++j) {
+        for (int j = i + 1; j < m_model->rowCount(); ++j) {
             Data::View subsequentview = m_model->at(j);
 
             if (subsequentview.isMoveDestination
-                    && subsequentview.state() == Data::View::OriginFromLayout
-                    && subsequentview.originFile() == baseview.originFile()
-                    && subsequentview.originLayout() == baseview.originLayout()
-                    && subsequentview.originView() == baseview.originView()) {
+                && subsequentview.state() == Data::View::OriginFromLayout
+                && subsequentview.originFile() == baseview.originFile()
+                && subsequentview.originLayout() == baseview.originLayout()
+                && subsequentview.originView() == baseview.originView()) {
                 //! this is a subsequent view that needs to be updated properly
                 subsequentview.isMoveDestination = false;
                 subsequentview.isMoveOrigin = false;
@@ -504,7 +508,7 @@ void Views::messagesForErrorsWarnings(const Latte::CentralLayout *centralLayout,
         Data::WarningsList warnings = centralLayout->warnings();
 
         // show warnings
-        for (int i=0; i< warnings.count(); ++i) {
+        for (int i = 0; i < warnings.count(); ++i) {
             if (warnings[i].id == Data::Warning::ORPHANEDSUBCONTAINMENT) {
                 messageForWarningOrphanedSubContainments(warnings[i]);
             } else if (warnings[i].id == Data::Warning::APPLETANDCONTAINMENTWITHSAMEID) {
@@ -513,14 +517,15 @@ void Views::messagesForErrorsWarnings(const Latte::CentralLayout *centralLayout,
         }
 
         // count warnings per view
-        for (int i=0; i<warnings.count(); ++i) {
-            for (int j=0; j<warnings[i].information.rowCount(); ++j) {
+        for (int i = 0; i < warnings.count(); ++i) {
+            for (int j = 0; j < warnings[i].information.rowCount(); ++j) {
                 if (!warnings[i].information[j].containment.isValid()) {
                     continue;
                 }
 
                 QString cid = warnings[i].information[j].containment.storageId;
                 Data::View view = m_model->currentData(cid);
+
                 if (!view.isValid()) {
                     //! one step back from subcontainment to view in order to find the influenced view id
                     cid = m_model->viewForSubContainment(cid);
@@ -540,7 +545,7 @@ void Views::messagesForErrorsWarnings(const Latte::CentralLayout *centralLayout,
         Data::ErrorsList errors = centralLayout->errors();
 
         // show errors
-        for (int i=0; i< errors.count(); ++i) {
+        for (int i = 0; i < errors.count(); ++i) {
             if (errors[i].id == Data::Error::APPLETSWITHSAMEID) {
                 messageForErrorAppletsWithSameId(errors[i]);
             } else if (errors[i].id == Data::Error::ORPHANEDPARENTAPPLETOFSUBCONTAINMENT) {
@@ -549,14 +554,15 @@ void Views::messagesForErrorsWarnings(const Latte::CentralLayout *centralLayout,
         }
 
         // count errors per view
-        for (int i=0; i<errors.count(); ++i) {
-            for (int j=0; j<errors[i].information.rowCount(); ++j) {
+        for (int i = 0; i < errors.count(); ++i) {
+            for (int j = 0; j < errors[i].information.rowCount(); ++j) {
                 if (!errors[i].information[j].containment.isValid()) {
                     continue;
                 }
 
                 QString cid = errors[i].information[j].containment.storageId;
                 Data::View view = m_model->currentData(cid);
+
                 if (!view.isValid()) {
                     //! one step back from subcontainment to view in order to find the influenced view id
                     cid = m_model->viewForSubContainment(cid);
@@ -582,9 +588,9 @@ void Views::messagesForErrorsWarnings(const Latte::CentralLayout *centralLayout,
 }
 
 void Views::showDefaultPersistentErrorWarningInlineMessage(const QString &messageText,
-                                                           const KMessageWidget::MessageType &messageType,
-                                                           QList<QAction *> extraActions,
-                                                           const bool &showOpenLayoutAction)
+        const KMessageWidget::MessageType &messageType,
+        QList<QAction *> extraActions,
+        const bool &showOpenLayoutAction)
 {
     QList<QAction *> actions;
     actions << extraActions;
@@ -599,7 +605,7 @@ void Views::showDefaultPersistentErrorWarningInlineMessage(const QString &messag
         openlayoutaction->setData(currentlayout.id);
         actions << openlayoutaction;
 
-        connect(openlayoutaction, &QAction::triggered, this, [&, openlayoutaction]() {
+        connect(openlayoutaction, &QAction::triggered, this, [ &, openlayoutaction]() {
             QString file = openlayoutaction->data().toString();
 
             if (!file.isEmpty()) {
@@ -629,9 +635,10 @@ void Views::showDefaultInlineMessageValidator()
     QList<QAction *> actions;
     actions << validateaction;
 
-    connect(validateaction, &QAction::triggered, this, [&, currentlayout]() {
+    connect(validateaction, &QAction::triggered, this, [ &, currentlayout]() {
 
         auto centrallayout = m_handler->layoutsController()->centralLayout(currentlayout.id);
+
         if (centrallayout && !centrallayout->isActive()) {
             KSharedConfigPtr lFile = KSharedConfig::openConfig(centrallayout->file());
             //! update configuration with latest changes
@@ -657,13 +664,14 @@ void Views::messageForErrorAppletsWithSameId(const Data::Error &error)
     }
 
     //! construct message
-    QString message = i18nc("error id and title", "<b>Error #%1: %2</b> <br/>",error.id, error.name);
+    QString message = i18nc("error id and title", "<b>Error #%1: %2</b> <br/>", error.id, error.name);
     message += QStringLiteral("<br/>");
     message += i18n("In your layout there are two or more applets with same id. Such situation can create crashes, abnormal behavior and data loss when you activate and use this layout.<br/>");
 
     message += QStringLiteral("<br/>");
     message += i18n("<b>Applets:</b><br/>");
-    for (int i=0; i<error.information.rowCount(); ++i) {
+
+    for (int i = 0; i < error.information.rowCount(); ++i) {
         QString appletname = error.information[i].applet.visibleName();
         QString appletstorageid = error.information[i].applet.storageId;
         QString viewname = visibleViewName(error.information[i].containment.storageId);
@@ -695,11 +703,13 @@ void Views::messageForErrorOrphanedParentAppletOfSubContainment(const Data::Erro
 
     //! construct message
     QString message = i18nc("error id and title", "<b>Error #%1: %2</b> <br/><br/>", error.id, error.name);
-    message += i18n("In your layout there are orphaned pseudo applets that link to unexistent subcontainments. Such case is for example a systemtray that has lost connection with its child applets. Such situation can create crashes, abnormal behavior and data loss when you activate and use this layout.<br/>");
+    message +=
+        i18n("In your layout there are orphaned pseudo applets that link to unexistent subcontainments. Such case is for example a systemtray that has lost connection with its child applets. Such situation can create crashes, abnormal behavior and data loss when you activate and use this layout.<br/>");
 
     message += QStringLiteral("<br/>");
     message += i18n("<b>Pseudo Applets:</b><br/>");
-    for (int i=0; i<error.information.rowCount(); ++i) {
+
+    for (int i = 0; i < error.information.rowCount(); ++i) {
         if (!error.information[i].applet.isValid()) {
             continue;
         }
@@ -719,7 +729,8 @@ void Views::messageForErrorOrphanedParentAppletOfSubContainment(const Data::Erro
 
     message += QStringLiteral("<br/>");
     message += i18n("<b>Orphaned Subcontainments:</b><br/>");
-    for (int i=0; i<error.information.rowCount(); ++i) {
+
+    for (int i = 0; i < error.information.rowCount(); ++i) {
         if (error.information[i].applet.isValid()) {
             continue;
         }
@@ -754,7 +765,8 @@ void Views::messageForWarningAppletAndContainmentWithSameId(const Data::Warning 
 
     message += QStringLiteral("<br/>");
     message += i18n("<b>Applets:</b><br/>");
-    for (int i=0; i<warning.information.rowCount(); ++i) {
+
+    for (int i = 0; i < warning.information.rowCount(); ++i) {
         if (!warning.information[i].applet.isValid()) {
             continue;
         }
@@ -774,7 +786,8 @@ void Views::messageForWarningAppletAndContainmentWithSameId(const Data::Warning 
 
     message += QStringLiteral("<br/>");
     message += i18n("<b>Containments:</b><br/>");
-    for (int i=0; i<warning.information.rowCount(); ++i) {
+
+    for (int i = 0; i < warning.information.rowCount(); ++i) {
         if (warning.information[i].applet.isValid()) {
             continue;
         }
@@ -807,11 +820,13 @@ void Views::messageForWarningOrphanedSubContainments(const Data::Warning &warnin
 
     //! construct message
     QString message = i18nc("warning id and title", "<b>Warning #%1: %2</b> <br/><br/>", warning.id, warning.name);
-    message += i18n("In your layout there are orphaned subcontainments that are not used by any dock. Such situation is not dangerous but it is advised to remove them in order to reduce memory usage.<br/>");
+    message +=
+        i18n("In your layout there are orphaned subcontainments that are not used by any dock. Such situation is not dangerous but it is advised to remove them in order to reduce memory usage.<br/>");
 
     message += QStringLiteral("<br/>");
     message += i18n("<b>Orphaned Subcontainments:</b><br/>");
-    for (int i=0; i<warning.information.rowCount(); ++i) {
+
+    for (int i = 0; i < warning.information.rowCount(); ++i) {
         if (warning.information[i].applet.isValid()) {
             continue;
         }
@@ -840,10 +855,10 @@ void Views::messageForWarningOrphanedSubContainments(const Data::Warning &warnin
 
     Latte::Data::Layout currentlayout = m_handler->currentData();
 
-    connect(repairlayoutaction, &QAction::triggered, this, [&, currentlayout, orphaned]() {
+    connect(repairlayoutaction, &QAction::triggered, this, [ &, currentlayout, orphaned]() {
         auto centrallayout = m_handler->layoutsController()->centralLayout(currentlayout.id);
 
-        for (int i=0; i<orphaned.count(); ++i) {
+        for (int i = 0; i < orphaned.count(); ++i) {
             centrallayout->removeOrphanedSubContainment(orphaned[i]);
         }
 
@@ -852,8 +867,8 @@ void Views::messageForWarningOrphanedSubContainments(const Data::Warning &warnin
 
     //! show message
     showDefaultPersistentErrorWarningInlineMessage(message,
-                                                   KMessageWidget::Warning,
-                                                   extraactions);
+            KMessageWidget::Warning,
+            extraactions);
 }
 
 void Views::save()
@@ -879,7 +894,7 @@ void Views::save()
     qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() call: " << m_debugSaveCall << "-------- ";
 
     //! add new views that are accepted
-    for(int i=0; i<newViews.rowCount(); ++i){
+    for (int i = 0; i < newViews.rowCount(); ++i) {
         if (newViews[i].isMoveDestination) {
             CentralLayout *originActive = originLayout(newViews[i]);
             bool inmovebetweenactivelayouts = central->isActive() && originActive && central != originActive && hasValidOriginView(newViews[i]);
@@ -906,7 +921,7 @@ void Views::save()
     }
 
     //! update altered views
-    for (int i=0; i<alteredViews.rowCount(); ++i) {
+    for (int i = 0; i < alteredViews.rowCount(); ++i) {
         if (alteredViews[i].state() == Data::View::IsCreated && !alteredViews[i].isMoveOrigin) {
             qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() updating altered view :: " << alteredViews[i];
             central->updateView(alteredViews[i]);
@@ -916,18 +931,18 @@ void Views::save()
     //! remove deprecated views that have been removed from user
     Latte::Data::ViewsTable removedViews = originalViews.subtracted(currentViews);
 
-    for (int i=0; i<removedViews.rowCount(); ++i) {
+    for (int i = 0; i < removedViews.rowCount(); ++i) {
         qCDebug(latteSettings) << "org.kde.latte ViewsDialog::save() real removing view :: " << removedViews[i];
         central->removeView(removedViews[i]);
     }
 
     //! remove deprecated views from external layouts that must be removed because of Cut->Paste Action
-    for(const auto vid: cuttedpastedviews.keys()){
+    for (const auto vid : cuttedpastedviews.keys()) {
         bool viewidisinteger{true};
         int vid_int = cuttedpastedviews[vid].originView().toInt(&viewidisinteger);
         QString vid_str = cuttedpastedviews[vid].originView();
 
-        if (vid_str.isEmpty() || !viewidisinteger || vid_int<=0) {
+        if (vid_str.isEmpty() || !viewidisinteger || vid_int <= 0) {
             //! ignore origin views that have not been created already
             continue;
         }
@@ -947,7 +962,7 @@ void Views::save()
     }
 
     //! move active views between different active layouts
-    for (const auto vid: cuttedpastedactiveviews.keys()) {
+    for (const auto vid : cuttedpastedactiveviews.keys()) {
         Data::View pastedactiveview = cuttedpastedactiveviews[vid];
         uint originviewid = pastedactiveview.originView().toUInt();
         CentralLayout *origin = originLayout(pastedactiveview);
@@ -984,7 +999,7 @@ void Views::save()
     }
 
     //! update model for newly added views
-    for (const auto vid: newviewsresponses.keys()) {
+    for (const auto vid : newviewsresponses.keys()) {
         m_model->setOriginalView(vid, newviewsresponses[vid]);
     }
 
@@ -1049,7 +1064,7 @@ void Views::applyColumnWidths()
 {
     m_view->horizontalHeader()->setSectionResizeMode(Model::Views::SUBCONTAINMENTSCOLUMN, QHeaderView::Stretch);
 
-    if (m_viewColumnWidths.count()<(Model::Views::columnCount()-1)) {
+    if (m_viewColumnWidths.count() < (Model::Views::columnCount() - 1)) {
         return;
     }
 
@@ -1062,9 +1077,10 @@ void Views::applyColumnWidths()
 
 void Views::storeColumnWidths()
 {
-    if (m_viewColumnWidths.isEmpty() || (m_viewColumnWidths.count()<Model::Views::columnCount()-1)) {
+    if (m_viewColumnWidths.isEmpty() || (m_viewColumnWidths.count() < Model::Views::columnCount() - 1)) {
         m_viewColumnWidths.clear();
-        for (int i=0; i<Model::Views::columnCount(); ++i) {
+
+        for (int i = 0; i < Model::Views::columnCount(); ++i) {
             m_viewColumnWidths << QString();
         }
     }

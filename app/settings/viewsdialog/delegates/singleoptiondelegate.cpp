@@ -52,7 +52,7 @@ QWidget *SingleOption::createEditor(QWidget *parent, const QStyleOptionViewItem 
     if (column == Model::Views::SCREENCOLUMN) {
         screens = index.data(Model::Views::CHOICESROLE).value<Latte::Data::ScreensTable>();
 
-        for (int i=0; i<screens.rowCount(); ++i) {
+        for (int i = 0; i < screens.rowCount(); ++i) {
             choices << Latte::Data::Generic(screens[i].id, screens[i].name);
 
             if (screens[i].isActive) {
@@ -62,12 +62,12 @@ QWidget *SingleOption::createEditor(QWidget *parent, const QStyleOptionViewItem 
     } else {
         views = index.data(Model::Views::CHOICESROLE).value<Latte::Data::ViewsTable>();
 
-        for (int i=0; i<views.rowCount(); ++i) {
+        for (int i = 0; i < views.rowCount(); ++i) {
             choices << Latte::Data::Generic(views[i].id, views[i].name);
         }
     }
 
-    for (int i=0; i<choices.rowCount(); ++i) {
+    for (int i = 0; i < choices.rowCount(); ++i) {
         QWidgetAction *action = new QWidgetAction(menu);
         action->setText(choices[i].name);
         action->setData(choices[i].id);

@@ -130,7 +130,7 @@ int main(int argc, char **argv)
             }
 
             qWarning() << "Waiting for Wayland platform..."
-                        << "attempt" << (i + 1) << "of" << maxRetries;
+                       << "attempt" << (i + 1) << "of" << maxRetries;
         }
 
         if (!waylandReady) {
@@ -167,23 +167,23 @@ int main(int argc, char **argv)
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOptions({
-                          {{QStringLiteral("r"), QStringLiteral("replace")}, i18nc("command line", "Replace the current Latte instance.")}
-                          , {{QStringLiteral("d"), QStringLiteral("debug")}, i18nc("command line", "Show the debugging messages on stdout.")}
-                          , {{QStringLiteral("cc"), QStringLiteral("clear-cache")}, i18nc("command line", "Clear qml cache. It can be useful after system upgrades.")}
-                          , {QStringLiteral("enable-autostart"), i18nc("command line", "Enable autostart for this application")}
-                          , {QStringLiteral("disable-autostart"), i18nc("command line", "Disable autostart for this application")}
-                          , {QStringLiteral("default-layout"), i18nc("command line", "Import and load default layout on startup.")}
-                          , {QStringLiteral("available-layouts"), i18nc("command line", "Print available layouts")}
-                          , {QStringLiteral("available-dock-templates"), i18nc("command line", "Print available dock templates")}
-                          , {QStringLiteral("available-layout-templates"), i18nc("command line", "Print available layout templates")}
-                          , {QStringLiteral("layout"), i18nc("command line", "Load specific layout on startup."), i18nc("command line: load", "layout_name")}
-                          , {QStringLiteral("import-layout"), i18nc("command line", "Import and load a layout."), i18nc("command line: import", "absolute_filepath")}
-                          , {QStringLiteral("suggested-layout-name"), i18nc("command line", "Suggested layout name when importing a layout file"), i18nc("command line: import", "suggested_name")}
-                          , {QStringLiteral("import-full"), i18nc("command line", "Import full configuration."), i18nc("command line: import", "file_name")}
-                          , {QStringLiteral("add-dock"), i18nc("command line", "Add Dock"), i18nc("command line: add", "template_name")}
-                          , {QStringLiteral("single"), i18nc("command line", "Single layout memory mode. Only one layout is active at any case.")}
-                          , {QStringLiteral("multiple"), i18nc("command line", "Multiple layouts memory mode. Multiple layouts can be active at any time based on Activities running.")}
-                      });
+        {{QStringLiteral("r"), QStringLiteral("replace")}, i18nc("command line", "Replace the current Latte instance.")}
+        , {{QStringLiteral("d"), QStringLiteral("debug")}, i18nc("command line", "Show the debugging messages on stdout.")}
+        , {{QStringLiteral("cc"), QStringLiteral("clear-cache")}, i18nc("command line", "Clear qml cache. It can be useful after system upgrades.")}
+        , {QStringLiteral("enable-autostart"), i18nc("command line", "Enable autostart for this application")}
+        , {QStringLiteral("disable-autostart"), i18nc("command line", "Disable autostart for this application")}
+        , {QStringLiteral("default-layout"), i18nc("command line", "Import and load default layout on startup.")}
+        , {QStringLiteral("available-layouts"), i18nc("command line", "Print available layouts")}
+        , {QStringLiteral("available-dock-templates"), i18nc("command line", "Print available dock templates")}
+        , {QStringLiteral("available-layout-templates"), i18nc("command line", "Print available layout templates")}
+        , {QStringLiteral("layout"), i18nc("command line", "Load specific layout on startup."), i18nc("command line: load", "layout_name")}
+        , {QStringLiteral("import-layout"), i18nc("command line", "Import and load a layout."), i18nc("command line: import", "absolute_filepath")}
+        , {QStringLiteral("suggested-layout-name"), i18nc("command line", "Suggested layout name when importing a layout file"), i18nc("command line: import", "suggested_name")}
+        , {QStringLiteral("import-full"), i18nc("command line", "Import full configuration."), i18nc("command line: import", "file_name")}
+        , {QStringLiteral("add-dock"), i18nc("command line", "Add Dock"), i18nc("command line: add", "template_name")}
+        , {QStringLiteral("single"), i18nc("command line", "Single layout memory mode. Only one layout is active at any case.")}
+        , {QStringLiteral("multiple"), i18nc("command line", "Multiple layouts memory mode. Multiple layouts can be active at any time based on Activities running.")}
+    });
 
     //! START: Hidden options for Developer and Debugging usage
     QCommandLineOption graphicsOption(QStringList() << QStringLiteral("graphics"));
@@ -361,6 +361,7 @@ int main(int argc, char **argv)
     //! for signal handling in event-loop applications and does not depend on
     //! signalfd or sigprocmask behaviour.
     static int sigPipe[2] = {-1, -1};
+
     if (pipe(sigPipe) == 0) {
         // Non-blocking write end so the signal handler cannot deadlock
         // if the pipe buffer is full.
@@ -370,7 +371,8 @@ int main(int argc, char **argv)
         // Use sigaction (async-signal-safe) to install a handler that writes
         // a byte to the pipe.  This runs in signal context so only
         // async-signal-safe functions are used.
-        struct sigaction sa{};
+        struct sigaction sa {};
+
         sa.sa_handler = [](int) {
             const char c = 1;
             // The pipe is non-blocking; when it is full a wake-up is already
@@ -378,6 +380,7 @@ int main(int argc, char **argv)
             const ssize_t written = write(sigPipe[1], &c, 1);
             (void)written;
         };
+
         sigemptyset(&sa.sa_mask);
         sa.sa_flags = SA_RESTART;
         sigaction(SIGINT, &sa, nullptr);
@@ -387,6 +390,7 @@ int main(int argc, char **argv)
         auto *sigNotifier = new QSocketNotifier(sigPipe[0], QSocketNotifier::Read, &app);
         QObject::connect(sigNotifier, &QSocketNotifier::activated, &app, [&app, &markSessionEnding](int) {
             char c;
+
             if (read(sigPipe[0], &c, 1) == 1) {
                 qInfo() << "[shutdown] SIGINT received via self-pipe → calling quit()";
                 markSessionEnding();
@@ -397,7 +401,7 @@ int main(int argc, char **argv)
 
     //! Signal handler: the primary shutdown trigger (matches plasmashell).
     QObject::connect(KSignalHandler::self(), &KSignalHandler::signalReceived,
-                     &app, [&app, &markSessionEnding](int signal) {
+    &app, [&app, &markSessionEnding](int signal) {
         qInfo() << "[shutdown] KSignalHandler received signal" << signal << "→ calling quit()";
         markSessionEnding();
         app.quit();
@@ -406,7 +410,7 @@ int main(int argc, char **argv)
     //! Match plasmashell: disable Qt session restoration, but do not quit from
     //! commitDataRequest/saveStateRequest.  Those requests can happen while
     //! the logout confirmation is still cancellable.
-    auto disableSessionManagement = [](QSessionManager &sm) {
+    auto disableSessionManagement = [](QSessionManager & sm) {
         qInfo() << "[shutdown] session management disabled → RestartNever.";
         sm.setRestartHint(QSessionManager::RestartNever);
     };
@@ -466,9 +470,9 @@ int main(int argc, char **argv)
         if (addview) {
             validaction = true;
             QDBusMessage msg = QDBusMessage::createMethodCall(
-                QStringLiteral("org.kde.lattedock"),
-                QStringLiteral("/Latte"), QString(),
-                QStringLiteral("addView"));
+                                   QStringLiteral("org.kde.lattedock"),
+                                   QStringLiteral("/Latte"), QString(),
+                                   QStringLiteral("addView"));
             msg.setArguments({static_cast<uint>(0), parser.value(QStringLiteral("add-dock"))});
             QDBusConnection::sessionBus().call(msg);
             return 0;
@@ -476,20 +480,20 @@ int main(int argc, char **argv)
             validaction = true;
             QString suggestedname = parser.isSet(QStringLiteral("suggested-layout-name")) ? parser.value(QStringLiteral("suggested-layout-name")) : QString();
             QDBusMessage msg = QDBusMessage::createMethodCall(
-                QStringLiteral("org.kde.lattedock"),
-                QStringLiteral("/Latte"), QString(),
-                QStringLiteral("importLayoutFile"));
+                                   QStringLiteral("org.kde.lattedock"),
+                                   QStringLiteral("/Latte"), QString(),
+                                   QStringLiteral("importLayoutFile"));
             msg.setArguments({parser.value(QStringLiteral("import-layout")), suggestedname});
             QDBusConnection::sessionBus().call(msg);
             return 0;
-        } else if (enableautostart || disableautostart){
+        } else if (enableautostart || disableautostart) {
             validaction = true;
         } else {
             // LayoutPage = 0
             QDBusMessage msg = QDBusMessage::createMethodCall(
-                QStringLiteral("org.kde.lattedock"),
-                QStringLiteral("/Latte"), QString(),
-                QStringLiteral("showSettingsWindow"));
+                                   QStringLiteral("org.kde.lattedock"),
+                                   QStringLiteral("/Latte"), QString(),
+                                   QStringLiteral("showSettingsWindow"));
             msg.setArguments({0});
             QDBusConnection::sessionBus().call(msg);
         }
@@ -497,6 +501,7 @@ int main(int argc, char **argv)
         if (!validaction) {
             if (parser.isSet(QStringLiteral("replace")) || parser.isSet(QStringLiteral("import-full"))) {
                 qint64 pid{ -1};
+
                 if (lockFile.getLockInfo(&pid, nullptr, nullptr)) {
                     qInfo() << i18n("Old instance (PID %1) did not exit in time. Try killing it manually.", pid);
                 } else {
@@ -592,6 +597,7 @@ int main(int argc, char **argv)
         qInstallMessageHandler(filterDebugMessageOutput);
     } else {
         const auto noMessageOutput = [](QtMsgType, const QMessageLogContext &, const QString &) {};
+
         qInstallMessageHandler(noMessageOutput);
     }
 
@@ -650,11 +656,13 @@ int main(int argc, char **argv)
                 markSessionEnding();
             }
         });
+
         sessionShutdownPoll.start();
 
         KDBusService service(KDBusService::Unique);
         result = app.exec();
     }
+
     // Detach the SharedQmlEngine from the QApplication before app is
     // destroyed.  Without this, ~QApplication() → deleteChildren() deletes
     // the SharedQmlEngine that is managed by a static shared_ptr, and the
@@ -731,6 +739,7 @@ void addLatteQmlImportPaths(QQmlEngine *engine)
     }
 
     const QString knsRoot = knsCompatUserQmlRoot();
+
     if (!knsRoot.isEmpty() && !currentPaths.contains(knsRoot)) {
         engine->addImportPath(knsRoot);
     }
@@ -747,13 +756,15 @@ inline void collectUserLocalPaths(int argc, char **argv)
 
     const QString userLocalPath = QDir::homePath() + QStringLiteral("/.local");
     QStringList qmlCandidates;
-    const auto addQmlCandidate = [&qmlCandidates](const QString &candidate) {
+    const auto addQmlCandidate = [&qmlCandidates](const QString & candidate) {
         const QString cleaned = QDir::cleanPath(candidate);
+
         if (!cleaned.isEmpty() && !qmlCandidates.contains(cleaned)) {
             qmlCandidates << cleaned;
         }
     };
-    const auto addUserLocalForSystemQml = [&addQmlCandidate, &userLocalPath](const QString &systemQmlPath) {
+
+    const auto addUserLocalForSystemQml = [&addQmlCandidate, &userLocalPath](const QString & systemQmlPath) {
         if (systemQmlPath.startsWith(QStringLiteral("/usr/local/"))) {
             addQmlCandidate(userLocalPath + QLatin1Char('/') + systemQmlPath.mid(11));
         } else if (systemQmlPath.startsWith(QStringLiteral("/usr/"))) {
@@ -806,8 +817,8 @@ inline void applyUserLocalPluginPaths()
 inline void configureQtQuickGraphicsPreference()
 {
     const bool hasExplicitGraphicsOverride = qEnvironmentVariableIsSet("QT_QUICK_BACKEND")
-            || qEnvironmentVariableIsSet("QSG_RHI_BACKEND")
-            || qEnvironmentVariableIsSet("QT_OPENGL");
+        || qEnvironmentVariableIsSet("QSG_RHI_BACKEND")
+        || qEnvironmentVariableIsSet("QT_OPENGL");
 
     if (hasExplicitGraphicsOverride) {
         qInfo() << "Latte Dock respecting explicit Qt Quick graphics override";
@@ -862,11 +873,12 @@ inline void autoClearQmlCacheOnVersionChange()
 
     if (cachedVersion != currentVersion) {
         QDir cacheDir(cachePath);
+
         if (cacheDir.exists()) {
             cacheDir.removeRecursively();
             qCDebug(latteApp) << "QML cache cleared — version changed from"
-                     << (cachedVersion.isEmpty() ? QStringLiteral("(none)") : cachedVersion)
-                     << "to" << currentVersion;
+                              << (cachedVersion.isEmpty() ? QStringLiteral("(none)") : cachedVersion)
+                              << "to" << currentVersion;
         }
     }
 
@@ -887,10 +899,10 @@ inline bool isKdeSessionShuttingDown()
     // DBus timeout is 25 s, which would stall the event loop and prevent
     // quit() from being processed in time.
     QDBusMessage msg = QDBusMessage::createMethodCall(
-        QStringLiteral("org.kde.ksmserver"),
-        QStringLiteral("/KSMServer"),
-        QStringLiteral("org.kde.KSMServerInterface"),
-        QStringLiteral("isShuttingDown"));
+                           QStringLiteral("org.kde.ksmserver"),
+                           QStringLiteral("/KSMServer"),
+                           QStringLiteral("org.kde.KSMServerInterface"),
+                           QStringLiteral("isShuttingDown"));
     QDBusMessage reply = QDBusConnection::sessionBus().call(msg, QDBus::Block, 1000);
     return (reply.type() == QDBusMessage::ReplyMessage
             && !reply.arguments().isEmpty()
@@ -920,9 +932,12 @@ inline bool isPlasmaShutdownServiceActive()
 //! the session-ending marker on the signal handler side guarantees that
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    if (msg.endsWith(QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.This behavior is deprecated.In Qt < 6.0 the default is Binding.RestoreBinding.In Qt >= 6.0 the default is Binding.RestoreBindingOrValue."))
-        || msg.endsWith(QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.\n"))
-        || msg.endsWith(QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue."))
+    if (msg.endsWith(
+            QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.This behavior is deprecated.In Qt < 6.0 the default is Binding.RestoreBinding.In Qt >= 6.0 the default is Binding.RestoreBindingOrValue."))
+        || msg.endsWith(
+            QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue.\n"))
+        || msg.endsWith(
+            QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.\nThis behavior is deprecated.\nYou have to import QtQml 2.15 after any QtQuick imports and set\nthe restoreMode of the binding to fix this warning.\nIn Qt < 6.0 the default is Binding.RestoreBinding.\nIn Qt >= 6.0 the default is Binding.RestoreBindingOrValue."))
         || msg.endsWith(QStringLiteral("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }"))
         || msg.contains(QStringLiteral("Toolbox not loading, toolbox package is either invalid or disabled."))
         || (msg.contains(QStringLiteral("Could not find required file \"mainscript\" for package \"/usr/share/plasma/plasmoids/org.kde.plasma."))
@@ -965,22 +980,27 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
     const char *function = context.function ? context.function : "";
 
     QString typeStr;
+
     switch (type) {
-    case QtDebugMsg:
-        typeStr = QStringLiteral("Debug");
-        break;
-    case QtInfoMsg:
-        typeStr = QStringLiteral("Info");
-        break;
-    case QtWarningMsg:
-        typeStr = QStringLiteral("Warning");
-        break;
-    case QtCriticalMsg:
-        typeStr = QStringLiteral("Critical");
-        break;
-    case QtFatalMsg:
-        typeStr = QStringLiteral("Fatal");
-        break;
+        case QtDebugMsg:
+            typeStr = QStringLiteral("Debug");
+            break;
+
+        case QtInfoMsg:
+            typeStr = QStringLiteral("Info");
+            break;
+
+        case QtWarningMsg:
+            typeStr = QStringLiteral("Warning");
+            break;
+
+        case QtCriticalMsg:
+            typeStr = QStringLiteral("Critical");
+            break;
+
+        case QtFatalMsg:
+            typeStr = QStringLiteral("Fatal");
+            break;
     };
 
     const char *TypeColor;
@@ -994,16 +1014,19 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
     }
 
     if (filterDebugLogFile.isEmpty()) {
-        qCDebug(latteApp).nospace() << TypeColor << "[" << qPrintable(typeStr) << " : " << CGREEN << QTime::currentTime().toString(QStringLiteral("h:mm:ss.zz")).toStdString().c_str() << TypeColor << "]" << CNORMAL
-                          #ifndef QT_NO_DEBUG
-                           << CIRED << " [" << CCYAN << function << CIRED << ":" << CCYAN << context.line << CIRED << "]"
-                          #endif
-                           << CICYAN << " - " << CNORMAL << msg;
+        qCDebug(latteApp).nospace() << TypeColor << "[" << qPrintable(typeStr) << " : " << CGREEN << QTime::currentTime().toString(QStringLiteral("h:mm:ss.zz")).toStdString().c_str() << TypeColor << "]" <<
+                                    CNORMAL
+#ifndef QT_NO_DEBUG
+                                    << CIRED << " [" << CCYAN << function << CIRED << ":" << CCYAN << context.line << CIRED << "]"
+#endif
+                                    << CICYAN << " - " << CNORMAL << msg;
     } else {
         QFile logfile(filterDebugLogFile);
+
         if (!logfile.open(QIODevice::WriteOnly | QIODevice::Append)) {
             return;
         }
+
         QTextStream logts(&logfile);
         logts << "[" << qPrintable(typeStr) << " : " << QTime::currentTime().toString(QStringLiteral("h:mm:ss.zz")).toStdString().c_str() << "]"
               <<  " - " << msg << Qt::endl;
@@ -1018,10 +1041,10 @@ inline void configureAboutData()
                      , QStringLiteral("Latte Dock NG")
                      , QStringLiteral(VERSION)
                      , i18n("Latte Dock NG is a Wayland-first dock for KDE Plasma 6.3+ that provides an elegant and"
-                            "intuitive experience for your tasks and widgets. It animates its contents "
-                            "using a parabolic zoom effect and stays out of the way when not needed."
-                            "\n\nSpecial thanks to the original Latte Dock authors and contributors."
-                            "\n\n\"Art in Coffee\"")
+           "intuitive experience for your tasks and widgets. It animates its contents "
+           "using a parabolic zoom effect and stays out of the way when not needed."
+           "\n\nSpecial thanks to the original Latte Dock authors and contributors."
+           "\n\n\"Art in Coffee\"")
                      , KAboutLicense::GPL_V3
                      , QStringLiteral("(C) 2024-2026 Ruizhi Zhong"));
 
@@ -1050,9 +1073,9 @@ inline void detectPlatform(int argc, char **argv)
 
     for (int i = 0; i < argc; i++) {
         if (qstrcmp(argv[i], "-platform") == 0 ||
-                qstrcmp(argv[i], "--platform") == 0 ||
-                QByteArray(argv[i]).startsWith("-platform=") ||
-                QByteArray(argv[i]).startsWith("--platform=")) {
+            qstrcmp(argv[i], "--platform") == 0 ||
+            QByteArray(argv[i]).startsWith("-platform=") ||
+            QByteArray(argv[i]).startsWith("--platform=")) {
             return;
         }
     }

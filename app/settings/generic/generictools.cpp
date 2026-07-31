@@ -102,7 +102,7 @@ QStringList subtracted(const QStringList &original, const QStringList &current)
 {
     QStringList subtract;
 
-    for(int i=0; i<original.count(); ++i) {
+    for (int i = 0; i < original.count(); ++i) {
         if (!current.contains(original[i])) {
             subtract << original[i];
         }
@@ -179,7 +179,7 @@ void drawFormattedText(QPainter *painter, const QStyleOption &option, const QStr
     }
 
     if (alignment == Qt::AlignHCenter) {
-        int textX = qMax(0, (option.rect.width() / 2) - (textWidth/2));
+        int textX = qMax(0, (option.rect.width() / 2) - (textWidth / 2));
         painter->translate(option.rect.left() + textX, textY);
     } else if (curalign == Qt::AlignRight) {
         painter->translate(qMax(option.rect.left(), option.rect.right() - textWidth), textY);
@@ -232,8 +232,8 @@ void drawLayoutIcon(QPainter *painter, const QStyleOption &option, const bool &i
     int lenmargin = (lengthMargin == -1 ? kIconMargin + kMargin : lengthMargin);
     int thickmargin = (thickMargin == -1 ? kIconMargin : thickMargin);
 
-    int iconsize = option.rect.height() - 2*thickMargin;
-    int total = iconsize + 2*lenmargin;
+    int iconsize = option.rect.height() - 2 * thickMargin;
+    int total = iconsize + 2 * lenmargin;
 
     Qt::AlignmentFlag curalign = alignment;
 
@@ -251,7 +251,7 @@ void drawLayoutIcon(QPainter *painter, const QStyleOption &option, const bool &i
         target = QRect(option.rect.x() + option.rect.width() - total + lenmargin, option.rect.y() + thickmargin, iconsize, iconsize);
     } else {
         //! centered
-        target = QRect(option.rect.x() + ((option.rect.width() - total)/2) + lenmargin, option.rect.y() + thickmargin, iconsize, iconsize);
+        target = QRect(option.rect.x() + ((option.rect.width() - total) / 2) + lenmargin, option.rect.y() + thickmargin, iconsize, iconsize);
     }
 
     painter->save();
@@ -259,7 +259,7 @@ void drawLayoutIcon(QPainter *painter, const QStyleOption &option, const bool &i
 
     if (isBackgroundFile) {
         int backImageMargin = 1; //most icon themes provide 1-2px. padding around icons //OLD CALCS: kIconMargin; //qMin(target.height()/4, kIconMargin+1);
-        QRect backTarget(target.x() + backImageMargin, target.y() + backImageMargin, target.width() - 2*backImageMargin, target.height() - 2*backImageMargin);
+        QRect backTarget(target.x() + backImageMargin, target.y() + backImageMargin, target.width() - 2 * backImageMargin, target.height() - 2 * backImageMargin);
 
         QPixmap backImage(iconName);
         backImage = backImage.copy(backTarget);
@@ -299,8 +299,8 @@ void drawColorSchemeIcon(QPainter *painter, const QStyleOption &option, const QC
     int lenmargin = (lengthMargin == -1 ? kIconMargin + kMargin : lengthMargin);
     int thickmargin = (thickMargin == -1 ? kIconMargin : thickMargin);
 
-    int iconsize = option.rect.height() - 2*thickMargin;
-    int total = iconsize + 2*lenmargin;
+    int iconsize = option.rect.height() - 2 * thickMargin;
+    int total = iconsize + 2 * lenmargin;
 
     Qt::AlignmentFlag curalign = alignment;
 
@@ -318,14 +318,14 @@ void drawColorSchemeIcon(QPainter *painter, const QStyleOption &option, const QC
         target = QRect(option.rect.x() + option.rect.width() - total + lenmargin, option.rect.y() + thickmargin, iconsize, iconsize);
     } else {
         //! centered
-        target = QRect(option.rect.x() + ((option.rect.width() - total)/2) + lenmargin, option.rect.y() + thickmargin, iconsize, iconsize);
+        target = QRect(option.rect.x() + ((option.rect.width() - total) / 2) + lenmargin, option.rect.y() + thickmargin, iconsize, iconsize);
     }
 
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing, false);
 
     int backImageMargin = 0; //most icon themes provide 1-2px. padding around icons //OLD CALCS: kIconMargin; //qMin(target.height()/4, kIconMargin+1);
-    QRect backTarget(target.x() + backImageMargin, target.y() + backImageMargin, target.width() - 2*backImageMargin, target.height() - 2*backImageMargin);
+    QRect backTarget(target.x() + backImageMargin, target.y() + backImageMargin, target.width() - 2 * backImageMargin, target.height() - 2 * backImageMargin);
 
     QPalette::ColorRole textColorRole = selected ? QPalette::HighlightedText : QPalette::Text;
 
@@ -352,8 +352,8 @@ QRect remainedFromIcon(const QStyleOption &option, Qt::AlignmentFlag alignment, 
 {
     int lenmargin = (lengthMargin == -1 ? kIconMargin + kMargin : lengthMargin);
 
-    int iconsize = option.rect.height() - 2*thickMargin;
-    int total = iconsize + 2*lenmargin;
+    int iconsize = option.rect.height() - 2 * thickMargin;
+    int total = iconsize + 2 * lenmargin;
 
     Qt::AlignmentFlag curalign = alignment;
 
@@ -364,7 +364,7 @@ QRect remainedFromIcon(const QStyleOption &option, Qt::AlignmentFlag alignment, 
     }
 
     QRect optionRemainedRect = (curalign == Qt::AlignLeft) ? QRect(option.rect.x() + total, option.rect.y(), option.rect.width() - total, option.rect.height()) :
-                                                             QRect(option.rect.x(), option.rect.y(), option.rect.width() - total, option.rect.height());
+                               QRect(option.rect.x(), option.rect.y(), option.rect.width() - total, option.rect.height());
 
     return optionRemainedRect;
 }
@@ -374,8 +374,8 @@ void drawIcon(QPainter *painter, const QStyleOption &option, const QString &icon
     int lenmargin = (lengthMargin == -1 ? kIconMargin + kMargin : lengthMargin);
     int thickmargin = (thickMargin == -1 ? kIconMargin : thickMargin);
 
-    int iconsize = option.rect.height() - 2*thickMargin;
-    int total = iconsize + 2*lenmargin;
+    int iconsize = option.rect.height() - 2 * thickMargin;
+    int total = iconsize + 2 * lenmargin;
 
     bool active = Latte::isActive(option);
     bool selected = Latte::isSelected(option);
@@ -407,7 +407,7 @@ int primitiveCheckBoxWidth(const QStyleOptionButton &option, const QWidget *widg
     QStyleOption copt;
     copt.rect = option.rect;
     int w = QApplication::style()->sizeFromContents(QStyle::CT_CheckBox, &copt, QSize(0, option.rect.height()), widget).width();
-    w = w > 0 ? w : option.rect.height() - 2*kMargin;
+    w = w > 0 ? w : option.rect.height() - 2 * kMargin;
     return w;
 }
 
@@ -423,7 +423,7 @@ QRect remainedFromCheckBox(const QStyleOptionButton &option, Qt::AlignmentFlag a
     }
 
     QRect optionRemainedRect = (curalign == Qt::AlignLeft) ? QRect(option.rect.x() + length, option.rect.y(), option.rect.width() - length, option.rect.height()) :
-                                                             QRect(option.rect.x(), option.rect.y(), option.rect.width() - length, option.rect.height());
+                               QRect(option.rect.x(), option.rect.y(), option.rect.width() - length, option.rect.height());
 
     return optionRemainedRect;
 }
@@ -442,7 +442,7 @@ void drawCheckBox(QPainter *painter, const QStyleOptionButton &option, Qt::Align
     }
 
     QRect changesrect = (curalign == Qt::AlignLeft) ? QRect(option.rect.x() + kMargin, option.rect.y(), length - kMargin, option.rect.height()) :
-                                                      QRect(option.rect.x() + option.rect.width() - length, option.rect.y(), length - kMargin, option.rect.height());
+                        QRect(option.rect.x() + option.rect.width() - length, option.rect.y(), length - kMargin, option.rect.height());
 
     optionbtn.rect = changesrect;
 
@@ -451,10 +451,10 @@ void drawCheckBox(QPainter *painter, const QStyleOptionButton &option, Qt::Align
 
 QRect remainedFromChangesIndicator(const QStyleOptionViewItem &option)
 {
-    int tsize{kIndicatorChangesLength + kIndicatorChangesMargin*2};
+    int tsize{kIndicatorChangesLength + kIndicatorChangesMargin * 2};
 
     QRect optionRemainedRect = (qApp->layoutDirection() == Qt::RightToLeft) ? QRect(option.rect.x() + tsize, option.rect.y(), option.rect.width() - tsize, option.rect.height()) :
-                                                                              QRect(option.rect.x(), option.rect.y(), option.rect.width() - tsize, option.rect.height());
+                               QRect(option.rect.x(), option.rect.y(), option.rect.width() - tsize, option.rect.height());
 
     return optionRemainedRect;
 }
@@ -466,8 +466,8 @@ void drawChangesIndicator(QPainter *painter, const QStyleOptionViewItem &option)
 
     painter->save();
 
-    QRect changesRect = (qApp->layoutDirection() == Qt::RightToLeft) ? QRect(option.rect.x() + kIndicatorChangesMargin, option.rect.y() + option.rect.height()/2 - csize/2, csize, csize) :
-                                                                       QRect(option.rect.x() + option.rect.width() - csize - kIndicatorChangesMargin, option.rect.y() + option.rect.height()/2 - csize/2, csize, csize);
+    QRect changesRect = (qApp->layoutDirection() == Qt::RightToLeft) ? QRect(option.rect.x() + kIndicatorChangesMargin, option.rect.y() + option.rect.height() / 2 - csize / 2, csize, csize) :
+                        QRect(option.rect.x() + option.rect.width() - csize - kIndicatorChangesMargin, option.rect.y() + option.rect.height() / 2 - csize / 2, csize, csize);
 
     constexpr int kPlasmaOrangeR = 246;
     constexpr int kPlasmaOrangeG = 116;
@@ -503,7 +503,7 @@ QRect remainedFromScreenDrawing(const QStyleOption &option, bool, const int &max
     int total_length = screenMaxLength(option, maxIconSize) + kMargin * 2 + 1;
 
     QRect optionRemainedRect = (qApp->layoutDirection() == Qt::RightToLeft) ? QRect(option.rect.x(), option.rect.y(), option.rect.width() - total_length, option.rect.height()) :
-                                                                              QRect(option.rect.x() + total_length, option.rect.y(), option.rect.width() - total_length, option.rect.height());
+                               QRect(option.rect.x() + total_length, option.rect.y(), option.rect.width() - total_length, option.rect.height());
 
     return optionRemainedRect;
 }
@@ -539,13 +539,13 @@ QRect drawScreen(QPainter *painter, const QStyleOption &option, bool drawMultipl
     int topmargin = (option.rect.height() - scr_maxthickness) / 2;
 
     QRect screenMaximumRect = (qApp->layoutDirection() == Qt::RightToLeft) ?
-                QRect(option.rect.x() + option.rect.width() - scr_maxlength - kMargin, option.rect.y() + topmargin, scr_maxlength, scr_maxthickness - 1) :
-                QRect(option.rect.x() + kMargin , option.rect.y() + topmargin, scr_maxlength, scr_maxthickness - 1);
+                              QRect(option.rect.x() + option.rect.width() - scr_maxlength - kMargin, option.rect.y() + topmargin, scr_maxlength, scr_maxthickness - 1) :
+                              QRect(option.rect.x() + kMargin, option.rect.y() + topmargin, scr_maxlength, scr_maxthickness - 1);
 
     int topScreenMargin = (screenMaximumRect.height() - scr_height) / 2;
     int leftScreenMargin = (screenMaximumRect.width() - scr_width) / 2;
 
-    QRect screenRect(screenMaximumRect.x() + leftScreenMargin + kMargin/2, screenMaximumRect.y() + topScreenMargin, scr_width, scr_height);
+    QRect screenRect(screenMaximumRect.x() + leftScreenMargin + kMargin / 2, screenMaximumRect.y() + topScreenMargin, scr_width, scr_height);
 
     QRect screenAvailableRect(screenRect.x() + pen_width - 1, screenRect.y() + pen_width - 1, screenRect.width() - pen_width - 1, screenRect.height() - pen_width - 1);
 
@@ -574,10 +574,10 @@ QRect drawScreen(QPainter *painter, const QStyleOption &option, bool drawMultipl
                           screenRect.x() - multiplemargin + screenRect.width(), screenRect.y() - multiplemargin);
     }
 
-    int basex = screenRect.x() + (screenRect.width()/2) - 4;
+    int basex = screenRect.x() + (screenRect.width() / 2) - 4;
     int basey = screenRect.y() + screenRect.height() + 2;
 
-    painter->drawLine(basex , basey, basex + 8, basey);
+    painter->drawLine(basex, basey, basex + 8, basey);
 
     // debug screen maximum available rect
     //painter->drawRect(screenMaximumRect);

@@ -16,7 +16,8 @@
 
 namespace Latte {
 
-class LayoutMenuItemWidget : public QWidget {
+class LayoutMenuItemWidget : public QWidget
+{
     Q_OBJECT
 
 public:

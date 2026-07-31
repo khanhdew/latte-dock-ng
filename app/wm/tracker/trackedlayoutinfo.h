@@ -18,6 +18,7 @@ namespace Latte {
 namespace Layout {
 class GenericLayout;
 }
+
 namespace WindowSystem {
 namespace Tracker {
 class Windows;
@@ -30,7 +31,8 @@ namespace Latte {
 namespace WindowSystem {
 namespace Tracker {
 
-class TrackedLayoutInfo : public TrackedGeneralInfo {
+class TrackedLayoutInfo : public TrackedGeneralInfo
+{
     Q_OBJECT
 
 public:

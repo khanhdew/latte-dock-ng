@@ -100,10 +100,10 @@ bool GenericTable<T>::operator==(const GenericTable<T> &rhs) const
         return false;
     }
 
-    for(int i=0; i<m_list.count(); ++i) {
+    for (int i = 0; i < m_list.count(); ++i) {
         QString id = m_list[i].id;
 
-        if (!rhs.containsId(id) || (*this)[id] != rhs[id]){
+        if (!rhs.containsId(id) || (*this)[id] != rhs[id]) {
             return false;
         }
     }
@@ -122,8 +122,8 @@ T &GenericTable<T>::operator[](const QString &id)
 {
     int pos{-1};
 
-    for(int i=0; i<m_list.count(); ++i) {
-        if (m_list[i].id == id){
+    for (int i = 0; i < m_list.count(); ++i) {
+        if (m_list[i].id == id) {
             pos = i;
             break;
         }
@@ -137,8 +137,8 @@ T GenericTable<T>::operator[](const QString &id) const
 {
     int pos{-1};
 
-    for(int i=0; i<m_list.count(); ++i) {
-        if (m_list[i].id == id){
+    for (int i = 0; i < m_list.count(); ++i) {
+        if (m_list[i].id == id) {
             pos = i;
             break;
         }
@@ -164,9 +164,10 @@ GenericTable<T>::operator QString() const
 {
     QString result;
 
-    for(int i=0; i<m_list.count(); ++i) {
+    for (int i = 0; i < m_list.count(); ++i) {
         result += m_list[i].id;
-        if (i<(m_list.count()-1)) {
+
+        if (i < (m_list.count() - 1)) {
             result += QLatin1String(", ");
         }
     }
@@ -177,8 +178,8 @@ GenericTable<T>::operator QString() const
 template <class T>
 bool GenericTable<T>::containsId(const QString &id) const
 {
-    for(int i=0; i<m_list.count(); ++i) {
-        if (m_list[i].id == id){
+    for (int i = 0; i < m_list.count(); ++i) {
+        if (m_list[i].id == id) {
             return true;
         }
     }
@@ -189,8 +190,8 @@ bool GenericTable<T>::containsId(const QString &id) const
 template <class T>
 bool GenericTable<T>::containsName(const QString &name) const
 {
-    for(int i=0; i<m_list.count(); ++i) {
-        if (m_list[i].name == name){
+    for (int i = 0; i < m_list.count(); ++i) {
+        if (m_list[i].name == name) {
             return true;
         }
     }
@@ -207,14 +208,14 @@ bool GenericTable<T>::isEmpty() const
 template <class T>
 bool GenericTable<T>::rowExists(const int &row) const
 {
-    return (m_list.count()>=0 && row>=0 && row<rowCount());
+    return (m_list.count() >= 0 && row >= 0 && row < rowCount());
 }
 
 template <class T>
 int GenericTable<T>::indexOf(const QString &id) const
 {
-    for(int i=0; i<m_list.count(); ++i) {
-        if (m_list[i].id == id){
+    for (int i = 0; i < m_list.count(); ++i) {
+        if (m_list[i].id == id) {
             return i;
         }
     }
@@ -233,7 +234,7 @@ int GenericTable<T>::sortedPosForId(const QString &id) const
 {
     int pos{0};
 
-    for(int i=0; i<m_list.count(); ++i) {
+    for (int i = 0; i < m_list.count(); ++i) {
         if (QString::compare(m_list[i].id, id, Qt::CaseInsensitive) <= 0) {
             pos++;
         } else {
@@ -249,7 +250,7 @@ int GenericTable<T>::sortedPosForName(const QString &name) const
 {
     int pos{0};
 
-    for(int i=0; i<m_list.count(); ++i) {
+    for (int i = 0; i < m_list.count(); ++i) {
         if (QString::compare(m_list[i].name, name, Qt::CaseInsensitive) <= 0) {
             pos++;
         } else {
@@ -263,7 +264,7 @@ int GenericTable<T>::sortedPosForName(const QString &name) const
 template <class T>
 QString GenericTable<T>::idForName(const QString &name) const
 {
-    for(int  i=0; i<m_list.count(); ++i) {
+    for (int  i = 0; i < m_list.count(); ++i) {
         if (m_list[i].name == name) {
             return m_list[i].id;
         }
@@ -277,7 +278,7 @@ QStringList GenericTable<T>::ids() const
 {
     QStringList idlist;
 
-    for(int i=0; i<m_list.count(); ++i) {
+    for (int i = 0; i < m_list.count(); ++i) {
         idlist << m_list[i].id;
     }
 
@@ -289,7 +290,7 @@ QStringList GenericTable<T>::names() const
 {
     QStringList nms;
 
-    for(int i=0; i<m_list.count(); ++i) {
+    for (int i = 0; i < m_list.count(); ++i) {
         nms << m_list[i].name;
     }
 

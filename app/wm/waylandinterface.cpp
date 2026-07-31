@@ -45,6 +45,7 @@ inline bool appIdMatches(const QString &windowAppId, const QString &requestedApp
     if (App::matchesSelfAppId(requestedAppId)) {
         return App::matchesSelfAppId(windowAppId);
     }
+
     return windowAppId == requestedAppId;
 }
 
@@ -59,30 +60,37 @@ QList<QRect> plasmaPanelGeometriesFromConfig()
     const KConfigGroup plasmaViewsGroup(shellConfig, QStringLiteral("PlasmaViews"));
     const QList<QScreen *> screens = qGuiApp->screens();
 
-    struct PanelInfo {
+    struct PanelInfo
+    {
         int lastScreen;
         Plasma::Types::Location location;
         int thickness;
     };
+
     QList<PanelInfo> panels;
 
     for (const QString &containmentId : containmentsGroup.groupList()) {
         const KConfigGroup containment = containmentsGroup.group(containmentId);
+
         if (containment.readEntry(QStringLiteral("plugin")) != QLatin1String("org.kde.panel")) continue;
 
         const int screenIndex = containment.readEntry(QStringLiteral("lastScreen"), -1);
+
         if (screenIndex < 0 || screenIndex >= screens.count()) continue;
 
         const KConfigGroup panelGroup = plasmaViewsGroup.group(QStringLiteral("Panel %1").arg(containmentId));
+
         if (!panelGroup.exists() || !panelGroup.hasGroup(QStringLiteral("Defaults"))) continue;
+
         if (!containment.hasGroup(QStringLiteral("Applets"))) continue;
 
         const KConfigGroup defaultsGroup = panelGroup.group(QStringLiteral("Defaults"));
         const int thickness = defaultsGroup.readEntry(QStringLiteral("thickness"), 0);
+
         if (thickness <= 0) continue;
 
         const auto location = static_cast<Plasma::Types::Location>(
-            containment.readEntry(QStringLiteral("location"), int(Plasma::Types::Floating)));
+                                  containment.readEntry(QStringLiteral("location"), int(Plasma::Types::Floating)));
 
         panels.append({screenIndex, location, thickness});
     }
@@ -98,32 +106,38 @@ QList<QRect> plasmaPanelGeometriesFromConfig()
 
     for (const auto &p : panels) {
         const QScreen *scr = nullptr;
+
         if (useLastScreen) {
             scr = screens.at(p.lastScreen);
         } else {
             switch (p.location) {
-            case Plasma::Types::TopEdge:
-                scr = *std::min_element(screens.constBegin(), screens.constEnd(),
-                    [](const QScreen *a, const QScreen *b) { return a->geometry().top() < b->geometry().top(); });
-                break;
-            case Plasma::Types::BottomEdge:
-                scr = *std::max_element(screens.constBegin(), screens.constEnd(),
-                    [](auto *a, auto *b) { return a->geometry().bottom() < b->geometry().bottom(); });
-                break;
-            case Plasma::Types::LeftEdge:
-                scr = *std::min_element(screens.constBegin(), screens.constEnd(),
-                    [](auto *a, auto *b) { return a->geometry().left() < b->geometry().left(); });
-                break;
-            case Plasma::Types::RightEdge:
-                scr = *std::max_element(screens.constBegin(), screens.constEnd(),
-                    [](auto *a, auto *b) { return a->geometry().right() < b->geometry().right(); });
-                break;
-            default: break;
+                case Plasma::Types::TopEdge:
+                    scr = *std::min_element(screens.constBegin(), screens.constEnd(),
+                    [](const QScreen * a, const QScreen * b) { return a->geometry().top() < b->geometry().top(); });
+                    break;
+
+                case Plasma::Types::BottomEdge:
+                    scr = *std::max_element(screens.constBegin(), screens.constEnd(),
+                    [](auto * a, auto * b) { return a->geometry().bottom() < b->geometry().bottom(); });
+                    break;
+
+                case Plasma::Types::LeftEdge:
+                    scr = *std::min_element(screens.constBegin(), screens.constEnd(),
+                    [](auto * a, auto * b) { return a->geometry().left() < b->geometry().left(); });
+                    break;
+
+                case Plasma::Types::RightEdge:
+                    scr = *std::max_element(screens.constBegin(), screens.constEnd(),
+                    [](auto * a, auto * b) { return a->geometry().right() < b->geometry().right(); });
+                    break;
+
+                default: break;
             }
         }
 
         if (scr) {
             const QRect g = Latte::ViewPart::screenEdgePanelGeometry(scr->geometry(), p.location, p.thickness);
+
             if (g.isValid()) geometries << g;
         }
     }
@@ -180,41 +194,47 @@ public:
         // setScreen() was introduced in LayerShellQt 6.6 and later removed;
         // conditional availability is detected at CMake time.
 #ifdef LATTE_LAYERSHELL_HAS_SET_SCREEN
+
         if (screen) {
             layerWindow->setScreen(screen);
         }
+
 #endif
 
         LayerShellQt::Window::Anchors anchors;
         int exclusiveZone = 0;
 
         switch (location) {
-        case Plasma::Types::BottomEdge:
-            anchors.setFlag(Anchor::AnchorBottom);
-            anchors.setFlag(Anchor::AnchorLeft);
-            anchors.setFlag(Anchor::AnchorRight);
-            exclusiveZone = rect.height();
-            break;
-        case Plasma::Types::TopEdge:
-            anchors.setFlag(Anchor::AnchorTop);
-            anchors.setFlag(Anchor::AnchorLeft);
-            anchors.setFlag(Anchor::AnchorRight);
-            exclusiveZone = rect.height();
-            break;
-        case Plasma::Types::LeftEdge:
-            anchors.setFlag(Anchor::AnchorLeft);
-            anchors.setFlag(Anchor::AnchorTop);
-            anchors.setFlag(Anchor::AnchorBottom);
-            exclusiveZone = rect.width();
-            break;
-        case Plasma::Types::RightEdge:
-            anchors.setFlag(Anchor::AnchorRight);
-            anchors.setFlag(Anchor::AnchorTop);
-            anchors.setFlag(Anchor::AnchorBottom);
-            exclusiveZone = rect.width();
-            break;
-        default:
-            return;
+            case Plasma::Types::BottomEdge:
+                anchors.setFlag(Anchor::AnchorBottom);
+                anchors.setFlag(Anchor::AnchorLeft);
+                anchors.setFlag(Anchor::AnchorRight);
+                exclusiveZone = rect.height();
+                break;
+
+            case Plasma::Types::TopEdge:
+                anchors.setFlag(Anchor::AnchorTop);
+                anchors.setFlag(Anchor::AnchorLeft);
+                anchors.setFlag(Anchor::AnchorRight);
+                exclusiveZone = rect.height();
+                break;
+
+            case Plasma::Types::LeftEdge:
+                anchors.setFlag(Anchor::AnchorLeft);
+                anchors.setFlag(Anchor::AnchorTop);
+                anchors.setFlag(Anchor::AnchorBottom);
+                exclusiveZone = rect.width();
+                break;
+
+            case Plasma::Types::RightEdge:
+                anchors.setFlag(Anchor::AnchorRight);
+                anchors.setFlag(Anchor::AnchorTop);
+                anchors.setFlag(Anchor::AnchorBottom);
+                exclusiveZone = rect.width();
+                break;
+
+            default:
+                return;
         }
 
         layerWindow->setAnchors(anchors);
@@ -231,12 +251,15 @@ public:
         //! making the ghost window essentially invisible regardless of layer.
         const int visualThickness = 1;
 #ifdef LATTE_LAYERSHELL_HAS_DESIRED_SIZE
+
         if (location == Plasma::Types::TopEdge || location == Plasma::Types::BottomEdge) {
             layerWindow->setDesiredSize(QSize(0, visualThickness));
         } else {
             layerWindow->setDesiredSize(QSize(visualThickness, 0));
         }
+
 #else
+
         // setDesiredSize not available in older liblayershellqtinterface (e.g. Debian 13).
         // Fall back to QWindow::resize to set a 1 px visual surface.
         if (location == Plasma::Types::TopEdge || location == Plasma::Types::BottomEdge) {
@@ -244,6 +267,7 @@ public:
         } else {
             resize(visualThickness, 0);
         }
+
 #endif
 
         m_validGeometry = rect;
@@ -312,7 +336,8 @@ void WaylandInterface::initWindowManagement(KWayland::Client::PlasmaWindowManage
         }
 
         auto w = m_windowManagement->activeWindow();
-        if (!w || (w && (!m_ignoredWindows.contains(w->uuid()))) ) {
+
+        if (!w || (w && (!m_ignoredWindows.contains(w->uuid())))) {
             Q_EMIT activeWindowChanged(w ? w->uuid() : QByteArray());
         }
 
@@ -340,12 +365,12 @@ void WaylandInterface::initVirtualDesktopManagement(KWayland::Client::PlasmaVirt
     });
 
     connect(m_virtualDesktopManagement, &KWayland::Client::PlasmaVirtualDesktopManagement::desktopCreated, this,
-            [this](const QString &id, quint32 position) {
+    [this](const QString & id, quint32 position) {
         addDesktop(id, position);
     });
 
     connect(m_virtualDesktopManagement, &KWayland::Client::PlasmaVirtualDesktopManagement::desktopRemoved, this,
-            [this](const QString &id) {
+    [this](const QString & id) {
         m_desktops.removeAll(id);
 
         if (m_currentDesktop == id) {
@@ -367,10 +392,11 @@ void WaylandInterface::addDesktop(const QString &id, quint32 position)
     const KWayland::Client::PlasmaVirtualDesktop *desktop = m_virtualDesktopManagement->getVirtualDesktop(id);
 
     QObject::connect(desktop, &KWayland::Client::PlasmaVirtualDesktop::activated, this,
-                     [desktop, this]() {
+    [desktop, this]() {
         setCurrentDesktop(desktop->id());
     }
-    );
+
+                    );
 
     if (desktop->isActive()) {
         setCurrentDesktop(id);
@@ -446,31 +472,35 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
 
         // Keep compositor-side panel behavior aligned with Latte visibility mode.
         switch (mode) {
-        case Latte::Types::DodgeActive:
-        case Latte::Types::DodgeMaximized:
-        case Latte::Types::DodgeAllWindows:
-            // Dodge visibility is handled by Latte itself. Keep compositor-side
-            // behavior non-reserving so desktop icons/workarea are not shifted.
-            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::WindowsCanCover);
-            break;
-        case Latte::Types::AutoHide:
-        case Latte::Types::SidebarOnDemand:
-        case Latte::Types::SidebarAutoHide:
-            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AutoHide);
-            break;
-        case Latte::Types::WindowsCanCover:
-            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::WindowsCanCover);
-            break;
-        case Latte::Types::WindowsGoBelow:
-            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::WindowsGoBelow);
-            break;
-        case Latte::Types::AlwaysVisible:
-        case Latte::Types::WindowsAlwaysCover:
-        case Latte::Types::NormalWindow:
-        case Latte::Types::None:
-        default:
-            surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AlwaysVisible);
-            break;
+            case Latte::Types::DodgeActive:
+            case Latte::Types::DodgeMaximized:
+            case Latte::Types::DodgeAllWindows:
+                // Dodge visibility is handled by Latte itself. Keep compositor-side
+                // behavior non-reserving so desktop icons/workarea are not shifted.
+                surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::WindowsCanCover);
+                break;
+
+            case Latte::Types::AutoHide:
+            case Latte::Types::SidebarOnDemand:
+            case Latte::Types::SidebarAutoHide:
+                surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AutoHide);
+                break;
+
+            case Latte::Types::WindowsCanCover:
+                surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::WindowsCanCover);
+                break;
+
+            case Latte::Types::WindowsGoBelow:
+                surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::WindowsGoBelow);
+                break;
+
+            case Latte::Types::AlwaysVisible:
+            case Latte::Types::WindowsAlwaysCover:
+            case Latte::Types::NormalWindow:
+            case Latte::Types::None:
+            default:
+                surface->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AlwaysVisible);
+                break;
         }
     } else {
         surface->setRole(PlasmaShellSurface::Role::Normal);
@@ -478,6 +508,7 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
 
     if (latteView || configView) {
         auto w = windowFor(winId);
+
         if (w && !w->isOnAllDesktops()) {
             requestToggleIsOnAllDesktops(winId);
         }
@@ -495,7 +526,7 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
         }
     }
 
-    if (atBottom){
+    if (atBottom) {
         //! trying to workaround WM behavior in order
         //!  1. View at the end MUST NOT HAVE FOCUSABILITY (issue example: clicking a single active task is not minimized)
         //!  2. View at the end MUST BE AT THE BOTTOM of windows stack
@@ -512,12 +543,14 @@ void WaylandInterface::setViewStruts(QWindow &view, const QRect &rect, Plasma::T
     //! surface) recreate when strut parameters are unchanged.
     const QString screenName = view.screen() ? view.screen()->name() : QString();
     auto it = m_strutCache.find(&view);
+
     if (it != m_strutCache.end()
         && it->rect == rect
         && it->location == location
         && it->screenName == screenName) {
         return;
     }
+
     m_strutCache[&view] = {rect, location, screenName};
 
     //! Recreate the ghost window only when parameters actually changed.
@@ -545,7 +578,7 @@ void WaylandInterface::switchToNextVirtualDesktop()
     int curPos = m_desktops.indexOf(m_currentDesktop);
     int nextPos = curPos + 1;
 
-    if (curPos >= m_desktops.count()-1) {
+    if (curPos >= m_desktops.count() - 1) {
         if (isVirtualDesktopNavigationWrappingAround()) {
             nextPos = 0;
         } else {
@@ -571,7 +604,7 @@ void WaylandInterface::switchToPreviousVirtualDesktop()
 
     if (curPos <= 0) {
         if (isVirtualDesktopNavigationWrappingAround()) {
-            nextPos = m_desktops.count()-1;
+            nextPos = m_desktops.count() - 1;
         } else {
             return;
         }
@@ -597,32 +630,32 @@ void WaylandInterface::setWindowOnActivities(const WindowId &wid, const QStringL
 
     if (!winfo.isOnAllActivities() && nextactivities.isEmpty()) {
         //! window must be set to all activities
-        for(int i=0; i<curactivities.count(); ++i) {
+        for (int i = 0; i < curactivities.count(); ++i) {
             w->requestLeaveActivity(curactivities[i]);
         }
     } else if (curactivities != nextactivities) {
         QStringList requestenter;
         QStringList requestleave;
 
-        for (int i=0; i<nextactivities.count(); ++i) {
+        for (int i = 0; i < nextactivities.count(); ++i) {
             if (!curactivities.contains(nextactivities[i])) {
                 requestenter << nextactivities[i];
             }
         }
 
-        for (int i=0; i<curactivities.count(); ++i) {
+        for (int i = 0; i < curactivities.count(); ++i) {
             if (!nextactivities.contains(curactivities[i])) {
                 requestleave << curactivities[i];
             }
         }
 
         //! leave afterwards from deprecated activities
-        for (int i=0; i<requestleave.count(); ++i) {
+        for (int i = 0; i < requestleave.count(); ++i) {
             w->requestLeaveActivity(requestleave[i]);
         }
 
         //! first enter to new activities
-        for (int i=0; i<requestenter.count(); ++i) {
+        for (int i = 0; i < requestenter.count(); ++i) {
             w->requestEnterActivity(requestenter[i]);
         }
     }
@@ -656,24 +689,24 @@ void WaylandInterface::slideWindow(QWindow &view, AbstractWindowInterface::Slide
     auto slideLocation = KWindowEffects::NoEdge;
 
     switch (location) {
-    case Slide::Top:
-        slideLocation = KWindowEffects::TopEdge;
-        break;
+        case Slide::Top:
+            slideLocation = KWindowEffects::TopEdge;
+            break;
 
-    case Slide::Bottom:
-        slideLocation = KWindowEffects::BottomEdge;
-        break;
+        case Slide::Bottom:
+            slideLocation = KWindowEffects::BottomEdge;
+            break;
 
-    case Slide::Left:
-        slideLocation = KWindowEffects::LeftEdge;
-        break;
+        case Slide::Left:
+            slideLocation = KWindowEffects::LeftEdge;
+            break;
 
-    case Slide::Right:
-        slideLocation = KWindowEffects::RightEdge;
-        break;
+        case Slide::Right:
+            slideLocation = KWindowEffects::RightEdge;
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     KWindowEffects::slideWindow(&view, slideLocation, -1);
@@ -701,11 +734,11 @@ void WaylandInterface::setActiveEdge(QWindow *view, bool active)
     const auto mode = parentView->visibility()->mode();
 
     if (parentView->surface()
-            && (mode == Types::DodgeActive
-                || mode == Types::DodgeMaximized
-                || mode == Types::DodgeAllWindows
-                || mode == Types::AutoHide
-                || mode == Types::SidebarAutoHide)) {
+        && (mode == Types::DodgeActive
+            || mode == Types::DodgeMaximized
+            || mode == Types::DodgeAllWindows
+            || mode == Types::AutoHide
+            || mode == Types::SidebarAutoHide)) {
         if (active) {
             window->showWithMask();
 
@@ -819,7 +852,7 @@ bool WaylandInterface::hasSessionBlockingWindows() const
         }
 
         if (w->appId() == QLatin1String("org.kde.plasmashell")
-                || w->appId().startsWith(QLatin1String("ksmserver"))) {
+            || w->appId().startsWith(QLatin1String("ksmserver"))) {
             continue;
         }
 
@@ -839,7 +872,7 @@ AppData WaylandInterface::appDataFor(WindowId wid)
 
     if (window) {
         const AppData &data = appDataFromUrl(windowUrlFromMetadata(window->appId(),
-                                                                   window->pid(), rulesConfig));
+                                             window->pid(), rulesConfig));
 
         return data;
     }
@@ -853,9 +886,9 @@ KWayland::Client::PlasmaWindow *WaylandInterface::windowFor(WindowId wid)
 {
     const auto windows = managedWindows();
 
-    auto it = std::find_if(windows.constBegin(), windows.constEnd(), [&wid](PlasmaWindow *w) noexcept {
-            return w->isValid() && w->uuid() == wid;
-        });
+    auto it = std::find_if(windows.constBegin(), windows.constEnd(), [&wid](PlasmaWindow * w) noexcept {
+        return w->isValid() && w->uuid() == wid;
+    });
 
     if (it == windows.constEnd()) {
         return nullptr;
@@ -894,7 +927,7 @@ WindowId WaylandInterface::winIdFor(QString appId, QString title)
 {
     const auto windows = managedWindows();
 
-    auto it = std::find_if(windows.constBegin(), windows.constEnd(), [&appId, &title](PlasmaWindow *w) noexcept {
+    auto it = std::find_if(windows.constBegin(), windows.constEnd(), [&appId, &title](PlasmaWindow * w) noexcept {
         return w->isValid() && appIdMatches(w->appId(), appId) && w->title().startsWith(title);
     });
 
@@ -909,7 +942,7 @@ WindowId WaylandInterface::winIdFor(QString appId, QRect geometry)
 {
     const auto windows = managedWindows();
 
-    auto it = std::find_if(windows.constBegin(), windows.constEnd(), [&appId, &geometry](PlasmaWindow *w) noexcept {
+    auto it = std::find_if(windows.constBegin(), windows.constEnd(), [&appId, &geometry](PlasmaWindow * w) noexcept {
         return w->isValid() && appIdMatches(w->appId(), appId) && w->geometry() == geometry;
     });
 
@@ -1053,6 +1086,7 @@ void WaylandInterface::requestToggleMinimized(WindowId wid)
         if (!m_currentDesktop.isEmpty()) {
             w->requestEnterVirtualDesktop(m_currentDesktop);
         }
+
         w->requestToggleMinimized();
     }
 }
@@ -1066,6 +1100,7 @@ void WaylandInterface::requestToggleMaximized(WindowId wid)
         if (!m_currentDesktop.isEmpty()) {
             w->requestEnterVirtualDesktop(m_currentDesktop);
         }
+
         w->requestToggleMaximized();
     }
 }
@@ -1133,8 +1168,8 @@ bool WaylandInterface::isAcceptableWindow(const KWayland::Client::PlasmaWindow *
     isSkipped = hasSkipTaskbar && hasSkipSwitcher;
 
     if (isSkipped
-            && ((w->appId() == QLatin1String("yakuake")
-                 || (w->appId() == QLatin1String("krunner"))) )) {
+        && ((w->appId() == QLatin1String("yakuake")
+             || (w->appId() == QLatin1String("krunner"))))) {
         registerWhitelistedWindow(w->uuid());
     } else if (w->appId() == QLatin1String("org.kde.plasmashell")) {
         if (isSkipped && isSidepanel(w)) {
@@ -1157,7 +1192,7 @@ bool WaylandInterface::isAcceptableWindow(const KWayland::Client::PlasmaWindow *
 
 void WaylandInterface::updateWindow()
 {
-    PlasmaWindow *pW = qobject_cast<PlasmaWindow*>(QObject::sender());
+    PlasmaWindow *pW = qobject_cast<PlasmaWindow *>(QObject::sender());
 
     if (isValidWindow(pW)) {
         considerWindowChanged(pW->uuid());
@@ -1177,7 +1212,8 @@ void WaylandInterface::updateWindowCache()
     //! Called for cosmetic changes (title, skipTaskbar, skipSwitcher,
     //! onAllDesktops, parentWindow). These do NOT affect view intersection
     //! or visibility, so we skip the expensive O(n_windows×n_views) scan.
-    PlasmaWindow *pW = qobject_cast<PlasmaWindow*>(QObject::sender());
+    PlasmaWindow *pW = qobject_cast<PlasmaWindow *>(QObject::sender());
+
     if (pW && isValidWindow(pW)) {
         //! Only update internal cached info — no need to trigger updateAllHints
         Q_EMIT windowChanged(pW->uuid());
@@ -1186,7 +1222,7 @@ void WaylandInterface::updateWindowCache()
 
 void WaylandInterface::windowUnmapped()
 {
-    PlasmaWindow *pW = qobject_cast<PlasmaWindow*>(QObject::sender());
+    PlasmaWindow *pW = qobject_cast<PlasmaWindow *>(QObject::sender());
 
     if (pW) {
         untrackWindow(pW);

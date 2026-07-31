@@ -17,8 +17,7 @@ namespace Latte {
 namespace ImportExport {
 Q_NAMESPACE
 
-enum State
-{
+enum State {
     FailedState = 0,
     UpdatedState = 2,
     InstalledState = 4
@@ -31,8 +30,7 @@ Q_ENUM_NS(State);
 namespace Latte {
 namespace MemoryUsage {
 
-enum LayoutsMemory
-{
+enum LayoutsMemory {
     Current = -1, /*current layouts memory usage*/
     SingleLayout = 0,  /* a single Layout is loaded in each time */
     MultipleLayouts  /* multiple layouts are loaded on runtime,based on Activities and one central layout for the rest unassigned Activities */
@@ -44,8 +42,7 @@ enum LayoutsMemory
 namespace Latte {
 namespace MultipleLayouts {
 
-enum Status
-{
+enum Status {
     Uninitialized = -1,
     Paused,
     Running
@@ -91,8 +88,8 @@ inline bool matchesSelfAppId(const QString &appId)
     static const QString desktopAppId = QString::fromLatin1(WAYLANDDESKTOPAPPID);
 
     return appId == primaryAppId
-            || appId == legacyAppId
-            || appId == desktopAppId;
+           || appId == legacyAppId
+           || appId == desktopAppId;
 }
 
 }

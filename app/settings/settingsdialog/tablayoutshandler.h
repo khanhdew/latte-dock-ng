@@ -31,7 +31,7 @@ namespace Controller {
 class Layouts;
 }
 
-namespace Dialog{
+namespace Dialog {
 class SettingsDialog;
 }
 

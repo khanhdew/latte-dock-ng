@@ -33,7 +33,7 @@
 #define PLASMACONFIG QStringLiteral("plasma-org.kde.plasma.desktop-appletsrc")
 #define DEFAULTWALLPAPER QStringLiteral("wallpapers/Next/contents/images/1920x1080.png")
 
-namespace Latte{
+namespace Latte {
 namespace PlasmaExtended {
 
 BackgroundCache::BackgroundCache(QObject *parent)
@@ -42,8 +42,8 @@ BackgroundCache::BackgroundCache(QObject *parent)
       m_plasmaConfig(KSharedConfig::openConfig(PLASMACONFIG))
 {
     const auto configFile = QStandardPaths::writableLocation(
-                QStandardPaths::GenericConfigLocation) +
-            QLatin1Char('/') + PLASMACONFIG;
+                                QStandardPaths::GenericConfigLocation) +
+                            QLatin1Char('/') + PLASMACONFIG;
 
     m_defaultWallpaperPath = Latte::standardPath(DEFAULTWALLPAPER);
 
@@ -63,7 +63,7 @@ BackgroundCache::BackgroundCache(QObject *parent)
 }
 
 BackgroundCache::~BackgroundCache()
-{   
+{
     if (m_pool) {
         m_pool->deleteLater();
     }
@@ -75,7 +75,8 @@ BackgroundCache *BackgroundCache::self()
     return &cache;
 }
 
-void BackgroundCache::settingsFileChanged(const QString &file) {
+void BackgroundCache::settingsFileChanged(const QString &file)
+{
     if (!file.endsWith(PLASMACONFIG)) {
         return;
     }
@@ -111,7 +112,7 @@ bool BackgroundCache::isDesktopContainment(const KConfigGroup &containment) cons
 {
     const auto type = containment.readEntry(QStringLiteral("plugin"), QString());
 
-    if (type == QLatin1String(Latte::PluginId::kDesktopContainment) || type == QLatin1String(Latte::PluginId::kFolder) ) {
+    if (type == QLatin1String(Latte::PluginId::kDesktopContainment) || type == QLatin1String(Latte::PluginId::kFolder)) {
         return true;
     }
 
@@ -157,9 +158,9 @@ void BackgroundCache::reload()
         }
 
         //! Take case of broadcasted backgrounds, when their plugin is changed they should be disabled
-        if (pluginExistsFor(activity,screenName)
-                && m_plugins[activity][screenName] != wallpaperPlugin
-                && backgroundIsBroadcasted(activity, screenName)){
+        if (pluginExistsFor(activity, screenName)
+            && m_plugins[activity][screenName] != wallpaperPlugin
+            && backgroundIsBroadcasted(activity, screenName)) {
             //! in such case the Desktop changed wallpaper plugin and the broadcasted wallpapers should be removed
             setBroadcastedBackgroundsEnabled(activity, screenName, false);
         }
@@ -171,8 +172,8 @@ void BackgroundCache::reload()
         }
 
         if(!m_backgrounds.contains(activity)
-                || !m_backgrounds[activity].contains(screenName)
-                || m_backgrounds[activity][screenName] != background) {
+            || !m_backgrounds[activity].contains(screenName)
+            || m_backgrounds[activity][screenName] != background) {
 
             updates[activity].append(screenName);
         }
@@ -189,9 +190,9 @@ void BackgroundCache::reload()
     }
 }
 
-QString BackgroundCache::background(QString activity, QString screen) const
-{
-    if (m_backgrounds.contains(activity) && m_backgrounds[activity].contains(screen)) {
+QString BackgroundCache::background(QString activity, QString screen) const {
+    if (m_backgrounds.contains(activity) && m_backgrounds[activity].contains(screen))
+    {
         return m_backgrounds[activity][screen];
     }
 
@@ -200,11 +201,13 @@ QString BackgroundCache::background(QString activity, QString screen) const
     // no explicit entry. Fall through from most-specific to least-specific:
     //   1. Default wallpaper (a well-known fallback image from the theme)
     //   2. Any screen we know about for this activity (primary screen's path)
-    if (!m_defaultWallpaperPath.isEmpty()) {
+    if (!m_defaultWallpaperPath.isEmpty())
+    {
         return m_defaultWallpaperPath;
     }
 
-    if (m_backgrounds.contains(activity) && !m_backgrounds[activity].isEmpty()) {
+    if (m_backgrounds.contains(activity) && !m_backgrounds[activity].isEmpty())
+    {
         return m_backgrounds[activity].constBegin().value();
     }
 
@@ -230,7 +233,7 @@ float BackgroundCache::brightnessFor(QString activity, QString screen, Plasma::T
         return brightnessForFile(assignedBackground, location);
     }
 
-    return -1000;
+    return - 1000;
 }
 
 float BackgroundCache::brightnessFromArea(QImage &image, int firstRow, int firstColumn, int endRow, int endColumn)
@@ -254,12 +257,11 @@ float BackgroundCache::brightnessFromArea(QImage &image, int firstRow, int first
     return areaBrightness;
 }
 
-bool BackgroundCache::areaIsBusy(float bright1, float bright2) const
-{
-    bool bright1IsLight = bright1>=123;
-    bool bright2IsLight = bright2>=123;
+bool BackgroundCache::areaIsBusy(float bright1, float bright2) const {
+    bool bright1IsLight = bright1 >= 123;
+    bool bright2IsLight = bright2 >= 123;
 
-    bool inBounds = bright1>=0 && bright2<=255 && bright2>=0 && bright2<=255;
+    bool inBounds = bright1 >= 0 && bright2 <= 255 && bright2 >= 0 && bright2 <= 255;
 
     return !inBounds || bright1IsLight != bright2IsLight;
 }
@@ -289,10 +291,10 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
 
         bool vertical = (location == Plasma::Types::LeftEdge || location == Plasma::Types::RightEdge) ? true : false;
         int imageLength = !vertical ? image.width() : image.height();
-        int tiles{qMin(10,imageLength)};
+        int tiles{qMin(10, imageLength)};
 
         //! 24px. should be enough because the views are always snapped to edges
-        int tileThickness = !vertical ? qMin(24,image.height()) : qMin(24,image.width());
+        int tileThickness = !vertical ? qMin(24, image.height()) : qMin(24, image.width());
         int tileLength = imageLength / tiles ;
 
         int tileWidth = !vertical ? tileLength : tileThickness;
@@ -304,7 +306,8 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
 
         qCDebug(lattePlasma) << "------------   -- Image Calculations --  --------------" ;
         qCDebug(lattePlasma) << "Hints for Background image | " << imageFile;
-        qCDebug(lattePlasma) << "Hints for Background image | Edge: " << location << ", Image size: " << image.width() << "x" << image.height() << ", Tiles: " << tiles << ", subsize: " << tileWidth << "x" << tileHeight;
+        qCDebug(lattePlasma) << "Hints for Background image | Edge: " << location << ", Image size: " << image.width() << "x" << image.height() << ", Tiles: " << tiles << ", subsize: " << tileWidth << "x" <<
+                             tileHeight;
 
         //! Iterating algorigthm
         int firstRow = 0; int firstColumn = 0; int endRow = 0; int endColumn = 0;
@@ -325,20 +328,21 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
         }
 
         if (!vertical) {
-            for (int i=1; i<=tiles; ++i) {
+            for (int i = 1; i <= tiles; ++i) {
                 float subFactor = static_cast<float>(i) * factor;
                 firstColumn = endColumn; endColumn = subFactor * imageLength;
                 endColumn = qMin(endColumn, imageLength);
 
                 int tempBrightness = normalizedBrightness(firstRow, firstColumn, endRow, endColumn);
                 qCDebug(lattePlasma) << " Tile considering horizontal << (" << firstColumn << "," << firstRow << ") - (" << endColumn << "," << endRow << "), subfactor: " << subFactor
-                         << ", brightness: " << tempBrightness;
+                                     << ", brightness: " << tempBrightness;
 
                 subBrightness.append(tempBrightness);
 
                 if (tempBrightness > maxBrightness) {
                     maxBrightness = tempBrightness;
                 }
+
                 if (tempBrightness < minBrightness) {
                     minBrightness = tempBrightness;
                 }
@@ -353,29 +357,31 @@ void BackgroundCache::updateImageCalculations(QString imageFile, Plasma::Types::
         }
 
         if (vertical) {
-            for (int i=1; i<=tiles; ++i) {
+            for (int i = 1; i <= tiles; ++i) {
                 float subFactor = static_cast<float>(i) * factor;
                 firstRow = endRow; endRow = subFactor * imageLength;
                 endRow = qMin(endRow, imageLength);
 
                 int tempBrightness = normalizedBrightness(firstRow, firstColumn, endRow, endColumn);
                 qCDebug(lattePlasma) << " Tile considering vertical << (" << firstColumn << "," << firstRow << ") - (" << endColumn << "," << endRow << "), subfactor: " << subFactor
-                         << ", brightness: " << tempBrightness;
+                                     << ", brightness: " << tempBrightness;
 
                 subBrightness.append(tempBrightness);
 
                 if (tempBrightness > maxBrightness) {
                     maxBrightness = tempBrightness;
                 }
+
                 if (tempBrightness < minBrightness) {
                     minBrightness = tempBrightness;
                 }
             }
         }
+
         //! compute total brightness for this area
         float subBrightnessSum = 0;
 
-        for (int i=0; i<subBrightness.count(); ++i) {
+        for (int i = 0; i < subBrightness.count(); ++i) {
             subBrightnessSum = subBrightnessSum + subBrightness[i];
         }
 
@@ -455,6 +461,7 @@ void BackgroundCache::cleanupHashes()
     //! changes push the cache just over MAXHASHSIZE.
     int toRemove = m_hintsCache.size() - MAXHASHSIZE / 2;
     auto it = m_hintsCache.begin();
+
     while (toRemove > 0 && it != m_hintsCache.end()) {
         it = m_hintsCache.erase(it);
         --toRemove;

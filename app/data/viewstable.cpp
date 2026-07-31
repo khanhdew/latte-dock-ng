@@ -51,7 +51,7 @@ bool ViewsTable::operator==(const ViewsTable &rhs) const
     GenericTable<View> tempView = (*this);
 
     return (isInitialized == rhs.isInitialized)
-            && (((GenericTable<View>)*this) == ((GenericTable<View>)rhs));
+           && (((GenericTable<View>) * this) == ((GenericTable<View>)rhs));
 }
 
 bool ViewsTable::operator!=(const ViewsTable &rhs) const
@@ -65,7 +65,7 @@ bool ViewsTable::hasContainmentId(const QString &cid) const
         return true;
     }
 
-    for(int i=0; i<rowCount(); ++i) {
+    for (int i = 0; i < rowCount(); ++i) {
         if (m_list[i].subcontainments.containsId(cid)) {
             return true;
         }
@@ -82,7 +82,7 @@ ViewsTable ViewsTable::subtracted(const ViewsTable &rhs) const
         return subtract;
     }
 
-    for(int i=0; i<m_list.count(); ++i) {
+    for (int i = 0; i < m_list.count(); ++i) {
         if (!rhs.containsId(m_list[i].id)) {
             subtract << m_list[i];
         }
@@ -95,7 +95,7 @@ ViewsTable ViewsTable::onlyOriginals() const
 {
     ViewsTable originals;
 
-    for(int i=0; i<m_list.count(); ++i) {
+    for (int i = 0; i < m_list.count(); ++i) {
         if (m_list[i].isOriginal()) {
             originals << m_list[i];
         }
@@ -108,10 +108,11 @@ void ViewsTable::appendTemporaryView(const Data::View &view)
 {
     int maxTempId = 0;
 
-    for(int i=0; i<rowCount(); ++i) {
+    for (int i = 0; i < rowCount(); ++i) {
         if ((*this)[i].id.startsWith(TEMPIDPREFIX)) {
             QString tid = (*this)[i].id;
             tid.remove(0, TEMPIDPREFIX.size());
+
             if (tid.toInt() > maxTempId) {
                 maxTempId = tid.toInt();
             }
@@ -128,8 +129,8 @@ void ViewsTable::print()
     qCDebug(latteApp).noquote() << QStringLiteral("Views initialized : ") + (isInitialized ? QStringLiteral("true") : QStringLiteral("false"));
     qCDebug(latteApp).noquote() << "aa | id | active | primary | screen | edge | alignment | maxlength | subcontainments";
 
-    for(int i=0; i<rowCount(); ++i) {
-        qCDebug(latteApp).noquote() << QString::number(i+1) << " | " << m_list[i];
+    for (int i = 0; i < rowCount(); ++i) {
+        qCDebug(latteApp).noquote() << QString::number(i + 1) << " | " << m_list[i];
     }
 }
 

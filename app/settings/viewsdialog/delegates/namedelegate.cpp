@@ -72,19 +72,23 @@ void NameDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
 
     // draw changes indicator
     QRect remainedrect = Latte::remainedFromChangesIndicator(option);
+
     if (isChanged) {
         Latte::drawChangesIndicator(painter, option);
     }
+
     myOptions.rect = remainedrect;
 
     // draw errors/warnings
     if (hasErrors || hasWarnings) {
         remainedrect = Latte::remainedFromIcon(myOptions, Qt::AlignRight, -1, 2);
+
         if (hasErrors) {
             Latte::drawIcon(painter, myOptions, QStringLiteral("data-error"), Qt::AlignRight, -1, 2);
         } else if (hasWarnings) {
             Latte::drawIcon(painter, myOptions, QStringLiteral("data-warning"), Qt::AlignRight, -1, 2);
         }
+
         myOptions.rect = remainedrect;
     }
 

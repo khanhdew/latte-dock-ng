@@ -94,6 +94,7 @@ void Manager::init()
         m_corona->universalSettings()->setVersion(2);
 
         bool isOlderVersion = m_importer->updateOldConfiguration();
+
         if (isOlderVersion) {
             qCDebug(latteLayout) << "Latte is updating its older configuration...";
             m_corona->templatesManager()->importSystemLayouts();
@@ -170,7 +171,7 @@ QStringList Manager::viewTemplateNames() const
 
     QStringList names;
 
-    for(int i=0; i<viewtemplates.rowCount(); ++i) {
+    for (int i = 0; i < viewtemplates.rowCount(); ++i) {
         names << viewtemplates[i].name;
     }
 
@@ -183,7 +184,7 @@ QStringList Manager::viewTemplateIds() const
 
     QStringList ids;
 
-    for(int i=0; i<viewtemplates.rowCount(); ++i) {
+    for (int i = 0; i < viewtemplates.rowCount(); ++i) {
         ids << viewtemplates[i].id;
     }
 
@@ -223,31 +224,31 @@ bool Manager::switchToLayout(QString layoutName,  MemoryUsage::LayoutsMemory new
 
 void Manager::loadLayoutOnStartup(QString layoutName)
 {
- /*   QStringList layouts = m_importer->checkRepairMultipleLayoutsLinkedFile();
+    /*   QStringList layouts = m_importer->checkRepairMultipleLayoutsLinkedFile();
 
-    //! Latte didn't close correctly, maybe a crash
-    if (layouts.size() > 0) {
-        QDialog* dialog = new QDialog(nullptr);
-        dialog->setWindowTitle(i18n("Multiple Layouts Startup Warning"));
-        dialog->setObjectName(QStringLiteral("sorry"));
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
+       //! Latte didn't close correctly, maybe a crash
+       if (layouts.size() > 0) {
+           QDialog* dialog = new QDialog(nullptr);
+           dialog->setWindowTitle(i18n("Multiple Layouts Startup Warning"));
+           dialog->setObjectName(QStringLiteral("sorry"));
+           dialog->setAttribute(Qt::WA_DeleteOnClose);
 
-        auto buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok);
+           auto buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok);
 
-        KMessageBox::createKMessageBox(dialog,
-                                       buttonbox,
-                                       QMessageBox::Warning,
-                                       i18np("<b>Multiple Layouts based on Activities</b> mode did not close properly during the last session.<br/><br/>The following layout <b>[ %2 ]</b> had to be updated for consistency!",
-                                             "<b>Multiple Layouts based on Activities</b> mode did not close properly during the last session.<br/><br/>The following layouts <b>[ %2 ]</b> had to be updated for consistency!",
-                                             layouts.count(),
-                                             layouts.join(", ")),
-                                       QStringList(),
-                                       QString(),
-                                       0,
-                                       KMessageBox::Options{KMessageBox::NoExec},
-                                       QString());
-        dialog->show();
-    }*/
+           KMessageBox::createKMessageBox(dialog,
+                                          buttonbox,
+                                          QMessageBox::Warning,
+                                          i18np("<b>Multiple Layouts based on Activities</b> mode did not close properly during the last session.<br/><br/>The following layout <b>[ %2 ]</b> had to be updated for consistency!",
+                                                "<b>Multiple Layouts based on Activities</b> mode did not close properly during the last session.<br/><br/>The following layouts <b>[ %2 ]</b> had to be updated for consistency!",
+                                                layouts.count(),
+                                                layouts.join(", ")),
+                                          QStringList(),
+                                          QString(),
+                                          0,
+                                          KMessageBox::Options{KMessageBox::NoExec},
+                                          QString());
+           dialog->show();
+       }*/
 
     m_synchronizer->switchToLayout(layoutName);
 }
@@ -255,10 +256,10 @@ void Manager::loadLayoutOnStartup(QString layoutName)
 void Manager::moveView(QString originLayoutName, uint originViewId, QString destinationLayoutName)
 {
     if (memoryUsage() != Latte::MemoryUsage::MultipleLayouts
-            || originLayoutName.isEmpty()
-            || destinationLayoutName.isEmpty()
-            || originViewId <= 0
-            || originLayoutName == destinationLayoutName) {
+        || originLayoutName.isEmpty()
+        || destinationLayoutName.isEmpty()
+        || originViewId <= 0
+        || originLayoutName == destinationLayoutName) {
         return;
     }
 
@@ -368,7 +369,7 @@ void Manager::cleanupOnStartup(QString path)
                 QStringList appletIds = applets.groupList();
 
                 if (!appletIds.isEmpty()) {
-                    std::sort(appletIds.begin(), appletIds.end(), [](const QString &lhs, const QString &rhs) {
+                    std::sort(appletIds.begin(), appletIds.end(), [](const QString & lhs, const QString & rhs) {
                         bool lhsOk{false};
                         bool rhsOk{false};
                         const int lhsId = lhs.toInt(&lhsOk);
@@ -407,7 +408,7 @@ void Manager::cleanupOnStartup(QString path)
                 //! Migrate the legacy "Default Dock" template shape that bundled the analog clock in the same dock.
                 //! On Plasma 6 this applet can dominate dock sizing and interfere with hover UX.
                 if (!tasksAppletId.isEmpty() && !analogClockAppletId.isEmpty()
-                        && tasksAppletId == QStringLiteral("2") && analogClockAppletId == QStringLiteral("3")) {
+                    && tasksAppletId == QStringLiteral("2") && analogClockAppletId == QStringLiteral("3")) {
                     applets.group(analogClockAppletId).deleteGroup();
                     applets.sync();
                     general.writeEntry(QStringLiteral("appletOrder"), tasksAppletId);
@@ -458,6 +459,7 @@ void Manager::showLatteSettingsDialog(int firstPage, bool toggleCurrentPage)
         // hideLatteSettingsDialog() during application quit.
         m_latteSettingsDialog = new Latte::Settings::Dialog::SettingsDialog(nullptr, m_corona);
     }
+
     m_latteSettingsDialog->show();
 
     if (m_latteSettingsDialog->isMinimized()) {

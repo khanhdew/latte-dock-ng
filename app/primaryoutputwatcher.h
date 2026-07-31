@@ -9,10 +9,8 @@
 
 #include <QObject>
 
-namespace KWayland
-{
-namespace Client
-{
+namespace KWayland {
+namespace Client {
 class Registry;
 class ConnectionThread;
 }

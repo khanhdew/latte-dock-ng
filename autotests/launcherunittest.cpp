@@ -18,38 +18,32 @@ public:
     QList<QString> calls;
     QList<QVariantList> arguments;
 
-    Q_INVOKABLE void addSyncedLauncher(QVariant group, QVariant launcher)
-    {
+    Q_INVOKABLE void addSyncedLauncher(QVariant group, QVariant launcher) {
         calls << QStringLiteral("add");
         arguments << QVariantList{group, launcher};
     }
 
-    Q_INVOKABLE void removeSyncedLauncher(QVariant group, QVariant launcher)
-    {
+    Q_INVOKABLE void removeSyncedLauncher(QVariant group, QVariant launcher) {
         calls << QStringLiteral("remove");
         arguments << QVariantList{group, launcher};
     }
 
-    Q_INVOKABLE void addSyncedLauncherToActivity(QVariant group, QVariant launcher, QVariant activity)
-    {
+    Q_INVOKABLE void addSyncedLauncherToActivity(QVariant group, QVariant launcher, QVariant activity) {
         calls << QStringLiteral("addToActivity");
         arguments << QVariantList{group, launcher, activity};
     }
 
-    Q_INVOKABLE void removeSyncedLauncherFromActivity(QVariant group, QVariant launcher, QVariant activity)
-    {
+    Q_INVOKABLE void removeSyncedLauncherFromActivity(QVariant group, QVariant launcher, QVariant activity) {
         calls << QStringLiteral("removeFromActivity");
         arguments << QVariantList{group, launcher, activity};
     }
 
-    Q_INVOKABLE void dropSyncedUrls(QVariant group, QVariant urls)
-    {
+    Q_INVOKABLE void dropSyncedUrls(QVariant group, QVariant urls) {
         calls << QStringLiteral("drop");
         arguments << QVariantList{group, urls};
     }
 
-    Q_INVOKABLE void validateSyncedLaunchersOrder(QVariant group, QVariant launchers)
-    {
+    Q_INVOKABLE void validateSyncedLaunchersOrder(QVariant group, QVariant launchers) {
         calls << QStringLiteral("validate");
         arguments << QVariantList{group, launchers};
     }
@@ -80,7 +74,7 @@ void LauncherUnitTest::uniqueLaunchersTargetOnlySenderWhenGroupIdIsEmpty()
     launchers.addAbilityClient(&other);
     launchers.addLauncher(QStringLiteral("Layout"), 1, Latte::Types::UniqueLaunchers, QString(), QStringLiteral("app.desktop"));
 
-    QCOMPARE(sender.calls, QList<QString>{QStringLiteral("add")});
+    QCOMPARE(sender.calls, QList<QString> {QStringLiteral("add")});
     QCOMPARE(sender.arguments.constFirst().at(1).toString(), QStringLiteral("app.desktop"));
     QVERIFY(other.calls.isEmpty());
 }
@@ -106,8 +100,8 @@ void LauncherUnitTest::groupLaunchersTargetMatchingGroupClients()
     launchers.addAbilityClient(&unrelated);
     launchers.removeLauncher(QString(), 1, Latte::Types::UniqueLaunchers, QStringLiteral("group"), QStringLiteral("app.desktop"));
 
-    QCOMPARE(first.calls, QList<QString>{QStringLiteral("remove")});
-    QCOMPARE(second.calls, QList<QString>{QStringLiteral("remove")});
+    QCOMPARE(first.calls, QList<QString> {QStringLiteral("remove")});
+    QCOMPARE(second.calls, QList<QString> {QStringLiteral("remove")});
     QVERIFY(unrelated.calls.isEmpty());
 }
 
@@ -132,7 +126,7 @@ void LauncherUnitTest::layoutLaunchersRestrictClientsToMatchingLayout()
                                     QStringLiteral("app.desktop"),
                                     QStringLiteral("activity"));
 
-    QCOMPARE(sameLayout.calls, QList<QString>{QStringLiteral("addToActivity")});
+    QCOMPARE(sameLayout.calls, QList<QString> {QStringLiteral("addToActivity")});
     QCOMPARE(sameLayout.arguments.constFirst().at(2).toString(), QStringLiteral("activity"));
     QVERIFY(otherLayout.calls.isEmpty());
 }
@@ -153,7 +147,7 @@ void LauncherUnitTest::destroyedClientsAreCompactedBeforeDispatch()
 
     launchers.urlsDropped(QString(), 2, Latte::Types::UniqueLaunchers, QStringLiteral("group"), {QStringLiteral("file:///tmp/app.desktop")});
 
-    QCOMPARE(alive.calls, QList<QString>{QStringLiteral("drop")});
+    QCOMPARE(alive.calls, QList<QString> {QStringLiteral("drop")});
     QCOMPARE(alive.arguments.constFirst().at(1).toStringList(), QStringList{QStringLiteral("file:///tmp/app.desktop")});
 }
 
@@ -172,7 +166,7 @@ void LauncherUnitTest::validateLaunchersOrderSkipsSender()
     launchers.validateLaunchersOrder(QString(), 1, Latte::Types::UniqueLaunchers, QStringLiteral("group"), {QStringLiteral("a"), QStringLiteral("b")});
 
     QVERIFY(sender.calls.isEmpty());
-    QCOMPARE(receiver.calls, QList<QString>{QStringLiteral("validate")});
+    QCOMPARE(receiver.calls, QList<QString> {QStringLiteral("validate")});
     QCOMPARE(receiver.arguments.constFirst().at(1).toStringList(), QStringList({QStringLiteral("a"), QStringLiteral("b")}));
 }
 

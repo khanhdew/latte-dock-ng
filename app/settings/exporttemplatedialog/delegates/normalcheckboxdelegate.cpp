@@ -28,12 +28,13 @@ bool NormalCheckBox::editorEvent(QEvent *event, QAbstractItemModel *model, const
     Q_ASSERT(model);
 
     if (event->type() == QEvent::MouseButtonDblClick) {
-        if (!option.rect.contains(static_cast<QMouseEvent *>(event)->pos())){
+        if (!option.rect.contains(static_cast<QMouseEvent *>(event)->pos())) {
             return false;
         }
     } else if (event->type() == QEvent::MouseButtonRelease) {
         QRect checkBoxRect{option.rect.x(), option.rect.y(), option.rect.x() + option.rect.height(), option.rect.y() + option.rect.height()};
-        if (!checkBoxRect.contains(static_cast<QMouseEvent *>(event)->pos())){
+
+        if (!checkBoxRect.contains(static_cast<QMouseEvent *>(event)->pos())) {
             return false;
         }
     } else if (event->type() == QEvent::KeyPress) {
@@ -44,7 +45,7 @@ bool NormalCheckBox::editorEvent(QEvent *event, QAbstractItemModel *model, const
     }
 
     const int currentState = index.data(Qt::CheckStateRole).toInt();
-    return model->setData(index, (currentState>1 ? Qt::Unchecked : Qt::Checked), Qt::CheckStateRole);
+    return model->setData(index, (currentState > 1 ? Qt::Unchecked : Qt::Checked), Qt::CheckStateRole);
 }
 
 }

@@ -101,21 +101,21 @@ Layout &Layout::operator=(const Layout &rhs)
 bool Layout::operator==(const Layout &rhs) const
 {
     return (id == rhs.id)
-            && (name == rhs.name)
-            && (icon == rhs.icon)
-            && (textColor == rhs.textColor)
-            //&& (lastUsedActivity == rhs.lastUsedActivity) /*Disabled because this is not needed in order to track layout changes for saving*/
-            //&& (isActive == rhs.isActive) /*Disabled because this is not needed in order to track layout changes for saving*/
-            //&& (isConsideredActive == rhs.isConsideredActive) /*Disabled because this is not needed in order to track layout changes for saving*/
-            && (isLocked == rhs.isLocked)
-            && (isShownInMenu == rhs.isShownInMenu)
-            && (isTemplate == rhs.isTemplate)
-            && (popUpMargin == rhs.popUpMargin)
-            && (schemeFile == rhs.schemeFile)
-            && (activities == rhs.activities)
-            //&& (errors == rhs.errors) /*Disabled because this is not needed in order to track layout changes for saving*/
-            //&& (warnings == rhs.warnings) /*Disabled because this is not needed in order to track layout changes for saving*/
-            && (views == rhs.views);
+           && (name == rhs.name)
+           && (icon == rhs.icon)
+           && (textColor == rhs.textColor)
+           //&& (lastUsedActivity == rhs.lastUsedActivity) /*Disabled because this is not needed in order to track layout changes for saving*/
+           //&& (isActive == rhs.isActive) /*Disabled because this is not needed in order to track layout changes for saving*/
+           //&& (isConsideredActive == rhs.isConsideredActive) /*Disabled because this is not needed in order to track layout changes for saving*/
+           && (isLocked == rhs.isLocked)
+           && (isShownInMenu == rhs.isShownInMenu)
+           && (isTemplate == rhs.isTemplate)
+           && (popUpMargin == rhs.popUpMargin)
+           && (schemeFile == rhs.schemeFile)
+           && (activities == rhs.activities)
+           //&& (errors == rhs.errors) /*Disabled because this is not needed in order to track layout changes for saving*/
+           //&& (warnings == rhs.warnings) /*Disabled because this is not needed in order to track layout changes for saving*/
+           && (views == rhs.views);
 }
 
 bool Layout::operator!=(const Layout &rhs) const

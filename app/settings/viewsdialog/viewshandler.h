@@ -24,15 +24,16 @@ namespace Ui {
 class ViewsDialog;
 }
 
-namespace Latte{
+namespace Latte {
 class CentralLayout;
 class Corona;
-namespace Settings{
-namespace Controller{
+namespace Settings {
+namespace Controller {
 class Layouts;
 class Views;
 }
-namespace Dialog{
+
+namespace Dialog {
 class ViewsDialog;
 }
 }

@@ -22,8 +22,7 @@ public:
     Types() = delete;
     ~Types() {}
 
-    enum ScrollAction
-    {
+    enum ScrollAction {
         ScrollNone = 0,
         ScrollDesktops,
         ScrollActivities,
@@ -32,16 +31,14 @@ public:
     };
     Q_ENUM(ScrollAction);
 
-    enum ShadowColorGroup
-    {
+    enum ShadowColorGroup {
         DefaultColorShadow = 0,
         ThemeColorShadow,
         UserColorShadow
     };
     Q_ENUM(ShadowColorGroup);
 
-    enum ThemeColorsGroup
-    {
+    enum ThemeColorsGroup {
         PlasmaThemeColors = 0,
         ReverseThemeColors,
         SmartThemeColors,
@@ -51,16 +48,14 @@ public:
     };
     Q_ENUM(ThemeColorsGroup);
 
-    enum WindowColorsGroup
-    {
+    enum WindowColorsGroup {
         NoneWindowColors = 0,
         ActiveWindowColors,
         TouchingWindowColors
     };
     Q_ENUM(WindowColorsGroup);
 
-    enum ActiveWindowFilterGroup
-    {
+    enum ActiveWindowFilterGroup {
         ActiveInCurrentScreen = 0,
         ActiveFromAllScreens
     };

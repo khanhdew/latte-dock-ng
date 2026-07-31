@@ -166,6 +166,7 @@ void SettingsDialog::initHelpMenu()
     connect(githubIssueAction, &QAction::triggered, this, []() {
         QDesktopServices::openUrl(QUrl(QStringLiteral(BUG_ADDRESS)));
     });
+
     m_helpMenu->menu()->insertAction(m_helpMenu->menu()->actions().isEmpty() ? nullptr : m_helpMenu->menu()->actions().constFirst(),
                                      githubIssueAction);
     m_helpMenu->menu()->insertSeparator(m_helpMenu->menu()->actions().size() > 1 ? m_helpMenu->menu()->actions().at(1) : nullptr);
@@ -231,7 +232,7 @@ QMenu *SettingsDialog::helpMenu() const
 
 ConfigurationPage SettingsDialog::currentPage()
 {
-    ConfigurationPage cPage= static_cast<ConfigurationPage>(m_ui->tabWidget->currentIndex());
+    ConfigurationPage cPage = static_cast<ConfigurationPage>(m_ui->tabWidget->currentIndex());
 
     return cPage;
 }
@@ -255,11 +256,11 @@ void SettingsDialog::importFullConfiguration()
     qCDebug(latteSettings) << Q_FUNC_INFO;
 
     QFileDialog *importFileDialog = new QFileDialog(this, i18nc("import full configuration", "Import Full Configuration")
-                                                    , QDir::homePath()
-                                                    , QStringLiteral("latterc"));
+        , QDir::homePath()
+        , QStringLiteral("latterc"));
 
     importFileDialog->setWindowIcon(QIcon::fromTheme(QStringLiteral("document-import")));
-    importFileDialog->setLabelText(QFileDialog::Accept, i18nc("import full configuration","Import"));
+    importFileDialog->setLabelText(QFileDialog::Accept, i18nc("import full configuration", "Import"));
     importFileDialog->setFileMode(QFileDialog::AnyFile);
     importFileDialog->setAcceptMode(QFileDialog::AcceptOpen);
     importFileDialog->setDefaultSuffix(QStringLiteral("latterc"));
@@ -275,7 +276,7 @@ void SettingsDialog::importFullConfiguration()
         qCDebug(latteSettings) << "VERSION :::: " << version;
 
         if (version == Latte::Layouts::Importer::ConfigVersion2
-                || version == Latte::Layouts::Importer::ConfigVersion1) {
+            || version == Latte::Layouts::Importer::ConfigVersion1) {
             auto msg = new QMessageBox(this);
             msg->setIcon(QMessageBox::Warning);
             msg->setWindowTitle(i18n("Import: Full Configuration File"));
@@ -298,7 +299,7 @@ void SettingsDialog::importFullConfiguration()
 
             connect(msg, &QFileDialog::finished, msg, &QFileDialog::deleteLater);
 
-            connect(importBtn, &QPushButton::clicked, this, [&, file](bool) {
+            connect(importBtn, &QPushButton::clicked, this, [ &, file](bool) {
                 m_corona->importFullConfiguration(file);
             });
 
@@ -319,10 +320,10 @@ void SettingsDialog::exportFullConfiguration()
     m_corona->layoutsManager()->synchronizer()->syncActiveLayoutsToOriginalFiles();
 
     QFileDialog *exportFileDialog = new QFileDialog(this, i18n("Export Full Configuration"),
-                                                    QDir::homePath(),
-                                                    QStringLiteral("latterc"));
+        QDir::homePath(),
+        QStringLiteral("latterc"));
 
-    exportFileDialog->setLabelText(QFileDialog::Accept, i18nc("export full configuration","Export"));
+    exportFileDialog->setLabelText(QFileDialog::Accept, i18nc("export full configuration", "Export"));
     exportFileDialog->setFileMode(QFileDialog::AnyFile);
     exportFileDialog->setAcceptMode(QFileDialog::AcceptSave);
     exportFileDialog->setDefaultSuffix(QStringLiteral("latterc"));
@@ -350,7 +351,7 @@ void SettingsDialog::exportFullConfiguration()
             QList<QAction *> actions;
             actions << openUrlAction;
 
-            connect(openUrlAction, &QAction::triggered, this, [&, openUrlAction]() {
+            connect(openUrlAction, &QAction::triggered, this, [ &, openUrlAction]() {
                 QString file = openUrlAction->data().toString();
 
                 if (!file.isEmpty()) {
@@ -440,7 +441,7 @@ void SettingsDialog::updateApplyButtonsState()
     //! Ok, Apply Buttons
 
     if ((currentPage() == LayoutPage && m_tabLayoutsHandler->hasChangedData())
-            ||(currentPage() == PreferencesPage && m_tabPreferencesHandler->hasChangedData())) {
+        || (currentPage() == PreferencesPage && m_tabPreferencesHandler->hasChangedData())) {
         changed = true;
     }
 
@@ -459,7 +460,7 @@ void SettingsDialog::updateApplyButtonsState()
         m_ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)->setVisible(true);
 
         //! Defaults for general Latte settings
-        if (m_tabPreferencesHandler->inDefaultValues() ) {
+        if (m_tabPreferencesHandler->inDefaultValues()) {
             m_ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)->setEnabled(false);
         } else {
             m_ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)->setEnabled(true);
@@ -565,7 +566,7 @@ void SettingsDialog::showScreensInformation()
 
 void SettingsDialog::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (currentPage() == LayoutPage){
+    if (currentPage() == LayoutPage) {
         m_tabLayoutsHandler->onDragEnterEvent(event);
     } else {
         QDialog::dragEnterEvent(event);
@@ -574,7 +575,7 @@ void SettingsDialog::dragEnterEvent(QDragEnterEvent *event)
 
 void SettingsDialog::dragLeaveEvent(QDragLeaveEvent *event)
 {
-    if (currentPage() == LayoutPage){
+    if (currentPage() == LayoutPage) {
         m_tabLayoutsHandler->onDragLeaveEvent(event);
     } else {
         QDialog::dragLeaveEvent(event);
@@ -583,7 +584,7 @@ void SettingsDialog::dragLeaveEvent(QDragLeaveEvent *event)
 
 void SettingsDialog::dragMoveEvent(QDragMoveEvent *event)
 {
-    if (currentPage() == LayoutPage){
+    if (currentPage() == LayoutPage) {
         m_tabLayoutsHandler->onDragMoveEvent(event);
     } else {
         QDialog::dragMoveEvent(event);
@@ -592,7 +593,7 @@ void SettingsDialog::dragMoveEvent(QDragMoveEvent *event)
 
 void SettingsDialog::dropEvent(QDropEvent *event)
 {
-    if (currentPage() == LayoutPage){
+    if (currentPage() == LayoutPage) {
         m_tabLayoutsHandler->onDropEvent(event);
     } else {
         QDialog::dropEvent(event);

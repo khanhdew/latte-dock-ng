@@ -20,17 +20,17 @@ namespace Ui {
 class ExportTemplateDialog;
 }
 
-namespace Latte{
+namespace Latte {
 class View;
-namespace Settings{
-namespace Dialog{
+namespace Settings {
+namespace Dialog {
 class ExportTemplateDialog;
 }
 }
 }
 
-namespace Latte{
-namespace Settings{
+namespace Latte {
+namespace Settings {
 namespace Model {
 class Applets;
 }

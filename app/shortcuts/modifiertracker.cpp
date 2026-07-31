@@ -37,6 +37,7 @@ void ModifierTracker::init()
 
     connect(&m_modifierKeyInfo, &KModifierKeyInfo::keyPressed, this, [this](Qt::Key key, bool state) {
         Qt::Key nKey = normalizeKey(key);
+
         //! ignore modifiers that we do not take into account
         if (!modifierIsTracked(nKey)) {
             return;
@@ -46,6 +47,7 @@ void ModifierTracker::init()
 
         if (nKey == Qt::Key_Super_L) {
             bool singleKey{singleModifierPressed(Qt::Key_Super_L)};
+
             if (state && singleKey) {
                 m_metaPressedTimer.start();
             } else if (!state || !singleKey) {
@@ -86,7 +88,7 @@ void ModifierTracker::unblockModifierTracking(Qt::Key key)
 bool ModifierTracker::noModifierPressed()
 {
     for (const Qt::Key &modifier : m_pressed.keys()) {
-        if ( m_pressed[modifier]) {
+        if (m_pressed[modifier]) {
             return false;
         }
     }
@@ -115,8 +117,8 @@ bool ModifierTracker::sequenceModifierPressed(const QKeySequence &seq)
 bool ModifierTracker::singleModifierPressed(Qt::Key key)
 {
     for (const Qt::Key &modifier : m_pressed.keys()) {
-        if ( (modifier != key && m_pressed[modifier])
-             || (modifier == key && !m_pressed[modifier]) ) {
+        if ((modifier != key && m_pressed[modifier])
+            || (modifier == key && !m_pressed[modifier])) {
             return false;
         }
     }

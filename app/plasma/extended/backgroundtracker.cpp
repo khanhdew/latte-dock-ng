@@ -86,7 +86,7 @@ void BackgroundTracker::setScreenName(QString name)
 
 void BackgroundTracker::backgroundChanged(const QString &activity, const QString &screenName)
 {
-    if (m_activity==activity && m_screenName==screenName) {
+    if (m_activity == activity && m_screenName == screenName) {
         update();
     }
 }

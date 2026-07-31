@@ -144,13 +144,14 @@ void ExportTemplateHandler::chooseFileDialog()
     bool inLayoutState = c_filepath.endsWith(QStringLiteral("layout.latte"));
 
     QFileDialog *chooseFileDlg = new QFileDialog(m_dialog,
-                                                 inLayoutState ? i18n("Choose Layout Template file") : i18n("Choose View Template file"),
-                                                 currentFile.absoluteFilePath(),
-                                                 inLayoutState ? QStringLiteral(".layout.latte") : QStringLiteral(".view.latte"));
+        inLayoutState ? i18n("Choose Layout Template file") : i18n("Choose View Template file"),
+        currentFile.absoluteFilePath(),
+        inLayoutState ? QStringLiteral(".layout.latte") : QStringLiteral(".view.latte"));
 
-    chooseFileDlg->setLabelText(QFileDialog::Accept, i18nc("choose file","Choose"));
+    chooseFileDlg->setLabelText(QFileDialog::Accept, i18nc("choose file", "Choose"));
     chooseFileDlg->setFileMode(QFileDialog::AnyFile);
     chooseFileDlg->setAcceptMode(QFileDialog::AcceptSave);
+
     if (inLayoutState) {
         chooseFileDlg->setDefaultSuffix(QStringLiteral("layout.latte"));
     } else {
@@ -168,7 +169,7 @@ void ExportTemplateHandler::chooseFileDialog()
     chooseFileDlg->setNameFilters(filters);
 
     connect(chooseFileDlg, &QFileDialog::finished, chooseFileDlg, &QFileDialog::deleteLater);
-    connect(chooseFileDlg, &QFileDialog::fileSelected, this, [&, inLayoutState](const QString &file) {
+    connect(chooseFileDlg, &QFileDialog::fileSelected, this, [ &, inLayoutState](const QString & file) {
         if (inLayoutState) {
             if (!file.endsWith(QStringLiteral(".layout.latte"))) {
                 QString selected = file;
@@ -209,15 +210,16 @@ void ExportTemplateHandler::onExport()
     }
 
     //! Proceed with export
-    auto showExportTemplateError = [this](const QString &templateName) {
-        showInlineMessage(i18nc("settings:template export fail","Template <b>%1</b> export <b>failed</b>...", templateName),
+    auto showExportTemplateError = [this](const QString & templateName) {
+        showInlineMessage(i18nc("settings:template export fail", "Template <b>%1</b> export <b>failed</b>...", templateName),
                           KMessageWidget::Error,
                           true);
     };
 
     bool result = m_dialog->corona()->templatesManager()->exportTemplate(m_originFilePath,
-                                                                         c_filepath,
-                                                                         m_appletsModel->selectedApplets());
+                  c_filepath,
+                  m_appletsModel->selectedApplets());
+
     if (result) {
         QAction *openUrlAction = new QAction(i18n("Open Location..."), this);
         openUrlAction->setIcon(QIcon::fromTheme(QStringLiteral("document-open")));
@@ -225,7 +227,7 @@ void ExportTemplateHandler::onExport()
         QList<QAction *> actions;
         actions << openUrlAction;
 
-        connect(openUrlAction, &QAction::triggered, this, [&, openUrlAction]() {
+        connect(openUrlAction, &QAction::triggered, this, [ &, openUrlAction]() {
             QString file = openUrlAction->data().toString();
 
             if (!file.isEmpty()) {
@@ -233,7 +235,7 @@ void ExportTemplateHandler::onExport()
             }
         });
 
-        showInlineMessage(i18nc("settings:template export success","Template <b>%1</b> export succeeded...", curbasename),
+        showInlineMessage(i18nc("settings:template export success", "Template <b>%1</b> export succeeded...", curbasename),
                           KMessageWidget::Positive,
                           false,
                           actions);
@@ -295,10 +297,10 @@ void ExportTemplateHandler::save()
 bool ExportTemplateHandler::overwriteConfirmation(const QString &fileName)
 {
     return (KMessageBox::questionTwoActions(m_dialog,
-                                      i18n("The file \"%1\" already exists. Do you wish to overwrite it?", fileName),
-                                      i18n("Overwrite File?"),
-                                      KStandardGuiItem::overwrite(),
-                                      KStandardGuiItem::cancel()) == KMessageBox::PrimaryAction);
+                                            i18n("The file \"%1\" already exists. Do you wish to overwrite it?", fileName),
+                                            i18n("Overwrite File?"),
+                                            KStandardGuiItem::overwrite(),
+                                            KStandardGuiItem::cancel()) == KMessageBox::PrimaryAction);
 }
 
 }

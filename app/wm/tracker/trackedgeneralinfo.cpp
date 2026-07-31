@@ -18,7 +18,7 @@ namespace Tracker {
 
 
 TrackedGeneralInfo::TrackedGeneralInfo(Tracker::Windows *tracker)
-    : QObject(tracker) ,
+    : QObject(tracker),
       m_wm(tracker->wm()),
       m_tracker(tracker)
 {
@@ -105,7 +105,7 @@ bool TrackedGeneralInfo::isTrackingCurrentActivity() const
 
 void TrackedGeneralInfo::updateTrackingCurrentActivity()
 {
-    m_isTrackingCurrentActivity = ( m_activities.isEmpty() || m_activities[0] == QLatin1String("{0}") || m_activities.contains(m_wm->currentActivity()));
+    m_isTrackingCurrentActivity = (m_activities.isEmpty() || m_activities[0] == QLatin1String("{0}") || m_activities.contains(m_wm->currentActivity()));
 }
 
 bool TrackedGeneralInfo::isTrackingActivity(const QString &activity)

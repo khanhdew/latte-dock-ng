@@ -17,24 +17,24 @@ namespace Delegate {
 
 class PersistentMenu : public QMenu
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PersistentMenu(QWidget *parent = nullptr);
+    PersistentMenu(QWidget *parent = nullptr);
 
-  int masterIndex() const;
-  void setMasterIndex(const int &index);
+    int masterIndex() const;
+    void setMasterIndex(const int &index);
 
 protected:
-  void setVisible(bool visible) override;
-  void mouseReleaseEvent(QMouseEvent *e) override;
+    void setVisible(bool visible) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
 
 Q_SIGNALS:
-  void masterIndexChanged(const int &masterRow);
+    void masterIndexChanged(const int &masterRow);
 
 private:
-  bool m_blockHide{false};
+    bool m_blockHide{false};
 
-  int m_masterIndex{-1};
+    int m_masterIndex{-1};
 
 };
 

@@ -32,8 +32,7 @@ class Views : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    enum Columns
-    {
+    enum Columns {
         IDCOLUMN = 0,
         NAMECOLUMN,
         SCREENCOLUMN,
@@ -43,8 +42,7 @@ public:
         LASTCOLUMN
     };
 
-    enum Roles
-    {
+    enum Roles {
         IDROLE = Qt::UserRole + 1,
         NAMEROLE,
         ISACTIVEROLE,
@@ -59,8 +57,7 @@ public:
         SORTINGROLE
     };
 
-    enum SortingPriority
-    {
+    enum SortingPriority {
         NORMALPRIORITY = 10,
         MEDIUMPRIORITY = 100,
         HIGHPRIORITY = 1000,

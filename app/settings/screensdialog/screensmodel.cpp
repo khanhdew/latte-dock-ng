@@ -33,7 +33,7 @@ bool Screens::hasChangedData() const
 
 bool Screens::hasChecked() const
 {
-    for(int i=0; i<c_screens.rowCount(); ++i) {
+    for (int i = 0; i < c_screens.rowCount(); ++i) {
         if (c_screens[i].isSelected) {
             return true;
         }
@@ -63,7 +63,7 @@ int Screens::columnCount(const QModelIndex &parent) const
 
 int Screens::row(const QString &id)
 {
-    for (int i=0; i<c_screens.rowCount(); ++i){
+    for (int i = 0; i < c_screens.rowCount(); ++i) {
         if (c_screens[i].id == id) {
             return i;
         }
@@ -79,7 +79,7 @@ bool Screens::inDefaultValues() const
 
 void Screens::initDefaults()
 {
-    for(int i=0; i<c_screens.rowCount(); ++i) {
+    for (int i = 0; i < c_screens.rowCount(); ++i) {
         c_screens[i].isSelected = false;
     }
 }
@@ -100,11 +100,11 @@ void Screens::deselectAll()
     QList<int> roles;
     roles << Qt::CheckStateRole;
 
-    for(int i=0; i<c_screens.rowCount(); ++i) {
+    for (int i = 0; i < c_screens.rowCount(); ++i) {
         c_screens[i].isSelected = false;
     }
 
-    Q_EMIT dataChanged(index(0, SCREENCOLUMN), index(c_screens.rowCount()-1, SCREENCOLUMN), roles);
+    Q_EMIT dataChanged(index(0, SCREENCOLUMN), index(c_screens.rowCount() - 1, SCREENCOLUMN), roles);
     Q_EMIT screenDataChanged();
 }
 
@@ -115,7 +115,7 @@ void Screens::reset()
     QList<int> roles;
     roles << Qt::CheckStateRole;
 
-    Q_EMIT dataChanged(index(0, SCREENCOLUMN), index(c_screens.rowCount()-1, SCREENCOLUMN), roles);
+    Q_EMIT dataChanged(index(0, SCREENCOLUMN), index(c_screens.rowCount() - 1, SCREENCOLUMN), roles);
     Q_EMIT screenDataChanged();
 }
 
@@ -159,7 +159,7 @@ void Screens::setData(const Latte::Data::ScreensTable &screens)
     clear();
 
     if (screens.rowCount() > 0) {
-        beginInsertRows(QModelIndex(), 0, screens.rowCount()-1);
+        beginInsertRows(QModelIndex(), 0, screens.rowCount() - 1);
         c_screens = screens;
         initDefaults();
         o_screens = c_screens;
@@ -173,10 +173,10 @@ void Screens::setSelected(const Latte::Data::ScreensTable &screens)
 {
     bool changed{false};
 
-    for(int i=0; i<screens.rowCount(); ++i) {
+    for (int i = 0; i < screens.rowCount(); ++i) {
         int pos = c_screens.indexOf(screens[i].id);
 
-        if (pos>=0 && screens[i].isSelected != c_screens[pos].isSelected) {
+        if (pos >= 0 && screens[i].isSelected != c_screens[pos].isSelected) {
             QList<int> roles;
             roles << Qt::CheckStateRole;
 
@@ -195,11 +195,12 @@ Latte::Data::ScreensTable Screens::checkedScreens()
 {
     Data::ScreensTable checked;
 
-    for(int i=0; i<c_screens.rowCount(); ++i) {
+    for (int i = 0; i < c_screens.rowCount(); ++i) {
         if (!c_screens[i].isActive && c_screens[i].isSelected) {
             checked << c_screens[i];
         }
     }
+
     return checked;
 }
 
@@ -236,14 +237,16 @@ QVariant Screens::headerData(int section, Qt::Orientation orientation, int role)
         return font;
     }
 
-    switch(section) {
-    case SCREENCOLUMN:
-        if (role == Qt::DisplayRole) {
-            return QString(i18nc("column for screens", "Screens"));
-        }
-        break;
-    default:
-        break;
+    switch (section) {
+        case SCREENCOLUMN:
+            if (role == Qt::DisplayRole) {
+                return QString(i18nc("column for screens", "Screens"));
+            }
+
+            break;
+
+        default:
+            break;
     };
 
     return QAbstractTableModel::headerData(section, orientation, role);
@@ -254,19 +257,20 @@ bool Screens::setData(const QModelIndex &index, const QVariant &value, int role)
     const int row = index.row();
     const int column = index.column();
 
-    if (!c_screens.rowExists(row) || column<0 || column > SCREENCOLUMN) {
+    if (!c_screens.rowExists(row) || column < 0 || column > SCREENCOLUMN) {
         return false;
     }
 
     //! specific roles to each independent cell
     switch (column) {
-    case SCREENCOLUMN:
-        if (role == Qt::CheckStateRole) {
-            c_screens[row].isSelected = (value.toInt() > 0 ? true : false);
-            Q_EMIT screenDataChanged();
-            return true;
-        }
-        break;
+        case SCREENCOLUMN:
+            if (role == Qt::CheckStateRole) {
+                c_screens[row].isSelected = (value.toInt() > 0 ? true : false);
+                Q_EMIT screenDataChanged();
+                return true;
+            }
+
+            break;
     };
 
     return false;

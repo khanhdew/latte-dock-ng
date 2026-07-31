@@ -312,6 +312,7 @@ bool WindowInfoWrap::isCloseable() const
 {
     return m_isClosable;
 }
+
 void WindowInfoWrap::setIsClosable(bool closable)
 {
     m_isClosable = closable;
@@ -321,6 +322,7 @@ bool WindowInfoWrap::isFullScreenable() const
 {
     return m_isFullScreenable;
 }
+
 void WindowInfoWrap::setIsFullScreenable(bool fullscreenable)
 {
     m_isFullScreenable = fullscreenable;
@@ -330,6 +332,7 @@ bool WindowInfoWrap::isGroupable() const
 {
     return m_isGroupable;
 }
+
 void WindowInfoWrap::setIsGroupable(bool groupable)
 {
     m_isGroupable = groupable;
@@ -339,6 +342,7 @@ bool WindowInfoWrap::isMaximizable() const
 {
     return m_isMaximizable;
 }
+
 void WindowInfoWrap::setIsMaximizable(bool maximizable)
 {
     m_isMaximizable = maximizable;
@@ -348,6 +352,7 @@ bool WindowInfoWrap::isMinimizable() const
 {
     return m_isMinimizable;
 }
+
 void WindowInfoWrap::setIsMinimizable(bool minimizable)
 {
     m_isMinimizable = minimizable;
@@ -357,6 +362,7 @@ bool WindowInfoWrap::isMovable() const
 {
     return m_isMovable;
 }
+
 void WindowInfoWrap::setIsMovable(bool movable)
 {
     m_isMovable = movable;
@@ -366,6 +372,7 @@ bool WindowInfoWrap::isResizable() const
 {
     return m_isResizable;
 }
+
 void WindowInfoWrap::setIsResizable(bool resizable)
 {
     m_isResizable = resizable;
@@ -375,6 +382,7 @@ bool WindowInfoWrap::isShadeable() const
 {
     return m_isShadeable;
 }
+
 void WindowInfoWrap::setIsShadeable(bool shadeble)
 {
     m_isShadeable = shadeble;
@@ -384,10 +392,12 @@ bool WindowInfoWrap::isVirtualDesktopsChangeable() const
 {
     return m_isVirtualDesktopsChangeable;
 }
+
 void WindowInfoWrap::setIsVirtualDesktopsChangeable(bool virtualdesktopchangeable)
 {
     m_isVirtualDesktopsChangeable = virtualdesktopchangeable;
 }
+
 //!END: Window Abilities
 
 

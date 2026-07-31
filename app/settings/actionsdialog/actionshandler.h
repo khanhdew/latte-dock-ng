@@ -20,9 +20,9 @@ namespace Ui {
 class ActionsDialog;
 }
 
-namespace Latte{
-namespace Settings{
-namespace Dialog{
+namespace Latte {
+namespace Settings {
+namespace Dialog {
 class ActionsDialog;
 }
 }

@@ -254,7 +254,7 @@ void DetailsHandler::selectIcon()
 
 void DetailsHandler::updateWindowTitle()
 {
-    m_dialog->setWindowTitle(i18nc("<layout name> Details","%1 Details", m_ui->layoutsCmb->currentText()));
+    m_dialog->setWindowTitle(i18nc("<layout name> Details", "%1 Details", m_ui->layoutsCmb->currentText()));
 }
 
 KMessageBox::ButtonCode DetailsHandler::saveChangesConfirmation()

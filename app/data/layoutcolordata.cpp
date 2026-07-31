@@ -49,10 +49,10 @@ LayoutColor &LayoutColor::operator=(LayoutColor &&rhs)
 
 bool LayoutColor::operator==(const LayoutColor &rhs) const
 {
-    return  (id == rhs.id)
-            && (name == rhs.name)
-            && (path == rhs.path)
-            && (textColor == rhs.textColor);
+    return (id == rhs.id)
+           && (name == rhs.name)
+           && (path == rhs.path)
+           && (textColor == rhs.textColor);
 }
 
 bool LayoutColor::operator!=(const LayoutColor &rhs) const

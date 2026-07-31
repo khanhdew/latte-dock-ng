@@ -32,7 +32,8 @@ int TasksModel::rowCount(const QModelIndex &) const
 
 QVariant TasksModel::data(const QModelIndex &index, int role) const
 {
-    bool rowIsValid = (index.row()>=0 && index.row()<m_tasks.count());
+    bool rowIsValid = (index.row() >= 0 && index.row() < m_tasks.count());
+
     if (!rowIsValid) {
         return QVariant();
     }
@@ -45,7 +46,8 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
 }
 
 
-QHash<int, QByteArray> TasksModel::roleNames() const{
+QHash<int, QByteArray> TasksModel::roleNames() const
+{
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole] = "tasks";
     return roles;
@@ -61,11 +63,11 @@ void TasksModel::addTask(PlasmaQuick::AppletQuickItem *plasmoid)
     m_tasks << plasmoid;
     endInsertRows();
 
-    connect(plasmoid, &QObject::destroyed, this, [&, plasmoid](){
+    connect(plasmoid, &QObject::destroyed, this, [ &, plasmoid]() {
         removeTask(plasmoid);
     });
 
-    connect(plasmoid->applet(), &Plasma::Applet::destroyedChanged, this, [&, plasmoid](const bool &destroyed){
+    connect(plasmoid->applet(), &Plasma::Applet::destroyedChanged, this, [ &, plasmoid](const bool & destroyed) {
         if (destroyed) {
             moveIntoWaitingTasks(plasmoid);
         } else {

@@ -29,7 +29,8 @@ namespace Latte {
 namespace WindowSystem {
 namespace Tracker {
 
-class LastActiveWindow : public QObject {
+class LastActiveWindow : public QObject
+{
     Q_OBJECT
     Q_PROPERTY(bool isValid READ isValid NOTIFY isValidChanged)
 
@@ -95,7 +96,7 @@ public:
 
     QString appName() const;
     QString colorScheme() const;
-    QString display() const;    
+    QString display() const;
 
     QRect geometry() const;
     QIcon icon() const;

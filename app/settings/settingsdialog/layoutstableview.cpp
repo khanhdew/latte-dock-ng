@@ -35,10 +35,12 @@ LayoutsTableView::LayoutsTableView(QWidget *parent)
     fn.setBold(true);
 
     const qreal pointSize = fn.pointSizeF();
+
     if (pointSize > 0) {
         fn.setPointSizeF(pointSize * 3.0);
     } else {
         int pixelSize = fn.pixelSize();
+
         if (pixelSize <= 0) {
             pixelSize = QApplication::font().pixelSize();
         }
@@ -76,16 +78,18 @@ void LayoutsTableView::paintEvent(QPaintEvent *event)
 void LayoutsTableView::dragEntered(QDragEnterEvent *event)
 {
     m_overlayDropMessage->move(MARGIN, MARGIN);
-    m_overlayDropMessage->resize(width() - 2*MARGIN, height() - 2*MARGIN);
+    m_overlayDropMessage->resize(width() - 2 * MARGIN, height() - 2 * MARGIN);
 
     m_overlayDropMessage->raise();
+
     if (event->mimeData()->hasUrls()) {
         m_overlayDropMessage->setText(i18n("Drop layout files here..."));
-    } else if(event->mimeData()->hasText()) {
+    } else if (event->mimeData()->hasText()) {
         m_overlayDropMessage->setText(i18n("Drop raw layout text here..."));
     } else {
         m_overlayDropMessage->setText(i18n("Unsupported data!"));
     }
+
     m_overlayDropMessage->setVisible(true);
 }
 

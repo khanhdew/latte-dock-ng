@@ -13,7 +13,7 @@
 // Qt
 #include <QObject>
 
-namespace Latte{
+namespace Latte {
 class View;
 
 namespace ViewPart {
@@ -33,7 +33,8 @@ namespace Latte {
 namespace ViewPart {
 namespace TrackerPart {
 
-class CurrentScreenTracker : public QObject {
+class CurrentScreenTracker : public QObject
+{
     Q_OBJECT
     Q_PROPERTY(bool activeWindowMaximized READ activeWindowMaximized NOTIFY activeWindowMaximizedChanged)
     Q_PROPERTY(bool activeWindowTouching READ activeWindowTouching NOTIFY activeWindowTouchingChanged)

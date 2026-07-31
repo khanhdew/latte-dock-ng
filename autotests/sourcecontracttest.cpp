@@ -595,7 +595,7 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(mainSource.contains(QStringLiteral("app.setProperty(\"latte_session_ending\", true);")));
     QVERIFY(mainSource.contains(QStringLiteral("#include \"session/shutdownstate.h\"")));
     QVERIFY(mainSource.contains(QStringLiteral("inline bool isPlasmaShutdownServiceActive();")));
-    QVERIFY(mainSource.contains(QStringLiteral("auto disableSessionManagement = [](QSessionManager &sm)")));
+    QVERIFY(mainSource.contains(QStringLiteral("auto disableSessionManagement = [](QSessionManager & sm)")));
     QVERIFY(mainSource.contains(QStringLiteral("QObject::connect(&app, &QGuiApplication::commitDataRequest")));
     QVERIFY(mainSource.contains(QStringLiteral("sm.setRestartHint(QSessionManager::RestartNever);")));
     QVERIFY(mainSource.contains(QStringLiteral("QObject::connect(&app, &QGuiApplication::saveStateRequest")));
@@ -649,7 +649,8 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(pollerBody.contains(QStringLiteral("if (app.property(\"latte_session_ending\").toBool()")));
     QVERIFY(pollerBody.contains(QStringLiteral("Latte::Session::shouldQuitForCommittedShutdown(sessionShutdownSawBlockingWindows, shutdownServiceActive, hasBlockingWindows)")));
     QVERIFY(pollerBody.contains(QStringLiteral("app.quit();")));
-    QVERIFY(pollerBody.indexOf(QStringLiteral("Latte::Session::shouldQuitForCommittedShutdown(sessionShutdownSawBlockingWindows, shutdownServiceActive, hasBlockingWindows)")) < pollerBody.indexOf(QStringLiteral("app.quit();")));
+    QVERIFY(pollerBody.indexOf(QStringLiteral("Latte::Session::shouldQuitForCommittedShutdown(sessionShutdownSawBlockingWindows, shutdownServiceActive, hasBlockingWindows)")) < pollerBody.indexOf(
+                QStringLiteral("app.quit();")));
 
     QFile abstractWmHeaderFile(QStringLiteral(LATTE_SOURCE_DIR "/app/wm/abstractwindowinterface.h"));
     QVERIFY(abstractWmHeaderFile.open(QFile::ReadOnly));
@@ -1061,7 +1062,8 @@ void SourceContractTest::modernDockBackgroundShadowDefaultIsCompact()
     const QString backgroundSource = QString::fromUtf8(backgroundFile.readAll());
     QVERIFY(backgroundSource.contains(QStringLiteral("import org.kde.latte.abilities.definition 0.1 as AbilityDefinition")));
     QVERIFY(backgroundSource.contains(QStringLiteral("AbilityDefinition.MetricsConstants.kModernBackgroundShadowMinPixels")));
-    QVERIFY(backgroundSource.contains(QStringLiteral("if (modernDockStyle && customDefShadowIsEnabled) {\n            return AbilityDefinition.MetricsConstants.kModernBackgroundShadowMinPixels;\n        }")));
+    QVERIFY(backgroundSource.contains(
+                QStringLiteral("if (modernDockStyle && customDefShadowIsEnabled) {\n            return AbilityDefinition.MetricsConstants.kModernBackgroundShadowMinPixels;\n        }")));
     QVERIFY(backgroundSource.contains(QStringLiteral("return customShadow; //! Modern default")));
     QVERIFY(!backgroundSource.contains(QStringLiteral("return Math.max(10, customShadow); //! Modern default")));
     QVERIFY(!backgroundSource.contains(QStringLiteral("return Math.max(AbilityDefinition.MetricsConstants.kModernBackgroundShadowMinPixels, customShadow);")));
@@ -1301,12 +1303,12 @@ void SourceContractTest::autostartDefaultEnabledContracts()
     //! First-run chain: when the user never configured autostart and it is
     //! disabled, enable it exactly once and remember the decision.
     const int userSetRead = universalSource.indexOf(
-        QStringLiteral("bool autostartUserSet = m_universalGroup.readEntry(QStringLiteral(\"userConfiguredAutostart\"), false);"));
+                                QStringLiteral("bool autostartUserSet = m_universalGroup.readEntry(QStringLiteral(\"userConfiguredAutostart\"), false);"));
     const int firstRunGuard = universalSource.indexOf(
-        QStringLiteral("if (!autostartUserSet && !autostart()) {"), userSetRead);
+                                  QStringLiteral("if (!autostartUserSet && !autostart()) {"), userSetRead);
     const int enableCall = universalSource.indexOf(QStringLiteral("setAutostart(true);"), firstRunGuard);
     const int rememberDecision = universalSource.indexOf(
-        QStringLiteral("m_universalGroup.writeEntry(QStringLiteral(\"userConfiguredAutostart\"), true);"), enableCall);
+                                     QStringLiteral("m_universalGroup.writeEntry(QStringLiteral(\"userConfiguredAutostart\"), true);"), enableCall);
     QVERIFY(userSetRead >= 0);
     QVERIFY(firstRunGuard > userSetRead);
     QVERIFY(enableCall > firstRunGuard);
@@ -1392,7 +1394,7 @@ void SourceContractTest::autoSizeLoopsUseInequalityNotStrictEquality()
     //! the boundary is not a multiple of 8 skip past the guard value and
     //! loop forever at ~100% CPU.
     QFile autoSize(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/abilities/AutoSize.qml"));
+                                  "/containment/package/contents/ui/abilities/AutoSize.qml"));
     QVERIFY(autoSize.open(QFile::ReadOnly));
     const QString content = QString::fromUtf8(autoSize.readAll());
 
@@ -1600,7 +1602,7 @@ void SourceContractTest::scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAn
     // minimize/maximize windows because their per-screen tracker
     // has never been populated (commit b4bd3a3e6 → f4ab344ee).
 
-    auto checkFileUsesAllScreens = [](const QString &filePath) {
+    auto checkFileUsesAllScreens = [](const QString & filePath) {
         QFile f(filePath);
         QVERIFY2(f.open(QFile::ReadOnly), qPrintable(filePath));
         const QString src = QString::fromUtf8(f.readAll());
@@ -1612,7 +1614,7 @@ void SourceContractTest::scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAn
         // the minimize / maximize-toggle actions.
         const int first = src.indexOf(QStringLiteral("ScrollToggleMinimized"));
         const int second = src.indexOf(QStringLiteral("ScrollToggleMinimized"),
-                                        first + QStringLiteral("ScrollToggleMinimized").length());
+                                       first + QStringLiteral("ScrollToggleMinimized").length());
 
         // At least one allScreens.lastActiveWindow access must appear
         // within each ScrollToggleMinimized block.
@@ -2145,7 +2147,7 @@ void SourceContractTest::layoutManagerShouldRetryGatedByMaxRetries()
     // permanently because shouldRetry stays true forever while no more retries
     // are scheduled.
     QVERIFY(src.contains(QStringLiteral(
-        "const bool shouldRetry = ((expectedAppletCount > 0) || initialWarmupRetries) && (m_restoreRetryCount < 60);")));
+                             "const bool shouldRetry = ((expectedAppletCount > 0) || initialWarmupRetries) && (m_restoreRetryCount < 60);")));
 }
 
 void SourceContractTest::mainCppSelfPipeSigintHandlerAndReplaceLockTimeout()
@@ -2213,7 +2215,7 @@ void SourceContractTest::layoutManagerRestoreInvalidAppletCleanupPreservesValidI
     const QString src = QString::fromUtf8(f.readAll());
 
     // Invalid applet tracking: only positive IDs are checked, negative/zero skipped.
-    QVERIFY(src.contains(QStringLiteral("aid>0 && !isValidApplet(aid)")));
+    QVERIFY(src.contains(QStringLiteral("aid > 0 && !isValidApplet(aid)")));
     // Invalid applets must be removed from the order.
     QVERIFY(src.contains(QStringLiteral("invalidApplets")));
     QVERIFY(src.contains(QStringLiteral("removeAll")));
@@ -2237,7 +2239,7 @@ void SourceContractTest::layoutManagerRestoreAppletContainerCreationRetryLimit()
 void SourceContractTest::visibilityManagerSlotMustBeShownGuardsStartupAndMode()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/VisibilityManager.qml"));
+                           "/containment/package/contents/ui/VisibilityManager.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2252,7 +2254,7 @@ void SourceContractTest::visibilityManagerSlotMustBeShownGuardsStartupAndMode()
 void SourceContractTest::visibilityManagerSlotMustBeHideGuardsMouseAndBlockHiding()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/VisibilityManager.qml"));
+                           "/containment/package/contents/ui/VisibilityManager.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2267,7 +2269,7 @@ void SourceContractTest::visibilityManagerSlotMustBeHideGuardsMouseAndBlockHidin
 void SourceContractTest::visibilityManagerUpdateMaskAreaClampingPreventsNegativeBounds()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/VisibilityManager.qml"));
+                           "/containment/package/contents/ui/VisibilityManager.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2281,7 +2283,7 @@ void SourceContractTest::visibilityManagerUpdateMaskAreaClampingPreventsNegative
 void SourceContractTest::visibilityManagerSlidingOutAnimationInitGatesInStartup()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/VisibilityManager.qml"));
+                           "/containment/package/contents/ui/VisibilityManager.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2315,7 +2317,7 @@ void SourceContractTest::positionerSyncGeometrySuppressedDuringSlideAnimation()
 
     // syncGeometry must return early when a slide animation is in progress
     // or the slide offset is non-zero.
-    QVERIFY(src.contains(QStringLiteral("m_slideOffset!=0 || inSlideAnimation()")));
+    QVERIFY(src.contains(QStringLiteral("m_slideOffset != 0 || inSlideAnimation()")));
 }
 
 void SourceContractTest::positionerResizeWindowEnforcesWaylandMinimumSize()
@@ -2466,7 +2468,7 @@ void SourceContractTest::screenPoolIsScreenActiveReturnsFalseForStaleDisconnecte
 void SourceContractTest::launchersNormalizeLauncherListExpandsOnlyLength2to4()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
+                           "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2480,7 +2482,7 @@ void SourceContractTest::launchersNormalizeLauncherListExpandsOnlyLength2to4()
 void SourceContractTest::launchersFreeSeparatorNameExhaustionReturnsEmptyString()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
+                           "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2493,7 +2495,7 @@ void SourceContractTest::launchersFreeSeparatorNameExhaustionReturnsEmptyString(
 void SourceContractTest::launchersTransientEmptyRecoveryCeilingAt8()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
+                           "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2504,7 +2506,7 @@ void SourceContractTest::launchersTransientEmptyRecoveryCeilingAt8()
 void SourceContractTest::launchersIsSeparatorGuardsDesktopExtensionPosition()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
+                           "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2517,7 +2519,7 @@ void SourceContractTest::launchersIsSeparatorGuardsDesktopExtensionPosition()
 void SourceContractTest::launchersAddDroppedLauncherIconDataTruncationBoundary()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
+                           "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2607,7 +2609,7 @@ void SourceContractTest::mainCppDetectPlatformPreservesExplicitPlatformArg()
 void SourceContractTest::mainQmlInStartupSetFalseInSlidingOutAnimationOnStopped()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/VisibilityManager.qml"));
+                           "/containment/package/contents/ui/VisibilityManager.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2620,7 +2622,7 @@ void SourceContractTest::mainQmlInStartupSetFalseInSlidingOutAnimationOnStopped(
 void SourceContractTest::mainQmlStartupDelayerTriggeredByHasRestoredAppletsSignal()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/main.qml"));
+                           "/containment/package/contents/ui/main.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2632,7 +2634,7 @@ void SourceContractTest::mainQmlStartupDelayerTriggeredByHasRestoredAppletsSigna
 void SourceContractTest::mainQmlCreateAppletItemRetryCeilingAt80()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/main.qml"));
+                           "/containment/package/contents/ui/main.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2655,7 +2657,7 @@ void SourceContractTest::mainQmlPanelCfgSyncTransparencySevenInputClasses()
 
     {
         QFile f(QStringLiteral(LATTE_SOURCE_DIR
-            "/containment/package/contents/ui/main.qml"));
+                               "/containment/package/contents/ui/main.qml"));
         QVERIFY(f.open(QFile::ReadOnly));
         const QString src = QString::fromUtf8(f.readAll());
 
@@ -2681,7 +2683,7 @@ void SourceContractTest::mainQmlPanelCfgSyncTransparencySevenInputClasses()
         // The C++ gate now uses backgroundOpacity instead, which is -1
         // at default and correctly allows effects through.
         QFile f(QStringLiteral(LATTE_SOURCE_DIR
-            "/containment/package/contents/ui/BindingsExternal.qml"));
+                               "/containment/package/contents/ui/BindingsExternal.qml"));
         QVERIFY(f.open(QFile::ReadOnly));
         const QString src = QString::fromUtf8(f.readAll());
 
@@ -2694,7 +2696,7 @@ void SourceContractTest::mainQmlPanelCfgSyncTransparencySevenInputClasses()
 void SourceContractTest::mainQmlOnInStartupChangedMustCheckLatteViewExists()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/main.qml"));
+                           "/containment/package/contents/ui/main.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2781,7 +2783,7 @@ void SourceContractTest::mouseButtonEnumUsesMiddleButtonNotMidButton()
     // handling. EnvironmentActions delegates middle-click to the C++
     // ContextMenuLayerQuickItem handler and only accepts Qt.LeftButton.
     QFile env(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/layouts/EnvironmentActions.qml"));
+                             "/containment/package/contents/ui/layouts/EnvironmentActions.qml"));
     QVERIFY(env.open(QFile::ReadOnly));
     const QString envSource = QString::fromUtf8(env.readAll());
     // EnvironmentActions only accepts LeftButton (middle-click handled by C++)
@@ -2790,14 +2792,14 @@ void SourceContractTest::mouseButtonEnumUsesMiddleButtonNotMidButton()
     QVERIFY(!envSource.contains(QStringLiteral("Qt.MiddleButton")));
 
     QFile taskMouse(QStringLiteral(LATTE_SOURCE_DIR
-        "/plasmoid/package/contents/ui/task/TaskMouseArea.qml"));
+                                   "/plasmoid/package/contents/ui/task/TaskMouseArea.qml"));
     QVERIFY(taskMouse.open(QFile::ReadOnly));
     const QString taskMouseSource = QString::fromUtf8(taskMouse.readAll());
     QVERIFY(taskMouseSource.contains(QStringLiteral("Qt.MiddleButton")));
     QVERIFY(!taskMouseSource.contains(QStringLiteral("Qt.MidButton")));
 
     QFile clickedAnim(QStringLiteral(LATTE_SOURCE_DIR
-        "/plasmoid/package/contents/ui/task/animations/ClickedAnimation.qml"));
+                                     "/plasmoid/package/contents/ui/task/animations/ClickedAnimation.qml"));
     QVERIFY(clickedAnim.open(QFile::ReadOnly));
     const QString clickedAnimSource = QString::fromUtf8(clickedAnim.readAll());
     QVERIFY(clickedAnimSource.contains(QStringLiteral("Qt.MiddleButton")));
@@ -2811,7 +2813,7 @@ void SourceContractTest::environmentActionsDoesNotAcceptMiddleButton()
     // in its MouseArea — doing so would swallow the event before it
     // reaches the C++ layer.
     QFile env(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/layouts/EnvironmentActions.qml"));
+                             "/containment/package/contents/ui/layouts/EnvironmentActions.qml"));
     QVERIFY(env.open(QFile::ReadOnly));
     const QString envSource = QString::fromUtf8(env.readAll());
     QVERIFY(envSource.contains(QStringLiteral("acceptedButtons: Qt.LeftButton")));
@@ -2825,7 +2827,7 @@ void SourceContractTest::upgraderQmlUsesPlasmoidConfiguration()
     // tasks.configuration directly returns undefined.  The correct
     // path is tasks.plasmoid.configuration.
     QFile upgrader(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/package/contents/ui/Upgrader.qml"));
+                                  "/containment/package/contents/ui/Upgrader.qml"));
     QVERIFY(upgrader.open(QFile::ReadOnly));
     const QString upgraderSource = QString::fromUtf8(upgrader.readAll());
     QVERIFY(upgraderSource.contains(QStringLiteral("tasks.plasmoid.configuration")));
@@ -2837,7 +2839,7 @@ void SourceContractTest::middleClickActionDefaultIsClose()
     // The default middleClickAction should be Close (1), not NewInstance (2).
     // Middle-click on a task icon should close the task window by default.
     QFile configXml(QStringLiteral(LATTE_SOURCE_DIR
-        "/plasmoid/package/contents/config/main.xml"));
+                                   "/plasmoid/package/contents/config/main.xml"));
     QVERIFY(configXml.open(QFile::ReadOnly));
     const QString xmlSource = QString::fromUtf8(configXml.readAll());
 
@@ -2851,26 +2853,26 @@ void SourceContractTest::middleClickActionDefaultIsClose()
               && xmlSource.indexOf(QStringLiteral("<default>2</default>"), entryIdx) < xmlSource.indexOf(QStringLiteral("</entry>"), entryIdx)));
 }
 
-	void SourceContractTest::dragDropHandlersUseBindingSyntaxForQt6()
-	{
-	    // function onDragEnter/onDragMove/onDrop does not connect to
-	    // DragDrop.DropArea signals in Qt 6. Arrow-function binding form
-	    // is required. Widget Explorer drops (text/x-plasmoidservicename)
-	    // are handled by the C++ path; QML onDrop returns early for this
-	    // mime to avoid double-creation with handlePlasmoidDrop().
-	    QFile dnd(QStringLiteral(LATTE_SOURCE_DIR
-	        "/containment/package/contents/ui/DragDropArea.qml"));
-	    QVERIFY(dnd.open(QFile::ReadOnly));
-	    const QString dndSource = QString::fromUtf8(dnd.readAll());
-	    QVERIFY(dndSource.contains(QStringLiteral("onDragEnter:")));
-	    QVERIFY(dndSource.contains(QStringLiteral("onDragMove:")));
-	    QVERIFY(dndSource.contains(QStringLiteral("onDrop:")));
-	    QVERIFY(!dndSource.contains(QStringLiteral("function onDragEnter(event)")));
-	    QVERIFY(!dndSource.contains(QStringLiteral("function onDragMove(event)")));
-	    QVERIFY(!dndSource.contains(QStringLiteral("function onDrop(event)")));
-	    // Mime split guard: prevents QML double-handling Widget Explorer drops
-	    QVERIFY(dndSource.contains(QStringLiteral("text/x-plasmoidservicename")));
-	}
+void SourceContractTest::dragDropHandlersUseBindingSyntaxForQt6()
+{
+    // function onDragEnter/onDragMove/onDrop does not connect to
+    // DragDrop.DropArea signals in Qt 6. Arrow-function binding form
+    // is required. Widget Explorer drops (text/x-plasmoidservicename)
+    // are handled by the C++ path; QML onDrop returns early for this
+    // mime to avoid double-creation with handlePlasmoidDrop().
+    QFile dnd(QStringLiteral(LATTE_SOURCE_DIR
+                             "/containment/package/contents/ui/DragDropArea.qml"));
+    QVERIFY(dnd.open(QFile::ReadOnly));
+    const QString dndSource = QString::fromUtf8(dnd.readAll());
+    QVERIFY(dndSource.contains(QStringLiteral("onDragEnter:")));
+    QVERIFY(dndSource.contains(QStringLiteral("onDragMove:")));
+    QVERIFY(dndSource.contains(QStringLiteral("onDrop:")));
+    QVERIFY(!dndSource.contains(QStringLiteral("function onDragEnter(event)")));
+    QVERIFY(!dndSource.contains(QStringLiteral("function onDragMove(event)")));
+    QVERIFY(!dndSource.contains(QStringLiteral("function onDrop(event)")));
+    // Mime split guard: prevents QML double-handling Widget Explorer drops
+    QVERIFY(dndSource.contains(QStringLiteral("text/x-plasmoidservicename")));
+}
 
 // ── Infinite-loop guard contracts ────────────────────────────────────
 
@@ -2900,7 +2902,7 @@ void SourceContractTest::importerUniqueLayoutNameHasIterationCap()
 void SourceContractTest::viewscontrollerUniqueViewNameHasIterationCap()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/app/settings/viewsdialog/viewscontroller.cpp"));
+                           "/app/settings/viewsdialog/viewscontroller.cpp"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2911,7 +2913,7 @@ void SourceContractTest::viewscontrollerUniqueViewNameHasIterationCap()
 void SourceContractTest::layoutscontrollerUniqueLayoutNameHasIterationCap()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/app/settings/settingsdialog/layoutscontroller.cpp"));
+                           "/app/settings/settingsdialog/layoutscontroller.cpp"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2959,7 +2961,7 @@ void SourceContractTest::originalViewCleanClonesDrainsFromLocalCopy()
 void SourceContractTest::layoutManagerResolveAppletQuickItemUsesVisitedSet()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/containment/plugin/layoutmanager.cpp"));
+                           "/containment/plugin/layoutmanager.cpp"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
@@ -2972,7 +2974,7 @@ void SourceContractTest::layoutManagerResolveAppletQuickItemUsesVisitedSet()
 void SourceContractTest::levelOptionsHasIsBackgroundIsForegroundReentryGuards()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR
-        "/declarativeimports/abilities/items/indicators/LevelOptions.qml"));
+                           "/declarativeimports/abilities/items/indicators/LevelOptions.qml"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 

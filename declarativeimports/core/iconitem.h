@@ -214,4 +214,5 @@ private:
 };
 
 }
+
 #endif // ICONITEM_H

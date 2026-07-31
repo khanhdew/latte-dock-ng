@@ -62,55 +62,55 @@ inline bool shouldRespectExternalPanelsForVerticalDock(Types::Alignment alignmen
     }
 
     return verticalDockTouchesTopLengthEdge(alignment, maxLength, offset)
-            || verticalDockTouchesBottomLengthEdge(alignment, maxLength, offset);
+           || verticalDockTouchesBottomLengthEdge(alignment, maxLength, offset);
 }
 
 inline Plasma::Types::FormFactor dockFormFactorForLocation(Plasma::Types::Location location,
-                                                           Plasma::Types::FormFactor fallback)
+        Plasma::Types::FormFactor fallback)
 {
     switch (location) {
-    case Plasma::Types::LeftEdge:
-    case Plasma::Types::RightEdge:
-        return Plasma::Types::Vertical;
+        case Plasma::Types::LeftEdge:
+        case Plasma::Types::RightEdge:
+            return Plasma::Types::Vertical;
 
-    case Plasma::Types::TopEdge:
-    case Plasma::Types::BottomEdge:
-        return Plasma::Types::Horizontal;
+        case Plasma::Types::TopEdge:
+        case Plasma::Types::BottomEdge:
+            return Plasma::Types::Horizontal;
 
-    default:
-        return fallback;
+        default:
+            return fallback;
     }
 }
 
 inline Types::Alignment dockAlignmentForLocation(Plasma::Types::Location location, Types::Alignment alignment)
 {
     switch (location) {
-    case Plasma::Types::LeftEdge:
-    case Plasma::Types::RightEdge:
-        if (alignment == Types::Left) {
-            return Types::Top;
-        }
+        case Plasma::Types::LeftEdge:
+        case Plasma::Types::RightEdge:
+            if (alignment == Types::Left) {
+                return Types::Top;
+            }
 
-        if (alignment == Types::Right) {
-            return Types::Bottom;
-        }
+            if (alignment == Types::Right) {
+                return Types::Bottom;
+            }
 
-        return alignment;
+            return alignment;
 
-    case Plasma::Types::TopEdge:
-    case Plasma::Types::BottomEdge:
-        if (alignment == Types::Top) {
-            return Types::Left;
-        }
+        case Plasma::Types::TopEdge:
+        case Plasma::Types::BottomEdge:
+            if (alignment == Types::Top) {
+                return Types::Left;
+            }
 
-        if (alignment == Types::Bottom) {
-            return Types::Right;
-        }
+            if (alignment == Types::Bottom) {
+                return Types::Right;
+            }
 
-        return alignment;
+            return alignment;
 
-    default:
-        return alignment;
+        default:
+            return alignment;
     }
 }
 
@@ -169,22 +169,22 @@ inline QRect screenEdgePanelGeometry(const QRect &screenGeometry, Plasma::Types:
     }
 
     switch (location) {
-    case Plasma::Types::TopEdge:
-        return QRect(screenGeometry.x(), screenGeometry.y(), screenGeometry.width(), qMin(thickness, screenGeometry.height()));
+        case Plasma::Types::TopEdge:
+            return QRect(screenGeometry.x(), screenGeometry.y(), screenGeometry.width(), qMin(thickness, screenGeometry.height()));
 
-    case Plasma::Types::BottomEdge:
-        thickness = qMin(thickness, screenGeometry.height());
-        return QRect(screenGeometry.x(), screenGeometry.bottom() - thickness + 1, screenGeometry.width(), thickness);
+        case Plasma::Types::BottomEdge:
+            thickness = qMin(thickness, screenGeometry.height());
+            return QRect(screenGeometry.x(), screenGeometry.bottom() - thickness + 1, screenGeometry.width(), thickness);
 
-    case Plasma::Types::LeftEdge:
-        return QRect(screenGeometry.x(), screenGeometry.y(), qMin(thickness, screenGeometry.width()), screenGeometry.height());
+        case Plasma::Types::LeftEdge:
+            return QRect(screenGeometry.x(), screenGeometry.y(), qMin(thickness, screenGeometry.width()), screenGeometry.height());
 
-    case Plasma::Types::RightEdge:
-        thickness = qMin(thickness, screenGeometry.width());
-        return QRect(screenGeometry.right() - thickness + 1, screenGeometry.y(), thickness, screenGeometry.height());
+        case Plasma::Types::RightEdge:
+            thickness = qMin(thickness, screenGeometry.width());
+            return QRect(screenGeometry.right() - thickness + 1, screenGeometry.y(), thickness, screenGeometry.height());
 
-    default:
-        return QRect();
+        default:
+            return QRect();
     }
 }
 

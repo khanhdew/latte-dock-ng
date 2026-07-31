@@ -46,16 +46,16 @@ void TabPreferences::initUi()
     m_thicknessMarginInfluenceButtons->addButton(m_ui->fullMarginInfluenceBtn, 100); // 100%
     m_thicknessMarginInfluenceButtons->setExclusive(true);
 
-    m_ui->noMarginInfluenceBtn->setText(i18nc("number in percentage, e.g. 85%","%1%", 0));
-    m_ui->halfMarginInfluenceBtn->setText(i18nc("number in percentage, e.g. 85%","%1%", 50));
-    m_ui->fullMarginInfluenceBtn->setText(i18nc("number in percentage, e.g. 85%","%1%", 100));
+    m_ui->noMarginInfluenceBtn->setText(i18nc("number in percentage, e.g. 85%", "%1%", 0));
+    m_ui->halfMarginInfluenceBtn->setText(i18nc("number in percentage, e.g. 85%", "%1%", 50));
+    m_ui->fullMarginInfluenceBtn->setText(i18nc("number in percentage, e.g. 85%", "%1%", 100));
 
     //! Buttons
     connect(m_ui->contextMenuActionsBtn, &QPushButton::clicked, this, &TabPreferences::onActionsBtnPressed);
 
     //! signals
     connect(m_parabolicSpreadButtons, &QButtonGroup::idToggled,
-            [ = ](int id, bool checked) {
+    [ = ](int id, bool checked) {
         if (checked) {
             m_preferences.parabolicSpread = id;
             Q_EMIT dataChanged();
@@ -63,7 +63,7 @@ void TabPreferences::initUi()
     });
 
     connect(m_thicknessMarginInfluenceButtons, &QButtonGroup::idToggled,
-            [ = ](int id, bool checked) {
+    [ = ](int id, bool checked) {
         if (checked) {
             m_preferences.thicknessMarginInfluence = (id / 100.0f);
             Q_EMIT dataChanged();

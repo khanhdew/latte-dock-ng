@@ -52,11 +52,11 @@ void drawView(QPainter *painter, const QStyleOption &option, const Latte::Data::
     int screen_edge = (view.screenEdgeMargin > 0) ? kMargin : 0;
 
     if (view.edge == Plasma::Types::TopEdge) {
-        y = availableScreenRect.y() + thick/2 + screen_edge;
+        y = availableScreenRect.y() + thick / 2 + screen_edge;
     } else if (view.edge == Plasma::Types::BottomEdge) {
         y = availableScreenRect.y() + availableScreenRect.height() - 1 - screen_edge;
     } else if (view.edge == Plasma::Types::LeftEdge) {
-        x = availableScreenRect.x() + thick/2 + screen_edge;
+        x = availableScreenRect.x() + thick / 2 + screen_edge;
     } else if (view.edge == Plasma::Types::RightEdge) {
         x = availableScreenRect.x() + availableScreenRect.width() - 1 - screen_edge;
     }
@@ -67,7 +67,7 @@ void drawView(QPainter *painter, const QStyleOption &option, const Latte::Data::
         } else if (view.alignment == Latte::Types::Right) {
             x = availableScreenRect.x() + availableScreenRect.width() - length - 1;
         } else if (view.alignment == Latte::Types::Center) {
-            int leftmargin = (availableScreenRect.width()/2) - (length/2);
+            int leftmargin = (availableScreenRect.width() / 2) - (length / 2);
             x = availableScreenRect.x() + leftmargin + 1;
         } else if (view.alignment == Latte::Types::Justify) {
             x = availableScreenRect.x() + thick / 2;
@@ -78,7 +78,7 @@ void drawView(QPainter *painter, const QStyleOption &option, const Latte::Data::
         } else if (view.alignment == Latte::Types::Bottom) {
             y = availableScreenRect.y() + availableScreenRect.height() - length - 1;
         } else if (view.alignment == Latte::Types::Center) {
-            int topmargin = (availableScreenRect.height()/2) - (length/2);
+            int topmargin = (availableScreenRect.height() / 2) - (length / 2);
             y = availableScreenRect.y() + topmargin + 1;
         } else if (view.alignment == Latte::Types::Justify) {
             y = availableScreenRect.y() + thick / 2;

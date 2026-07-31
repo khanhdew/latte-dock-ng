@@ -324,6 +324,7 @@ void LastActiveWindow::setIsVirtualDesktopsChangeable(bool virtualdestkopschange
     m_isVirtualDesktopsChangeable = virtualdestkopschangeable;
     Q_EMIT isVirtualDesktopChangeableChanged();
 }
+
 //! END: Window Abitilities
 
 
@@ -364,7 +365,7 @@ QString LastActiveWindow::colorScheme() const
 
 void LastActiveWindow::setColorScheme(QString scheme)
 {
-    if (m_colorScheme == scheme){
+    if (m_colorScheme == scheme) {
         return;
     }
 
@@ -417,6 +418,7 @@ void LastActiveWindow::setInformation(const WindowInfoWrap &info)
 {
     if (!m_trackedInfo->isTracking(info)) {
         removeFromHistory(info.wid());
+
         if (m_currentWinId == info.wid()) {
             updateInformationFromHistory();
         }
@@ -505,6 +507,7 @@ void LastActiveWindow::windowChanged(const WindowId &wid)
 
         if (!m_trackedInfo->isTracking(historyitem)) {
             removeFromHistory(wid);
+
             if (m_currentWinId == wid) {
                 updateInformationFromHistory();
             }
@@ -532,7 +535,8 @@ void LastActiveWindow::cleanHistory()
 {
     if (m_history.count() > MAXHISTORY) {
         int size = m_history.count();
-        for(int i=0; i<(size-PREFHISTORY); ++i) {
+
+        for (int i = 0; i < (size - PREFHISTORY); ++i) {
             if (!m_history.isEmpty()) {
                 m_history.removeLast();
             }
@@ -559,7 +563,7 @@ void LastActiveWindow::removeFromHistory(const WindowId &wid)
 
 void LastActiveWindow::updateInformationFromHistory()
 {
-    for(int i=0; i<m_history.count(); ++i) {
+    for (int i = 0; i < m_history.count(); ++i) {
         WindowInfoWrap historyitem = m_windowsTracker->infoFor(m_history[i]);
 
         if (m_trackedInfo->isTracking(historyitem) && m_trackedInfo->isShown(historyitem)) {
@@ -574,6 +578,7 @@ void LastActiveWindow::updateInformationFromHistory()
 void LastActiveWindow::updateColorScheme()
 {
     auto scheme = m_wm->schemesTracker()->schemeForWindow(m_currentWinId);
+
     if (scheme) {
         setColorScheme(scheme->schemeFile());
     }

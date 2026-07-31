@@ -30,8 +30,8 @@
 #define REVERSEDCOLORSCHEME QStringLiteral("reversed.colors")
 
 #if defined(Q_CC_CLANG)
-QT_WARNING_PUSH
-QT_WARNING_DISABLE_CLANG("-Wcast-align")
+    QT_WARNING_PUSH
+    QT_WARNING_DISABLE_CLANG("-Wcast-align")
 #endif
 
 namespace Latte {
@@ -188,6 +188,7 @@ void Theme::setOriginalSchemeFile(const QString &file)
 void Theme::updateDefaultScheme()
 {
     QString defaultFilePath = m_extendedThemeDir.path() + QLatin1String("/") + DEFAULTCOLORSCHEME;
+
     if (QFileInfo(defaultFilePath).exists()) {
         QFile(defaultFilePath).remove();
     }
@@ -259,7 +260,7 @@ void Theme::updateReversedSchemeValues()
                 KConfigGroup reversedGroup(reversedPtr, groupName);
 
                 if (reversedGroup.keyList().contains(QStringLiteral("BackgroundNormal"))
-                        && reversedGroup.keyList().contains(QStringLiteral("ForegroundNormal"))) {
+                    && reversedGroup.keyList().contains(QStringLiteral("ForegroundNormal"))) {
                     //! reverse usual text/background values
                     KConfigGroup originalGroup(originalPtr, groupName);
 
@@ -276,9 +277,9 @@ void Theme::updateReversedSchemeValues()
         KConfigGroup normalWindowGroup(originalPtr, QStringLiteral("Colors:Window"));
 
         if (reversedWMGroup.keyList().contains(QStringLiteral("activeBackground"))
-                && reversedWMGroup.keyList().contains(QStringLiteral("activeForeground"))
-                && reversedWMGroup.keyList().contains(QStringLiteral("inactiveBackground"))
-                && reversedWMGroup.keyList().contains(QStringLiteral("inactiveForeground"))) {
+            && reversedWMGroup.keyList().contains(QStringLiteral("activeForeground"))
+            && reversedWMGroup.keyList().contains(QStringLiteral("inactiveBackground"))
+            && reversedWMGroup.keyList().contains(QStringLiteral("inactiveForeground"))) {
             //! reverse usual wm titlebar values
             KConfigGroup originalGroup(originalPtr, QStringLiteral("WM"));
             reversedWMGroup.writeEntry(QStringLiteral("activeBackground"), normalWindowGroup.readEntry(QStringLiteral("ForegroundNormal"), QColor()));
@@ -289,7 +290,7 @@ void Theme::updateReversedSchemeValues()
         }
 
         if (reversedWMGroup.keyList().contains(QStringLiteral("activeBlend"))
-                && reversedWMGroup.keyList().contains(QStringLiteral("inactiveBlend"))) {
+            && reversedWMGroup.keyList().contains(QStringLiteral("inactiveBlend"))) {
             KConfigGroup originalGroup(originalPtr, QStringLiteral("WM"));
             reversedWMGroup.writeEntry(QStringLiteral("activeBlend"), originalGroup.readEntry(QStringLiteral("inactiveBlend"), QColor()));
             reversedWMGroup.writeEntry(QStringLiteral("inactiveBlend"), originalGroup.readEntry(QStringLiteral("activeBlend"), QColor()));
@@ -331,8 +332,8 @@ void Theme::updateHasShadow()
 
     int fullTransparentPixels = 0;
 
-    for(int c=0; c<corner.width(); ++c) {
-        for(int r=0; r<corner.height(); ++r) {
+    for (int c = 0; c < corner.width(); ++c) {
+        for (int r = 0; r < corner.height(); ++r) {
             QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(r));
             QRgb point = line[c];
 
@@ -344,7 +345,7 @@ void Theme::updateHasShadow()
 
     int pixels = (corner.width() * corner.height());
 
-    m_hasShadow = (fullTransparentPixels != pixels );
+    m_hasShadow = (fullTransparentPixels != pixels);
     Q_EMIT hasShadowChanged();
 
     qCDebug(lattePlasma) << "  PLASMA THEME TOPLEFT SHADOW :: pixels : " << pixels << "  transparent pixels" << fullTransparentPixels << " | HAS SHADOWS :" << m_hasShadow;
@@ -440,17 +441,19 @@ const CornerRegions &Theme::cornersMask(const int &radius)
     pen.setWidth(1);
     painter.setPen(pen);
 
-    QRect rectArea(0,0,axis,axis);
+    QRect rectArea(0, 0, axis, axis);
     painter.fillRect(rectArea, Qt::white);
     painter.drawRoundedRect(rectArea, axis, axis);
 
     QRegion topleft;
-    for(int y=0; y<radius; ++y) {
+
+    for (int y = 0; y < radius; ++y) {
         QRgb *line = reinterpret_cast<QRgb *>(cornerimage.scanLine(y));
 
         QString bits;
         int width{0};
-        for(int x=0; x<radius; ++x) {
+
+        for (int x = 0; x < radius; ++x) {
             QRgb point = line[x];
 
             if (QColor(point) != Qt::white) {
@@ -462,12 +465,13 @@ const CornerRegions &Theme::cornersMask(const int &radius)
             }
         }
 
-        if (width>0) {
+        if (width > 0) {
             topleft += QRect(0, y, width, 1);
         }
 
-        qCDebug(lattePlasma)<< "  " << bits;
+        qCDebug(lattePlasma) << "  " << bits;
     }
+
     corners.topLeft = topleft;
 
     QTransform transform;
@@ -520,8 +524,8 @@ void Theme::updateMarginsAreaValues()
     }
 
     qCDebug(lattePlasma) << "PLASMA THEME MARGINS AREA ::" <<
-                m_marginsAreaTop << m_marginsAreaLeft <<
-                m_marginsAreaBottom << m_marginsAreaRight;
+                         m_marginsAreaTop << m_marginsAreaLeft <<
+                         m_marginsAreaBottom << m_marginsAreaRight;
 
     svg->deleteLater();
 
@@ -546,7 +550,7 @@ void Theme::qmlRegisterTypes()
 }
 
 #if defined(Q_CC_CLANG)
-QT_WARNING_POP
+    QT_WARNING_POP
 #endif
 
 }

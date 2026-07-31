@@ -12,8 +12,7 @@
 #include <QQuickItem>
 #include <QPointer>
 
-namespace KDeclarative
-{
+namespace KDeclarative {
 class QmlObjectSharedEngine;
 }
 

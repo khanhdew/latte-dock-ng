@@ -88,6 +88,7 @@ void LayoutName::paint(QPainter *painter, const QStyleOptionViewItem &option, co
 
     //! Changes Indicator
     QRect remainedrect = Latte::remainedFromChangesIndicator(myOptions);
+
     if (isChanged) {
         Latte::drawChangesIndicator(painter, option);
     }
@@ -96,11 +97,13 @@ void LayoutName::paint(QPainter *painter, const QStyleOptionViewItem &option, co
 
     if (hasErrors || hasWarnings) {
         remainedrect = Latte::remainedFromIcon(myOptions, Qt::AlignRight, -1, 2);
+
         if (hasErrors) {
             Latte::drawIcon(painter, myOptions, QStringLiteral("data-error"), Qt::AlignRight, -1, 2);
         } else if (hasWarnings) {
             Latte::drawIcon(painter, myOptions, QStringLiteral("data-warning"), Qt::AlignRight, -1, 2);
         }
+
         myOptions.rect = remainedrect;
     }
 

@@ -88,136 +88,148 @@ QEvent *EventsSink::onEvent(QEvent *e)
     QEvent *sunkevent = e;
 
     switch (e->type()) {
-    case QEvent::Leave:
-        release();
-        break;
-    case QEvent::DragEnter:
-        if (auto de = static_cast<QDragEnterEvent *>(e)) {
-            const QPointF point = de->position();
-            if (originSinksContain(point)) {
-                auto de2 = new QDragEnterEvent(positionAdjustedForDestination(point).toPoint(),
-                                               de->possibleActions(),
-                                               de->mimeData(),
-                                               de->buttons(),
-                                               de->modifiers());
-                sunkevent = de2;
-            } else if (!destinationContains(point)) {
-                release();
-            }
-        }
-        break;
+        case QEvent::Leave:
+            release();
+            break;
 
-    case QEvent::DragMove:
-        if (auto de = static_cast<QDragMoveEvent *>(e)) {
-            const QPointF point = de->position();
-            if (originSinksContain(point)) {
-                auto de2 = new QDragMoveEvent(positionAdjustedForDestination(point).toPoint(),
+        case QEvent::DragEnter:
+            if (auto de = static_cast<QDragEnterEvent *>(e)) {
+                const QPointF point = de->position();
+
+                if (originSinksContain(point)) {
+                    auto de2 = new QDragEnterEvent(positionAdjustedForDestination(point).toPoint(),
+                                                   de->possibleActions(),
+                                                   de->mimeData(),
+                                                   de->buttons(),
+                                                   de->modifiers());
+                    sunkevent = de2;
+                } else if (!destinationContains(point)) {
+                    release();
+                }
+            }
+
+            break;
+
+        case QEvent::DragMove:
+            if (auto de = static_cast<QDragMoveEvent *>(e)) {
+                const QPointF point = de->position();
+
+                if (originSinksContain(point)) {
+                    auto de2 = new QDragMoveEvent(positionAdjustedForDestination(point).toPoint(),
+                                                  de->possibleActions(),
+                                                  de->mimeData(),
+                                                  de->buttons(),
+                                                  de->modifiers());
+
+                    sunkevent = de2;
+                } else if (!destinationContains(point)) {
+                    release();
+                }
+            }
+
+            break;
+
+        case QEvent::Drop:
+            if (auto de = static_cast<QDropEvent *>(e)) {
+                const QPointF point = de->position();
+
+                if (originSinksContain(point)) {
+                    auto de2 = new QDropEvent(positionAdjustedForDestination(point).toPoint(),
                                               de->possibleActions(),
                                               de->mimeData(),
                                               de->buttons(),
                                               de->modifiers());
 
-                sunkevent = de2;
-            } else if (!destinationContains(point)) {
-                release();
+                    sunkevent = de2;
+                } else if (!destinationContains(point)) {
+                    release();
+                }
             }
-        }
-        break;
 
-    case QEvent::Drop:
-        if (auto de = static_cast<QDropEvent *>(e)) {
-            const QPointF point = de->position();
-            if (originSinksContain(point)) {
-                auto de2 = new QDropEvent(positionAdjustedForDestination(point).toPoint(),
-                                          de->possibleActions(),
-                                          de->mimeData(),
-                                          de->buttons(),
-                                          de->modifiers());
+            break;
 
-                sunkevent = de2;
-            } else if (!destinationContains(point)) {
-                release();
+        case QEvent::MouseMove:
+            if (auto me = dynamic_cast<QMouseEvent *>(e)) {
+                const QPointF scenePos = me->scenePosition();
+
+                if (m_view->positioner() && m_view->positioner()->isCursorInsideView() && originSinksContain(scenePos)) {
+                    auto positionadjusted = positionAdjustedForDestination(scenePos);
+                    auto me2 = new QMouseEvent(me->type(),
+                                               positionadjusted,
+                                               positionadjusted,
+                                               positionadjusted + m_view->position(),
+                                               me->button(), me->buttons(), me->modifiers());
+
+                    sunkevent = me2;
+                } else if (!destinationContains(scenePos)) {
+                    release();
+                }
             }
-        }
 
-        break;
+            break;
 
-    case QEvent::MouseMove:
-        if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-            const QPointF scenePos = me->scenePosition();
+        case QEvent::MouseButtonPress:
+            if (auto me = dynamic_cast<QMouseEvent *>(e)) {
+                const QPointF scenePos = me->scenePosition();
 
-            if (m_view->positioner() && m_view->positioner()->isCursorInsideView() && originSinksContain(scenePos)) {
-                auto positionadjusted = positionAdjustedForDestination(scenePos);
-                auto me2 = new QMouseEvent(me->type(),
-                                           positionadjusted,
-                                           positionadjusted,
-                                           positionadjusted + m_view->position(),
-                                           me->button(), me->buttons(), me->modifiers());
+                if (originSinksContain(scenePos)) {
+                    auto positionadjusted = positionAdjustedForDestination(scenePos);
+                    auto me2 = new QMouseEvent(me->type(),
+                                               positionadjusted,
+                                               positionadjusted,
+                                               positionadjusted + m_view->position(),
+                                               me->button(), me->buttons(), me->modifiers());
 
-                sunkevent = me2;
-            } else if (!destinationContains(scenePos)) {
-                release();
+                    qCDebug(latteView) << "Sunk Event:: sunk event pressed...";
+                    sunkevent = me2;
+                } else if (!destinationContains(scenePos)) {
+                    release();
+                }
             }
-        }
-        break;
 
-    case QEvent::MouseButtonPress:
-        if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-            const QPointF scenePos = me->scenePosition();
+            break;
 
-            if (originSinksContain(scenePos)) {
-                auto positionadjusted = positionAdjustedForDestination(scenePos);
-                auto me2 = new QMouseEvent(me->type(),
-                                           positionadjusted,
-                                           positionadjusted,
-                                           positionadjusted + m_view->position(),
-                                           me->button(), me->buttons(), me->modifiers());
+        case QEvent::MouseButtonRelease:
+            if (auto me = dynamic_cast<QMouseEvent *>(e)) {
+                const QPointF scenePos = me->scenePosition();
 
-                qCDebug(latteView) << "Sunk Event:: sunk event pressed...";
-                sunkevent = me2;
-            } else if (!destinationContains(scenePos)) {
-                release();
+                if (originSinksContain(scenePos)) {
+                    auto positionadjusted = positionAdjustedForDestination(scenePos);
+                    auto me2 = new QMouseEvent(me->type(),
+                                               positionadjusted,
+                                               positionadjusted,
+                                               positionadjusted + m_view->position(),
+                                               me->button(), me->buttons(), me->modifiers());
+
+                    sunkevent = me2;
+                } else if (!destinationContains(scenePos)) {
+                    release();
+                }
             }
-        }
-        break;
 
-    case QEvent::MouseButtonRelease:
-        if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-            const QPointF scenePos = me->scenePosition();
+            break;
 
-            if (originSinksContain(scenePos)) {
-                auto positionadjusted = positionAdjustedForDestination(scenePos);
-                auto me2 = new QMouseEvent(me->type(),
-                                           positionadjusted,
-                                           positionadjusted,
-                                           positionadjusted + m_view->position(),
-                                           me->button(), me->buttons(), me->modifiers());
+        case QEvent::Wheel:
+            if (auto we = dynamic_cast<QWheelEvent *>(e)) {
+                QPoint pos = we->position().toPoint();
 
-                sunkevent = me2;
-            } else if (!destinationContains(scenePos)) {
-                release();
+                if (originSinksContain(pos)) {
+                    auto positionadjusted = positionAdjustedForDestination(pos);
+                    auto we2 = new QWheelEvent(positionadjusted,
+                                               positionadjusted + m_view->position(),
+                                               we->pixelDelta(), we->angleDelta(),
+                                               we->buttons(), we->modifiers(), we->phase(), false);
+
+                    sunkevent = we2;
+                } else if (!destinationContains(pos)) {
+                    release();
+                }
             }
-        }
-        break;
 
-    case QEvent::Wheel:
-        if (auto we = dynamic_cast<QWheelEvent *>(e)) {
-            QPoint pos = we->position().toPoint();
-            if (originSinksContain(pos)) {
-                auto positionadjusted = positionAdjustedForDestination(pos);
-                auto we2 = new QWheelEvent(positionadjusted,
-                                           positionadjusted + m_view->position(),
-                                           we->pixelDelta(), we->angleDelta(),
-                                           we->buttons(), we->modifiers(), we->phase(), false);
+            break;
 
-                sunkevent = we2;
-            } else if (!destinationContains(pos)) {
-                release();
-            }
-        }
-        break;
-    default:
-        break;
+        default:
+            break;
     }
 
     return sunkevent;
@@ -230,7 +242,7 @@ QPointF EventsSink::positionAdjustedForDestination(const QPointF &point) const
     }
 
     const QRectF destinationRectToScene = m_destinationItem->mapRectToScene(
-        QRectF(0, 0, m_destinationItem->width() - 1, m_destinationItem->height() - 1));
+            QRectF(0, 0, m_destinationItem->width() - 1, m_destinationItem->height() - 1));
 
     return QPointF(safeClamp(destinationRectToScene.left(), point.x(), destinationRectToScene.right()),
                    safeClamp(destinationRectToScene.top(), point.y(), destinationRectToScene.bottom()));
@@ -243,7 +255,7 @@ bool EventsSink::destinationContains(const QPointF &point) const
     }
 
     const QRectF destinationRectToScene = m_destinationItem->mapRectToScene(
-        QRectF(0, 0, m_destinationItem->width() - 1, m_destinationItem->height() - 1));
+            QRectF(0, 0, m_destinationItem->width() - 1, m_destinationItem->height() - 1));
 
     return destinationRectToScene.normalized().contains(point);
 }
@@ -252,7 +264,7 @@ bool EventsSink::originSinksContain(const QPointF &point) const
 {
     QRegion originsRegion;
 
-    for(const auto currentOrigin: m_originParentItem->childItems()) {
+    for (const auto currentOrigin : m_originParentItem->childItems()) {
         QRectF currentOriginGeometry = currentOrigin->mapRectToScene(QRectF(0, 0, currentOrigin->width(), currentOrigin->height()));
         originsRegion = originsRegion.united(currentOriginGeometry.toRect());
     }

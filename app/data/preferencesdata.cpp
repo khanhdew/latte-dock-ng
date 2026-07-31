@@ -80,14 +80,14 @@ Preferences &Preferences::operator=(Preferences &&rhs)
 bool Preferences::operator==(const Preferences &rhs) const
 {
     return (badgeStyle3D == rhs.badgeStyle3D)
-            && (layoutsInformationWindow == rhs.layoutsInformationWindow)
-            && (autostart == rhs.autostart)
-            && (contextMenuAlwaysActions == rhs.contextMenuAlwaysActions)
-            && (isAvailableGeometryBroadcastedToPlasma == rhs.isAvailableGeometryBroadcastedToPlasma)
-            && (metaHoldForBadges == rhs.metaHoldForBadges)
-            && (parabolicSpread == rhs.parabolicSpread)
-            && (thicknessMarginInfluence == rhs.thicknessMarginInfluence)
-            && (screensDelay == rhs.screensDelay);
+           && (layoutsInformationWindow == rhs.layoutsInformationWindow)
+           && (autostart == rhs.autostart)
+           && (contextMenuAlwaysActions == rhs.contextMenuAlwaysActions)
+           && (isAvailableGeometryBroadcastedToPlasma == rhs.isAvailableGeometryBroadcastedToPlasma)
+           && (metaHoldForBadges == rhs.metaHoldForBadges)
+           && (parabolicSpread == rhs.parabolicSpread)
+           && (thicknessMarginInfluence == rhs.thicknessMarginInfluence)
+           && (screensDelay == rhs.screensDelay);
 }
 
 bool Preferences::operator!=(const Preferences &rhs) const
@@ -98,14 +98,14 @@ bool Preferences::operator!=(const Preferences &rhs) const
 bool Preferences::inDefaultValues() const
 {
     return (badgeStyle3D == BADGE3DSTYLE)
-            && (layoutsInformationWindow == LAYOUTSINFORMATIONWINDOW)
-            && (autostart == AUTOSTART)
-            && (contextMenuAlwaysActions == Data::ContextMenu::ACTIONSALWAYSVISIBLE)
-            && (isAvailableGeometryBroadcastedToPlasma == ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA)
-            && (metaHoldForBadges == METAHOLDFORBADGES)
-            && (parabolicSpread == PARABOLICSPREAD)
-            && (thicknessMarginInfluence == THICKNESSMARGININFLUENCE)
-            && (screensDelay == SCREENSDELAY);
+           && (layoutsInformationWindow == LAYOUTSINFORMATIONWINDOW)
+           && (autostart == AUTOSTART)
+           && (contextMenuAlwaysActions == Data::ContextMenu::ACTIONSALWAYSVISIBLE)
+           && (isAvailableGeometryBroadcastedToPlasma == ISAVAILABLEGEOMETRYBROADCASTEDTOPLASMA)
+           && (metaHoldForBadges == METAHOLDFORBADGES)
+           && (parabolicSpread == PARABOLICSPREAD)
+           && (thicknessMarginInfluence == THICKNESSMARGININFLUENCE)
+           && (screensDelay == SCREENSDELAY);
 }
 
 void Preferences::setToDefaults()

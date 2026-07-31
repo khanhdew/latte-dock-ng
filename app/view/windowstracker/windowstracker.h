@@ -12,7 +12,7 @@
 // Qt
 #include <QObject>
 
-namespace Latte{
+namespace Latte {
 class View;
 
 namespace ViewPart {
@@ -30,7 +30,8 @@ class AbstractWindowInterface;
 namespace Latte {
 namespace ViewPart {
 
-class WindowsTracker : public QObject {
+class WindowsTracker : public QObject
+{
     Q_OBJECT
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
 

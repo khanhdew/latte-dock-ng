@@ -36,10 +36,10 @@ namespace {
 QDBusMessage callLatte(const QString &method, const QVariantList &args = {})
 {
     QDBusMessage msg = QDBusMessage::createMethodCall(
-        QStringLiteral("org.kde.lattedock"),
-        QStringLiteral("/Latte"),
-        QString(),
-        method);
+                           QStringLiteral("org.kde.lattedock"),
+                           QStringLiteral("/Latte"),
+                           QString(),
+                           method);
     msg.setArguments(args);
     return QDBusConnection::sessionBus().call(msg);
 }
@@ -53,21 +53,19 @@ const int LAYOUTMENUINDEX = 4;
 const int VIEWLAYOUTINDEX = 5;
 const int VIEWTYPEINDEX = 6;
 
-enum LayoutsMemoryUsage
-{
+enum LayoutsMemoryUsage {
     SingleLayout = 0,
     MultipleLayouts
 };
 
-enum LatteConfigPage
-{
+enum LatteConfigPage {
     LayoutPage = 0,
     PreferencesPage
 };
 
 template<typename T>
 inline auto registerContainmentAction(T *containment, const QString &name, QAction *action, int)
-    -> decltype(containment->actions()->addAction(name, action), void())
+-> decltype(containment->actions()->addAction(name, action), void())
 {
     if (containment && action) {
         containment->actions()->addAction(name, action);
@@ -188,37 +186,40 @@ void Menu::restore(const KConfigGroup &)
     //! Configure Latte
     m_actions[Latte::Data::ContextMenu::PREFERENCESACTION] = new QAction(QIcon::fromTheme(QStringLiteral("configure")), i18nc("global settings window", "&Configure Latte..."), this);
     registerContainmentAction(this->containment(), Latte::Data::ContextMenu::PREFERENCESACTION, m_actions[Latte::Data::ContextMenu::PREFERENCESACTION], 0);
-    connect(m_actions[Latte::Data::ContextMenu::PREFERENCESACTION], &QAction::triggered, [=](){
+    connect(m_actions[Latte::Data::ContextMenu::PREFERENCESACTION], &QAction::triggered, [ = ]() {
         callLatte(QStringLiteral("showSettingsWindow"),
-                  {QVariant::fromValue((int)PreferencesPage)});
+        {QVariant::fromValue((int)PreferencesPage)});
     });
 
     //! Duplicate Action
     m_actions[Latte::Data::ContextMenu::DUPLICATEVIEWACTION] = new QAction(QIcon::fromTheme(QStringLiteral("edit-copy")), QStringLiteral("Duplicate Dock as Template"), this);
-    connect(m_actions[Latte::Data::ContextMenu::DUPLICATEVIEWACTION], &QAction::triggered, [=](){
+    connect(m_actions[Latte::Data::ContextMenu::DUPLICATEVIEWACTION], &QAction::triggered, [ = ]() {
         callLatte(QStringLiteral("duplicateView"),
-                  {QVariant::fromValue(containment()->id())});
+        {QVariant::fromValue(containment()->id())});
     });
+
     registerContainmentAction(this->containment(), Latte::Data::ContextMenu::DUPLICATEVIEWACTION, m_actions[Latte::Data::ContextMenu::DUPLICATEVIEWACTION], 0);
 
     //! Export View Template Action
     m_actions[Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION] = new QAction(QIcon::fromTheme(QStringLiteral("document-export")), QStringLiteral("Export as Template..."), this);
-    connect(m_actions[Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION], &QAction::triggered, [=](){
+    connect(m_actions[Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION], &QAction::triggered, [ = ]() {
         callLatte(QStringLiteral("exportViewTemplate"),
-                  {QVariant::fromValue(containment()->id())});
+        {QVariant::fromValue(containment()->id())});
     });
+
     registerContainmentAction(this->containment(), Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION, m_actions[Latte::Data::ContextMenu::EXPORTVIEWTEMPLATEACTION], 0);
 
     //! Remove Action
     m_actions[Latte::Data::ContextMenu::REMOVEVIEWACTION] = new QAction(QIcon::fromTheme(QStringLiteral("delete")), QStringLiteral("Remove Dock"), this);
-    connect(m_actions[Latte::Data::ContextMenu::REMOVEVIEWACTION], &QAction::triggered, [=](){
+    connect(m_actions[Latte::Data::ContextMenu::REMOVEVIEWACTION], &QAction::triggered, [ = ]() {
         callLatte(QStringLiteral("removeView"),
-                  {QVariant::fromValue(containment()->id())});
+        {QVariant::fromValue(containment()->id())});
     });
+
     registerContainmentAction(this->containment(), Latte::Data::ContextMenu::REMOVEVIEWACTION, m_actions[Latte::Data::ContextMenu::REMOVEVIEWACTION], 0);
 
     //! Signals
-    connect(this->containment(), &Plasma::Containment::userConfiguringChanged, [=](){
+    connect(this->containment(), &Plasma::Containment::userConfiguringChanged, [ = ]() {
         updateVisibleActions();
     });
 }
@@ -243,9 +244,11 @@ QList<QAction *> Menu::contextualActions()
 
     actions << m_actions[Latte::Data::ContextMenu::SECTIONACTION];
     actions << m_actions[Latte::Data::ContextMenu::PRINTACTION];
-    for(int i=0; i<Latte::Data::ContextMenu::ACTIONSEDITORDER.count(); ++i) {
+
+    for (int i = 0; i < Latte::Data::ContextMenu::ACTIONSEDITORDER.count(); ++i) {
         actions << m_actions[Latte::Data::ContextMenu::ACTIONSEDITORDER[i]];
     }
+
     actions << m_actions[Latte::Data::ContextMenu::EDITVIEWACTION];
 
     m_data.clear();
@@ -253,12 +256,14 @@ QList<QAction *> Menu::contextualActions()
 
     {
         QDBusMessage reply = callLatte(QStringLiteral("contextMenuData"),
-                                       {QVariant::fromValue(containment()->id())});
+        {QVariant::fromValue(containment()->id())});
+
         if (reply.type() == QDBusMessage::ReplyMessage && !reply.arguments().isEmpty()) {
             m_data = reply.arguments().first().toStringList();
         }
 
         QDBusMessage tReply = callLatte(QStringLiteral("viewTemplatesData"));
+
         if (tReply.type() == QDBusMessage::ReplyMessage && !tReply.arguments().isEmpty()) {
             m_viewTemplates = tReply.arguments().first().toStringList();
         }
@@ -269,9 +274,11 @@ QList<QAction *> Menu::contextualActions()
     updateViewData();
 
     QString configureActionText = i18n("&Edit Dock...");
+
     if (m_view.isCloned) {
         configureActionText = i18n("&Edit Original Dock...");
     }
+
     m_actions[Latte::Data::ContextMenu::EDITVIEWACTION]->setText(configureActionText);
 
     m_actions[Latte::Data::ContextMenu::DUPLICATEVIEWACTION]->setText(i18n("&Duplicate Dock"));
@@ -300,14 +307,14 @@ QAction *Menu::action(const QString &name)
 void Menu::updateVisibleActions()
 {
     if (!m_actions.contains(Latte::Data::ContextMenu::EDITVIEWACTION)
-            || !m_actions.contains(Latte::Data::ContextMenu::REMOVEVIEWACTION)) {
+        || !m_actions.contains(Latte::Data::ContextMenu::REMOVEVIEWACTION)) {
         return;
     }
 
     bool configuring = containment()->isUserConfiguring();
 
     // normal actions that the user can specify their visibility
-    for(auto actionName: m_actions.keys()) {
+    for (auto actionName : m_actions.keys()) {
         if (Latte::Data::ContextMenu::ACTIONSSPECIAL.contains(actionName)) {
             continue;
         } else if (Latte::Data::ContextMenu::ACTIONSALWAYSHIDDEN.contains(actionName)) {
@@ -320,7 +327,7 @@ void Menu::updateVisibleActions()
     }
 
     // normal actions with more criteria
-    bool isshown = (m_actions[Latte::Data::ContextMenu::MOVEVIEWACTION]->isVisible() && m_activeLayoutNames.count()>1);
+    bool isshown = (m_actions[Latte::Data::ContextMenu::MOVEVIEWACTION]->isVisible() && m_activeLayoutNames.count() > 1);
     m_actions[Latte::Data::ContextMenu::MOVEVIEWACTION]->setVisible(isshown);
 
     // special actions
@@ -335,7 +342,7 @@ void Menu::updateVisibleActions()
     }
 
     // because sometimes they are disabled unexpectedly, we should reenable them
-    for(auto actionName: m_actions.keys()) {
+    for (auto actionName : m_actions.keys()) {
         m_actions[actionName]->setEnabled(true);
     }
 }
@@ -353,7 +360,7 @@ void Menu::populateLayouts()
 
     QStringList layoutsdata = m_data[LAYOUTMENUINDEX].split(QStringLiteral(";;"));
 
-    for (int i=0; i<layoutsdata.count(); ++i) {
+    for (int i = 0; i < layoutsdata.count(); ++i) {
         QStringList cdata = layoutsdata[i].split(QStringLiteral("**"));
 
         LayoutInfo info;
@@ -414,7 +421,7 @@ void Menu::populateMoveToLayouts()
 
         QStringList layoutsdata = m_data[LAYOUTMENUINDEX].split(QStringLiteral(";;"));
 
-        for (int i=0; i<layoutsdata.count(); ++i) {
+        for (int i = 0; i < layoutsdata.count(); ++i) {
             QStringList cdata = layoutsdata[i].split(QStringLiteral("**"));
 
             LayoutInfo info;
@@ -453,7 +460,7 @@ void Menu::populateViewTemplates()
 {
     m_addViewMenu->clear();
 
-    for(int i=0; i<m_viewTemplates.count(); ++i) {
+    for (int i = 0; i < m_viewTemplates.count(); ++i) {
         if (i % 2 == 1) {
             //! even records are the templates ids and they have already been registered
             continue;
@@ -461,7 +468,7 @@ void Menu::populateViewTemplates()
 
         QAction *templateAction = m_addViewMenu->addAction(m_viewTemplates[i]);
         templateAction->setIcon(QIcon::fromTheme(QStringLiteral("list-add")));
-        templateAction->setData(m_viewTemplates[i+1]);
+        templateAction->setData(m_viewTemplates[i + 1]);
     }
 
     m_addViewMenu->addSeparator();
@@ -477,7 +484,7 @@ void Menu::addView(QAction *action)
 
     QTimer::singleShot(kDbusCallDelayMs, [this, templateId]() {
         callLatte(QStringLiteral("addView"),
-                  {QVariant::fromValue(containment()->id()), QVariant::fromValue(templateId)});
+        {QVariant::fromValue(containment()->id()), QVariant::fromValue(templateId)});
     });
 }
 
@@ -487,7 +494,7 @@ void Menu::moveToLayout(QAction *action)
 
     QTimer::singleShot(kDbusCallDelayMs, [this, layoutName]() {
         callLatte(QStringLiteral("moveViewToLayout"),
-                  {QVariant::fromValue(containment()->id()), QVariant::fromValue(layoutName)});
+        {QVariant::fromValue(containment()->id()), QVariant::fromValue(layoutName)});
     });
 }
 
@@ -498,12 +505,12 @@ void Menu::switchToLayout(QAction *action)
     if (layout == QLatin1String(" _show_latte_settings_dialog_")) {
         QTimer::singleShot(kDbusCallDelayMs, []() {
             callLatte(QStringLiteral("showSettingsWindow"),
-                      {QVariant::fromValue((int)LayoutPage)});
+            {QVariant::fromValue((int)LayoutPage)});
         });
     } else {
         QTimer::singleShot(kDbusCallDelayMs, [layout]() {
             callLatte(QStringLiteral("switchToLayout"),
-                      {QVariant::fromValue(layout)});
+            {QVariant::fromValue(layout)});
         });
     }
 }

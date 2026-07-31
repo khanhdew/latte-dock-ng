@@ -43,6 +43,7 @@ Plasma::Types::Location effectiveLocationForView(const Latte::View *view)
     }
 
     Plasma::Types::Location location = view->location();
+
     if ((location == Plasma::Types::Desktop || location == Plasma::Types::Floating) && view->containment()) {
         location = view->containment()->location();
     }
@@ -205,6 +206,7 @@ void Positioner::initDelayedSignals()
 void Positioner::updateWaylandId()
 {
     QString validTitle = m_view->validTitle();
+
     if (validTitle.isEmpty()) {
         return;
     }
@@ -245,7 +247,7 @@ void Positioner::setInRelocationShowing(bool active)
 
 bool Positioner::isOffScreen() const
 {
-    return (m_view->absoluteGeometry().x()<-500 || m_view->absoluteGeometry().y()<-500);
+    return (m_view->absoluteGeometry().x() < -500 || m_view->absoluteGeometry().y() < -500);
 }
 
 int Positioner::currentScreenId() const
@@ -282,25 +284,25 @@ WindowSystem::AbstractWindowInterface::Slide Positioner::slideLocation(Plasma::T
     }
 
     switch (location) {
-    case Plasma::Types::TopEdge:
-        slideedge = WindowSystem::AbstractWindowInterface::Slide::Top;
-        break;
+        case Plasma::Types::TopEdge:
+            slideedge = WindowSystem::AbstractWindowInterface::Slide::Top;
+            break;
 
-    case Plasma::Types::RightEdge:
-        slideedge = WindowSystem::AbstractWindowInterface::Slide::Right;
-        break;
+        case Plasma::Types::RightEdge:
+            slideedge = WindowSystem::AbstractWindowInterface::Slide::Right;
+            break;
 
-    case Plasma::Types::BottomEdge:
-        slideedge = WindowSystem::AbstractWindowInterface::Slide::Bottom;
-        break;
+        case Plasma::Types::BottomEdge:
+            slideedge = WindowSystem::AbstractWindowInterface::Slide::Bottom;
+            break;
 
-    case Plasma::Types::LeftEdge:
-        slideedge = WindowSystem::AbstractWindowInterface::Slide::Left;
-        break;
+        case Plasma::Types::LeftEdge:
+            slideedge = WindowSystem::AbstractWindowInterface::Slide::Left;
+            break;
 
-    default:
-        qCDebug(latteView) << staticMetaObject.className() << "wrong location";
-        break;
+        default:
+            qCDebug(latteView) << staticMetaObject.className() << "wrong location";
+            break;
     }
 
     return slideedge;
@@ -416,7 +418,7 @@ void Positioner::reconsiderScreen()
     //!check if the associated screen is running
     for (const auto scr : qGuiApp->screens()) {
         if (m_screenNameToFollow == scr->name()
-                || (m_view->onPrimary() && scr == primaryScreen)) {
+            || (m_view->onPrimary() && scr == primaryScreen)) {
             screenExists = true;
         }
     }
@@ -467,7 +469,7 @@ void Positioner::onScreenChanged(QScreen *scr)
 
 void Positioner::syncGeometry()
 {
-    if (!(m_view->screen() && m_view->containment()) || m_inDelete || m_slideOffset!=0 || inSlideAnimation()) {
+    if (!(m_view->screen() && m_view->containment()) || m_inDelete || m_slideOffset != 0 || inSlideAnimation()) {
         return;
     }
 
@@ -525,7 +527,7 @@ void Positioner::immediateSyncGeometry()
                                                   Latte::Types::SidebarAutoHide});
 
             QList<Plasma::Types::Location> ignoreEdges({Plasma::Types::LeftEdge,
-                                                        Plasma::Types::RightEdge});
+                    Plasma::Types::RightEdge});
 
             if (m_isStickedOnTopEdge && m_isStickedOnBottomEdge) {
                 //! dont send an empty edges array because that means include all screen edges in calculations
@@ -542,6 +544,7 @@ void Positioner::immediateSyncGeometry()
             }
 
             QString activityid = m_view->layout() ? m_view->layout()->lastUsedActivity() : QString();
+
             if (m_inStartup) {
                 //! paint out-of-screen
                 freeRegion = availableScreenRect;
@@ -552,9 +555,10 @@ void Positioner::immediateSyncGeometry()
                 // panels are respected regardless of dock alignment or length.
                 {
                     const QList<QRect> panelGeometries = m_corona->wm()->plasmaPanelGeometries();
+
                     if (!panelGeometries.isEmpty()) {
                         freeRegion = freeRegion.intersected(
-                            verticalDockExternalPanelGeometry(m_view->screen()->geometry(), panelGeometries));
+                                         verticalDockExternalPanelGeometry(m_view->screen()->geometry(), panelGeometries));
                     }
                 }
             }
@@ -570,7 +574,7 @@ void Positioner::immediateSyncGeometry()
 
             //! it is used to choose which or the availableRegion rectangles will
             //! be the one representing dock geometry
-            for (QRegion::const_iterator p_rect=availableRegion.begin(); p_rect!=availableRegion.end(); ++p_rect) {
+            for (QRegion::const_iterator p_rect = availableRegion.begin(); p_rect != availableRegion.end(); ++p_rect) {
                 //! the area of each rectangle in calculated in squares of 50x50
                 //! this is a way to avoid enormous numbers for area value
                 float tempArea = static_cast<float>((*p_rect).width() * (*p_rect).height()) / 2500;
@@ -607,7 +611,7 @@ void Positioner::immediateSyncGeometry()
 
 void Positioner::validateDockGeometry()
 {
-    if (m_slideOffset==0 && m_view->geometry() != m_validGeometry) {
+    if (m_slideOffset == 0 && m_view->geometry() != m_validGeometry) {
         m_validateGeometryTimer.start();
     }
 }
@@ -643,19 +647,19 @@ QRect Positioner::maximumNormalGeometry(QRect screenGeometry)
     maxGeometry.setRect(0, 0, maxWidth, maxHeight);
 
     switch (m_view->location()) {
-    case Plasma::Types::LeftEdge:
-        xPos = currentScrGeometry.x();
-        maxGeometry.setRect(xPos, yPos, maxWidth, maxHeight);
-        break;
+        case Plasma::Types::LeftEdge:
+            xPos = currentScrGeometry.x();
+            maxGeometry.setRect(xPos, yPos, maxWidth, maxHeight);
+            break;
 
-    case Plasma::Types::RightEdge:
-        xPos = currentScrGeometry.right() - maxWidth + 1;
-        maxGeometry.setRect(xPos, yPos, maxWidth, maxHeight);
-        break;
+        case Plasma::Types::RightEdge:
+            xPos = currentScrGeometry.right() - maxWidth + 1;
+            maxGeometry.setRect(xPos, yPos, maxWidth, maxHeight);
+            break;
 
-    default:
-        //! bypass clang warnings
-        break;
+        default:
+            //! bypass clang warnings
+            break;
     }
 
     return maxGeometry;
@@ -669,7 +673,7 @@ void Positioner::validateTopBottomBorders(QRect availableScreenRect, QRegion ava
     if (availableScreenRect.top() != m_view->screenGeometry().top()) {
         //! check top border
         int x = m_view->location() == Plasma::Types::LeftEdge ? m_view->screenGeometry().x() : m_view->screenGeometry().right() - edgeMargin + 1;
-        QRegion fitInRegion = QRect(x, availableScreenRect.y()-1, edgeMargin, 1);
+        QRegion fitInRegion = QRect(x, availableScreenRect.y() - 1, edgeMargin, 1);
         QRegion subtracted = fitInRegion.subtracted(availableScreenRegion);
 
         if (subtracted.isNull()) {
@@ -686,7 +690,7 @@ void Positioner::validateTopBottomBorders(QRect availableScreenRect, QRegion ava
     if (availableScreenRect.bottom() != m_view->screenGeometry().bottom()) {
         //! check top border
         int x = m_view->location() == Plasma::Types::LeftEdge ? m_view->screenGeometry().x() : m_view->screenGeometry().right()  - edgeMargin + 1;
-        QRegion fitInRegion = QRect(x, availableScreenRect.bottom()+1, edgeMargin, 1);
+        QRegion fitInRegion = QRect(x, availableScreenRect.bottom() + 1, edgeMargin, 1);
         QRegion subtracted = fitInRegion.subtracted(availableScreenRegion);
 
         if (subtracted.isNull()) {
@@ -722,40 +726,40 @@ void Positioner::updateCanvasGeometry(QRect availableScreenRect)
     Plasma::Types::Location location = effectiveLocationForView(m_view);
 
     switch (location) {
-    case Plasma::Types::TopEdge:
-        canvas.moveLeft(screenGeometry.x());
-        canvas.moveTop(screenGeometry.y());
-        break;
+        case Plasma::Types::TopEdge:
+            canvas.moveLeft(screenGeometry.x());
+            canvas.moveTop(screenGeometry.y());
+            break;
 
-    case Plasma::Types::BottomEdge:
-        canvas.moveLeft(screenGeometry.x());
-        canvas.moveTop(screenGeometry.bottom() - thickness + 1);
-        break;
+        case Plasma::Types::BottomEdge:
+            canvas.moveLeft(screenGeometry.x());
+            canvas.moveTop(screenGeometry.bottom() - thickness + 1);
+            break;
 
-    case Plasma::Types::RightEdge:
-        canvas.moveLeft(screenGeometry.right() - thickness + 1);
-        canvas.moveTop(availableScreenRect.y());
-        break;
+        case Plasma::Types::RightEdge:
+            canvas.moveLeft(screenGeometry.right() - thickness + 1);
+            canvas.moveTop(availableScreenRect.y());
+            break;
 
-    case Plasma::Types::LeftEdge:
-        canvas.moveLeft(availableScreenRect.x());
-        canvas.moveTop(availableScreenRect.y());
-        break;
+        case Plasma::Types::LeftEdge:
+            canvas.moveLeft(availableScreenRect.x());
+            canvas.moveTop(availableScreenRect.y());
+            break;
 
-    default: {
-        const Plasma::Types::Location containmentLocation = m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop;
-        const bool transientDesktopLocation = (m_view->location() == Plasma::Types::Desktop || m_view->location() == Plasma::Types::Floating)
-                                              && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
+        default: {
+            const Plasma::Types::Location containmentLocation = m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop;
+            const bool transientDesktopLocation = (m_view->location() == Plasma::Types::Desktop || m_view->location() == Plasma::Types::Floating)
+                                                  && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
 
-        if (transientDesktopLocation) {
-            qCDebug(latteView) << "transient desktop/floating location while updating canvas geometry"
-                     << m_view->location()
-                     << " containment location:" << containmentLocation;
-        } else {
-            qWarning() << "wrong location, couldn't update the canvas config window geometry " << m_view->location()
-                       << " containment location:" << containmentLocation;
+            if (transientDesktopLocation) {
+                qCDebug(latteView) << "transient desktop/floating location while updating canvas geometry"
+                                   << m_view->location()
+                                   << " containment location:" << containmentLocation;
+            } else {
+                qWarning() << "wrong location, couldn't update the canvas config window geometry " << m_view->location()
+                           << " containment location:" << containmentLocation;
+            }
         }
-    }
     }
 
     setCanvasGeometry(canvas);
@@ -770,41 +774,41 @@ void Positioner::updatePosition(QRect availableScreenRect)
     Plasma::Types::Location location = effectiveLocationForView(m_view);
 
     switch (location) {
-    case Plasma::Types::TopEdge:
-        position = {screenGeometry.x(), screenGeometry.y()};
+        case Plasma::Types::TopEdge:
+            position = {screenGeometry.x(), screenGeometry.y()};
 
-        break;
+            break;
 
-    case Plasma::Types::BottomEdge:
-        position = {screenGeometry.x(), screenGeometry.y() + screenGeometry.height() - m_view->height()};
+        case Plasma::Types::BottomEdge:
+            position = {screenGeometry.x(), screenGeometry.y() + screenGeometry.height() - m_view->height()};
 
-        break;
+            break;
 
-    case Plasma::Types::RightEdge:
-        position = {availableScreenRect.right() - m_view->width() + 1, availableScreenRect.y()};
+        case Plasma::Types::RightEdge:
+            position = {availableScreenRect.right() - m_view->width() + 1, availableScreenRect.y()};
 
-        break;
+            break;
 
-    case Plasma::Types::LeftEdge:
-        position = {availableScreenRect.x(), availableScreenRect.y()};
+        case Plasma::Types::LeftEdge:
+            position = {availableScreenRect.x(), availableScreenRect.y()};
 
-        break;
+            break;
 
-    default: {
-        const Plasma::Types::Location containmentLocation = m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop;
-        const bool transientDesktopLocation = (m_view->location() == Plasma::Types::Desktop || m_view->location() == Plasma::Types::Floating)
-                                              && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
+        default: {
+            const Plasma::Types::Location containmentLocation = m_view->containment() ? m_view->containment()->location() : Plasma::Types::Desktop;
+            const bool transientDesktopLocation = (m_view->location() == Plasma::Types::Desktop || m_view->location() == Plasma::Types::Floating)
+                                                  && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
 
-        if (transientDesktopLocation) {
-            qCDebug(latteView) << "transient desktop/floating location while updating panel position"
-                     << m_view->location()
-                     << " containment location:" << containmentLocation;
-        } else {
-            qWarning() << "wrong location, couldn't update the panel position"
-                       << m_view->location()
-                       << " containment location:" << containmentLocation;
+            if (transientDesktopLocation) {
+                qCDebug(latteView) << "transient desktop/floating location while updating panel position"
+                                   << m_view->location()
+                                   << " containment location:" << containmentLocation;
+            } else {
+                qWarning() << "wrong location, couldn't update the panel position"
+                           << m_view->location()
+                           << " containment location:" << containmentLocation;
+            }
         }
-    }
     }
 
     if (m_slideOffset == 0 || m_nextScreenEdge != Plasma::Types::Floating /*exactly after relocating and changing screen edge*/) {
@@ -848,8 +852,8 @@ void Positioner::resizeWindow(QRect availableScreenRect)
 {
     QSize screenSize = m_view->screen()->size();
     QSize size = (effectiveFormFactorForView(m_view) == Plasma::Types::Vertical)
-            ? QSize(m_view->maxThickness(), availableScreenRect.height())
-            : QSize(screenSize.width(), m_view->maxThickness());
+                 ? QSize(m_view->maxThickness(), availableScreenRect.height())
+                 : QSize(screenSize.width(), m_view->maxThickness());
 
     //! protect from invalid window size under wayland
     size.setWidth(qMax(1, size.width()));
@@ -874,30 +878,30 @@ void Positioner::updateFormFactor()
     Plasma::Types::Location location = effectiveLocationForView(m_view);
 
     switch (location) {
-    case Plasma::Types::TopEdge:
-    case Plasma::Types::BottomEdge:
-        m_view->containment()->setFormFactor(Plasma::Types::Horizontal);
-        break;
+        case Plasma::Types::TopEdge:
+        case Plasma::Types::BottomEdge:
+            m_view->containment()->setFormFactor(Plasma::Types::Horizontal);
+            break;
 
-    case Plasma::Types::LeftEdge:
-    case Plasma::Types::RightEdge:
-        m_view->containment()->setFormFactor(Plasma::Types::Vertical);
-        break;
+        case Plasma::Types::LeftEdge:
+        case Plasma::Types::RightEdge:
+            m_view->containment()->setFormFactor(Plasma::Types::Vertical);
+            break;
 
-    default: {
-        const Plasma::Types::Location containmentLocation = m_view->containment()->location();
-        const bool transientDesktopLocation = (m_view->location() == Plasma::Types::Desktop || m_view->location() == Plasma::Types::Floating)
-                                              && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
+        default: {
+            const Plasma::Types::Location containmentLocation = m_view->containment()->location();
+            const bool transientDesktopLocation = (m_view->location() == Plasma::Types::Desktop || m_view->location() == Plasma::Types::Floating)
+                                                  && (containmentLocation == Plasma::Types::Desktop || containmentLocation == Plasma::Types::Floating);
 
-        if (transientDesktopLocation) {
-            qCDebug(latteView) << "transient desktop/floating location while updating form factor"
-                     << m_view->location()
-                     << " containment location:" << containmentLocation;
-        } else {
-            qWarning() << "wrong location, couldn't update the panel position" << m_view->location()
-                       << " containment location:" << containmentLocation;
+            if (transientDesktopLocation) {
+                qCDebug(latteView) << "transient desktop/floating location while updating form factor"
+                                   << m_view->location()
+                                   << " containment location:" << containmentLocation;
+            } else {
+                qWarning() << "wrong location, couldn't update the panel position" << m_view->location()
+                           << " containment location:" << containmentLocation;
+            }
         }
-    }
     }
 }
 
@@ -946,8 +950,8 @@ void Positioner::initSignalingForLocationChangeSliding()
         bool confirmedgeometry = true;
 
         if (m_nextScreen
-                && m_nextScreen == m_view->screen()
-                && confirmedgeometry) {
+            && m_nextScreen == m_view->screen()
+            && confirmedgeometry) {
             bool isrelocationlastevent = isLastHidingRelocationEvent();
             m_nextScreen = nullptr;
             m_nextScreenName = QString();
@@ -1010,9 +1014,10 @@ void Positioner::initSignalingForLocationChangeSliding()
         //! SCREEN_EDGE
         if (m_nextScreenEdge != Plasma::Types::Floating) {
             const Types::Alignment requestedAlignment = m_nextAlignment != Latte::Types::NoneAlignment
-                    ? m_nextAlignment
-                    : static_cast<Types::Alignment>(m_view->alignment());
+                ? m_nextAlignment
+                : static_cast<Types::Alignment>(m_view->alignment());
             const Types::Alignment edgeAlignment = dockAlignmentForLocation(m_nextScreenEdge, requestedAlignment);
+
             if (edgeAlignment != m_view->alignment()) {
                 m_view->setAlignment(edgeAlignment);
             }
@@ -1116,7 +1121,7 @@ bool Positioner::isLastHidingRelocationEvent() const
         events++;
     }
 
-    if (!m_nextScreenName.isEmpty()){
+    if (!m_nextScreenName.isEmpty()) {
         events++;
     }
 
@@ -1138,7 +1143,7 @@ void Positioner::setNextLocation(const QString layoutName, const int screensGrou
         auto origin = qobject_cast<CentralLayout *>(layout);
         auto destination = m_corona->layoutsManager()->synchronizer()->centralLayout(layoutName);
 
-        if (origin && destination && origin!=destination) {
+        if (origin && destination && origin != destination) {
             //! Needs to be updated; when the next layout is in the same Visible Workarea
             //! with the old one changing layouts should be instant
             bool inVisibleWorkarea{origin->lastUsedActivity() == destination->lastUsedActivity()};
@@ -1180,9 +1185,9 @@ void Positioner::setNextLocation(const QString layoutName, const int screensGrou
     if (!screenName.isEmpty()) {
         bool nextonprimary = (screenName == Latte::Data::Screen::ONPRIMARYNAME);
 
-        if ( (m_view->onPrimary() && !nextonprimary) /*primary -> explicit*/
-             || (!m_view->onPrimary() && nextonprimary) /*explicit -> primary*/
-             || (!m_view->onPrimary() && !nextonprimary && screenName != currentScreenName()) ) { /*explicit -> new_explicit*/
+        if ((m_view->onPrimary() && !nextonprimary)  /*primary -> explicit*/
+            || (!m_view->onPrimary() && nextonprimary) /*explicit -> primary*/
+            || (!m_view->onPrimary() && !nextonprimary && screenName != currentScreenName())) {  /*explicit -> new_explicit*/
 
             QString nextscreenname = nextonprimary ? m_corona->screenPool()->primaryScreen()->name() : screenName;
 
@@ -1222,7 +1227,7 @@ void Positioner::setNextLocation(const QString layoutName, const int screensGrou
 
     if (isanimated) {
         Q_EMIT hidingForRelocationStarted();
-    } else if (haschanges){
+    } else if (haschanges) {
         Q_EMIT hidingForRelocationFinished();
     }
 }

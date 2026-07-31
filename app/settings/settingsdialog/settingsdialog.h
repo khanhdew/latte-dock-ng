@@ -39,8 +39,7 @@ namespace Latte {
 namespace Settings {
 namespace Dialog {
 
-enum ConfigurationPage
-{
+enum ConfigurationPage {
     LayoutPage = 0,
     PreferencesPage
 };

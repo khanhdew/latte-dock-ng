@@ -76,4 +76,5 @@ private:
 };
 
 }
+
 #endif //INFOVIEW_H

@@ -23,7 +23,6 @@
     --indent-preproc-block
     --indent-preproc-define
     --min-conditional-indent=1
-    --max-instatement-indent=40
 
 #PaddingOptions
     --break-blocks

@@ -41,7 +41,7 @@ ShortcutsTracker::~ShortcutsTracker()
 
 void ShortcutsTracker::initGlobalShortcutsWatcher()
 {
-    for (int i=1; i<=19; ++i) {
+    for (int i = 1; i <= 19; ++i) {
         m_badgesForActivate << QString();
     }
 
@@ -92,7 +92,7 @@ QString ShortcutsTracker::shortcutToBadge(QStringList shortcutRecords)
 {
     QString badge;
 
-    if (shortcutRecords.count()>0 && shortcutRecords[0] != QStringLiteral("none")) {
+    if (shortcutRecords.count() > 0 && shortcutRecords[0] != QStringLiteral("none")) {
         QStringList modifiers = shortcutRecords[0].split(QLatin1Char('+'));
 
         if (modifiers.count() >= 1) {
@@ -123,9 +123,11 @@ void ShortcutsTracker::parseGlobalShortcuts()
 
             if (latteGroup.hasKey(entry)) {
                 QStringList records = latteGroup.readEntry(entry, QStringList());
+
                 if (records.count() > 0) {
                     records[0] = records[0].split(QLatin1Char('	'))[0];
                 }
+
                 m_badgesForActivate << shortcutToBadge(records);
             } else {
                 m_badgesForActivate << QString();
@@ -134,7 +136,7 @@ void ShortcutsTracker::parseGlobalShortcuts()
 
         m_basedOnPositionEnabled = (!m_badgesForActivate[0].isEmpty() && !m_badgesForActivate[1].isEmpty());
 
-        for(auto &key : latteGroup.keyList()) {
+        for (auto &key : latteGroup.keyList()) {
             if (key.startsWith(APPLETSHORTCUTKEY)) {
                 QStringList records = latteGroup.readEntry(key, QStringList());
                 int appletId = key.remove(APPLETSHORTCUTKEY).toInt();
@@ -154,7 +156,7 @@ void ShortcutsTracker::clearAllAppletShortcuts()
 {
     KConfigGroup latteGroup = KConfigGroup(m_shortcutsConfigPtr, QStringLiteral("lattedock"));
 
-    for(const auto &key : latteGroup.keyList()) {
+    for (const auto &key : latteGroup.keyList()) {
         if (key.startsWith(APPLETSHORTCUTKEY)) {
             QAction *appletAction = new QAction(this);
 

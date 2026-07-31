@@ -26,7 +26,8 @@ namespace Latte {
 namespace WindowSystem {
 namespace Tracker {
 
-class Schemes : public QObject {
+class Schemes : public QObject
+{
     Q_OBJECT
 
 public:
@@ -49,13 +50,13 @@ private:
     void init();
 
 private:
-     AbstractWindowInterface *m_wm;
+    AbstractWindowInterface *m_wm;
 
-     //! scheme file and its loaded colors
-     QMap<QString, Latte::WindowSystem::SchemeColors *> m_schemes;
+    //! scheme file and its loaded colors
+    QMap<QString, Latte::WindowSystem::SchemeColors *> m_schemes;
 
-     //! window id and its corresponding scheme file
-     QMap<WindowId, QString> m_windowScheme;
+    //! window id and its corresponding scheme file
+    QMap<WindowId, QString> m_windowScheme;
 };
 
 }

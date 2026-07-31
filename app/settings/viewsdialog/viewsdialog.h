@@ -24,6 +24,7 @@ namespace Settings {
 namespace Controller {
 class Layouts;
 }
+
 namespace Handler {
 class ViewsHandler;
 }
@@ -68,7 +69,7 @@ private:
 
     QPushButton *m_applyNowBtn{nullptr};
 
-    Handler::ViewsHandler *m_handler;   
+    Handler::ViewsHandler *m_handler;
 
     //! properties
     QSize m_windowSize;

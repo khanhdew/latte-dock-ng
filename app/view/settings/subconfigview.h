@@ -109,4 +109,5 @@ private:
 
 }
 }
+
 #endif //SUBCONFIGVIEW_H

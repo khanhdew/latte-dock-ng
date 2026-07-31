@@ -18,18 +18,18 @@ namespace Settings {
 
 class LayoutsComboBox : public QComboBox
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  LayoutsComboBox(QWidget *parent = nullptr);
+    LayoutsComboBox(QWidget *parent = nullptr);
 
-  Latte::Data::LayoutIcon layoutIcon() const;
-  void setLayoutIcon(const Latte::Data::LayoutIcon &icon);
+    Latte::Data::LayoutIcon layoutIcon() const;
+    void setLayoutIcon(const Latte::Data::LayoutIcon &icon);
 
 protected:
-  void paintEvent(QPaintEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
-  Latte::Data::LayoutIcon m_layoutIcon;
+    Latte::Data::LayoutIcon m_layoutIcon;
 
 };
 

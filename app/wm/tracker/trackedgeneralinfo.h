@@ -28,7 +28,8 @@ namespace Latte {
 namespace WindowSystem {
 namespace Tracker {
 
-class TrackedGeneralInfo : public QObject {
+class TrackedGeneralInfo : public QObject
+{
     Q_OBJECT
 
     Q_PROPERTY(Latte::WindowSystem::Tracker::LastActiveWindow *activeWindow READ lastActiveWindow NOTIFY lastActiveWindowChanged)

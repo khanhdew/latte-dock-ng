@@ -25,8 +25,7 @@ class TestPrimaryOutputWatcher : public Latte::PrimaryOutputWatcher
 {
 public:
     explicit TestPrimaryOutputWatcher(QObject *parent = nullptr)
-        : Latte::PrimaryOutputWatcher(parent)
-    {
+        : Latte::PrimaryOutputWatcher(parent) {
     }
 
     using Latte::PrimaryOutputWatcher::setPrimaryOutputName;
@@ -36,8 +35,7 @@ class TestScreenPool : public Latte::ScreenPool
 {
 public:
     explicit TestScreenPool(KSharedConfig::Ptr config)
-        : Latte::ScreenPool(config)
-    {
+        : Latte::ScreenPool(config) {
     }
 
     using Latte::ScreenPool::firstAvailableId;

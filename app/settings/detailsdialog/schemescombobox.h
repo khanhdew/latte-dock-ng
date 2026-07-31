@@ -16,22 +16,22 @@ namespace Settings {
 
 class SchemesComboBox : public QComboBox
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  SchemesComboBox(QWidget *parent = nullptr);
+    SchemesComboBox(QWidget *parent = nullptr);
 
-  QColor backgroundColor() const;
-  void setBackgroundColor(const QColor &color);
+    QColor backgroundColor() const;
+    void setBackgroundColor(const QColor &color);
 
-  QColor textColor() const;
-  void setTextColor(const QColor &color);
+    QColor textColor() const;
+    void setTextColor(const QColor &color);
 
 protected:
-  void paintEvent(QPaintEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
-  QColor m_backgroundColor;
-  QColor m_textColor;
+    QColor m_backgroundColor;
+    QColor m_textColor;
 
 };
 

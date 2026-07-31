@@ -105,8 +105,8 @@ void WindowSystemUnitTest::processLookupCanIgnoreConfiguredRuntimeWrapper()
     config->sync();
 
     const KService::List services = Latte::WindowSystem::servicesFromCmdLine(QStringLiteral("latte-runtime-wrapper /bin/true"),
-                                                                             QStringLiteral("True"),
-                                                                             config);
+                                    QStringLiteral("True"),
+                                    config);
 
     QCOMPARE(services.count(), 1);
     QCOMPARE(services.constFirst()->name(), QStringLiteral("True"));

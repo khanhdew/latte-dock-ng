@@ -23,7 +23,8 @@
 namespace Latte {
 namespace PlasmaExtended {
 
-struct ImageHints {
+struct ImageHints
+{
     bool busy{false};
     float brightness{-1000};
 };

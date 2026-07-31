@@ -63,7 +63,7 @@ int Applets::columnCount(const QModelIndex &parent) const
 
 int Applets::row(const QString &id)
 {
-    for (int i=0; i<c_applets.rowCount(); ++i){
+    for (int i = 0; i < c_applets.rowCount(); ++i) {
         if (c_applets[i].id == id) {
             return i;
         }
@@ -79,7 +79,7 @@ bool Applets::inDefaultValues() const
 
 void Applets::initDefaults()
 {
-    for(int i=0; i<c_applets.rowCount(); ++i) {
+    for (int i = 0; i < c_applets.rowCount(); ++i) {
         c_applets[i].isSelected = m_appletsWithNoPersonalData.contains(c_applets[i].id);
     }
 }
@@ -102,7 +102,7 @@ void Applets::reset()
     QList<int> roles;
     roles << Qt::CheckStateRole;
 
-    Q_EMIT dataChanged(index(0, NAMECOLUMN), index(c_applets.rowCount()-1, NAMECOLUMN), roles);
+    Q_EMIT dataChanged(index(0, NAMECOLUMN), index(c_applets.rowCount() - 1, NAMECOLUMN), roles);
     Q_EMIT appletsDataChanged();
 }
 
@@ -111,7 +111,7 @@ void Applets::setData(const Latte::Data::AppletsTable &applets)
     clear();
 
     if (applets.rowCount() > 0) {
-        beginInsertRows(QModelIndex(), 0, applets.rowCount()-1);
+        beginInsertRows(QModelIndex(), 0, applets.rowCount() - 1);
         c_applets = applets;
         initDefaults();
         o_applets = c_applets;
@@ -128,7 +128,7 @@ void Applets::selectAll()
 
     bool changed{false};
 
-    for(int i=0; i<c_applets.rowCount(); ++i) {
+    for (int i = 0; i < c_applets.rowCount(); ++i) {
         if (!c_applets[i].isSelected) {
             c_applets[i].isSelected = true;
             Q_EMIT dataChanged(index(i, NAMECOLUMN), index(i, NAMECOLUMN), roles);
@@ -148,7 +148,7 @@ void Applets::deselectAll()
 
     bool changed{false};
 
-    for(int i=0; i<c_applets.rowCount(); ++i) {
+    for (int i = 0; i < c_applets.rowCount(); ++i) {
         if (c_applets[i].isSelected) {
             c_applets[i].isSelected = false;
             Q_EMIT dataChanged(index(i, NAMECOLUMN), index(i, NAMECOLUMN), roles);
@@ -165,10 +165,10 @@ void Applets::setSelected(const Latte::Data::AppletsTable &applets)
 {
     bool changed{false};
 
-    for(int i=0; i<applets.rowCount(); ++i) {
+    for (int i = 0; i < applets.rowCount(); ++i) {
         int pos = c_applets.indexOf(applets[i].id);
 
-        if (pos>=0 && applets[i].isSelected != c_applets[pos].isSelected) {
+        if (pos >= 0 && applets[i].isSelected != c_applets[pos].isSelected) {
             QList<int> roles;
             roles << Qt::CheckStateRole;
 
@@ -187,11 +187,12 @@ Latte::Data::AppletsTable Applets::selectedApplets()
 {
     Data::AppletsTable selected;
 
-    for(int i=0; i<c_applets.rowCount(); ++i) {
+    for (int i = 0; i < c_applets.rowCount(); ++i) {
         if (c_applets[i].isSelected) {
             selected << c_applets[i];
         }
     }
+
     return selected;
 }
 
@@ -217,14 +218,16 @@ QVariant Applets::headerData(int section, Qt::Orientation orientation, int role)
         return font;
     }
 
-    switch(section) {
-    case NAMECOLUMN:
-        if (role == Qt::DisplayRole) {
-            return QString(i18nc("column for current applets", "Current Applets"));
-        }
-        break;
-    default:
-        break;
+    switch (section) {
+        case NAMECOLUMN:
+            if (role == Qt::DisplayRole) {
+                return QString(i18nc("column for current applets", "Current Applets"));
+            }
+
+            break;
+
+        default:
+            break;
     };
 
     return QAbstractTableModel::headerData(section, orientation, role);
@@ -235,19 +238,20 @@ bool Applets::setData(const QModelIndex &index, const QVariant &value, int role)
     const int row = index.row();
     const int column = index.column();
 
-    if (!c_applets.rowExists(row) || column<0 || column > NAMECOLUMN) {
+    if (!c_applets.rowExists(row) || column < 0 || column > NAMECOLUMN) {
         return false;
     }
 
     //! specific roles to each independent cell
     switch (column) {
-    case NAMECOLUMN:
-        if (role == Qt::CheckStateRole) {
-            c_applets[row].isSelected = (value.toInt() > 0 ? true : false);
-            Q_EMIT appletsDataChanged();
-            return true;
-        }
-        break;
+        case NAMECOLUMN:
+            if (role == Qt::CheckStateRole) {
+                c_applets[row].isSelected = (value.toInt() > 0 ? true : false);
+                Q_EMIT appletsDataChanged();
+                return true;
+            }
+
+            break;
     };
 
     return false;
@@ -266,10 +270,10 @@ QVariant Applets::data(const QModelIndex &index, int role) const
         return c_applets[row].name;
     } else if (role == Qt::CheckStateRole) {
         return (c_applets[row].isSelected ? Qt::Checked : Qt::Unchecked);
-    } else if (role== Qt::DecorationRole) {
+    } else if (role == Qt::DecorationRole) {
         return QIcon::fromTheme(c_applets[row].icon);
     } else if (role == IDROLE) {
-            return c_applets[row].id;
+        return c_applets[row].id;
     } else if (role == SELECTEDROLE) {
         return c_applets[row].isSelected;
     } else if (role == ICONROLE) {

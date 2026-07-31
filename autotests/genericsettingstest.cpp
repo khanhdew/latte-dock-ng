@@ -24,23 +24,22 @@ public:
     using Latte::Settings::Handler::Generic::setTwinProperty;
 
     explicit TestGenericHandler(QObject *parent = nullptr)
-        : Latte::Settings::Handler::Generic(nullptr, parent)
-    {
+        : Latte::Settings::Handler::Generic(nullptr, parent) {
     }
 
-    bool hasChangedData() const override
-    {
+    bool hasChangedData() const override {
         return false;
     }
 
-    bool inDefaultValues() const override
-    {
+    bool inDefaultValues() const override {
         return true;
     }
 
 public Q_SLOTS:
     void reset() override {}
+
     void resetDefaults() override {}
+
     void save() override {}
 };
 

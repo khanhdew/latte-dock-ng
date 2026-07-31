@@ -46,8 +46,8 @@ Error &Error::operator=(Error &&rhs)
 bool Error::operator==(const Error &rhs) const
 {
     return (id == rhs.id)
-            && (name == rhs.name)
-            && (information == rhs.information);
+           && (name == rhs.name)
+           && (information == rhs.information);
 }
 
 bool Error::operator!=(const Error &rhs) const

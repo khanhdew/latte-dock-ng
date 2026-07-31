@@ -167,7 +167,7 @@ void PrimaryConfigView::showCanvasWindow()
         m_canvasConfigView = new CanvasConfigView(m_latteView, this);
     }
 
-    if (m_canvasConfigView && !m_canvasConfigView->isVisible()){
+    if (m_canvasConfigView && !m_canvasConfigView->isVisible()) {
         m_canvasConfigView->showAfter(CANVASWINDOWINTERVAL);
     }
 }
@@ -228,7 +228,7 @@ void PrimaryConfigView::initParentView(Latte::View *view)
     });
 
     viewconnections << connect(m_corona->universalSettings(), &Latte::UniversalSettings::inAdvancedModeForEditSettingsChanged, m_latteView, &Latte::View::inSettingsAdvancedModeChanged);
-    viewconnections << connect(m_latteView->containment(), &Plasma::Containment::immutabilityChanged, this, &PrimaryConfigView::immutabilityChanged);   
+    viewconnections << connect(m_latteView->containment(), &Plasma::Containment::immutabilityChanged, this, &PrimaryConfigView::immutabilityChanged);
 
     m_originalMode = m_latteView->visibility()->mode();
 
@@ -254,7 +254,7 @@ void PrimaryConfigView::instantUpdateAvailableScreenGeometry()
 
     int currentScrId = m_latteView->positioner()->currentScreenId();
 
-    QList<Latte::Types::Visibility> ignoreModes{Latte::Types::SidebarOnDemand,Latte::Types::SidebarAutoHide};
+    QList<Latte::Types::Visibility> ignoreModes{Latte::Types::SidebarOnDemand, Latte::Types::SidebarAutoHide};
 
     if (m_latteView->visibility() && m_latteView->visibility()->isSidebar()) {
         ignoreModes.removeAll(Latte::Types::SidebarOnDemand);
@@ -268,7 +268,7 @@ void PrimaryConfigView::instantUpdateAvailableScreenGeometry()
 }
 
 void PrimaryConfigView::updateAvailableScreenGeometry(View *origin)
-{    
+{
     if (!m_latteView || !m_latteView->layout() || m_latteView == origin) {
         return;
     }
@@ -312,6 +312,7 @@ void PrimaryConfigView::syncGeometry()
     if (size.width() <= 0 || size.height() <= 0) {
         return;
     }
+
     const auto location = m_latteView->containment()->location();
     const auto scrGeometry = m_latteView->screenGeometry();
     const auto availGeometry = m_availableScreenGeometry;
@@ -325,39 +326,39 @@ void PrimaryConfigView::syncGeometry()
     int yPos{0};
 
     switch (m_latteView->formFactor()) {
-    case Plasma::Types::Horizontal: {
-        if (inAdvancedMode()) {
-            if (qApp->isLeftToRight()) {
-                xPos = availGeometry.x() + availGeometry.width() - size.width();
+        case Plasma::Types::Horizontal: {
+            if (inAdvancedMode()) {
+                if (qApp->isLeftToRight()) {
+                    xPos = availGeometry.x() + availGeometry.width() - size.width();
+                } else {
+                    xPos = availGeometry.x();
+                }
             } else {
-                xPos = availGeometry.x();
+                xPos = scrGeometry.center().x() - size.width() / 2;
             }
-        } else {
-            xPos = scrGeometry.center().x() - size.width() / 2;
-        }
 
-        if (location == Plasma::Types::TopEdge) {
-            yPos = scrGeometry.y() + canvasThickness;
-        } else if (location == Plasma::Types::BottomEdge) {
-            yPos = scrGeometry.y() + scrGeometry.height() - canvasThickness - size.height();
+            if (location == Plasma::Types::TopEdge) {
+                yPos = scrGeometry.y() + canvasThickness;
+            } else if (location == Plasma::Types::BottomEdge) {
+                yPos = scrGeometry.y() + scrGeometry.height() - canvasThickness - size.height();
+            }
         }
-    }
         break;
 
-    case Plasma::Types::Vertical: {
-        if (location == Plasma::Types::LeftEdge) {
-            xPos = scrGeometry.x() + canvasThickness;
-            yPos =  availGeometry.y() + (availGeometry.height() - size.height())/2;
-        } else if (location == Plasma::Types::RightEdge) {
-            xPos = scrGeometry.x() + scrGeometry.width() - canvasThickness - size.width();
-            yPos =  availGeometry.y() + (availGeometry.height() - size.height())/2;
+        case Plasma::Types::Vertical: {
+            if (location == Plasma::Types::LeftEdge) {
+                xPos = scrGeometry.x() + canvasThickness;
+                yPos =  availGeometry.y() + (availGeometry.height() - size.height()) / 2;
+            } else if (location == Plasma::Types::RightEdge) {
+                xPos = scrGeometry.x() + scrGeometry.width() - canvasThickness - size.width();
+                yPos =  availGeometry.y() + (availGeometry.height() - size.height()) / 2;
+            }
         }
-    }
         break;
 
-    default:
-        qWarning() << "no sync geometry, wrong formFactor";
-        break;
+        default:
+            qWarning() << "no sync geometry, wrong formFactor";
+            break;
     }
 
     position = {xPos, yPos};
@@ -450,7 +451,7 @@ void PrimaryConfigView::focusOutEvent(QFocusEvent *ev)
     const auto *focusWindow = qGuiApp->focusWindow();
 
     if (focusWindow && (focusWindow->flags().testFlag(Qt::Popup)
-                                || focusWindow->flags().testFlag(Qt::ToolTip))) {
+                        || focusWindow->flags().testFlag(Qt::ToolTip))) {
         return;
     }
 
@@ -510,24 +511,24 @@ void PrimaryConfigView::updateEnabledBorders()
     KSvg::FrameSvg::EnabledBorders borders = KSvg::FrameSvg::AllBorders;
 
     switch (m_latteView->location()) {
-    case Plasma::Types::TopEdge:
-        borders &= m_inReverse ? ~KSvg::FrameSvg::BottomBorder : ~KSvg::FrameSvg::TopBorder;
-        break;
+        case Plasma::Types::TopEdge:
+            borders &= m_inReverse ? ~KSvg::FrameSvg::BottomBorder : ~KSvg::FrameSvg::TopBorder;
+            break;
 
-    case Plasma::Types::LeftEdge:
-        borders &= ~KSvg::FrameSvg::LeftBorder;
-        break;
+        case Plasma::Types::LeftEdge:
+            borders &= ~KSvg::FrameSvg::LeftBorder;
+            break;
 
-    case Plasma::Types::RightEdge:
-        borders &= ~KSvg::FrameSvg::RightBorder;
-        break;
+        case Plasma::Types::RightEdge:
+            borders &= ~KSvg::FrameSvg::RightBorder;
+            break;
 
-    case Plasma::Types::BottomEdge:
-        borders &= m_inReverse ? ~KSvg::FrameSvg::TopBorder : ~KSvg::FrameSvg::BottomBorder;
-        break;
+        case Plasma::Types::BottomEdge:
+            borders &= m_inReverse ? ~KSvg::FrameSvg::TopBorder : ~KSvg::FrameSvg::BottomBorder;
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     if (m_enabledBorders != borders) {
@@ -538,6 +539,7 @@ void PrimaryConfigView::updateEnabledBorders()
         Q_EMIT enabledBordersChanged();
     }
 }
+
 //!END borders
 
 void PrimaryConfigView::updateEffects()
@@ -560,7 +562,7 @@ void PrimaryConfigView::updateEffects()
 
     QRegion mask = m_background->mask();
 
-    QRegion fixedMask = mask.isNull() ? QRegion(QRect(0,0,width(),height())) : mask;
+    QRegion fixedMask = mask.isNull() ? QRegion(QRect(0, 0, width(), height())) : mask;
 
     if (!fixedMask.isEmpty()) {
         setMask(fixedMask);

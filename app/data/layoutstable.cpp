@@ -48,7 +48,7 @@ LayoutsTable LayoutsTable::subtracted(const LayoutsTable &rhs) const
         return subtract;
     }
 
-    for(int i=0; i<m_list.count(); ++i) {
+    for (int i = 0; i < m_list.count(); ++i) {
         if (!rhs.containsId(m_list[i].id)) {
             subtract << m_list[i];
         }
@@ -62,7 +62,7 @@ void LayoutsTable::setLayoutForFreeActivities(const QString &id)
     int row = indexOf(id);
 
 
-    if (row>=0) {
+    if (row >= 0) {
         m_list[row].activities = QStringList(Data::Layout::FREEACTIVITIESID);
     }
 }

@@ -88,5 +88,6 @@ private:
 
 }
 }
+
 #endif //WIDGETEXPLORERVIEW_H
 

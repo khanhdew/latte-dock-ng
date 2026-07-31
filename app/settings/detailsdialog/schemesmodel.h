@@ -23,8 +23,7 @@ class Schemes : public QAbstractListModel
     Q_OBJECT
 
 public:
-    enum SchemesRoles
-    {
+    enum SchemesRoles {
         IDROLE = Qt::UserRole + 1,
         NAMEROLE,
         TEXTCOLORROLE,

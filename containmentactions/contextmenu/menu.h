@@ -19,13 +19,15 @@ class QMenu;
 namespace Latte {
 namespace ContainmentActions {
 
-struct LayoutInfo {
+struct LayoutInfo
+{
     QString layoutName;
     bool isBackgroundFileIcon;
     QString iconName;
 };
 
-struct ViewData {
+struct ViewData
+{
     bool isCloned{true};
     int clonesCount{0};
 };

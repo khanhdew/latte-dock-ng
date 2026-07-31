@@ -98,7 +98,7 @@ void ViewsHandler::init()
     m_ui->removeBtn->addAction(m_removeViewAction); //this is needed in order to be triggered properly
 
     //! Import
-    m_importViewAction =new QAction(i18nc("import dock","&Import..."));
+    m_importViewAction = new QAction(i18nc("import dock", "&Import..."));
     m_importViewAction->setToolTip(i18n("Import dock from local file"));
     m_importViewAction->setIcon(QIcon::fromTheme(QStringLiteral("document-import")));
     m_importViewAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_I));
@@ -121,7 +121,7 @@ void ViewsHandler::init()
     connect(this, &ViewsHandler::currentLayoutChanged, this, &ViewsHandler::reload);
 
     reload();
-    m_lastConfirmedLayoutIndex =m_ui->layoutsCmb->currentIndex();
+    m_lastConfirmedLayoutIndex = m_ui->layoutsCmb->currentIndex();
 
     Q_EMIT currentLayoutChanged();
 
@@ -150,7 +150,7 @@ void ViewsHandler::initViewTemplatesSubMenu()
 
     bool customtemplateseparatoradded{false};
 
-    for (int i=0; i<templates.rowCount(); ++i) {
+    for (int i = 0; i < templates.rowCount(); ++i) {
         if (!customtemplateseparatoradded && templates[i].id.startsWith(QDir::homePath())) {
             m_viewTemplatesSubMenu->addSeparator();
             customtemplateseparatoradded = true;
@@ -161,7 +161,7 @@ void ViewsHandler::initViewTemplatesSubMenu()
 
         Data::Generic templateData = templates[i];
 
-        connect(newview, &QAction::triggered, this, [&, templateData]() {
+        connect(newview, &QAction::triggered, this, [ &, templateData]() {
             newView(templateData);
         });
     }
@@ -186,12 +186,12 @@ void ViewsHandler::initViewExportSubMenu()
         m_viewExportSubMenu->clear();
     }
 
-    QAction *exportforbackup = m_viewExportSubMenu->addAction(i18nc("export for backup","&Export For Backup..."));
+    QAction *exportforbackup = m_viewExportSubMenu->addAction(i18nc("export for backup", "&Export For Backup..."));
     exportforbackup->setIcon(QIcon::fromTheme(QStringLiteral("document-export")));
     exportforbackup->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_E));
     connect(exportforbackup, &QAction::triggered, this, &ViewsHandler::exportViewForBackup);
 
-    QAction *exportastemplate = m_viewExportSubMenu->addAction(i18nc("export as template","Export As &Template..."));
+    QAction *exportastemplate = m_viewExportSubMenu->addAction(i18nc("export as template", "Export As &Template..."));
     exportastemplate->setIcon(QIcon::fromTheme(QStringLiteral("document-export")));
     exportastemplate->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_T));
     connect(exportastemplate, &QAction::triggered, this, &ViewsHandler::exportViewAsTemplate);
@@ -270,7 +270,7 @@ void ViewsHandler::save()
 {
     int viewsforremoval = m_viewsController->viewsForRemovalCount();
 
-    if (viewsforremoval <=0 || removalConfirmation(viewsforremoval) == KMessageBox::PrimaryAction) {
+    if (viewsforremoval <= 0 || removalConfirmation(viewsforremoval) == KMessageBox::PrimaryAction) {
         m_viewsController->save();
     }
 }
@@ -303,7 +303,7 @@ void ViewsHandler::newView(const Data::Generic &templateData)
         viewfromtemplate.name = templateData.name;
         Data::View newview = m_viewsController->appendViewFromViewTemplate(viewfromtemplate);
 
-        showInlineMessage(i18nc("settings:dock added successfully","<b>%1</b> added successfully...", newview.name),
+        showInlineMessage(i18nc("settings:dock added successfully", "<b>%1</b> added successfully...", newview.name),
                           KMessageWidget::Positive);
     }
 }
@@ -342,7 +342,7 @@ void ViewsHandler::exportViewForBackup()
 
     QFileDialog *exportFileDialog = new QFileDialog(m_dialog, i18n("Export Dock For Backup"), QDir::homePath(), QStringLiteral("view.latte"));
 
-    exportFileDialog->setLabelText(QFileDialog::Accept, i18nc("export view","Export"));
+    exportFileDialog->setLabelText(QFileDialog::Accept, i18nc("export view", "Export"));
     exportFileDialog->setFileMode(QFileDialog::AnyFile);
     exportFileDialog->setAcceptMode(QFileDialog::AcceptSave);
     exportFileDialog->setDefaultSuffix(QStringLiteral("view.latte"));
@@ -356,9 +356,9 @@ void ViewsHandler::exportViewForBackup()
 
     connect(exportFileDialog, &QFileDialog::finished, exportFileDialog, &QFileDialog::deleteLater);
 
-    connect(exportFileDialog, &QFileDialog::fileSelected, this, [&, temporiginfile](const QString & file) {
-        auto showExportViewError = [this](const QString &destinationfile) {
-            showInlineMessage(i18nc("settings:view export fail","Export in file <b>%1</b> <b>failed</b>...", QFileInfo(destinationfile).fileName()),
+    connect(exportFileDialog, &QFileDialog::fileSelected, this, [ &, temporiginfile](const QString & file) {
+        auto showExportViewError = [this](const QString & destinationfile) {
+            showInlineMessage(i18nc("settings:view export fail", "Export in file <b>%1</b> <b>failed</b>...", QFileInfo(destinationfile).fileName()),
                               KMessageWidget::Error,
                               true);
         };
@@ -379,7 +379,7 @@ void ViewsHandler::exportViewForBackup()
             QList<QAction *> actions;
             actions << openUrlAction;
 
-            connect(openUrlAction, &QAction::triggered, this, [&, openUrlAction]() {
+            connect(openUrlAction, &QAction::triggered, this, [ &, openUrlAction]() {
                 QString file = openUrlAction->data().toString();
 
                 if (!file.isEmpty()) {
@@ -387,7 +387,7 @@ void ViewsHandler::exportViewForBackup()
                 }
             });
 
-            showInlineMessage(i18nc("settings:view export success","Export in file <b>%1</b> succeeded...", QFileInfo(file).fileName()),
+            showInlineMessage(i18nc("settings:view export success", "Export in file <b>%1</b> succeeded...", QFileInfo(file).fileName()),
                               KMessageWidget::Positive,
                               false,
                               actions);
@@ -516,18 +516,18 @@ void ViewsHandler::updateWindowTitle()
 
 KMessageBox::ButtonCode ViewsHandler::removalConfirmation(const int &viewsCount)
 {
-    if (viewsCount<=0) {
+    if (viewsCount <= 0) {
         return KMessageBox::SecondaryAction;
     }
 
-    if (hasChangedData() && viewsCount>0) {
+    if (hasChangedData() && viewsCount > 0) {
         return KMessageBox::questionTwoActions(m_dialog,
-                                         i18np("You are going to <b>remove 1</b> dock completely from your layout.<br/>Would you like to continue?",
-                                               "You are going to <b>remove %1</b> docks completely from your layout.<br/>Would you like to continue?",
-                                               viewsCount),
-                                         i18n("Approve Removal"),
-                                         KGuiItem(i18n("Remove"), QStringLiteral("edit-delete")),
-                                         KStandardGuiItem::cancel());
+                                               i18np("You are going to <b>remove 1</b> dock completely from your layout.<br/>Would you like to continue?",
+                                                       "You are going to <b>remove %1</b> docks completely from your layout.<br/>Would you like to continue?",
+                                                       viewsCount),
+                                               i18n("Approve Removal"),
+                                               KGuiItem(i18n("Remove"), QStringLiteral("edit-delete")),
+                                               KStandardGuiItem::cancel());
     }
 
     return KMessageBox::SecondaryAction;

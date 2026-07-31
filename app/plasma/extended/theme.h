@@ -38,7 +38,8 @@ class PanelBackground;
 namespace Latte {
 namespace PlasmaExtended {
 
-struct CornerRegions {
+struct CornerRegions
+{
     QRegion topLeft;
     QRegion topRight;
     QRegion bottomLeft;

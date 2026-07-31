@@ -75,12 +75,12 @@ Screen &Screen::operator=(Screen &&rhs)
 bool Screen::operator==(const Screen &rhs) const
 {
     return (id == rhs.id)
-            && (name == rhs.name)
-            && (hasExplicitViews == rhs.hasExplicitViews)
-            //&& (isActive == rhs.isActive) /*Disabled because this is not a data but a screen state*/
-            //&& (isRemovable == rhs.isRemovable) /*Disabled because this is not a data but a screen state*/
-            && (isSelected == rhs.isSelected)
-            && (geometry == rhs.geometry);
+           && (name == rhs.name)
+           && (hasExplicitViews == rhs.hasExplicitViews)
+           //&& (isActive == rhs.isActive) /*Disabled because this is not a data but a screen state*/
+           //&& (isRemovable == rhs.isRemovable) /*Disabled because this is not a data but a screen state*/
+           && (isSelected == rhs.isSelected)
+           && (geometry == rhs.geometry);
 }
 
 bool Screen::operator!=(const Screen &rhs) const

@@ -52,8 +52,8 @@ LayoutIcon &LayoutIcon::operator=(const LayoutIcon &rhs)
 bool LayoutIcon::operator==(const LayoutIcon &rhs) const
 {
     return (id == rhs.id)
-            && (name == rhs.name)
-            && (isBackgroundFile == rhs.isBackgroundFile);
+           && (name == rhs.name)
+           && (isBackgroundFile == rhs.isBackgroundFile);
 }
 
 bool LayoutIcon::operator!=(const LayoutIcon &rhs) const

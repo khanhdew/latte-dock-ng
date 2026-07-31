@@ -25,7 +25,7 @@ namespace Layout {
 Q_NAMESPACE
 
 #ifdef Type
-#undef Type
+    #undef Type
 #endif
 
 enum Type {
@@ -104,7 +104,7 @@ public:
 // STATIC
     static QString layoutName(const QString &fileName);
     static QList<Plasma::Types::Location> combinedFreeEdges(const QList<Plasma::Types::Location> &edges1,
-                                                            const QList<Plasma::Types::Location> &edges2);
+            const QList<Plasma::Types::Location> &edges2);
 
 Q_SIGNALS:
     void backgroundChanged();

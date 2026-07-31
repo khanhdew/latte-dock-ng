@@ -50,9 +50,9 @@ ErrorInformation &ErrorInformation::operator=(ErrorInformation &&rhs)
 bool ErrorInformation::operator==(const ErrorInformation &rhs) const
 {
     return (id == rhs.id)
-            && (name == rhs.name)
-            && (containment == rhs.containment)
-            && (applet == rhs.applet);
+           && (name == rhs.name)
+           && (containment == rhs.containment)
+           && (applet == rhs.applet);
 }
 
 bool ErrorInformation::operator!=(const ErrorInformation &rhs) const

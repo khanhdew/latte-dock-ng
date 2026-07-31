@@ -71,8 +71,9 @@ void Manager::initLayoutTemplates(const QString &path)
     filter.append(QStringLiteral("*.layout.latte"));
     QStringList templates = templatesDir.entryList(filter, QDir::Files | QDir::Hidden | QDir::NoSymLinks);
 
-    for (int i=0; i<templates.count(); ++i) {
+    for (int i = 0; i < templates.count(); ++i) {
         QString templatePath = templatesDir.path() + QLatin1String("/") + templates[i];
+
         if (!m_layoutTemplates.containsId(templatePath)) {
             CentralLayout layouttemplate(this, templatePath);
 
@@ -98,7 +99,7 @@ void Manager::initViewTemplates(const QString &path)
     filter.append(QStringLiteral("*.view.latte"));
     QStringList templates = templatesDir.entryList(filter, QDir::Files | QDir::Hidden | QDir::NoSymLinks);
 
-    for (int i=0; i<templates.count(); ++i) {
+    for (int i = 0; i < templates.count(); ++i) {
         QString templatePath = templatesDir.path() + QLatin1String("/") + templates[i];
 
         if (!m_viewTemplates.containsId(templatePath)) {
@@ -137,10 +138,10 @@ Data::LayoutsTable Manager::layoutTemplates()
     id = m_layoutTemplates.idForName(i18n(EMPTYLAYOUTTEMPLATENAME));
     templates << m_layoutTemplates[id];
 
-    for (int i=0; i<m_layoutTemplates.rowCount(); ++i) {
-        if ( m_layoutTemplates[i].name != i18n(DEFAULTLAYOUTTEMPLATENAME)
-             && m_layoutTemplates[i].name != i18n(EMPTYLAYOUTTEMPLATENAME)
-             && m_layoutTemplates[i].name != Layout::MULTIPLELAYOUTSHIDDENNAME) {
+    for (int i = 0; i < m_layoutTemplates.rowCount(); ++i) {
+        if (m_layoutTemplates[i].name != i18n(DEFAULTLAYOUTTEMPLATENAME)
+            && m_layoutTemplates[i].name != i18n(EMPTYLAYOUTTEMPLATENAME)
+            && m_layoutTemplates[i].name != Layout::MULTIPLELAYOUTSHIDDENNAME) {
             templates << m_layoutTemplates[i];
         }
     }
@@ -199,7 +200,7 @@ void Manager::onCustomTemplatesCountChanged(const QString &file)
 
 void Manager::importSystemLayouts()
 {
-    for (int i=0; i<m_layoutTemplates.rowCount(); ++i) {
+    for (int i = 0; i < m_layoutTemplates.rowCount(); ++i) {
         if (m_layoutTemplates[i].isSystemTemplate()) {
             QString userLayoutPath = Layouts::Importer::layoutUserFilePath(m_layoutTemplates[i].name);
 
@@ -228,7 +229,7 @@ QString Manager::proposedTemplateAbsolutePath(QString templateFilename)
 
 bool Manager::hasCustomLayoutTemplate(const QString &templateName) const
 {
-    for (int i=0; i<m_layoutTemplates.rowCount(); ++i) {
+    for (int i = 0; i < m_layoutTemplates.rowCount(); ++i) {
         if (m_layoutTemplates[i].name == templateName && !m_layoutTemplates[i].isSystemTemplate()) {
             return true;
         }
@@ -329,12 +330,13 @@ QString Manager::templateName(const QString &filePath)
 
     QString extension(QStringLiteral(".layout.latte"));
     int ext = templatename.lastIndexOf(extension);
-    if (ext>0) {
+
+    if (ext > 0) {
         templatename = templatename.remove(ext, extension.size());
     } else {
         extension = QStringLiteral(".view.latte");
         ext = templatename.lastIndexOf(extension);
-        templatename = templatename.remove(ext,extension.size());
+        templatename = templatename.remove(ext, extension.size());
     }
 
     return templatename;

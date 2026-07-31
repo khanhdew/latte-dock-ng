@@ -112,7 +112,7 @@ void Dialog::updatePopUpEnabledBorders()
     int appletspopupmargin = appletsPopUpMargin();
 
     //! Plasma Scenario
-    bool hideEdgeBorder = isRespectingAppletsLayoutGeometry() && !appletslayoutgeometry.isEmpty() && appletspopupmargin==-1;
+    bool hideEdgeBorder = isRespectingAppletsLayoutGeometry() && !appletslayoutgeometry.isEmpty() && appletspopupmargin == -1;
 
     if (hideEdgeBorder) {
         setLocation(m_edge);
@@ -141,11 +141,11 @@ QPoint Dialog::popupPosition(QQuickItem *item, const QSize &size)
         if (m_edge == Plasma::Types::LeftEdge || m_edge == Plasma::Types::RightEdge) {
             //! vertical scenario
             screengeometry -= QMargins(0, popupmargin, 0, popupmargin);
-            y = parenttopleft.y() + (visualparent->height()/2) - (size.height()/2);
+            y = parenttopleft.y() + (visualparent->height() / 2) - (size.height() / 2);
         } else {
             //! horizontal scenario
             screengeometry -= QMargins(popupmargin, 0, popupmargin, 0);
-            x = parenttopleft.x() + (visualparent->width()/2) - (size.width()/2);
+            x = parenttopleft.x() + (visualparent->width() / 2) - (size.width() / 2);
         }
 
         if (m_edge == Plasma::Types::LeftEdge) {
@@ -171,13 +171,13 @@ QPoint Dialog::popupPosition(QQuickItem *item, const QSize &size)
             QRect appletsglobalgeometry(appletsglobaltopleft.x(), appletsglobaltopleft.y(), appletslayoutgeometry.width(), appletslayoutgeometry.height());
 
             if (m_edge == Plasma::Types::LeftEdge || m_edge == Plasma::Types::RightEdge) {
-                int bottomy = appletsglobalgeometry.bottom()-size.height();
+                int bottomy = appletsglobalgeometry.bottom() - size.height();
 
                 if (appletsglobalgeometry.height() >= size.height()) {
                     y = safeBoundInt(appletsglobalgeometry.y(), y, bottomy + 1);
                 }
             } else {
-                int rightx = appletsglobalgeometry.right()-size.width();
+                int rightx = appletsglobalgeometry.right() - size.width();
 
                 if (appletsglobalgeometry.width() >= size.width()) {
                     x = safeBoundInt(appletsglobalgeometry.x(), x, rightx + 1);
@@ -185,7 +185,7 @@ QPoint Dialog::popupPosition(QQuickItem *item, const QSize &size)
             }
         }
 
-        return QPoint(x,y);
+        return QPoint(x, y);
     }
 
     return PlasmaQuick::Dialog::popupPosition(item, size);

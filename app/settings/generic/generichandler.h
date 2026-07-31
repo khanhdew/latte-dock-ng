@@ -35,9 +35,9 @@ class Generic : public QObject
 {
     Q_OBJECT
 public:
-    static constexpr const char* TWINENABLED = "Enabled";
-    static constexpr const char* TWINVISIBLE = "Visible";
-    static constexpr const char* TWINCHECKED = "Checked";
+    static constexpr const char *TWINENABLED = "Enabled";
+    static constexpr const char *TWINVISIBLE = "Visible";
+    static constexpr const char *TWINCHECKED = "Checked";
 
     Generic(Dialog::GenericDialog *parent);
     Generic(Dialog::GenericDialog *parentDialog, QObject *parent);

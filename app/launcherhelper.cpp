@@ -37,10 +37,10 @@ int main(int argc, char **argv)
     }
 
     QDBusMessage msg = QDBusMessage::createMethodCall(
-        QStringLiteral("org.kde.lattedock"),
-        QStringLiteral("/Latte"),
-        QStringLiteral("org.kde.LatteDock"),
-        QStringLiteral("addLauncher"));
+                           QStringLiteral("org.kde.lattedock"),
+                           QStringLiteral("/Latte"),
+                           QStringLiteral("org.kde.LatteDock"),
+                           QStringLiteral("addLauncher"));
     msg.setArguments({arguments.constFirst(), QString()});
 
     QDBusMessage reply = QDBusConnection::sessionBus().call(msg, QDBus::Block, 1000);

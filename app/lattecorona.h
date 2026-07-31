@@ -57,24 +57,29 @@ class GlobalShortcuts;
 class UniversalSettings;
 class View;
 class ViewSettingsFactory;
-namespace Indicator{
+namespace Indicator {
 class Factory;
 }
-namespace Layout{
+
+namespace Layout {
 class GenericLayout;
 }
-namespace Layouts{
+
+namespace Layouts {
 class Manager;
 }
-namespace PlasmaExtended{
+
+namespace PlasmaExtended {
 class ScreenGeometries;
 class ScreenPool;
 class Theme;
 }
+
 namespace Templates {
 class Manager;
 }
-namespace WindowSystem{
+
+namespace WindowSystem {
 class AbstractWindowInterface;
 }
 }
@@ -88,10 +93,10 @@ class Corona : public Plasma::Corona
 
 public:
     Corona(bool defaultLayoutOnStartup = false,
-               QString layoutNameOnStartUp = QString(),
-               QString addViewTemplateName = QString(),
-               int userSetMemoryUsage = -1,
-               QObject *parent = nullptr);
+           QString layoutNameOnStartUp = QString(),
+           QString addViewTemplateName = QString(),
+           int userSetMemoryUsage = -1,
+           QObject *parent = nullptr);
     ~Corona() override;
 
     bool inQuit() const;
@@ -113,11 +118,11 @@ public:
                                           bool desktopUse = false) const;
 
     QRegion availableScreenRegionWithCriteria(int id,
-                                              QString activityid = QString(),
-                                              QList<Latte::Types::Visibility> ignoreModes = QList<Latte::Types::Visibility>(),
-                                              QList<Plasma::Types::Location> ignoreEdges = QList<Plasma::Types::Location>(),
-                                              bool ignoreExternalPanels = true,
-                                              bool desktopUse = false) const;
+            QString activityid = QString(),
+            QList<Latte::Types::Visibility> ignoreModes = QList<Latte::Types::Visibility>(),
+            QList<Plasma::Types::Location> ignoreEdges = QList<Plasma::Types::Location>(),
+            bool ignoreExternalPanels = true,
+            bool desktopUse = false) const;
 
     int screenForContainment(const Plasma::Containment *containment) const override;
 
@@ -128,7 +133,7 @@ public:
     ScreenPool *screenPool() const;
     UniversalSettings *universalSettings() const;
     ViewSettingsFactory *viewSettingsFactory() const;
-    Layouts::Manager *layoutsManager() const;   
+    Layouts::Manager *layoutsManager() const;
     Templates::Manager *templatesManager() const;
 
     Indicator::Factory *indicatorFactory() const;
@@ -144,7 +149,7 @@ public:
     //! finished all its exit operations
     void importFullConfiguration(const QString &file);
 
-    //! these functions are used from context menu through containmentactions    
+    //! these functions are used from context menu through containmentactions
     void quitApplication();
     void switchToLayout(QString layout);
     void importLayoutFile(const QString &filepath, const QString &suggestedLayoutName = QString());

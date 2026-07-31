@@ -81,12 +81,12 @@ void ScreenEdgeGhostWindow::updateGeometry()
 
     if (m_latteView->formFactor() == Plasma::Types::Horizontal) {
         //! set minimum length to be 25% of screen width
-        length = qMax(m_latteView->screenGeometry().width()/4,qMin(m_latteView->absoluteGeometry().width(), m_latteView->screenGeometry().width() - 1));
-        lengthDifference = qMax(0,length - m_latteView->absoluteGeometry().width()) / 2;
+        length = qMax(m_latteView->screenGeometry().width() / 4, qMin(m_latteView->absoluteGeometry().width(), m_latteView->screenGeometry().width() - 1));
+        lengthDifference = qMax(0, length - m_latteView->absoluteGeometry().width()) / 2;
     } else {
         //! set minimum length to be 25% of screen height
-        length = qMax(m_latteView->screenGeometry().height()/4,qMin(m_latteView->absoluteGeometry().height(), m_latteView->screenGeometry().height() - 1));
-        lengthDifference = qMax(0,length - m_latteView->absoluteGeometry().height()) / 2;
+        length = qMax(m_latteView->screenGeometry().height() / 4, qMin(m_latteView->absoluteGeometry().height(), m_latteView->screenGeometry().height() - 1));
+        lengthDifference = qMax(0, length - m_latteView->absoluteGeometry().height()) / 2;
     }
 
     if (m_latteView->formFactor() == Plasma::Types::Horizontal) {
@@ -107,7 +107,7 @@ void ScreenEdgeGhostWindow::updateGeometry()
         newGeometry.moveTop(m_latteView->screenGeometry().top());
     } else if (m_latteView->location() == Plasma::Types::LeftEdge) {
         newGeometry.moveLeft(m_latteView->screenGeometry().left());
-    } else if (m_latteView->location() == Plasma::Types::RightEdge) {        
+    } else if (m_latteView->location() == Plasma::Types::RightEdge) {
         newGeometry.moveLeft(m_latteView->screenGeometry().right() - m_thickness);
     }
 
@@ -147,11 +147,13 @@ bool ScreenEdgeGhostWindow::event(QEvent *e)
         }
     } else if (e->type() == QEvent::Enter) {
         m_delayedContainsMouse = true;
+
         if (!m_delayedMouseTimer.isActive()) {
             m_delayedMouseTimer.start();
         }
     } else if (e->type() == QEvent::Leave || e->type() == QEvent::DragLeave) {
         m_delayedContainsMouse = false;
+
         if (!m_delayedMouseTimer.isActive()) {
             m_delayedMouseTimer.start();
         }

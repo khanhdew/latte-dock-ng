@@ -51,9 +51,9 @@ UniqueIdInfo &UniqueIdInfo::operator=(UniqueIdInfo &&rhs)
 bool UniqueIdInfo::operator==(const UniqueIdInfo &rhs) const
 {
     return (newId == rhs.newId)
-            && (newName == rhs.newName)
-            && (oldId == rhs.oldId)
-            && (oldName == rhs.oldName);
+           && (newName == rhs.newName)
+           && (oldId == rhs.oldId)
+           && (oldName == rhs.oldName);
 }
 
 bool UniqueIdInfo::operator!=(const UniqueIdInfo &rhs) const

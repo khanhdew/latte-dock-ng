@@ -58,7 +58,7 @@ AbstractWindowInterface::AbstractWindowInterface(QObject *parent)
     //     qCDebug(latteWm) << "WINDOW CHANGED ::: " << wid;
     // });
 
-    connect(m_activities.data(), &KActivities::Consumer::currentActivityChanged, this, [this](const QString &id) {
+    connect(m_activities.data(), &KActivities::Consumer::currentActivityChanged, this, [this](const QString & id) {
         m_currentActivity = id;
         Q_EMIT currentActivityChanged();
     });
@@ -161,7 +161,7 @@ bool AbstractWindowInterface::isFullScreenWindow(const QRect &wGeometry) const
 }
 
 bool AbstractWindowInterface::isPlasmaPanel(const QRect &wGeometry) const
-{     
+{
     if (wGeometry.isEmpty()) {
         return false;
     }
@@ -188,7 +188,7 @@ bool AbstractWindowInterface::isPlasmaPanel(const QRect &wGeometry) const
     }
 
     if ((isTouchingHorizontalEdge && wGeometry.height() < MAXPLASMAPANELTHICKNESS)
-            || (isTouchingVerticalEdge && wGeometry.width() < MAXPLASMAPANELTHICKNESS)) {
+        || (isTouchingVerticalEdge && wGeometry.width() < MAXPLASMAPANELTHICKNESS)) {
         return true;
     }
 
@@ -217,7 +217,7 @@ bool AbstractWindowInterface::isSidepanel(const QRect &wGeometry) const
     bool lengthIsAccepted = isVertical && !screenGeometry.isEmpty() && (length > 0.6 * screenGeometry.height());
     float sideRatio = static_cast<float>(wGeometry.width()) / static_cast<float>(wGeometry.height());
 
-    return (thicknessIsAcccepted && lengthIsAccepted && sideRatio<0.4);
+    return (thicknessIsAcccepted && lengthIsAccepted && sideRatio < 0.4);
 }
 
 bool AbstractWindowInterface::hasBlockedTracking(const WindowId &wid) const
@@ -258,10 +258,10 @@ void AbstractWindowInterface::initKWinInterface()
     // delivered via QDBusPendingCallWatcher when the DBus daemon responds.
     if (!m_isKWinInterfaceAvailable) {
         QDBusMessage msg = QDBusMessage::createMethodCall(
-            KWINSERVICE,
-            QStringLiteral("/VirtualDesktopManager"),
-            QStringLiteral("org.freedesktop.DBus.Properties"),
-            QStringLiteral("Get"));
+                               KWINSERVICE,
+                               QStringLiteral("/VirtualDesktopManager"),
+                               QStringLiteral("org.freedesktop.DBus.Properties"),
+                               QStringLiteral("Get"));
         msg.setArguments({KWINVIRTUALDESKTOPMANAGERNAMESPACE,
                           QStringLiteral("navigationWrappingAround")});
 
@@ -269,9 +269,10 @@ void AbstractWindowInterface::initKWinInterface()
             QDBusConnection::sessionBus().asyncCall(msg), this);
 
         connect(watcher, &QDBusPendingCallWatcher::finished, this,
-                [this](QDBusPendingCallWatcher *w) {
+        [this](QDBusPendingCallWatcher * w) {
             w->deleteLater();
             QDBusMessage reply = w->reply();
+
             if (reply.type() != QDBusMessage::ReplyMessage) {
                 return;
             }
@@ -286,16 +287,16 @@ void AbstractWindowInterface::initKWinInterface()
             }
 
             bool signalconnected = QDBusConnection::sessionBus().connect(
-                KWINSERVICE,
-                QStringLiteral("/VirtualDesktopManager"),
-                KWINVIRTUALDESKTOPMANAGERNAMESPACE,
-                QStringLiteral("navigationWrappingAroundChanged"),
-                this,
-                SLOT(onVirtualDesktopNavigationWrappingAroundChanged(bool)));
+                                       KWINSERVICE,
+                                       QStringLiteral("/VirtualDesktopManager"),
+                                       KWINVIRTUALDESKTOPMANAGERNAMESPACE,
+                                       QStringLiteral("navigationWrappingAroundChanged"),
+                                       this,
+                                       SLOT(onVirtualDesktopNavigationWrappingAroundChanged(bool)));
 
             if (!signalconnected) {
                 qCDebug(latteWm) << " KWIN SERVICE :: Virtual Desktop Manager ::"
-                         << "navigationsWrappingSignal is not connected...";
+                                 << "navigationsWrappingSignal is not connected...";
             }
         });
     }
@@ -377,6 +378,7 @@ void AbstractWindowInterface::windowRemovedSlot(WindowId wid)
 void AbstractWindowInterface::switchToNextActivity()
 {
     QStringList runningActivities = m_activities->activities();
+
     if (runningActivities.count() <= 1) {
         return;
     }
@@ -384,7 +386,7 @@ void AbstractWindowInterface::switchToNextActivity()
     int curPos = runningActivities.indexOf(m_currentActivity);
     int nextPos = curPos + 1;
 
-    if (curPos == runningActivities.count() -1) {
+    if (curPos == runningActivities.count() - 1) {
         nextPos = 0;
     }
 
@@ -395,6 +397,7 @@ void AbstractWindowInterface::switchToNextActivity()
 void AbstractWindowInterface::switchToPreviousActivity()
 {
     QStringList runningActivities = m_activities->activities();
+
     if (runningActivities.count() <= 1) {
         return;
     }

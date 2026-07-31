@@ -62,7 +62,7 @@ private Q_SLOTS:
 void PositionerGeometryTest::emptyPanelListPreservesScreenGeometry()
 {
     const QRect screen(0, 0, 1920, 1080);
-    QCOMPARE(verticalDockExternalPanelGeometry(screen, QList<QRect>{}), screen);
+    QCOMPARE(verticalDockExternalPanelGeometry(screen, QList<QRect> {}), screen);
 }
 
 void PositionerGeometryTest::topPanelReducesAvailableTopSpace()

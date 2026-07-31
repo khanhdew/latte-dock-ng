@@ -23,6 +23,7 @@ class View;
 namespace Layout {
 class GenericLayout;
 }
+
 namespace WindowSystem {
 class AbstractWindowInterface;
 class SchemeColors;
@@ -38,7 +39,8 @@ namespace Latte {
 namespace WindowSystem {
 namespace Tracker {
 
-class Windows : public QObject {
+class Windows : public QObject
+{
     Q_OBJECT
 
 public:

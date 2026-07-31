@@ -40,7 +40,7 @@ namespace Latte {
 namespace Layout {
 
 GenericLayout::GenericLayout(QObject *parent, QString layoutFile, QString assignedName)
-    : AbstractLayout (parent, layoutFile, assignedName)
+    : AbstractLayout(parent, layoutFile, assignedName)
 {
 }
 
@@ -60,9 +60,9 @@ void GenericLayout::unloadContainments()
     }
 
     qCDebug(latteLayout) << QStringLiteral("Layout - ") + name() + QStringLiteral(" : [unloadContainments]")
-             << "containments ::: " << m_containments.size()
-             << " ,latteViews in memory ::: " << m_latteViews.size()
-             << " ,hidden latteViews in memory :::  " << m_waitingLatteViews.size();
+                         << "containments ::: " << m_containments.size()
+                         << " ,latteViews in memory ::: " << m_latteViews.size()
+                         << " ,hidden latteViews in memory :::  " << m_waitingLatteViews.size();
 
     for (const auto view : m_latteViews) {
         view->disconnectSensitiveSignals();
@@ -106,9 +106,9 @@ void GenericLayout::unloadLatteViews()
     }
 
     qCDebug(latteLayout) << QStringLiteral("Layout - ") + name() + QStringLiteral(" : [unloadLatteViews]")
-             << "containments ::: " << m_containments.size()
-             << " ,latteViews in memory ::: " << m_latteViews.size()
-             << " ,hidden latteViews in memory :::  " << m_waitingLatteViews.size();
+                         << "containments ::: " << m_containments.size()
+                         << " ,latteViews in memory ::: " << m_latteViews.size()
+                         << " ,hidden latteViews in memory :::  " << m_waitingLatteViews.size();
 
     //!disconnect signals in order to avoid crashes when the layout is unloading
     // lambda-based connects cannot be disconnected by signal pointer
@@ -159,7 +159,7 @@ bool GenericLayout::isCurrent()
 
 bool GenericLayout::hasCorona() const
 {
-    return (m_corona!=nullptr);
+    return (m_corona != nullptr);
 }
 
 void GenericLayout::setCorona(Latte::Corona *corona)
@@ -251,7 +251,7 @@ QList<Plasma::Types::Location> GenericLayout::freeEdges(QScreen *scr) const
 {
     using Plasma::Types;
     QList<Types::Location> edges{Types::BottomEdge, Types::LeftEdge,
-                Types::TopEdge, Types::RightEdge};
+                                 Types::TopEdge, Types::RightEdge};
 
     if (!m_corona) {
         return edges;
@@ -270,7 +270,7 @@ QList<Plasma::Types::Location> GenericLayout::freeEdges(int screen) const
 {
     using Plasma::Types;
     QList<Types::Location> edges{Types::BottomEdge, Types::LeftEdge,
-                Types::TopEdge, Types::RightEdge};
+                                 Types::TopEdge, Types::RightEdge};
 
     if (!m_corona) {
         return edges;
@@ -359,13 +359,13 @@ void GenericLayout::onLastConfigViewChangedFrom(Latte::View *view)
 
 Latte::View *GenericLayout::viewForContainment(uint id) const
 {
-    for(auto view : m_latteViews) {
+    for (auto view : m_latteViews) {
         if (view && view->containment()->id() == id) {
             return view;
         }
     }
 
-    for(auto view : m_waitingLatteViews) {
+    for (auto view : m_waitingLatteViews) {
         if (view && view->containment()->id() == id) {
             return view;
         }
@@ -376,7 +376,7 @@ Latte::View *GenericLayout::viewForContainment(uint id) const
 
 Plasma::Containment *GenericLayout::containmentForId(uint id) const
 {
-    for(auto containment : m_containments) {
+    for (auto containment : m_containments) {
         if (containment->id() == id) {
             return containment;
         }
@@ -398,6 +398,7 @@ int GenericLayout::screenForContainment(Plasma::Containment *containment)
 
     //! there is a pending update
     QString containmentid = QString::number(containment->id());
+
     if (m_pendingContainmentUpdates.containsId(containmentid)) {
         if (m_corona && m_pendingContainmentUpdates[containmentid].onPrimary) {
             return m_corona->screenPool()->primaryScreenId();
@@ -429,7 +430,7 @@ bool GenericLayout::containsView(const int &containmentId) const
         return Layouts::Storage::self()->containsView(file(), containmentId);
     }
 
-    for(auto containment : m_containments) {
+    for (auto containment : m_containments) {
         if (static_cast<int>(containment->id()) == containmentId && Layouts::Storage::self()->isLatteContainment(containment)) {
             return true;
         }
@@ -488,8 +489,8 @@ QList<Latte::View *> GenericLayout::sortedLatteViews(QList<Latte::View *> views,
     for (int i = 0; i < sortedViews.size(); ++i) {
         for (int j = 0; j < sortedViews.size() - i - 1; ++j) {
             if (viewAtLowerScreenPriority(sortedViews[j], sortedViews[j + 1], primaryScreen)
-                    || (sortedViews[j]->screen() == sortedViews[j + 1]->screen()
-                        && viewAtLowerEdgePriority(sortedViews[j], sortedViews[j + 1]))) {
+                || (sortedViews[j]->screen() == sortedViews[j + 1]->screen()
+                    && viewAtLowerEdgePriority(sortedViews[j], sortedViews[j + 1]))) {
                 Latte::View *temp = sortedViews[j + 1];
                 sortedViews[j + 1] = sortedViews[j];
                 sortedViews[j] = temp;
@@ -565,7 +566,7 @@ bool GenericLayout::viewAtLowerEdgePriority(Latte::View *test, Latte::View *base
     }
 
     QList<Plasma::Types::Location> edges{Plasma::Types::RightEdge, Plasma::Types::TopEdge,
-                Plasma::Types::LeftEdge, Plasma::Types::BottomEdge};
+                                         Plasma::Types::LeftEdge, Plasma::Types::BottomEdge};
 
     int testPriority = -1;
     int basePriority = -1;
@@ -616,7 +617,7 @@ bool GenericLayout::viewDataAtLowerStatePriority(const Latte::Data::View &test, 
 bool GenericLayout::viewDataAtLowerEdgePriority(const Latte::Data::View &test, const Latte::Data::View &base) const
 {
     QList<Plasma::Types::Location> edges{Plasma::Types::RightEdge, Plasma::Types::TopEdge,
-                Plasma::Types::LeftEdge, Plasma::Types::BottomEdge};
+                                         Plasma::Types::LeftEdge, Plasma::Types::BottomEdge};
 
     int testPriority = -1;
     int basePriority = -1;
@@ -649,9 +650,9 @@ QList<Latte::Data::View> GenericLayout::sortedViewsData(const QList<Latte::Data:
     for (int i = 0; i < sortedData.size(); ++i) {
         for (int j = 0; j < sortedData.size() - i - 1; ++j) {
             if (viewDataAtLowerStatePriority(sortedData[j], sortedData[j + 1])
-                    || viewDataAtLowerScreenPriority(sortedData[j], sortedData[j + 1])
-                    || (!viewDataAtLowerScreenPriority(sortedData[j], sortedData[j + 1])
-                        && viewDataAtLowerEdgePriority(sortedData[j], sortedData[j + 1])) ) {
+                || viewDataAtLowerScreenPriority(sortedData[j], sortedData[j + 1])
+                || (!viewDataAtLowerScreenPriority(sortedData[j], sortedData[j + 1])
+                    && viewDataAtLowerEdgePriority(sortedData[j], sortedData[j + 1]))) {
                 Latte::Data::View temp = sortedData[j + 1];
                 sortedData[j + 1] = sortedData[j];
                 sortedData[j] = temp;
@@ -681,6 +682,7 @@ QList<Latte::View *> GenericLayout::viewsWithPlasmaShortcuts()
     for (const auto &appletId : appletsWithShortcuts) {
         for (const auto view : m_latteViews) {
             bool found{false};
+
             for (const auto applet : view->containment()->applets()) {
                 if (appletId == applet->id()) {
                     if (!views.contains(view)) {
@@ -819,7 +821,7 @@ void GenericLayout::destroyedChanged(bool destroyed)
         m_waitingLatteViews[sender] = view;
     } else {
         view = m_waitingLatteViews.take(static_cast<Plasma::Containment *>(sender));
-        m_latteViews[sender] =view;
+        m_latteViews[sender] = view;
     }
 
     if (view) {
@@ -878,10 +880,10 @@ void GenericLayout::addView(Plasma::Containment *containment)
     QString nextScreenName = m_corona->screenPool()->hasScreenId(viewdata.screen) ? m_corona->screenPool()->connector(viewdata.screen) : QString();
 
     qCDebug(latteLayout).noquote() << "Adding View:" << viewdata.id << "-"
-                       << "IsClonedFrom:" << viewdata.isClonedFrom
-                       << ", NextScreen:" << viewdata.screen << "-" << nextScreenName
-                       << ", OnPrimary:" << viewdata.onPrimary
-                       << ", Edge:" << viewdata.edge;
+                                   << "IsClonedFrom:" << viewdata.isClonedFrom
+                                   << ", NextScreen:" << viewdata.screen << "-" << nextScreenName
+                                   << ", OnPrimary:" << viewdata.onPrimary
+                                   << ", Edge:" << viewdata.edge;
 
     if (!viewdata.onPrimary && Layouts::Storage::isValid(viewdata.screen)) {
         bool foundNextExplicitScreen{false};
@@ -948,25 +950,26 @@ void GenericLayout::toggleHiddenState(QString viewName, QString screenName, Plas
     }
 
     QString validScreenName = m_corona->screenPool()->primaryScreen()->name();
+
     if (!screenName.isEmpty()) {
         validScreenName = screenName;
     }
 
     int viewsOnEdge{0};
 
-    for(const auto view : latteViews()) {
+    for (const auto view : latteViews()) {
         if ((viewName.isEmpty() || (!viewName.isEmpty() && viewName == view->name()))
-                && view->positioner()->currentScreenName() == validScreenName
-                && (edge == Plasma::Types::Floating || ((edge != Plasma::Types::Floating) && view->location() == edge))) {
+            && view->positioner()->currentScreenName() == validScreenName
+            && (edge == Plasma::Types::Floating || ((edge != Plasma::Types::Floating) && view->location() == edge))) {
             viewsOnEdge++;
         }
     }
 
     if (viewsOnEdge >= 1) {
-        for(const auto view : latteViews()) {
+        for (const auto view : latteViews()) {
             if ((viewName.isEmpty() || (!viewName.isEmpty() && viewName == view->name()))
-                    && view->positioner()->currentScreenName() == validScreenName
-                    && (edge == Plasma::Types::Floating || ((edge != Plasma::Types::Floating) && view->location() == edge))) {
+                && view->positioner()->currentScreenName() == validScreenName
+                && (edge == Plasma::Types::Floating || ((edge != Plasma::Types::Floating) && view->location() == edge))) {
                 view->visibility()->toggleHiddenState();
             }
         }
@@ -993,6 +996,7 @@ bool GenericLayout::initCorona()
 
     //!connect signals after adding the containment
     connect(this, &GenericLayout::viewsCountChanged, m_corona, [this]() { Q_EMIT m_corona->availableScreenRectChanged(-1); });
+
     connect(this, &GenericLayout::viewsCountChanged, m_corona, [this]() { Q_EMIT m_corona->availableScreenRegionChanged(-1); });
 
     return true;
@@ -1006,14 +1010,14 @@ bool GenericLayout::initContainments()
 
     qCDebug(latteLayout) << "Layout ::::: " << name() << " added containments ::: " << m_containments.size();
 
-    for(int pass=1; pass<=2; ++pass) {
+    for (int pass = 1; pass <= 2; ++pass) {
         for (const auto containment : m_corona->containments()) {
             //! in first pass we load subcontainments
             //! in second pass we load main dock and panel containments
             //! this way subcontainments will be always available to find when the layout is activating
             //! for example during startup that clones must be created and subcontainments should be taken into account
-            if ((pass==1 && Layouts::Storage::self()->isLatteContainment(containment)
-                 || (pass==2 && !Layouts::Storage::self()->isLatteContainment(containment)))) {
+            if ((pass == 1 && Layouts::Storage::self()->isLatteContainment(containment)
+                 || (pass == 2 && !Layouts::Storage::self()->isLatteContainment(containment)))) {
                 continue;
             }
 
@@ -1028,6 +1032,7 @@ bool GenericLayout::initContainments()
             }
         }
     }
+
     m_hasInitializedContainments = true;
     Q_EMIT viewsCountChanged();
     return true;
@@ -1043,7 +1048,7 @@ void GenericLayout::updateLastUsedActivity()
     QStringList appliedActivitiesIds = appliedActivities();
 
     if (appliedActivitiesIds.contains(Data::Layout::ALLACTIVITIESID)
-            || (m_lastUsedActivity != currentId && appliedActivitiesIds.contains(currentId))) {
+        || (m_lastUsedActivity != currentId && appliedActivitiesIds.contains(currentId))) {
         m_lastUsedActivity = currentId;
         Q_EMIT lastUsedActivityChanged();
     }
@@ -1170,7 +1175,7 @@ QList<Plasma::Types::Location> GenericLayout::availableEdgesForView(QScreen *scr
 {
     using Plasma::Types;
     QList<Types::Location> edges{Types::BottomEdge, Types::LeftEdge,
-                Types::TopEdge, Types::RightEdge};
+                                 Types::TopEdge, Types::RightEdge};
 
     if (!m_corona) {
         return edges;
@@ -1237,8 +1242,8 @@ bool GenericLayout::primaryDockOccupyEdge(Plasma::Types::Location location) cons
 
 bool GenericLayout::mapContainsId(const Layout::ViewsMap *map, uint viewId) const
 {
-    for(const auto &scr : map->keys()) {
-        for(const auto &edge : (*map)[scr].keys()) {
+    for (const auto &scr : map->keys()) {
+        for (const auto &edge : (*map)[scr].keys()) {
             if ((*map)[scr][edge].contains(viewId)) {
                 return true;
             }
@@ -1250,8 +1255,8 @@ bool GenericLayout::mapContainsId(const Layout::ViewsMap *map, uint viewId) cons
 
 QString GenericLayout::mapScreenName(const ViewsMap *map, uint viewId) const
 {
-    for(const auto &scr : map->keys()) {
-        for(const auto &edge : (*map)[scr].keys()) {
+    for (const auto &scr : map->keys()) {
+        for (const auto &edge : (*map)[scr].keys()) {
             if ((*map)[scr][edge].contains(viewId)) {
                 return scr;
             }
@@ -1274,7 +1279,7 @@ Layout::ViewsMap GenericLayout::validViewsMap()
 
     for (const auto containment : m_containments) {
         if (Layouts::Storage::self()->isLatteContainment(containment)
-                && !Layouts::Storage::self()->isClonedView(containment)) {
+            && !Layouts::Storage::self()->isClonedView(containment)) {
             Data::View view = hasLatteView(containment) ? m_latteViews[containment]->data() : Latte::Layouts::Storage::self()->view(this, containment);
             view.screen = Layouts::Storage::self()->expectedViewScreenId(m_corona, view);
 
@@ -1308,24 +1313,25 @@ void GenericLayout::syncLatteViewsToScreens()
 
     //! Clear up pendingContainmentUpdates when no-needed any more
     QStringList clearpendings;
-    for(int i=0; i<m_pendingContainmentUpdates.rowCount(); ++i) {
+
+    for (int i = 0; i < m_pendingContainmentUpdates.rowCount(); ++i) {
         auto viewdata = m_pendingContainmentUpdates[i];
         auto containment = containmentForId(viewdata.id.toUInt());
 
         if (containment) {
             if ((viewdata.onPrimary && containment->lastScreen() == m_corona->screenPool()->primaryScreenId())
-                    || (!viewdata.onPrimary && containment->lastScreen() == viewdata.screen)) {
+                || (!viewdata.onPrimary && containment->lastScreen() == viewdata.screen)) {
                 clearpendings << viewdata.id;
             }
         }
     }
 
-    for(auto pendingid : clearpendings) {
+    for (auto pendingid : clearpendings) {
         m_pendingContainmentUpdates.remove(pendingid);
     }
 
     if (m_pendingContainmentUpdates.rowCount() > 0) {
-        qDebug () << "  Pending View updates still valid : ";
+        qDebug() << "  Pending View updates still valid : ";
         m_pendingContainmentUpdates.print();
     }
 
@@ -1350,12 +1356,13 @@ void GenericLayout::syncLatteViewsToScreens()
 
     for (auto view : m_latteViews) {
         auto containment = view->containment();
+
         if (containment && view->isOriginal() && !mapContainsId(&viewsMap, containment->id())) {
             viewsToDelete << containment;
         }
     }
 
-    while(!viewsToDelete.isEmpty()) {
+    while (!viewsToDelete.isEmpty()) {
         auto containment = viewsToDelete.takeFirst();
         auto view = m_latteViews.take(containment);
         qCDebug(latteLayout) << "syncLatteViewsToScreens: view must be deleted... for containment:" << containment->id() << " at screen:" << view->positioner()->currentScreenName();
@@ -1427,7 +1434,7 @@ QList<int> GenericLayout::viewsExplicitScreens()
     Data::ViewsTable views = viewsTable();
     QList<int> screens;
 
-    for (int i=0; i<views.rowCount(); ++i) {
+    for (int i = 0; i < views.rowCount(); ++i) {
         if (!views[i].onPrimary && !screens.contains(views[i].screen)) {
             screens << views[i].screen;
         }
@@ -1540,6 +1547,7 @@ void GenericLayout::updateView(const Latte::Data::View &viewData)
     //! inactiveinmemory -> active/inactiveinmemory [viewscenario]
     //! active -> inactiveinmemory                  [viewscenario]
     auto containment = containmentForId(viewData.id.toUInt());
+
     if (containment) {
         Layouts::Storage::self()->updateView(this, viewData);
 
@@ -1550,6 +1558,7 @@ void GenericLayout::updateView(const Latte::Data::View &viewData)
         } else {
             m_pendingContainmentUpdates[viewData.id] = viewData;
         }
+
         containment->reactToScreenChange();
     }
 
@@ -1593,13 +1602,16 @@ void GenericLayout::removeViewWithoutDestroyingContainment(const Latte::Data::Vi
     }
 
     Plasma::Containment *viewcontainment = containmentForId(viewData.id.toUInt());
+
     if (viewcontainment) {
         auto *vw = m_latteViews.take(viewcontainment);
         m_containments.removeAll(viewcontainment);
+
         if (vw) {
             vw->disconnectSensitiveSignals();
             vw->deleteLater();
         }
+
         Layouts::Storage::self()->removeView(file(), viewData);
     }
 }

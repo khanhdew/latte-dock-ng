@@ -8,7 +8,7 @@
 // Qt
 #include <QtMath>
 
-namespace Latte{
+namespace Latte {
 
 Tools::Tools(QObject *parent)
     : QObject(parent)

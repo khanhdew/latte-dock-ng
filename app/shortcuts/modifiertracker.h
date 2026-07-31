@@ -17,7 +17,8 @@
 namespace Latte {
 namespace ShortcutsPart {
 
-class ModifierTracker: public QObject {
+class ModifierTracker: public QObject
+{
     Q_OBJECT
 
 public:

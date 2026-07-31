@@ -73,7 +73,7 @@ public:
 
     QString originFile() const;
     QString originLayout() const;
-    QString originView() const;    
+    QString originView() const;
 
     View::State state() const;
     void setState(View::State state, QString file = QString(), QString layout = QString(), QString view = QString());

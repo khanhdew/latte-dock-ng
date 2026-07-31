@@ -17,7 +17,8 @@
 namespace Latte {
 namespace ShortcutsPart {
 
-class ShortcutsTracker: public QObject {
+class ShortcutsTracker: public QObject
+{
     Q_OBJECT
     Q_PROPERTY(bool basedOnPositionEnabled READ basedOnPositionEnabled NOTIFY badgesForActivateChanged)
     Q_PROPERTY(QStringList badgesForActivate READ badgesForActivate NOTIFY badgesForActivateChanged)

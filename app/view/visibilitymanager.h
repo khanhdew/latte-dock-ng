@@ -29,6 +29,7 @@ namespace ViewPart {
 class FloatingGapWindow;
 class ScreenEdgeGhostWindow;
 }
+
 namespace WindowSystem {
 class AbstractWindowInterface;
 }
@@ -44,10 +45,10 @@ class VisibilityManager : public QObject
 
     Q_PROPERTY(Latte::Types::Visibility mode READ mode WRITE setMode NOTIFY modeChanged)
     Q_PROPERTY(bool raiseOnDesktop READ raiseOnDesktop WRITE setRaiseOnDesktop NOTIFY raiseOnDesktopChanged)
-    Q_PROPERTY(bool raiseOnActivity READ raiseOnActivity WRITE setRaiseOnActivity NOTIFY raiseOnActivityChanged)    
+    Q_PROPERTY(bool raiseOnActivity READ raiseOnActivity WRITE setRaiseOnActivity NOTIFY raiseOnActivityChanged)
     Q_PROPERTY(bool isHidden READ isHidden WRITE setIsHidden NOTIFY isHiddenChanged)
     Q_PROPERTY(bool isShownFully READ isShownFully WRITE setIsShownFully NOTIFY isShownFullyChanged)
-    Q_PROPERTY(bool isBelowLayer READ isBelowLayer NOTIFY isBelowLayerChanged)    
+    Q_PROPERTY(bool isBelowLayer READ isBelowLayer NOTIFY isBelowLayerChanged)
     Q_PROPERTY(bool isSidebar READ isSidebar NOTIFY isSidebarChanged)
     Q_PROPERTY(bool containsMouse READ containsMouse NOTIFY containsMouseChanged)
 
@@ -269,4 +270,5 @@ private:
 
 }
 }
+
 #endif // VISIBILITYMANAGER_H

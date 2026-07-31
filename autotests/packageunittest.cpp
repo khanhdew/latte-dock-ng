@@ -64,8 +64,8 @@ void PackageUnitTest::indicatorPackageLoadsFromPluginAndResolvesDirectories()
 void PackageUnitTest::indicatorPackageResolvesBundledDefaultIndicator()
 {
     KPackage::Package package = KPackage::PackageLoader::self()->loadPackage(
-        QStringLiteral("Latte/Indicator"),
-        QStringLiteral(LATTE_SOURCE_DIR "/indicators/default"));
+                                    QStringLiteral("Latte/Indicator"),
+                                    QStringLiteral(LATTE_SOURCE_DIR "/indicators/default"));
 
     QVERIFY(package.isValid());
     QCOMPARE(package.metadata().pluginId(), QStringLiteral("org.kde.latte.default"));

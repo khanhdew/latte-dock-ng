@@ -50,7 +50,7 @@ Windows::Windows(AbstractWindowInterface *parent)
 Windows::~Windows()
 {
     //! clear all the m_views tracking information
-    for (QHash<Latte::View *, TrackedViewInfo *>::iterator i=m_views.begin(); i!=m_views.end(); ++i) {
+    for (QHash<Latte::View *, TrackedViewInfo *>::iterator i = m_views.begin(); i != m_views.end(); ++i) {
         i.value()->deleteLater();
         m_views[i.key()] = nullptr;
     }
@@ -58,7 +58,7 @@ Windows::~Windows()
     m_views.clear();
 
     //! clear all the m_layouts tracking layouts
-    for (QHash<Latte::Layout::GenericLayout *, TrackedLayoutInfo *>::iterator i=m_layouts.begin(); i!=m_layouts.end(); ++i) {
+    for (QHash<Latte::Layout::GenericLayout *, TrackedLayoutInfo *>::iterator i = m_layouts.begin(); i != m_layouts.end(); ++i) {
         i.value()->deleteLater();
         m_layouts[i.key()] = nullptr;
     }
@@ -91,6 +91,7 @@ void Windows::init()
         if (!m_windows.contains(wid)) {
             m_windows.insert(wid, m_wm->requestInfo(wid));
         }
+
         updateAllHintsAfterTimer();
     });
 
@@ -99,6 +100,7 @@ void Windows::init()
         //! when the active window changes the previous active windows should be also updated
         for (const auto view : m_views.keys()) {
             WindowId lastWinId = m_views[view]->lastActiveWindow()->currentWinId();
+
             if ((lastWinId) != wid && m_windows.contains(lastWinId)) {
                 m_windows[lastWinId] = m_wm->requestInfo(lastWinId);
             }
@@ -165,7 +167,7 @@ void Windows::addView(Latte::View *view)
     //! Consider Layouts
     addRelevantLayout(view);
 
-    connect(view, &Latte::View::layoutChanged, this, [&, view]() {
+    connect(view, &Latte::View::layoutChanged, this, [ &, view]() {
         addRelevantLayout(view);
     });
 
@@ -216,12 +218,13 @@ void Windows::addRelevantLayout(Latte::View *view)
 
 void Windows::updateRelevantLayouts()
 {
-    QList<Latte::Layout::GenericLayout*> orphanedLayouts;
+    QList<Latte::Layout::GenericLayout *> orphanedLayouts;
 
     //! REMOVE Orphaned Relevant layouts that have been removed or they don't contain any Views anymore
-    for (QHash<Latte::Layout::GenericLayout *, TrackedLayoutInfo *>::iterator i=m_layouts.begin(); i!=m_layouts.end(); ++i) {
+    for (QHash<Latte::Layout::GenericLayout *, TrackedLayoutInfo *>::iterator i = m_layouts.begin(); i != m_layouts.end(); ++i) {
         bool hasView{false};
-        for (QHash<Latte::View *, TrackedViewInfo *>::iterator j=m_views.begin(); j!=m_views.end(); ++j) {
+
+        for (QHash<Latte::View *, TrackedViewInfo *>::iterator j = m_views.begin(); j != m_views.end(); ++j) {
             if (j.key() && i.key() && i.key() == j.key()->layout()) {
                 hasView = true;
                 break;
@@ -232,18 +235,20 @@ void Windows::updateRelevantLayouts()
             if (i.value()) {
                 i.value()->deleteLater();
             }
+
             orphanedLayouts << i.key();
         }
     }
 
-    for(const auto &layout : orphanedLayouts) {
+    for (const auto &layout : orphanedLayouts) {
         m_layouts.remove(layout);
     }
 
     //! UPDATE Enabled layout window tracking based on the Views that are requesting windows tracking
-    for (QHash<Latte::Layout::GenericLayout *, TrackedLayoutInfo *>::iterator i=m_layouts.begin(); i!=m_layouts.end(); ++i) {
+    for (QHash<Latte::Layout::GenericLayout *, TrackedLayoutInfo *>::iterator i = m_layouts.begin(); i != m_layouts.end(); ++i) {
         bool hasViewEnabled{false};
-        for (QHash<Latte::View *, TrackedViewInfo *>::iterator j=m_views.begin(); j!=m_views.end(); ++j) {
+
+        for (QHash<Latte::View *, TrackedViewInfo *>::iterator j = m_views.begin(); j != m_views.end(); ++j) {
             if (i.key() == j.key()->layout() && j.value()->enabled()) {
                 hasViewEnabled = true;
                 break;
@@ -624,7 +629,7 @@ QString Windows::appNameFor(const WindowId &wid)
         return QString();
     }
 
-    if(!m_initializedApplicationData.contains(wid) && !m_delayedApplicationData.contains(wid)) {
+    if (!m_initializedApplicationData.contains(wid) && !m_delayedApplicationData.contains(wid)) {
         m_delayedApplicationData.append(wid);
         m_updateApplicationDataTimer.start();
     }
@@ -643,7 +648,7 @@ QString Windows::appNameFor(const WindowId &wid)
 void Windows::updateApplicationData()
 {
     if (m_delayedApplicationData.count() > 0) {
-        for(int i=0; i<m_delayedApplicationData.count(); ++i) {
+        for (int i = 0; i < m_delayedApplicationData.count(); ++i) {
             auto wid = m_delayedApplicationData[i];
 
             if (m_windows.contains(wid)) {
@@ -748,7 +753,7 @@ bool Windows::isTouchingViewEdge(Latte::View *view, const QRect &windowgeometry)
             QPoint leftChecker(windowgeometry.left(), yCenter);
             QPoint rightChecker(windowgeometry.right(), yCenter);
 
-            bool fulloverlap = (windowgeometry.left()<=view->absoluteGeometry().left()) && (windowgeometry.right()>=view->absoluteGeometry().right());
+            bool fulloverlap = (windowgeometry.left() <= view->absoluteGeometry().left()) && (windowgeometry.right() >= view->absoluteGeometry().right());
 
             inViewLengthBoundaries = fulloverlap || view->absoluteGeometry().contains(leftChecker) || view->absoluteGeometry().contains(rightChecker);
         } else if (view->formFactor() == Plasma::Types::Vertical) {
@@ -757,7 +762,7 @@ bool Windows::isTouchingViewEdge(Latte::View *view, const QRect &windowgeometry)
             QPoint topChecker(xCenter, windowgeometry.top());
             QPoint bottomChecker(xCenter, windowgeometry.bottom());
 
-            bool fulloverlap = (windowgeometry.top()<=view->absoluteGeometry().top()) && (windowgeometry.bottom()>=view->absoluteGeometry().bottom());
+            bool fulloverlap = (windowgeometry.top() <= view->absoluteGeometry().top()) && (windowgeometry.bottom() >= view->absoluteGeometry().bottom());
 
             inViewLengthBoundaries = fulloverlap || view->absoluteGeometry().contains(topChecker) || view->absoluteGeometry().contains(bottomChecker);
         }
@@ -815,6 +820,7 @@ void Windows::updateAllHints()
     //! Pre-filter: only update views that are enabled and tracking the
     //! current activity. Disabled/inactive views are skipped entirely.
     bool hasActiveView{false};
+
     for (const auto view : m_views.keys()) {
         if (m_views[view]->enabled() && m_views[view]->isTrackingCurrentActivity()) {
             updateHints(view);
@@ -854,9 +860,11 @@ void Windows::updateLayoutHintsFromViews()
             if (m_views[view]->existsWindowActive()) {
                 foundActive = true;
             }
+
             if (m_views[view]->existsWindowMaximized()) {
                 foundMaximized = true;
             }
+
             if (m_views[view]->activeWindowMaximized()) {
                 foundActiveMaximized = true;
             }
@@ -959,9 +967,9 @@ void Windows::updateHints(Latte::View *view)
             existsFaultyWindow = true;
         }
 
-        if ( !m_wm->inCurrentDesktopActivity(winfo)
-             || m_wm->hasBlockedTracking(winfo.wid())
-             || winfo.isMinimized()) {
+        if (!m_wm->inCurrentDesktopActivity(winfo)
+            || m_wm->hasBlockedTracking(winfo.wid())
+            || winfo.isMinimized()) {
             continue;
         }
 
@@ -976,7 +984,7 @@ void Windows::updateHints(Latte::View *view)
 
         //! Maximized windows flags
         if ((winfo.isActive() && isMaximizedInViewScreen(view, winfo)) //! active maximized windows have higher priority than the rest maximized windows
-                || (!foundMaximizedInCurScreen && isMaximizedInViewScreen(view, winfo))) {
+            || (!foundMaximizedInCurScreen && isMaximizedInViewScreen(view, winfo))) {
             foundMaximizedInCurScreen = true;
             maxWinId = winfo.wid();
         }
@@ -1020,8 +1028,8 @@ void Windows::updateHints(Latte::View *view)
 
         for (const auto &winfo : m_windows) {
             if (!m_wm->inCurrentDesktopActivity(winfo)
-                    || m_wm->hasBlockedTracking(winfo.wid())
-                    || winfo.isMinimized()) {
+                || m_wm->hasBlockedTracking(winfo.wid())
+                || winfo.isMinimized()) {
                 continue;
             }
 
@@ -1083,7 +1091,8 @@ void Windows::updateHints(Latte::View *view)
     }
 }
 
-void Windows::updateHints(Latte::Layout::GenericLayout *layout) {
+void Windows::updateHints(Latte::Layout::GenericLayout *layout)
+{
     if (!m_layouts.contains(layout) || !m_layouts[layout]->enabled() || !m_layouts[layout]->isTrackingCurrentActivity()) {
         return;
     }
@@ -1109,8 +1118,8 @@ void Windows::updateHints(Latte::Layout::GenericLayout *layout) {
         }
 
         if (!m_wm->inCurrentDesktopActivity(winfo)
-                || m_wm->hasBlockedTracking(winfo.wid())
-                || winfo.isMinimized()) {
+            || m_wm->hasBlockedTracking(winfo.wid())
+            || winfo.isMinimized()) {
             continue;
         }
 

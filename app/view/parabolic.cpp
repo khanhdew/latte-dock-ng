@@ -63,6 +63,7 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
         if (m_lastSwitchTimer.isValid() && m_lastSwitchTimer.elapsed() < MIN_SWITCH_INTERVAL_MS) {
             return;
         }
+
         m_lastSwitchTimer.start();
     }
 
@@ -79,6 +80,7 @@ void Parabolic::setCurrentParabolicItem(QQuickItem *item)
     if (item) {
         if (!m_nullifierFirePos.isNull() && m_view) {
             const QPointF cur = QCursor::pos(m_view->screen());
+
             if ((cur - m_nullifierFirePos).manhattanLength() < 3.0) {
                 // cursor hasn't moved — keep the guard
             } else {
@@ -100,7 +102,7 @@ void Parabolic::onEvent(QEvent *e)
         return;
     }
 
-    auto handlePointerMove = [&](const QPointF &windowPos) {
+    auto handlePointerMove = [&](const QPointF & windowPos) {
         if (m_currentParabolicItem) {
             QPointF internal = m_currentParabolicItem->mapFromItem(m_view->contentItem(), windowPos);
 
@@ -116,6 +118,7 @@ void Parabolic::onEvent(QEvent *e)
                                           Q_ARG(qreal, internal.y()));
             } else {
                 m_lastOrphanParabolicMove = windowPos;
+
                 //! clearing parabolic item.  Skip re-triggering the
                 //! nullifier within the grace period to prevent an
                 //! oscillation loop: a sglClearZoom() restore animation
@@ -132,51 +135,64 @@ void Parabolic::onEvent(QEvent *e)
 
     switch (e->type()) {
 
-    case QEvent::Leave:
-    case QEvent::DragLeave:
-        setCurrentParabolicItem(nullptr);
-        m_cachedDragParabolicItem = nullptr;
-        break;
-    case QEvent::MouseMove:
-        if (auto me = dynamic_cast<QMouseEvent *>(e)) {
-            handlePointerMove(me->position());
-        }
-        break;
-    case QEvent::HoverMove:
-        if (auto he = dynamic_cast<QHoverEvent *>(e)) {
-            handlePointerMove(he->position());
-        }
-        break;
-    case QEvent::DragMove:
-        if (auto de = dynamic_cast<QDragMoveEvent *>(e)) {
-            // During drag, QML MouseArea hover events are suppressed, so no
-            // ParabolicArea item is set as current.  Walk the visual item tree
-            // from the cursor position to find an item that accepts parabolic
-            // enter/move signals (identified by the "parabolicEntered" method).
-            // Cache the result per drag position to avoid redundant tree walks.
-            if (!m_currentParabolicItem && m_view) {
-                QPointF pos = de->position();
-                if (m_cachedDragPos != pos || !m_cachedDragParabolicItem) {
-                    m_cachedDragPos = pos;
-                    QQuickItem *child = m_view->contentItem()->childAt(pos.x(), pos.y());
-                    while (child) {
-                        int enterIdx = child->metaObject()->indexOfMethod("parabolicEntered(real,real)");
-                        if (enterIdx >= 0) {
-                            m_cachedDragParabolicItem = child;
-                            break;
+        case QEvent::Leave:
+        case QEvent::DragLeave:
+            setCurrentParabolicItem(nullptr);
+            m_cachedDragParabolicItem = nullptr;
+            break;
+
+        case QEvent::MouseMove:
+            if (auto me = dynamic_cast<QMouseEvent *>(e)) {
+                handlePointerMove(me->position());
+            }
+
+            break;
+
+        case QEvent::HoverMove:
+            if (auto he = dynamic_cast<QHoverEvent *>(e)) {
+                handlePointerMove(he->position());
+            }
+
+            break;
+
+        case QEvent::DragMove:
+            if (auto de = dynamic_cast<QDragMoveEvent *>(e)) {
+                // During drag, QML MouseArea hover events are suppressed, so no
+                // ParabolicArea item is set as current.  Walk the visual item tree
+                // from the cursor position to find an item that accepts parabolic
+                // enter/move signals (identified by the "parabolicEntered" method).
+                // Cache the result per drag position to avoid redundant tree walks.
+                if (!m_currentParabolicItem && m_view) {
+                    QPointF pos = de->position();
+
+                    if (m_cachedDragPos != pos || !m_cachedDragParabolicItem) {
+                        m_cachedDragPos = pos;
+                        QQuickItem *child = m_view->contentItem()->childAt(pos.x(), pos.y());
+
+                        while (child) {
+                            int enterIdx = child->metaObject()->indexOfMethod("parabolicEntered(real,real)");
+
+                            if (enterIdx >= 0) {
+                                m_cachedDragParabolicItem = child;
+                                break;
+                            }
+
+                            child = child->parentItem();
                         }
-                        child = child->parentItem();
+                    }
+
+                    if (m_cachedDragParabolicItem) {
+                        setCurrentParabolicItem(m_cachedDragParabolicItem);
                     }
                 }
-                if (m_cachedDragParabolicItem) {
-                    setCurrentParabolicItem(m_cachedDragParabolicItem);
-                }
+
+                handlePointerMove(de->position());
             }
-            handlePointerMove(de->position());
-        }
-        break;
-    default:
-        break;
+
+            break;
+
+        default:
+            break;
     }
 
 }

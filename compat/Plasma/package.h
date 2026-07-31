@@ -5,7 +5,7 @@
 // Just provide the full KPackage::Package definition; callers use kPackage()
 // which returns KPackage::Package directly.
 #if __has_include(<KPackage/Package>)
-#include <KPackage/Package>
+    #include <KPackage/Package>
 #else
-#include <kpackage/package.h>
+    #include <kpackage/package.h>
 #endif

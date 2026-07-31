@@ -71,6 +71,7 @@ QString Importer::standardPath(QString subPath, bool localfirst)
 
     for (const QString &root : std::as_const(s_dataRoots)) {
         const QString path = root + QStringLiteral("/") + subPath;
+
         if (QFileInfo::exists(path)) {
             return path;
         }
@@ -84,6 +85,7 @@ QStringList Importer::standardPathsFor(QString subPath, bool localfirst)
     Q_UNUSED(localfirst)
 
     QStringList paths;
+
     for (const QString &root : std::as_const(s_dataRoots)) {
         paths << root + QStringLiteral("/") + subPath;
     }

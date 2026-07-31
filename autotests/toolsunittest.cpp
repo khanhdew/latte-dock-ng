@@ -53,7 +53,7 @@ void ToolsUnitTest::styleStatePredicatesReflectOptionState()
 {
     QStyleOption option;
     option.state = QStyle::State_Enabled | QStyle::State_Active | QStyle::State_Selected
-            | QStyle::State_HasFocus | QStyle::State_MouseOver;
+                   | QStyle::State_HasFocus | QStyle::State_MouseOver;
 
     QVERIFY(Latte::isEnabled(option));
     QVERIFY(Latte::isActive(option));
@@ -257,7 +257,7 @@ void ToolsUnitTest::verticalDockExternalPanelGeometryKeepsScreenThicknessAxis()
 
     const QRect topPanelGeometry = Latte::ViewPart::screenEdgePanelGeometry(screenGeometry, Plasma::Types::TopEdge, 36);
     QCOMPARE(topPanelGeometry, QRect(0, 0, 1000, 36));
-    QCOMPARE(Latte::ViewPart::verticalDockExternalPanelGeometry(screenGeometry, QList<QRect>{topPanelGeometry}),
+    QCOMPARE(Latte::ViewPart::verticalDockExternalPanelGeometry(screenGeometry, QList<QRect> {topPanelGeometry}),
              QRect(0, 36, 1000, 764));
 }
 

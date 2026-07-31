@@ -25,6 +25,7 @@ bool shouldClearGuard(const QPointF &firePos, const QPointF &currentPos)
 {
     if (firePos.isNull())
         return true;
+
     return (currentPos - firePos).manhattanLength() >= STATIONARY_THRESHOLD;
 }
 

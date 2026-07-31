@@ -227,7 +227,7 @@ public:
 
     virtual Latte::Data::View data() const;
 
-    ViewPart::Effects *effects() const;   
+    ViewPart::Effects *effects() const;
     ViewPart::ContainmentInterface *extendedInterface() const;
     virtual ViewPart::Indicator *indicator() const;
     ViewPart::Parabolic *parabolic() const;

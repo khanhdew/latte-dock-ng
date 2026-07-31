@@ -278,10 +278,10 @@ static bool systemQmlBaseIsComplete(const QString &qmlBase)
     const QString controlsDir = qmlBase + QStringLiteral("/org/kde/kirigami/controls");
 
     return QFileInfo(templatesDir).isDir()
-            && QFileInfo(templatesDir + QStringLiteral("/private")).isDir()
-            && QFileInfo(newstuffDir).isDir()
-            && QFileInfo(controlsDir).isDir()
-            && QFileInfo(controlsDir + QStringLiteral("/qmldir")).isFile();
+           && QFileInfo(templatesDir + QStringLiteral("/private")).isDir()
+           && QFileInfo(newstuffDir).isDir()
+           && QFileInfo(controlsDir).isDir()
+           && QFileInfo(controlsDir + QStringLiteral("/qmldir")).isFile();
 }
 
 static QString resolvedSystemQmlBase()
@@ -481,15 +481,15 @@ void ensureKnsCompat()
     // Clean up overrides from the old user-local Qt QML path (pre-1.2.x)
     // that could crash other applications like systemsettings.
     const QStringList oldBases = {
-        QDir::homePath() + QStringLiteral("/.local/lib64/qt6/qml"),
-        QDir::homePath() + QStringLiteral("/.local/lib/qt6/qml"),
-    };
+                                     QDir::homePath() + QStringLiteral("/.local/lib64/qt6/qml"),
+                                     QDir::homePath() + QStringLiteral("/.local/lib/qt6/qml"),
+                                 };
     for (const auto &oldBase : oldBases) {
         const QStringList oldDirs = {
-            oldBase + QStringLiteral("/org/kde/kirigami/templates"),
-            oldBase + QStringLiteral("/org/kde/kirigami/controls"),
-            oldBase + QStringLiteral("/org/kde/newstuff"),
-        };
+                                        oldBase + QStringLiteral("/org/kde/kirigami/templates"),
+                                        oldBase + QStringLiteral("/org/kde/kirigami/controls"),
+                                        oldBase + QStringLiteral("/org/kde/newstuff"),
+                                    };
         for (const auto &d : oldDirs) {
             if (QFile::exists(d + QStringLiteral("/qmldir"))) {
                 qCDebug(latteApp) << "KnsCompat: removing old overrides from" << d;

@@ -81,5 +81,6 @@ private:
 
 }
 }
+
 #endif //CANVASSECONDARYCONFIGVIEW_H
 

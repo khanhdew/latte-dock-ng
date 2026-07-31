@@ -96,10 +96,12 @@ void Schemes::updateDefaultScheme()
     QSet<QString> referencedFiles;
     referencedFiles.insert(defaultSchemePath);
     referencedFiles.insert(QStringLiteral("kdeglobals"));
+
     for (auto it = m_windowScheme.constBegin(); it != m_windowScheme.constEnd(); ++it) {
         referencedFiles.insert(it.value());
     }
-    for (auto it = m_schemes.begin(); it != m_schemes.end(); ) {
+
+    for (auto it = m_schemes.begin(); it != m_schemes.end();) {
         if (!referencedFiles.contains(it.key())) {
             delete it.value();
             it = m_schemes.erase(it);

@@ -11,19 +11,19 @@ namespace Layout {
 namespace Delegate {
 
 PersistentMenu::PersistentMenu(QWidget *parent)
-    : QMenu (parent),
+    : QMenu(parent),
       m_blockHide(false)
 {
 }
 
-void PersistentMenu::setVisible (bool visible)
+void PersistentMenu::setVisible(bool visible)
 {
-  if (m_blockHide) {
-      m_blockHide = false;
-      return;
-  }
+    if (m_blockHide) {
+        m_blockHide = false;
+        return;
+    }
 
-  QMenu::setVisible(visible);
+    QMenu::setVisible(visible);
 }
 
 int PersistentMenu::masterIndex() const
@@ -41,14 +41,15 @@ void PersistentMenu::setMasterIndex(const int &index)
     Q_EMIT masterIndexChanged(index);
 }
 
-void PersistentMenu::mouseReleaseEvent (QMouseEvent *e)
+void PersistentMenu::mouseReleaseEvent(QMouseEvent *e)
 {
-  const QAction *action = actionAt(e->pos());
-  if (action) {
-      m_blockHide = true;
-  }
+    const QAction *action = actionAt(e->pos());
 
-  QMenu::mouseReleaseEvent (e);
+    if (action) {
+        m_blockHide = true;
+    }
+
+    QMenu::mouseReleaseEvent(e);
 }
 
 }

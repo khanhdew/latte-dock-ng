@@ -88,7 +88,8 @@ void UniversalSettings::load()
     updateColorsScriptIsPresent();
 
     QStringList colorsScriptPaths = Layouts::Importer::standardPathsFor(KWINCOLORSSCRIPT);
-    for(auto path: colorsScriptPaths) {
+
+    for (auto path : colorsScriptPaths) {
         KDirWatch::self()->addDir(path);
     }
 
@@ -375,7 +376,7 @@ void UniversalSettings::setScreenScales(QString screenName, float widthScale, fl
         m_screenScales[screenName].second = heightScale;
     } else {
         if (m_screenScales[screenName].first == widthScale
-                && m_screenScales[screenName].second == heightScale) {
+            && m_screenScales[screenName].second == heightScale) {
             return;
         }
 
@@ -408,6 +409,7 @@ void UniversalSettings::upgrade_v010()
             //! it is executed only after the upgrade path
             m_universalGroup.writeEntry(QStringLiteral("singleModeLayoutName"), m_singleModeLayoutName);
             CentralLayout storage(this, Layouts::Importer::layoutUserFilePath(m_singleModeLayoutName));
+
             if (m_singleModeLayoutName == lastNonAssigned) {
                 storage.setActivities(QStringList(Data::Layout::FREEACTIVITIESID));
             } else if (storage.activities().isEmpty()) {
@@ -503,6 +505,7 @@ void UniversalSettings::loadScalesConfig()
     for (const auto &screenName : m_screenScalesGroup.keyList()) {
         QString scalesStr = m_screenScalesGroup.readEntry(screenName, QString());
         QStringList scales = scalesStr.split(QLatin1Char(';'));
+
         if (scales.count() == 2) {
             m_screenScales[screenName] = qMakePair(scales[0].toFloat(), scales[1].toFloat());
         }

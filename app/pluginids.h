@@ -50,15 +50,15 @@ inline constexpr const char kPlasmaShellRc[] = "plasma-org.kde.plasma.desktop-ap
 inline bool isSeparatorPluginId(const QString &pluginId)
 {
     return pluginId == QLatin1String(kSeparator)
-            || pluginId == QLatin1String(kLegacySeparator);
+           || pluginId == QLatin1String(kLegacySeparator);
 }
 
 inline bool isLatteBuiltIn(const QString &pluginId)
 {
     return pluginId == QLatin1String(kSeparator)
-            || pluginId == QLatin1String(kSpacer)
-            || pluginId == QLatin1String(kPlasmoid)
-            || pluginId == QLatin1String(kSplitter);
+           || pluginId == QLatin1String(kSpacer)
+           || pluginId == QLatin1String(kPlasmoid)
+           || pluginId == QLatin1String(kSplitter);
 }
 
 } // namespace PluginId

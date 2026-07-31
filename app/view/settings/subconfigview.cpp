@@ -34,14 +34,17 @@ QObject *findGraphicContextObject(QObject *containmentObject)
     }
 
     QObject *candidate = containmentObject->property("_plasma_graphicObject").value<QObject *>();
+
     if (candidate) {
         return candidate;
     }
 
     candidate = containmentObject->property("graphicObject").value<QObject *>();
+
     if (candidate) {
         return candidate;
     }
+
     return nullptr;
 }
 }
@@ -224,9 +227,9 @@ void SubConfigView::syncPlasmoidContext()
     if (!m_loggedPlasmoidContext && plasmoidContextObject) {
         const QMetaObject *metaObj = plasmoidContextObject->metaObject();
         qCDebug(latteView) << "latte::config plasmoid context class:" << metaObj->className()
-                 << "has configuration:" << (metaObj->indexOfProperty("configuration") >= 0)
-                 << "has location:" << (metaObj->indexOfProperty("location") >= 0)
-                 << "has formFactor:" << (metaObj->indexOfProperty("formFactor") >= 0);
+                           << "has configuration:" << (metaObj->indexOfProperty("configuration") >= 0)
+                           << "has location:" << (metaObj->indexOfProperty("location") >= 0)
+                           << "has formFactor:" << (metaObj->indexOfProperty("formFactor") >= 0);
         m_loggedPlasmoidContext = true;
     }
 
@@ -235,6 +238,7 @@ void SubConfigView::syncPlasmoidContext()
             qCDebug(latteView) << "latte::config switched plasmoid context to graphic object";
             m_hasGraphicPlasmoidContext = true;
         }
+
         return;
     }
 
@@ -244,8 +248,8 @@ void SubConfigView::syncPlasmoidContext()
     if (m_plasmoidContextSyncAttempts == 0) {
         const QMetaObject *metaObj = containmentObject->metaObject();
         qCDebug(latteView) << "latte::config containment context fallback class:" << metaObj->className()
-                 << "has _plasma_graphicObject property:" << (metaObj->indexOfProperty("_plasma_graphicObject") >= 0)
-                 << "has graphicObject property:" << (metaObj->indexOfProperty("graphicObject") >= 0);
+                           << "has _plasma_graphicObject property:" << (metaObj->indexOfProperty("_plasma_graphicObject") >= 0)
+                           << "has graphicObject property:" << (metaObj->indexOfProperty("graphicObject") >= 0);
     }
 
     if (m_plasmoidContextSyncAttempts < kMaxPlasmoidContextSyncAttempts) {
@@ -284,25 +288,25 @@ void SubConfigView::syncSlideEffect()
     auto slideLocation = WindowSystem::AbstractWindowInterface::Slide::None;
 
     switch (m_latteView->containment()->location()) {
-    case Plasma::Types::TopEdge:
-        slideLocation = WindowSystem::AbstractWindowInterface::Slide::Top;
-        break;
+        case Plasma::Types::TopEdge:
+            slideLocation = WindowSystem::AbstractWindowInterface::Slide::Top;
+            break;
 
-    case Plasma::Types::RightEdge:
-        slideLocation = WindowSystem::AbstractWindowInterface::Slide::Right;
-        break;
+        case Plasma::Types::RightEdge:
+            slideLocation = WindowSystem::AbstractWindowInterface::Slide::Right;
+            break;
 
-    case Plasma::Types::BottomEdge:
-        slideLocation = WindowSystem::AbstractWindowInterface::Slide::Bottom;
-        break;
+        case Plasma::Types::BottomEdge:
+            slideLocation = WindowSystem::AbstractWindowInterface::Slide::Bottom;
+            break;
 
-    case Plasma::Types::LeftEdge:
-        slideLocation = WindowSystem::AbstractWindowInterface::Slide::Left;
-        break;
+        case Plasma::Types::LeftEdge:
+            slideLocation = WindowSystem::AbstractWindowInterface::Slide::Left;
+            break;
 
-    default:
-        qCDebug(latteView) << staticMetaObject.className() << "wrong location";
-        break;
+        default:
+            qCDebug(latteView) << staticMetaObject.className() << "wrong location";
+            break;
     }
 
     m_corona->wm()->slideWindow(*this, slideLocation);
@@ -364,23 +368,23 @@ bool SubConfigView::event(QEvent *e)
     if (e->type() == QEvent::PlatformSurface) {
         if (auto pe = dynamic_cast<QPlatformSurfaceEvent *>(e)) {
             switch (pe->surfaceEventType()) {
-            case QPlatformSurfaceEvent::SurfaceCreated:
+                case QPlatformSurfaceEvent::SurfaceCreated:
 
-                if (m_shellSurface) {
+                    if (m_shellSurface) {
+                        break;
+                    }
+
+                    setupWaylandIntegration();
                     break;
-                }
 
-                setupWaylandIntegration();
-                break;
+                case QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed:
+                    if (m_shellSurface) {
+                        delete m_shellSurface;
+                        m_shellSurface = nullptr;
+                        qCDebug(latteView) << "WAYLAND " << title() <<  " window surface was deleted...";
+                    }
 
-            case QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed:
-                if (m_shellSurface) {
-                    delete m_shellSurface;
-                    m_shellSurface = nullptr;
-                    qCDebug(latteView) << "WAYLAND " << title() <<  " window surface was deleted...";
-                }
-
-                break;
+                    break;
             }
         }
     }

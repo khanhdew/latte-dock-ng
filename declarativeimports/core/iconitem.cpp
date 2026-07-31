@@ -44,19 +44,24 @@ inline qreal itemDevicePixelRatio(const QQuickItem *item)
 inline KSvg::Svg::ColorSet toSvgColorSet(int group)
 {
     switch (group) {
-    case 1:
-        return KSvg::Svg::Button;
-    case 2:
-        return KSvg::Svg::View;
-    case 3:
-        return KSvg::Svg::Complementary;
-    case 4:
-        return KSvg::Svg::Header;
-    case 5:
-        return KSvg::Svg::Tooltip;
-    case 0:
-    default:
-        return KSvg::Svg::Window;
+        case 1:
+            return KSvg::Svg::Button;
+
+        case 2:
+            return KSvg::Svg::View;
+
+        case 3:
+            return KSvg::Svg::Complementary;
+
+        case 4:
+            return KSvg::Svg::Header;
+
+        case 5:
+            return KSvg::Svg::Tooltip;
+
+        case 0:
+        default:
+            return KSvg::Svg::Window;
     }
 }
 
@@ -456,8 +461,8 @@ void IconItem::updateColors()
         float rtotal = 0, gtotal = 0, btotal = 0;
         float total = 0.0f;
 
-        for(int row=0; row<icon.height(); ++row) {
-            for(int col=0; col<icon.width(); ++col) {
+        for (int row = 0; row < icon.height(); ++row) {
+            for (int col = 0; col < icon.width(); ++col) {
                 QRgb pix = icon.pixel(col, row);
 
                 int r = qRed(pix);
@@ -589,7 +594,7 @@ void IconItem::loadPixmap()
 void IconItem::itemChange(ItemChange change, const ItemChangeData &value)
 {
     if (change == QQuickItem::ItemSceneChange
-            || change == QQuickItem::ItemDevicePixelRatioHasChanged) {
+        || change == QQuickItem::ItemDevicePixelRatioHasChanged) {
         if (m_svgIcon) {
             m_svgIcon->setDevicePixelRatio(itemDevicePixelRatio(this));
         }

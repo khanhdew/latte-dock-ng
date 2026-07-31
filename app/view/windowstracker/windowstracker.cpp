@@ -30,7 +30,7 @@ WindowsTracker::WindowsTracker(Latte::View *parent)
     m_allScreensTracker = new TrackerPart::AllScreensTracker(this);
     m_currentScreenTracker = new TrackerPart::CurrentScreenTracker(this);
 
-    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::enabledChanged, this, [this](const Latte::View *view) {
+    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::enabledChanged, this, [this](const Latte::View * view) {
         if (m_latteView == view) {
             Q_EMIT enabledChanged();
         }

@@ -119,6 +119,7 @@ VisibilityManager::VisibilityManager(PlasmaQuick::ContainmentView *view)
             Q_EMIT mustBeShown();
         }
     });
+
     connect(&m_timerHide, &QTimer::timeout, this, [this]() {
         if (!hidingIsBlocked() && !m_isHidden && !m_isBelowLayer && !m_dragEnter) {
             if (m_isFloatingGapWindowEnabled) {
@@ -257,119 +258,119 @@ void VisibilityManager::setMode(Latte::Types::Visibility mode)
     }
 
     switch (m_mode) {
-    case Types::AlwaysVisible: {
-        if (m_latteView->containment() && m_latteView->screen()) {
-            updateStrutsBasedOnLayoutsAndActivities();
+        case Types::AlwaysVisible: {
+            if (m_latteView->containment() && m_latteView->screen()) {
+                updateStrutsBasedOnLayoutsAndActivities();
+            }
+
+            m_connections[base] = connect(this, &VisibilityManager::strutsThicknessChanged, &VisibilityManager::updateStrutsAfterTimer);
+
+            // disabling this call because it was creating too many struts calls and   ???
+            // could create reduced responsiveness for DynamicStruts Scenario(for example ??
+            // when dragging active window from a floating dock) ???
+            m_connections[base + 1] = connect(m_latteView, &Latte::View::absoluteGeometryChanged, this, &VisibilityManager::updateStrutsAfterTimer);
+
+            m_connections[base + 2] = connect(m_corona->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged, this, [this]() {
+                if (m_corona && m_corona->layoutsManager()->memoryUsage() == MemoryUsage::MultipleLayouts) {
+                    updateStrutsBasedOnLayoutsAndActivities(true);
+                }
+            });
+
+            //! Recompute struts when screen geometry changes on multi-screen setups.
+            m_connections[base + 3] = connect(m_corona->screenPool(), &Latte::ScreenPool::screenGeometryChanged, this, &VisibilityManager::updateStrutsAfterTimer);
+
+            m_connections[base + 4] = connect(m_latteView, &Latte::View::activitiesChanged, this, [this]() {
+                updateStrutsBasedOnLayoutsAndActivities(true);
+            });
+
+            raiseView(true);
+            break;
         }
 
-        m_connections[base] = connect(this, &VisibilityManager::strutsThicknessChanged, &VisibilityManager::updateStrutsAfterTimer);
+        case Types::AutoHide: {
+            m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged, this, [this]() {
+                raiseView(m_containsMouse);
+            });
 
-        // disabling this call because it was creating too many struts calls and   ???
-        // could create reduced responsiveness for DynamicStruts Scenario(for example ??
-        // when dragging active window from a floating dock) ???
-        m_connections[base+1] = connect(m_latteView, &Latte::View::absoluteGeometryChanged, this, &VisibilityManager::updateStrutsAfterTimer);
-
-        m_connections[base+2] = connect(m_corona->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged, this, [this]() {
-            if (m_corona && m_corona->layoutsManager()->memoryUsage() == MemoryUsage::MultipleLayouts) {
-                updateStrutsBasedOnLayoutsAndActivities(true);
-            }
-        });
-
-        //! Recompute struts when screen geometry changes on multi-screen setups.
-        m_connections[base+3] = connect(m_corona->screenPool(), &Latte::ScreenPool::screenGeometryChanged, this, &VisibilityManager::updateStrutsAfterTimer);
-
-        m_connections[base+4] = connect(m_latteView, &Latte::View::activitiesChanged, this, [this]() {
-            updateStrutsBasedOnLayoutsAndActivities(true);
-        });
-
-        raiseView(true);
-        break;
-    }
-
-    case Types::AutoHide: {
-        m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged, this, [this]() {
             raiseView(m_containsMouse);
-        });
+            break;
+        }
 
-        raiseView(m_containsMouse);
-        break;
-    }
+        case Types::DodgeActive: {
+            m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged
+                                          , this, &VisibilityManager::dodgeActive);
+            m_connections[base + 1] = connect(m_latteView->windowsTracker()->currentScreen(), &TrackerPart::CurrentScreenTracker::activeWindowTouchingChanged
+                                              , this, &VisibilityManager::dodgeActive);
 
-    case Types::DodgeActive: {
-        m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged
-                                      , this, &VisibilityManager::dodgeActive);
-        m_connections[base+1] = connect(m_latteView->windowsTracker()->currentScreen(), &TrackerPart::CurrentScreenTracker::activeWindowTouchingChanged
-                                        , this, &VisibilityManager::dodgeActive);
+            dodgeActive();
+            break;
+        }
 
-        dodgeActive();
-        break;
-    }
+        case Types::DodgeMaximized: {
+            m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged
+                                          , this, &VisibilityManager::dodgeMaximized);
+            m_connections[base + 1] = connect(m_latteView->windowsTracker()->currentScreen(), &TrackerPart::CurrentScreenTracker::activeWindowMaximizedChanged
+                                              , this, &VisibilityManager::dodgeMaximized);
 
-    case Types::DodgeMaximized: {
-        m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged
-                                      , this, &VisibilityManager::dodgeMaximized);
-        m_connections[base+1] = connect(m_latteView->windowsTracker()->currentScreen(), &TrackerPart::CurrentScreenTracker::activeWindowMaximizedChanged
-                                        , this, &VisibilityManager::dodgeMaximized);
+            dodgeMaximized();
+            break;
+        }
 
-        dodgeMaximized();
-        break;
-    }
+        case Types::DodgeAllWindows: {
+            m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged
+                                          , this, &VisibilityManager::dodgeAllWindows);
 
-    case Types::DodgeAllWindows: {
-        m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged
-                                      , this, &VisibilityManager::dodgeAllWindows);
+            m_connections[base + 1] = connect(m_latteView->windowsTracker()->currentScreen(), &TrackerPart::CurrentScreenTracker::existsWindowTouchingChanged
+                                              , this, &VisibilityManager::dodgeAllWindows);
 
-        m_connections[base+1] = connect(m_latteView->windowsTracker()->currentScreen(), &TrackerPart::CurrentScreenTracker::existsWindowTouchingChanged
-                                        , this, &VisibilityManager::dodgeAllWindows);
+            dodgeAllWindows();
+            break;
+        }
 
-        dodgeAllWindows();
-        break;
-    }
+        case Types::WindowsGoBelow:
+            break;
 
-    case Types::WindowsGoBelow:
-        break;
+        case Types::WindowsCanCover:
+            m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged, this, [this]() {
+                raiseView(m_containsMouse);
+            });
 
-    case Types::WindowsCanCover:
-        m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged, this, [this]() {
             raiseView(m_containsMouse);
-        });
+            break;
 
-        raiseView(m_containsMouse);
-        break;
+        case Types::WindowsAlwaysCover:
+            break;
 
-    case Types::WindowsAlwaysCover:
-        break;
+        case Types::SidebarOnDemand:
+            m_connections[base] = connect(m_latteView, &Latte::View::inEditModeChanged, this, [this]() {
+                if (!m_latteView->inEditMode()) {
+                    m_isRequestedShownSidebarOnDemand = false;
+                    updateHiddenState();
+                }
+            });
 
-    case Types::SidebarOnDemand:
-        m_connections[base] = connect(m_latteView, &Latte::View::inEditModeChanged, this, [this]() {
-            if (!m_latteView->inEditMode()) {
-                m_isRequestedShownSidebarOnDemand = false;
-                updateHiddenState();
-            }
-        });
+            m_isRequestedShownSidebarOnDemand = false;
+            updateHiddenState();
+            break;
 
-        m_isRequestedShownSidebarOnDemand = false;
-        updateHiddenState();
-        break;
+        case Types::SidebarAutoHide:
+            m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged, this, [this]() {
+                if (!m_latteView->inEditMode()) {
+                    updateHiddenState();
+                }
+            });
 
-    case Types::SidebarAutoHide:
-        m_connections[base] = connect(this, &VisibilityManager::containsMouseChanged, this, [this]() {
-            if (!m_latteView->inEditMode()) {
-                updateHiddenState();
-            }
-        });
-        
-        m_connections[base+1] = connect(m_latteView, &Latte::View::inEditModeChanged, this, [this]() {
-            if (m_latteView->inEditMode() && !m_isHidden) {
-                updateHiddenState();
-            }
-        });
+            m_connections[base + 1] = connect(m_latteView, &Latte::View::inEditModeChanged, this, [this]() {
+                if (m_latteView->inEditMode() && !m_isHidden) {
+                    updateHiddenState();
+                }
+            });
 
-        toggleHiddenState();
-        break;
+            toggleHiddenState();
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     Q_EMIT modeChanged();
@@ -406,8 +407,9 @@ void VisibilityManager::updateStrutsBasedOnLayoutsAndActivities(bool forceUpdate
                                         && m_latteView->layout() && !m_latteView->positioner()->inRelocationAnimation()
                                         && m_latteView->layout()->isCurrent());
 
-    if (m_strutsThickness>0 && canSetStrut() && (m_corona->layoutsManager()->memoryUsage() == MemoryUsage::SingleLayout || inMultipleLayoutsAndCurrent)) {
+    if (m_strutsThickness > 0 && canSetStrut() && (m_corona->layoutsManager()->memoryUsage() == MemoryUsage::SingleLayout || inMultipleLayoutsAndCurrent)) {
         QRect computedStruts = acceptableStruts();
+
         if (m_publishedStruts != computedStruts || forceUpdate) {
             //! Force update is needed when very important events happen in DE and there is a chance
             //! that previously even though struts where sent the DE did not accept them.
@@ -438,34 +440,34 @@ QRect VisibilityManager::acceptableStruts()
     QRect calcs;
 
     switch (m_latteView->location()) {
-    case Plasma::Types::TopEdge: {
-        calcs = QRect(m_latteView->x(), m_latteView->screenGeometry().top(), m_latteView->width(), m_strutsThickness);
-        break;
-    }
+        case Plasma::Types::TopEdge: {
+            calcs = QRect(m_latteView->x(), m_latteView->screenGeometry().top(), m_latteView->width(), m_strutsThickness);
+            break;
+        }
 
-    case Plasma::Types::BottomEdge: {
-        int y = m_latteView->screenGeometry().bottom() - m_strutsThickness + 1 /* +1, is needed in order to not leave a gap at screen_edge*/;
-        calcs = QRect(m_latteView->x(), y, m_latteView->width(), m_strutsThickness);
-        break;
-    }
+        case Plasma::Types::BottomEdge: {
+            int y = m_latteView->screenGeometry().bottom() - m_strutsThickness + 1 /* +1, is needed in order to not leave a gap at screen_edge*/;
+            calcs = QRect(m_latteView->x(), y, m_latteView->width(), m_strutsThickness);
+            break;
+        }
 
-    case Plasma::Types::LeftEdge: {
-        calcs = QRect(m_latteView->screenGeometry().left(), m_latteView->y(), m_strutsThickness, m_latteView->height());
-        break;
-    }
+        case Plasma::Types::LeftEdge: {
+            calcs = QRect(m_latteView->screenGeometry().left(), m_latteView->y(), m_strutsThickness, m_latteView->height());
+            break;
+        }
 
-    case Plasma::Types::RightEdge: {
-        int x = m_latteView->screenGeometry().right() - m_strutsThickness + 1 /* +1, is needed in order to not leave a gap at screen_edge*/;
-        calcs = QRect(x, m_latteView->y(), m_strutsThickness, m_latteView->height());
-        break;
-    }
+        case Plasma::Types::RightEdge: {
+            int x = m_latteView->screenGeometry().right() - m_strutsThickness + 1 /* +1, is needed in order to not leave a gap at screen_edge*/;
+            calcs = QRect(x, m_latteView->y(), m_strutsThickness, m_latteView->height());
+            break;
+        }
 
-    case Plasma::Types::Floating:
-    case Plasma::Types::Desktop:
-    case Plasma::Types::FullScreen:
-    default:
-        // Struts only apply to edge-aligned panels.
-        break;
+        case Plasma::Types::Floating:
+        case Plasma::Types::Desktop:
+        case Plasma::Types::FullScreen:
+        default:
+            // Struts only apply to edge-aligned panels.
+            break;
     }
 
     return calcs;
@@ -578,6 +580,7 @@ void VisibilityManager::addBlockHidingEvent(const QString &type)
     if (m_blockHidingEvents.contains(type) || type.isEmpty()) {
         return;
     }
+
     //qCDebug(latteView) << " org.kde.late {{ ++++ adding block hiding event :: " << type;
 
     bool prevHidingIsBlocked = hidingIsBlocked();
@@ -594,6 +597,7 @@ void VisibilityManager::removeBlockHidingEvent(const QString &type)
     if (!m_blockHidingEvents.contains(type) || type.isEmpty()) {
         return;
     }
+
     //qCDebug(latteView) << " org.kde.latte {{ ---- remove block hiding event :: " << type;
 
     bool prevHidingIsBlocked = hidingIsBlocked();
@@ -623,10 +627,10 @@ void VisibilityManager::onHeadThicknessChanged()
 }
 
 void VisibilityManager::publishFrameExtents(bool forceUpdate)
-{   
+{
     if (m_frameExtentsHeadThicknessGap != m_latteView->headThicknessGap()
-            || m_frameExtentsLocation != m_latteView->location()
-            || forceUpdate) {
+        || m_frameExtentsLocation != m_latteView->location()
+        || forceUpdate) {
 
         m_frameExtentsLocation = m_latteView->location();
         m_frameExtentsHeadThicknessGap = m_latteView->headThicknessGap();
@@ -755,33 +759,33 @@ void VisibilityManager::updateHiddenState()
         return;
 
     switch (m_mode) {
-    case Types::AutoHide:
-    case Types::WindowsCanCover:
-        raiseView(m_containsMouse);
-        break;
+        case Types::AutoHide:
+        case Types::WindowsCanCover:
+            raiseView(m_containsMouse);
+            break;
 
-    case Types::DodgeActive:
-        dodgeActive();
-        break;
+        case Types::DodgeActive:
+            dodgeActive();
+            break;
 
-    case Types::DodgeMaximized:
-        dodgeMaximized();
-        break;
+        case Types::DodgeMaximized:
+            dodgeMaximized();
+            break;
 
-    case Types::DodgeAllWindows:
-        dodgeAllWindows();
-        break;
+        case Types::DodgeAllWindows:
+            dodgeAllWindows();
+            break;
 
-    case Types::SidebarOnDemand:
-        raiseView(m_latteView->inEditMode() || m_isRequestedShownSidebarOnDemand);
-        break;
+        case Types::SidebarOnDemand:
+            raiseView(m_latteView->inEditMode() || m_isRequestedShownSidebarOnDemand);
+            break;
 
-    case Types::SidebarAutoHide:
-        raiseView(m_latteView->inEditMode() || (m_containsMouse && !m_isHidden));
-        break;
+        case Types::SidebarAutoHide:
+            raiseView(m_latteView->inEditMode() || (m_containsMouse && !m_isHidden));
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 }
 
@@ -793,6 +797,7 @@ void VisibilityManager::raiseView(bool raise)
         } else if (!raise && !m_isHidden && !m_dragEnter && !hidingIsBlocked()) {
             Q_EMIT mustBeHide();
         }
+
         return;
     }
 
@@ -965,32 +970,32 @@ void VisibilityManager::checkMouseInFloatingArea()
 void VisibilityManager::viewEventManager(QEvent *ev)
 {
     switch (ev->type()) {
-    case QEvent::Enter:
-        setContainsMouse(true);
-        break;
+        case QEvent::Enter:
+            setContainsMouse(true);
+            break;
 
-    case QEvent::Leave:
-        m_dragEnter = false;
-        setContainsMouse(false);
-        break;
+        case QEvent::Leave:
+            m_dragEnter = false;
+            setContainsMouse(false);
+            break;
 
-    case QEvent::DragEnter:
-        m_dragEnter = true;
+        case QEvent::DragEnter:
+            m_dragEnter = true;
 
-        if (m_isHidden && !isSidebar()) {
-            Q_EMIT mustBeShown();
-        }
+            if (m_isHidden && !isSidebar()) {
+                Q_EMIT mustBeShown();
+            }
 
-        break;
+            break;
 
-    case QEvent::DragLeave:
-    case QEvent::Drop:
-        m_dragEnter = false;
-        updateHiddenState();
-        break;
+        case QEvent::DragLeave:
+        case QEvent::Drop:
+            m_dragEnter = false;
+            updateHiddenState();
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 }
 
@@ -1014,9 +1019,9 @@ void VisibilityManager::setEnableKWinEdges(bool enable)
 void VisibilityManager::updateKWinEdgesSupport()
 {
     if (m_mode == Types::AutoHide
-         || m_mode == Types::DodgeActive
-         || m_mode == Types::DodgeAllWindows
-         || m_mode == Types::DodgeMaximized) {
+        || m_mode == Types::DodgeActive
+        || m_mode == Types::DodgeAllWindows
+        || m_mode == Types::DodgeMaximized) {
 
         if (m_enableKWinEdgesFromUser) {
             createEdgeGhostWindow();
@@ -1060,7 +1065,7 @@ void VisibilityManager::createEdgeGhostWindow()
         });
 
         m_connectionsKWinEdges[0] = connect(m_wm, &WindowSystem::AbstractWindowInterface::currentActivityChanged,
-                                            this, [&]() {
+        this, [&]() {
             bool inCurrentLayout = (m_corona->layoutsManager()->memoryUsage() == MemoryUsage::SingleLayout ||
                                     (m_corona->layoutsManager()->memoryUsage() == MemoryUsage::MultipleLayouts
                                      && m_latteView->layout() && !m_latteView->positioner()->inRelocationAnimation()

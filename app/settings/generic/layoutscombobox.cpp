@@ -21,7 +21,7 @@ namespace Settings {
 const int MARGIN = 2;
 
 LayoutsComboBox::LayoutsComboBox(QWidget *parent)
-    : QComboBox (parent)
+    : QComboBox(parent)
 {
 }
 
@@ -60,11 +60,13 @@ void LayoutsComboBox::paintEvent(QPaintEvent *)
     // adjust text place, move it a bit to the left
     QRect textRect;
     int textnegativepad = MARGIN + 1;
+
     if (qApp->layoutDirection() == Qt::LeftToRight) {
-        textRect = QRect(remained.x() - textnegativepad, opt.rect.y(), remained.width() + 2*textnegativepad, opt.rect.height());
+        textRect = QRect(remained.x() - textnegativepad, opt.rect.y(), remained.width() + 2 * textnegativepad, opt.rect.height());
     } else {
         textRect = QRect(remained.x(), opt.rect.y(), remained.width() + 2 * textnegativepad, opt.rect.height());
     }
+
     opt.rect = textRect;
 
     // text

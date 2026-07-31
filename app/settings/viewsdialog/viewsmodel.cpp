@@ -82,7 +82,7 @@ const Latte::Data::View Views::currentData(const QString &id)
 
 const Latte::Data::View Views::originalData(const QString &id)
 {
-    if (o_viewsTable.containsId(id)){
+    if (o_viewsTable.containsId(id)) {
         return o_viewsTable[id];
     }
 
@@ -151,7 +151,7 @@ int Views::sortingFactorForAlignment(const Data::View &view) const
 
 int Views::sortingFactorForSubContainments(const Data::View &view) const
 {
-    return view.subcontainments.rowCount()+1;
+    return view.subcontainments.rowCount() + 1;
 }
 
 QString Views::sortableText(const int &priority, const QString &text) const
@@ -186,7 +186,7 @@ void Views::initEdges()
 {
     s_edges.clear();
 
-    int i=0;
+    int i = 0;
     s_edges << Data::View(QString::number(Plasma::Types::TopEdge), i18nc("top edge", "Top"));
     s_edges[i].edge = Plasma::Types::TopEdge; s_edges[i].alignment = Latte::Types::Center;
     s_edges[i].setState(Data::View::IsCreated);
@@ -212,7 +212,7 @@ void Views::initAlignments()
     s_horizontalAlignments.clear();
     s_verticalAlignments.clear();
 
-    int i=0; // Left / Top
+    int i = 0; // Left / Top
     s_horizontalAlignments << Data::View(QString::number(Latte::Types::Left), i18nc("left alignment", "Left"));
     s_horizontalAlignments[i].edge = Plasma::Types::BottomEdge; s_horizontalAlignments[i].alignment = Latte::Types::Left;
     s_horizontalAlignments[i].setState(Data::View::IsCreated);
@@ -360,13 +360,15 @@ bool Views::removeRows(int row, int count, const QModelIndex &parent)
     Q_UNUSED(parent)
 
     int firstRow = row;
-    int lastRow = row+count-1;
+    int lastRow = row + count - 1;
 
     if (count > 0 && m_viewsTable.rowExists(firstRow) && (m_viewsTable.rowExists(lastRow))) {
         beginRemoveRows(QModelIndex(), firstRow, lastRow);
-        for(int i=0; i<count; ++i) {
+
+        for (int i = 0; i < count; ++i) {
             m_viewsTable.remove(firstRow);
         }
+
         endRemoveRows();
         return true;
     }
@@ -381,10 +383,10 @@ bool Views::isVertical(const Plasma::Types::Location &location) const
 
 QString Views::viewForSubContainment(const QString &sid)
 {
-    for(int i=0; i<m_viewsTable.rowCount(); ++i) {
-       if (m_viewsTable[i].hasSubContainment(sid)) {
-           return m_viewsTable[i].id;
-       }
+    for (int i = 0; i < m_viewsTable.rowCount(); ++i) {
+        if (m_viewsTable[i].hasSubContainment(sid)) {
+            return m_viewsTable[i].id;
+        }
     }
 
     return QString();
@@ -403,7 +405,7 @@ void Views::updateActiveStatesBasedOn(const CentralLayout *layout)
     roles << ISACTIVEROLE;
     roles << HASCHANGEDVIEWROLE;
 
-    for (int i=0; i<m_viewsTable.rowCount(); ++i) {
+    for (int i = 0; i < m_viewsTable.rowCount(); ++i) {
         uint viewid = m_viewsTable[i].id.toUInt();
         auto view = layout->viewForContainment(viewid);
 
@@ -424,7 +426,7 @@ Latte::Data::Screen Views::screenData(const QString &viewId) const
         return Latte::Data::Screen();
     }
 
-   // QString primaryid = QString::number(m_corona->screenPool()->primaryScreenId());
+    // QString primaryid = QString::number(m_corona->screenPool()->primaryScreenId());
     QString explicitid = QString::number(m_viewsTable[row].screen);
 
     Data::Screen scrData = s_screens[0]; //default
@@ -450,7 +452,7 @@ Latte::Data::ViewsTable Views::alteredViews() const
 {
     Latte::Data::ViewsTable views;
 
-    for(int i=0; i<rowCount(); ++i) {
+    for (int i = 0; i < rowCount(); ++i) {
         QString currentId = m_viewsTable[i].id;
 
         if (!o_viewsTable.containsId(currentId)
@@ -466,7 +468,7 @@ Latte::Data::ViewsTable Views::newViews() const
 {
     Latte::Data::ViewsTable views;
 
-    for(int i=0; i<rowCount(); ++i) {
+    for (int i = 0; i < rowCount(); ++i) {
         QString currentId = m_viewsTable[i].id;
 
         if (!o_viewsTable.containsId(currentId)) {
@@ -479,7 +481,7 @@ Latte::Data::ViewsTable Views::newViews() const
 
 void Views::clearErrorsAndWarnings()
 {
-    for(int i=0; i<m_viewsTable.rowCount(); ++i) {
+    for (int i = 0; i < m_viewsTable.rowCount(); ++i) {
         m_viewsTable[i].errors = 0;
         m_viewsTable[i].warnings = 0;
     }
@@ -490,7 +492,7 @@ void Views::clearErrorsAndWarnings()
     roles << ERRORSROLE;
     roles << WARNINGSROLE;
 
-    Q_EMIT dataChanged(this->index(0, IDCOLUMN), this->index(m_viewsTable.rowCount()-1, SUBCONTAINMENTSCOLUMN), roles);
+    Q_EMIT dataChanged(this->index(0, IDCOLUMN), this->index(m_viewsTable.rowCount() - 1, SUBCONTAINMENTSCOLUMN), roles);
 }
 
 void Views::populateScreens()
@@ -508,7 +510,7 @@ void Views::populateScreens()
     Data::Screen allsecscreens(QString::number(Data::Screen::ONALLSECONDARYSCREENSID),
                                i18n("Secondary Screens"));
 
-    primary.isActive = true;    
+    primary.isActive = true;
     allscreens.isActive = true;
     allsecscreens.isActive = (m_corona->screenPool()->secondaryScreenIds().count() > 0);
 
@@ -518,7 +520,7 @@ void Views::populateScreens()
     int defcount = s_screens.rowCount();
     s_screens << m_corona->screenPool()->screensTable();
 
-    for (int i=defcount; i<s_screens.rowCount(); ++i) {
+    for (int i = defcount; i < s_screens.rowCount(); ++i) {
         s_screens[i].isActive = m_corona->screenPool()->isScreenActive(s_screens[i].id.toInt());
     }
 }
@@ -589,47 +591,58 @@ QVariant Views::headerData(int section, Qt::Orientation orientation, int role) c
         return font;
     }
 
-    switch(section) {
-    case IDCOLUMN:
-        if (role == Qt::DisplayRole) {
-            return QStringLiteral("#");
-        }
-        break;
-    case NAMECOLUMN:
-        if (role == Qt::DisplayRole) {
-            return QString(i18n("Name"));
-        }
-        break;
-    case SCREENCOLUMN:
-        if (role == Qt::DisplayRole) {
-            return QString(i18n("Screen"));
-        }
-        /*  } else if (role == Qt::DecorationRole) {
-            return QIcon::fromTheme(QStringLiteral("desktop"));
-        }*/
-        break;
-    case EDGECOLUMN:
-        if (role == Qt::DisplayRole) {
-            return QString(i18nc("screen edge", "Edge"));
-        }
-        /*  } else if (role == Qt::DecorationRole) {
-            return QIcon::fromTheme(QStringLiteral("transform-move"));
-        }*/
-        break;
-    case ALIGNMENTCOLUMN:
-        if (role == Qt::DisplayRole) {
-            return QString(i18n("Alignment"));
-        }
-        /*} else if (role == Qt::DecorationRole) {
-            return QIcon::fromTheme(QStringLiteral("format-justify-center"));
-        }*/
-        break;
-    case SUBCONTAINMENTSCOLUMN:
-        if (role == Qt::DisplayRole) {
-            return QString(i18n("Includes"));
-        }
-    default:
-        break;
+    switch (section) {
+        case IDCOLUMN:
+            if (role == Qt::DisplayRole) {
+                return QStringLiteral("#");
+            }
+
+            break;
+
+        case NAMECOLUMN:
+            if (role == Qt::DisplayRole) {
+                return QString(i18n("Name"));
+            }
+
+            break;
+
+        case SCREENCOLUMN:
+            if (role == Qt::DisplayRole) {
+                return QString(i18n("Screen"));
+            }
+
+            /*  } else if (role == Qt::DecorationRole) {
+                return QIcon::fromTheme(QStringLiteral("desktop"));
+            }*/
+            break;
+
+        case EDGECOLUMN:
+            if (role == Qt::DisplayRole) {
+                return QString(i18nc("screen edge", "Edge"));
+            }
+
+            /*  } else if (role == Qt::DecorationRole) {
+                return QIcon::fromTheme(QStringLiteral("transform-move"));
+            }*/
+            break;
+
+        case ALIGNMENTCOLUMN:
+            if (role == Qt::DisplayRole) {
+                return QString(i18n("Alignment"));
+            }
+
+            /*} else if (role == Qt::DecorationRole) {
+                return QIcon::fromTheme(QStringLiteral("format-justify-center"));
+            }*/
+            break;
+
+        case SUBCONTAINMENTSCOLUMN:
+            if (role == Qt::DisplayRole) {
+                return QString(i18n("Includes"));
+            }
+
+        default:
+            break;
     };
 
     return QAbstractTableModel::headerData(section, orientation, role);
@@ -643,9 +656,9 @@ Qt::ItemFlags Views::flags(const QModelIndex &index) const
     auto flags = QAbstractTableModel::flags(index);
 
     if (column == NAMECOLUMN
-            || column == SCREENCOLUMN
-            || column == EDGECOLUMN
-            || column == ALIGNMENTCOLUMN) {
+        || column == SCREENCOLUMN
+        || column == EDGECOLUMN
+        || column == ALIGNMENTCOLUMN) {
         flags |= Qt::ItemIsEditable;
     }
 
@@ -657,7 +670,7 @@ bool Views::setData(const QModelIndex &index, const QVariant &value, int role)
     const int row = index.row();
     const int column = index.column();
 
-    if (!m_viewsTable.rowExists(row) || column<0 || column >= SUBCONTAINMENTSCOLUMN) {
+    if (!m_viewsTable.rowExists(row) || column < 0 || column >= SUBCONTAINMENTSCOLUMN) {
         return false;
     }
 
@@ -673,94 +686,101 @@ bool Views::setData(const QModelIndex &index, const QVariant &value, int role)
 
     //! specific roles to each independent cell
     switch (column) {
-    case NAMECOLUMN:
-        if (role == Qt::UserRole || role == Qt::EditRole) {
-            if (m_viewsTable[row].name == value.toString()) {
-                return false;
-            }
-
-            m_viewsTable[row].name = value.toString();
-            Q_EMIT dataChanged(index, index, roles);
-        }
-        break;
-    case SCREENCOLUMN:
-        if (role == Qt::UserRole) {
-            int screen = value.toString().toInt();
-            bool onprimary = (screen == Latte::Data::Screen::ONPRIMARYID);
-            bool onallscreens = (screen == Latte::Data::Screen::ONALLSCREENSID);
-            bool onallsecscreens = (screen == Latte::Data::Screen::ONALLSECONDARYSCREENSID);
-
-            if (onprimary) {
-                m_viewsTable[row].onPrimary = true;
-                m_viewsTable[row].screensGroup = Latte::Types::SingleScreenGroup;
-            } else if (onallscreens) {
-                m_viewsTable[row].onPrimary = true;
-                m_viewsTable[row].screensGroup = Latte::Types::AllScreensGroup;
-            } else if (onallsecscreens) {
-                m_viewsTable[row].onPrimary = false;
-                m_viewsTable[row].screensGroup = Latte::Types::AllSecondaryScreensGroup;
-            } else {
-                m_viewsTable[row].onPrimary = false;
-                m_viewsTable[row].screensGroup = Latte::Types::SingleScreenGroup;
-                m_viewsTable[row].screen = screen;
-            }
-
-            if (onprimary || onallscreens || onallsecscreens) {
-                if (o_viewsTable.containsId(m_viewsTable[row].id)) {
-                    //! we need to update screen also in order to not show that there are changes even though
-                    //! they are not any
-                    m_viewsTable[row].screen = o_viewsTable[m_viewsTable[row].id].screen;
+        case NAMECOLUMN:
+            if (role == Qt::UserRole || role == Qt::EditRole) {
+                if (m_viewsTable[row].name == value.toString()) {
+                    return false;
                 }
+
+                m_viewsTable[row].name = value.toString();
+                Q_EMIT dataChanged(index, index, roles);
             }
 
-            Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
-        }
-        break;
-    case EDGECOLUMN:
-        if (role == Qt::UserRole) {
-            Plasma::Types::Location edge = static_cast<Plasma::Types::Location>(value.toString().toInt());
+            break;
 
-            if (m_viewsTable[row].edge == edge) {
-                return false;
-            }
+        case SCREENCOLUMN:
+            if (role == Qt::UserRole) {
+                int screen = value.toString().toInt();
+                bool onprimary = (screen == Latte::Data::Screen::ONPRIMARYID);
+                bool onallscreens = (screen == Latte::Data::Screen::ONALLSCREENSID);
+                bool onallsecscreens = (screen == Latte::Data::Screen::ONALLSECONDARYSCREENSID);
 
-            Plasma::Types::Location previousEdge = m_viewsTable[row].edge;
-            m_viewsTable[row].edge = edge;
-            Q_EMIT dataChanged(index, index, roles);
+                if (onprimary) {
+                    m_viewsTable[row].onPrimary = true;
+                    m_viewsTable[row].screensGroup = Latte::Types::SingleScreenGroup;
+                } else if (onallscreens) {
+                    m_viewsTable[row].onPrimary = true;
+                    m_viewsTable[row].screensGroup = Latte::Types::AllScreensGroup;
+                } else if (onallsecscreens) {
+                    m_viewsTable[row].onPrimary = false;
+                    m_viewsTable[row].screensGroup = Latte::Types::AllSecondaryScreensGroup;
+                } else {
+                    m_viewsTable[row].onPrimary = false;
+                    m_viewsTable[row].screensGroup = Latte::Types::SingleScreenGroup;
+                    m_viewsTable[row].screen = screen;
+                }
 
-            bool previousFactor = isVertical(previousEdge);
-            bool currentFactor = isVertical(edge);
-
-            if (previousFactor != currentFactor) {
-                if (m_viewsTable[row].alignment == Latte::Types::Left) {
-                    m_viewsTable[row].alignment = Latte::Types::Top;
-                } else if (m_viewsTable[row].alignment == Latte::Types::Right) {
-                    m_viewsTable[row].alignment = Latte::Types::Bottom;
-                } else if (m_viewsTable[row].alignment == Latte::Types::Top) {
-                    m_viewsTable[row].alignment = Latte::Types::Left;
-                } else if (m_viewsTable[row].alignment == Latte::Types::Bottom) {
-                    m_viewsTable[row].alignment = Latte::Types::Right;
+                if (onprimary || onallscreens || onallsecscreens) {
+                    if (o_viewsTable.containsId(m_viewsTable[row].id)) {
+                        //! we need to update screen also in order to not show that there are changes even though
+                        //! they are not any
+                        m_viewsTable[row].screen = o_viewsTable[m_viewsTable[row].id].screen;
+                    }
                 }
 
                 Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
             }
 
-            return true;
-        }
-        break;
-    case ALIGNMENTCOLUMN:
-        if (role == Qt::UserRole)  {
-            int alignment = value.toString().toInt();
+            break;
 
-            if (m_viewsTable[row].alignment == alignment) {
-                return false;
+        case EDGECOLUMN:
+            if (role == Qt::UserRole) {
+                Plasma::Types::Location edge = static_cast<Plasma::Types::Location>(value.toString().toInt());
+
+                if (m_viewsTable[row].edge == edge) {
+                    return false;
+                }
+
+                Plasma::Types::Location previousEdge = m_viewsTable[row].edge;
+                m_viewsTable[row].edge = edge;
+                Q_EMIT dataChanged(index, index, roles);
+
+                bool previousFactor = isVertical(previousEdge);
+                bool currentFactor = isVertical(edge);
+
+                if (previousFactor != currentFactor) {
+                    if (m_viewsTable[row].alignment == Latte::Types::Left) {
+                        m_viewsTable[row].alignment = Latte::Types::Top;
+                    } else if (m_viewsTable[row].alignment == Latte::Types::Right) {
+                        m_viewsTable[row].alignment = Latte::Types::Bottom;
+                    } else if (m_viewsTable[row].alignment == Latte::Types::Top) {
+                        m_viewsTable[row].alignment = Latte::Types::Left;
+                    } else if (m_viewsTable[row].alignment == Latte::Types::Bottom) {
+                        m_viewsTable[row].alignment = Latte::Types::Right;
+                    }
+
+                    Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
+                }
+
+                return true;
             }
 
-            m_viewsTable[row].alignment = static_cast<Latte::Types::Alignment>(alignment);
-            Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
-            return true;
-        }
-        break;
+            break;
+
+        case ALIGNMENTCOLUMN:
+            if (role == Qt::UserRole)  {
+                int alignment = value.toString().toInt();
+
+                if (m_viewsTable[row].alignment == alignment) {
+                    return false;
+                }
+
+                m_viewsTable[row].alignment = static_cast<Latte::Types::Alignment>(alignment);
+                Q_EMIT dataChanged(this->index(row, NAMECOLUMN), this->index(row, ALIGNMENTCOLUMN), roles);
+                return true;
+            }
+
+            break;
     };
 
     return false;
@@ -832,178 +852,190 @@ QVariant Views::data(const QModelIndex &index, int role) const
         return m_viewsTable[row].warnings;
     }
 
-    if (role == Qt::TextAlignmentRole && column != NAMECOLUMN){
+    if (role == Qt::TextAlignmentRole && column != NAMECOLUMN) {
         return static_cast<Qt::Alignment::Int>(Qt::AlignHCenter | Qt::AlignVCenter);
     }
 
     switch (column) {
-    case IDCOLUMN:
-        if (role == Qt::DisplayRole){
-            return (m_viewsTable[row].state() == Data::View::IsCreated ? m_viewsTable[row].id : QStringLiteral("#"));
-        } else if (role == Qt::UserRole) {
-            return m_viewsTable[row].id;
-        } else if (role == ISCHANGEDROLE) {
-            return (isNewView || (m_viewsTable[row].id != o_viewsTable[origviewid].id));
-        }  else if (role == SORTINGROLE) {
-            int fsta = sortingFactorForState(m_viewsTable[row]);
-            int fscr = sortingFactorForScreen(m_viewsTable[row]);
-            int fedg = sortingFactorForEdge(m_viewsTable[row]);
-            int fali = sortingFactorForAlignment(m_viewsTable[row]);
+        case IDCOLUMN:
+            if (role == Qt::DisplayRole) {
+                return (m_viewsTable[row].state() == Data::View::IsCreated ? m_viewsTable[row].id : QStringLiteral("#"));
+            } else if (role == Qt::UserRole) {
+                return m_viewsTable[row].id;
+            } else if (role == ISCHANGEDROLE) {
+                return (isNewView || (m_viewsTable[row].id != o_viewsTable[origviewid].id));
+            }  else if (role == SORTINGROLE) {
+                int fsta = sortingFactorForState(m_viewsTable[row]);
+                int fscr = sortingFactorForScreen(m_viewsTable[row]);
+                int fedg = sortingFactorForEdge(m_viewsTable[row]);
+                int fali = sortingFactorForAlignment(m_viewsTable[row]);
 
-            int priority = (fsta * HIGHESTPRIORITY);
-            return sortableText(priority, m_viewsTable[row].id);
-        }
-        break;
-    case NAMECOLUMN:
-        if (role == Qt::DisplayRole || role == Qt::UserRole || role == Qt::EditRole){
-            return m_viewsTable[row].name;
-        } else if (role == ISCHANGEDROLE) {
-            return (isNewView || (m_viewsTable[row].name != o_viewsTable[origviewid].name));
-        } else if (role == SORTINGROLE) {
-            int fsta = sortingFactorForState(m_viewsTable[row]);
-            int fscr = sortingFactorForScreen(m_viewsTable[row]);
-            int fedg = sortingFactorForEdge(m_viewsTable[row]);
-            int fali = sortingFactorForAlignment(m_viewsTable[row]);
+                int priority = (fsta * HIGHESTPRIORITY);
+                return sortableText(priority, m_viewsTable[row].id);
+            }
 
-            int priority = (fsta * HIGHESTPRIORITY);
-            return sortableText(priority, m_viewsTable[row].name);
-        }
-        break;
-    case SCREENCOLUMN:
-        if (role == Qt::DisplayRole){
-            if (m_viewsTable[row].screensGroup == Latte::Types::SingleScreenGroup &&  m_viewsTable[row].onPrimary) {
-                return i18nc("primary screen", "Primary");
-            } else if (m_viewsTable[row].screensGroup == Latte::Types::AllScreensGroup) {
-                return i18n("All Screens");
-            } else if (m_viewsTable[row].screensGroup == Latte::Types::AllSecondaryScreensGroup) {
-                return i18n("Secondary Screens");
-            } else {
-                QString scrId = QString::number(m_viewsTable[row].screen);
-                if (s_screens.containsId(scrId)) {
-                    return s_screens[scrId].name;
+            break;
+
+        case NAMECOLUMN:
+            if (role == Qt::DisplayRole || role == Qt::UserRole || role == Qt::EditRole) {
+                return m_viewsTable[row].name;
+            } else if (role == ISCHANGEDROLE) {
+                return (isNewView || (m_viewsTable[row].name != o_viewsTable[origviewid].name));
+            } else if (role == SORTINGROLE) {
+                int fsta = sortingFactorForState(m_viewsTable[row]);
+                int fscr = sortingFactorForScreen(m_viewsTable[row]);
+                int fedg = sortingFactorForEdge(m_viewsTable[row]);
+                int fali = sortingFactorForAlignment(m_viewsTable[row]);
+
+                int priority = (fsta * HIGHESTPRIORITY);
+                return sortableText(priority, m_viewsTable[row].name);
+            }
+
+            break;
+
+        case SCREENCOLUMN:
+            if (role == Qt::DisplayRole) {
+                if (m_viewsTable[row].screensGroup == Latte::Types::SingleScreenGroup &&  m_viewsTable[row].onPrimary) {
+                    return i18nc("primary screen", "Primary");
+                } else if (m_viewsTable[row].screensGroup == Latte::Types::AllScreensGroup) {
+                    return i18n("All Screens");
+                } else if (m_viewsTable[row].screensGroup == Latte::Types::AllSecondaryScreensGroup) {
+                    return i18n("Secondary Screens");
                 } else {
-                    return i18nc("unknown screen", "Unknown: [%1]", scrId);
-                }
-            }
-        } else if (role == Qt::UserRole) {
-            if (m_viewsTable[row].screensGroup == Latte::Types::SingleScreenGroup &&  m_viewsTable[row].onPrimary) {
-                return QString::number(Data::Screen::ONPRIMARYID);
-            } else if (m_viewsTable[row].screensGroup == Latte::Types::AllScreensGroup) {
-                return QString::number(Data::Screen::ONALLSCREENSID);
-            } else if (m_viewsTable[row].screensGroup == Latte::Types::AllSecondaryScreensGroup) {
-                return QString::number(Data::Screen::ONALLSECONDARYSCREENSID);
-            } else {
-                return QString::number(m_viewsTable[row].screen);
-            }
-        } else if (role == ISCHANGEDROLE) {
-            return (isNewView
-                    || (m_viewsTable[row].onPrimary != o_viewsTable[origviewid].onPrimary)
-                    || (!m_viewsTable[row].onPrimary && m_viewsTable[row].screen != o_viewsTable[origviewid].screen));
-        } else if (role == SORTINGROLE) {
-            int fsta = sortingFactorForState(m_viewsTable[row]);
-            int fscr = sortingFactorForScreen(m_viewsTable[row]);
-            int fedg = sortingFactorForEdge(m_viewsTable[row]);
-            int fali = sortingFactorForAlignment(m_viewsTable[row]);
+                    QString scrId = QString::number(m_viewsTable[row].screen);
 
-            int priority = (fsta * HIGHESTPRIORITY) + (fscr * HIGHPRIORITY) + (fedg * MEDIUMPRIORITY) + (fali * NORMALPRIORITY);
-            return priority;
-        }
-        break;
-    case EDGECOLUMN:
-        if (role == Qt::DisplayRole){
-            // Use the same i18nc contexts as initEdges()'s s_edges entries so
-            // the button text matches the dropdown's checked-entry text exactly.
-            // The "X location" contexts above were used for an unrelated UI
-            // (BehaviorConfig.qml) and translators rendered them differently.
-            if (m_viewsTable[row].edge == Plasma::Types::BottomEdge) {
-                return i18nc("bottom edge", "Bottom");
-            } else if (m_viewsTable[row].edge == Plasma::Types::TopEdge) {
-                return i18nc("top edge", "Top");
-            } else if (m_viewsTable[row].edge == Plasma::Types::LeftEdge) {
-                return i18nc("left edge", "Left");
-            } else if (m_viewsTable[row].edge == Plasma::Types::RightEdge) {
-                return i18nc("right edge", "Right");
-            }
-
-            return i18nc("unknown edge", "Unknown");
-        } else if (role == Qt::UserRole) {
-            return QString::number(m_viewsTable[row].edge);
-        } else if (role == ISCHANGEDROLE) {
-            return (isNewView || (m_viewsTable[row].edge != o_viewsTable[origviewid].edge));
-        } else if (role == SORTINGROLE) {
-            int fsta = sortingFactorForState(m_viewsTable[row]);
-            int fscr = sortingFactorForScreen(m_viewsTable[row]);
-            int fedg = sortingFactorForEdge(m_viewsTable[row]);
-            int fali = sortingFactorForAlignment(m_viewsTable[row]);
-
-            int priority = (fsta * HIGHESTPRIORITY) + (fedg * HIGHPRIORITY) + (fscr * MEDIUMPRIORITY) + (fali * NORMALPRIORITY);
-            return priority;
-        }
-        break;
-    case ALIGNMENTCOLUMN:
-        if (role == Qt::DisplayRole){
-            if (m_viewsTable[row].alignment == Latte::Types::Center) {
-                return i18nc("center alignment", "Center");
-            } else if (m_viewsTable[row].alignment == Latte::Types::Left) {
-                return i18nc("left alignment", "Left");
-            } else if (m_viewsTable[row].alignment == Latte::Types::Right) {
-                return i18nc("right alignment", "Right");
-            } else if (m_viewsTable[row].alignment == Latte::Types::Top) {
-                return i18nc("top alignment", "Top");
-            } else if (m_viewsTable[row].alignment == Latte::Types::Bottom) {
-                return i18nc("bottom alignment", "Bottom");
-            } else if (m_viewsTable[row].alignment == Latte::Types::Justify) {
-                return i18nc("justify alignment", "Justify");
-            }
-
-            return i18nc("unknown alignment", "Unknown");
-        } else if (role == Qt::UserRole) {
-            return QString::number(m_viewsTable[row].alignment);
-        } else if (role == ISCHANGEDROLE) {
-            return (isNewView || (m_viewsTable[row].alignment != o_viewsTable[origviewid].alignment));
-        } else if (role == SORTINGROLE) {
-            int fsta = sortingFactorForState(m_viewsTable[row]);
-            int fscr = sortingFactorForScreen(m_viewsTable[row]);
-            int fedg = sortingFactorForEdge(m_viewsTable[row]);
-            int fali = sortingFactorForAlignment(m_viewsTable[row]);
-
-            int priority = (fsta * HIGHESTPRIORITY) + (fali * HIGHPRIORITY) + (fscr * MEDIUMPRIORITY) + (fedg * NORMALPRIORITY);
-            return priority;
-        }
-        break;
-    case SUBCONTAINMENTSCOLUMN:
-        if (role == Qt::DisplayRole){
-            if (m_viewsTable[row].subcontainments.rowCount()>0) {
-                QString result = QStringLiteral("{");
-
-                for (int i=0; i<m_viewsTable[row].subcontainments.rowCount(); ++i) {
-                    if (i>0) {
-                        result += QLatin1Char(' ');
-                    }
-                    result += (m_viewsTable[row].state() == Data::View::IsCreated ? m_viewsTable[row].subcontainments[i].id : TEMPIDDISPLAY);
-
-                    if (i<m_viewsTable[row].subcontainments.rowCount()-1) {
-                        result += QLatin1Char(',');
+                    if (s_screens.containsId(scrId)) {
+                        return s_screens[scrId].name;
+                    } else {
+                        return i18nc("unknown screen", "Unknown: [%1]", scrId);
                     }
                 }
+            } else if (role == Qt::UserRole) {
+                if (m_viewsTable[row].screensGroup == Latte::Types::SingleScreenGroup &&  m_viewsTable[row].onPrimary) {
+                    return QString::number(Data::Screen::ONPRIMARYID);
+                } else if (m_viewsTable[row].screensGroup == Latte::Types::AllScreensGroup) {
+                    return QString::number(Data::Screen::ONALLSCREENSID);
+                } else if (m_viewsTable[row].screensGroup == Latte::Types::AllSecondaryScreensGroup) {
+                    return QString::number(Data::Screen::ONALLSECONDARYSCREENSID);
+                } else {
+                    return QString::number(m_viewsTable[row].screen);
+                }
+            } else if (role == ISCHANGEDROLE) {
+                return (isNewView
+                        || (m_viewsTable[row].onPrimary != o_viewsTable[origviewid].onPrimary)
+                        || (!m_viewsTable[row].onPrimary && m_viewsTable[row].screen != o_viewsTable[origviewid].screen));
+            } else if (role == SORTINGROLE) {
+                int fsta = sortingFactorForState(m_viewsTable[row]);
+                int fscr = sortingFactorForScreen(m_viewsTable[row]);
+                int fedg = sortingFactorForEdge(m_viewsTable[row]);
+                int fali = sortingFactorForAlignment(m_viewsTable[row]);
 
-                result += QLatin1Char('}');
-                return result;
+                int priority = (fsta * HIGHESTPRIORITY) + (fscr * HIGHPRIORITY) + (fedg * MEDIUMPRIORITY) + (fali * NORMALPRIORITY);
+                return priority;
             }
 
-            return QString();
-        } else if (role == ISCHANGEDROLE) {
-            return (isNewView || (m_viewsTable[row].subcontainments != o_viewsTable[origviewid].subcontainments));
-        } else if (role == SORTINGROLE) {
-            int fsta = sortingFactorForState(m_viewsTable[row]);
-            int fscr = sortingFactorForScreen(m_viewsTable[row]);
-            int fedg = sortingFactorForEdge(m_viewsTable[row]);
-            int fali = sortingFactorForAlignment(m_viewsTable[row]);
-            int fsub = sortingFactorForSubContainments(m_viewsTable[row]);
+            break;
 
-            int priority = (fsta * HIGHESTPRIORITY) + (fsub * HIGHPRIORITY) + (fscr * MEDIUMPRIORITY) + (fedg * NORMALPRIORITY);
-            return priority;
-        }
+        case EDGECOLUMN:
+            if (role == Qt::DisplayRole) {
+                // Use the same i18nc contexts as initEdges()'s s_edges entries so
+                // the button text matches the dropdown's checked-entry text exactly.
+                // The "X location" contexts above were used for an unrelated UI
+                // (BehaviorConfig.qml) and translators rendered them differently.
+                if (m_viewsTable[row].edge == Plasma::Types::BottomEdge) {
+                    return i18nc("bottom edge", "Bottom");
+                } else if (m_viewsTable[row].edge == Plasma::Types::TopEdge) {
+                    return i18nc("top edge", "Top");
+                } else if (m_viewsTable[row].edge == Plasma::Types::LeftEdge) {
+                    return i18nc("left edge", "Left");
+                } else if (m_viewsTable[row].edge == Plasma::Types::RightEdge) {
+                    return i18nc("right edge", "Right");
+                }
+
+                return i18nc("unknown edge", "Unknown");
+            } else if (role == Qt::UserRole) {
+                return QString::number(m_viewsTable[row].edge);
+            } else if (role == ISCHANGEDROLE) {
+                return (isNewView || (m_viewsTable[row].edge != o_viewsTable[origviewid].edge));
+            } else if (role == SORTINGROLE) {
+                int fsta = sortingFactorForState(m_viewsTable[row]);
+                int fscr = sortingFactorForScreen(m_viewsTable[row]);
+                int fedg = sortingFactorForEdge(m_viewsTable[row]);
+                int fali = sortingFactorForAlignment(m_viewsTable[row]);
+
+                int priority = (fsta * HIGHESTPRIORITY) + (fedg * HIGHPRIORITY) + (fscr * MEDIUMPRIORITY) + (fali * NORMALPRIORITY);
+                return priority;
+            }
+
+            break;
+
+        case ALIGNMENTCOLUMN:
+            if (role == Qt::DisplayRole) {
+                if (m_viewsTable[row].alignment == Latte::Types::Center) {
+                    return i18nc("center alignment", "Center");
+                } else if (m_viewsTable[row].alignment == Latte::Types::Left) {
+                    return i18nc("left alignment", "Left");
+                } else if (m_viewsTable[row].alignment == Latte::Types::Right) {
+                    return i18nc("right alignment", "Right");
+                } else if (m_viewsTable[row].alignment == Latte::Types::Top) {
+                    return i18nc("top alignment", "Top");
+                } else if (m_viewsTable[row].alignment == Latte::Types::Bottom) {
+                    return i18nc("bottom alignment", "Bottom");
+                } else if (m_viewsTable[row].alignment == Latte::Types::Justify) {
+                    return i18nc("justify alignment", "Justify");
+                }
+
+                return i18nc("unknown alignment", "Unknown");
+            } else if (role == Qt::UserRole) {
+                return QString::number(m_viewsTable[row].alignment);
+            } else if (role == ISCHANGEDROLE) {
+                return (isNewView || (m_viewsTable[row].alignment != o_viewsTable[origviewid].alignment));
+            } else if (role == SORTINGROLE) {
+                int fsta = sortingFactorForState(m_viewsTable[row]);
+                int fscr = sortingFactorForScreen(m_viewsTable[row]);
+                int fedg = sortingFactorForEdge(m_viewsTable[row]);
+                int fali = sortingFactorForAlignment(m_viewsTable[row]);
+
+                int priority = (fsta * HIGHESTPRIORITY) + (fali * HIGHPRIORITY) + (fscr * MEDIUMPRIORITY) + (fedg * NORMALPRIORITY);
+                return priority;
+            }
+
+            break;
+
+        case SUBCONTAINMENTSCOLUMN:
+            if (role == Qt::DisplayRole) {
+                if (m_viewsTable[row].subcontainments.rowCount() > 0) {
+                    QString result = QStringLiteral("{");
+
+                    for (int i = 0; i < m_viewsTable[row].subcontainments.rowCount(); ++i) {
+                        if (i > 0) {
+                            result += QLatin1Char(' ');
+                        }
+
+                        result += (m_viewsTable[row].state() == Data::View::IsCreated ? m_viewsTable[row].subcontainments[i].id : TEMPIDDISPLAY);
+
+                        if (i < m_viewsTable[row].subcontainments.rowCount() - 1) {
+                            result += QLatin1Char(',');
+                        }
+                    }
+
+                    result += QLatin1Char('}');
+                    return result;
+                }
+
+                return QString();
+            } else if (role == ISCHANGEDROLE) {
+                return (isNewView || (m_viewsTable[row].subcontainments != o_viewsTable[origviewid].subcontainments));
+            } else if (role == SORTINGROLE) {
+                int fsta = sortingFactorForState(m_viewsTable[row]);
+                int fscr = sortingFactorForScreen(m_viewsTable[row]);
+                int fedg = sortingFactorForEdge(m_viewsTable[row]);
+                int fali = sortingFactorForAlignment(m_viewsTable[row]);
+                int fsub = sortingFactorForSubContainments(m_viewsTable[row]);
+
+                int priority = (fsta * HIGHESTPRIORITY) + (fsub * HIGHPRIORITY) + (fscr * MEDIUMPRIORITY) + (fedg * NORMALPRIORITY);
+                return priority;
+            }
     };
 
     return QVariant{};

@@ -22,7 +22,7 @@
 
 namespace Latte {
 namespace Settings {
-namespace Screens{
+namespace Screens {
 namespace Delegate {
 
 CheckBox::CheckBox(QObject *parent)
@@ -102,9 +102,11 @@ void CheckBox::paint(QPainter *painter, const QStyleOptionViewItem &option, cons
     checkopt.rect = option.rect;
 
     QRect remainedrect = Latte::remainedFromCheckBox(checkopt);
+
     if (screen.isRemovable) {
         Latte::drawCheckBox(painter, checkopt, Qt::AlignLeft, option.widget);
     }
+
     adjustedOption.rect = remainedrect;
 
     //! screen

@@ -21,16 +21,16 @@ namespace Ui {
 class DetailsDialog;
 }
 
-namespace Latte{
-namespace Settings{
-namespace Dialog{
+namespace Latte {
+namespace Settings {
+namespace Dialog {
 class DetailsDialog;
 }
 }
 }
 
-namespace Latte{
-namespace Settings{
+namespace Latte {
+namespace Settings {
 namespace Model {
 class Schemes;
 }

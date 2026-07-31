@@ -33,7 +33,8 @@ namespace Settings {
 namespace Handler {
 class TabLayouts;
 }
-namespace Part{
+
+namespace Part {
 class TemplatesKeeper;
 }
 }
@@ -83,7 +84,7 @@ public:
     void save();
     void removeSelected();
     void toggleEnabledForSelected();
-    void toggleLockedForSelected();    
+    void toggleLockedForSelected();
 
     QString iconsPath() const;
     QString colorPath(const QString color) const;
@@ -120,7 +121,7 @@ private Q_SLOTS:
     void onCurrentRowChanged();
     void onNameDuplicatedFrom(const QString &provenId,  const QString &trialId);
     void onLayoutAddedExternally(const Data::Layout &layout);
-    void onLayoutActivitiesChangedExternally(const Data::Layout &layout);  
+    void onLayoutActivitiesChangedExternally(const Data::Layout &layout);
 
 private:
     void initView();

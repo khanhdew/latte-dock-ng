@@ -170,7 +170,7 @@ void GlobalShortcuts::init()
     m_singleMetaAction = new QAction(this);
     m_singleMetaAction->setShortcut(QKeySequence(Qt::META));
 
-    connect(m_corona->universalSettings(), &UniversalSettings::metaPressAndHoldEnabledChanged , this, [this]() {
+    connect(m_corona->universalSettings(), &UniversalSettings::metaPressAndHoldEnabledChanged, this, [this]() {
         if (!m_corona->universalSettings()->metaPressAndHoldEnabled()) {
             m_modifierTracker->blockModifierTracking(Qt::Key_Super_L);
             m_modifierTracker->blockModifierTracking(Qt::Key_Super_R);
@@ -235,7 +235,7 @@ void GlobalShortcuts::activateLauncherMenu()
             m_lastInvokedAction = m_singleMetaAction;
 
             //! wait for view to fully shown
-            connect(highestPriorityView->visibility(), &Latte::ViewPart::VisibilityManager::isShownFullyChanged, this, [&, highestPriorityView](){
+            connect(highestPriorityView->visibility(), &Latte::ViewPart::VisibilityManager::isShownFullyChanged, this, [ &, highestPriorityView]() {
                 if (highestPriorityView->visibility()->isShownFully()) {
                     highestPriorityView->extendedInterface()->toggleAppletExpanded(highestPriorityView->extendedInterface()->applicationLauncherId());
                     //!remove that signal tracking
@@ -259,13 +259,14 @@ bool GlobalShortcuts::activatePlasmaTaskManager(const Latte::View *view, int ind
 
     if (!view->visibility()->isShownFully()) {
         //! wait for view to fully shown
-        connect(view->visibility(), &Latte::ViewPart::VisibilityManager::isShownFullyChanged, this, [&, view, index, activation](){
+        connect(view->visibility(), &Latte::ViewPart::VisibilityManager::isShownFullyChanged, this, [ &, view, index, activation]() {
             if (view->visibility()->isShownFully()) {
                 if (activation) {
                     view->extendedInterface()->activatePlasmaTask(index);
                 } else {
                     view->extendedInterface()->newInstanceForPlasmaTask(index);
                 }
+
                 //!remove that signal tracking
                 disconnect(view->visibility(), &Latte::ViewPart::VisibilityManager::isShownFullyChanged, this, nullptr);
             }
@@ -287,17 +288,18 @@ bool GlobalShortcuts::activateLatteEntry(Latte::View *view, int index, Qt::Key m
     bool newInstance{!activation};
 
     int appletId = view->extendedInterface()->appletIdForVisualIndex(index);
-    bool hasPopUp {(appletId>-1 && view->extendedInterface()->appletIsExpandable(appletId))};
+    bool hasPopUp {(appletId > -1 && view->extendedInterface()->appletIsExpandable(appletId))};
 
     if (!view->visibility()->isShownFully() && hasPopUp) {
         //! wait for view to fully shown
-        connect(view->visibility(), &Latte::ViewPart::VisibilityManager::isShownFullyChanged, this, [&, view, index, activation](){
+        connect(view->visibility(), &Latte::ViewPart::VisibilityManager::isShownFullyChanged, this, [ &, view, index, activation]() {
             if (view->visibility()->isShownFully()) {
                 if (activation) {
                     view->extendedInterface()->activateEntry(index);
                 } else {
                     view->extendedInterface()->newInstanceForEntry(index);
                 }
+
                 //!remove that signal tracking
                 disconnect(view->visibility(), &Latte::ViewPart::VisibilityManager::isShownFullyChanged, this, nullptr);
             }
@@ -382,6 +384,7 @@ void GlobalShortcuts::updateViewItemBadge(QString identifier, QString value)
 void GlobalShortcuts::showViews()
 {
     m_lastInvokedAction = dynamic_cast<QAction *>(sender());
+
     if (!m_lastInvokedAction) {
         // when holding Meta
         m_lastInvokedAction = m_singleMetaAction;
@@ -401,9 +404,9 @@ void GlobalShortcuts::showViews()
         }
     }
 
-    for(const auto view : sortedViews) {
+    for (const auto view : sortedViews) {
         if (!viewWithTasks
-                && (!hasPreferredForShortcutsView || view->isPreferredForShortcuts())) {
+            && (!hasPreferredForShortcutsView || view->isPreferredForShortcuts())) {
             viewWithTasks = view;
             break;
         }
@@ -448,7 +451,7 @@ void GlobalShortcuts::showViews()
         viewFound = true;
 
         if (!m_hideViewsTimer.isActive()) {
-            for(const auto view : viewsWithShortcuts) {
+            for (const auto view : viewsWithShortcuts) {
                 if (view != viewWithTasks && view != viewWithMeta) {
                     if (view->extendedInterface()->showShortcutBadges(false, false)) {
                         m_hideViews.append(view);
@@ -471,7 +474,7 @@ void GlobalShortcuts::showViews()
 
 bool GlobalShortcuts::viewsToHideAreValid()
 {
-    for(const auto view : m_hideViews) {
+    for (const auto view : m_hideViews) {
         if (!m_corona->layoutsManager()->synchronizer()->latteViewExists(view)) {
             return false;
         }
@@ -528,7 +531,7 @@ void GlobalShortcuts::hideViewsTimerSlot()
         m_lastInvokedAction = Q_NULLPTR;
 
         if (viewsToHideAreValid()) {
-            for(const auto latteView : m_hideViews) {
+            for (const auto latteView : m_hideViews) {
                 latteView->visibility()->removeBlockHidingEvent(SHORTCUTBLOCKHIDINGTYPE);
                 latteView->extendedInterface()->hideShortcutBadges();
 

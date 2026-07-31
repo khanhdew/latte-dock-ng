@@ -62,12 +62,12 @@ Applet &Applet::operator=(Applet &&rhs)
 bool Applet::operator==(const Applet &rhs) const
 {
     return (id == rhs.id)
-            && (name == rhs.name)
-            && (description == rhs.description)
-            && (icon == rhs.icon)
-            && (isSelected == rhs.isSelected)
-            && (storageId == rhs.storageId)
-            && (subcontainmentId == rhs.subcontainmentId);
+           && (name == rhs.name)
+           && (description == rhs.description)
+           && (icon == rhs.icon)
+           && (isSelected == rhs.isSelected)
+           && (storageId == rhs.storageId)
+           && (subcontainmentId == rhs.subcontainmentId);
 }
 
 bool  Applet::operator!=(const Applet &rhs) const

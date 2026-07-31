@@ -58,14 +58,14 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
 
     QString currentrealactivityid;
 
-    for (int i=0; i<allActivitiesTable.rowCount(); ++i) {
+    for (int i = 0; i < allActivitiesTable.rowCount(); ++i) {
         if (allActivitiesTable[i].isCurrent) {
             currentrealactivityid = allActivitiesTable[i].id;
             break;
         }
     }
 
-    for (int i=0; i<allActivities.count(); ++i) {
+    for (int i = 0; i < allActivities.count(); ++i) {
         Latte::Data::Activity activitydata = allActivitiesTable[allActivities[i]];
 
         if (!activitydata.isValid()) {
@@ -87,8 +87,8 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
         action->setChecked(ischecked);
 
         if (activitydata.id == Data::Layout::FREEACTIVITIESID
-                || activitydata.id == Data::Layout::ALLACTIVITIESID
-                || activitydata.id == Data::Layout::CURRENTACTIVITYID) {
+            || activitydata.id == Data::Layout::ALLACTIVITIESID
+            || activitydata.id == Data::Layout::CURRENTACTIVITYID) {
             if (isLayoutActive) {
                 QFont font = action->font();
                 font.setBold(true);
@@ -105,7 +105,8 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
 
                     if (action->data().toString() == Data::Layout::CURRENTACTIVITYID) {
                         auto actions = menu->actions();
-                        for (int i=0; i<actions.count(); ++i) {
+
+                        for (int i = 0; i < actions.count(); ++i) {
                             if (actions[i]->data().toString() == currentrealactivityid) {
                                 actions[i]->setChecked(true);
                             }
@@ -118,7 +119,8 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
 
                     if (action->data().toString() == Data::Layout::CURRENTACTIVITYID) {
                         auto actions = menu->actions();
-                        for (int i=0; i<actions.count(); ++i) {
+
+                        for (int i = 0; i < actions.count(); ++i) {
                             if (actions[i]->data().toString() == currentrealactivityid) {
                                 actions[i]->setChecked(false);
                             }
@@ -126,10 +128,10 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
 
                         updateCurrentActivityAction(menu);
                     }
-                }              
+                }
 
                 updateButton(button, allActivitiesTable);
-            });            
+            });
         } else {
             if (activitydata.isRunning()) {
                 QFont font = action->font();
@@ -156,10 +158,11 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
 
     connect(menu, &PersistentMenu::masterIndexChanged, this, [this, menu, button, allActivitiesTable]() {
         int masterRow = menu->masterIndex();
-        if (masterRow>=0) {
+
+        if (masterRow >= 0) {
             auto actions = button->menu()->actions();
 
-            for (int i=0; i<actions.count(); ++i) {
+            for (int i = 0; i < actions.count(); ++i) {
                 if (i != masterRow && actions[i]->isChecked()) {
                     actions[i]->setChecked(false);
                 }
@@ -167,6 +170,7 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
         } else {
             for (auto *action : button->menu()->actions()) {
                 QString actId = action->data().toString();
+
                 if (actId == Data::Layout::FREEACTIVITIESID || actId == Data::Layout::ALLACTIVITIESID) {
                     action->setChecked(false);
                 }
@@ -197,7 +201,7 @@ QWidget *Activities::createEditor(QWidget *parent, const QStyleOptionViewItem &o
     connect(menuDialogButtons->button(QDialogButtonBox::Cancel), &QPushButton::clicked,  menu, &QMenu::hide);
 
     connect(menuDialogButtons->button(QDialogButtonBox::Reset), &QPushButton::clicked,  [menu, originalChecked]() {
-        for (int i=0; i<menu->actions().count(); ++i) {
+        for (int i = 0; i < menu->actions().count(); ++i) {
             if (!originalChecked.contains(i)) {
                 menu->actions().at(i)->setChecked(false);
             } else {
@@ -218,7 +222,8 @@ void Activities::updateCurrentActivityAction(QMenu *menu) const
     }
 
     auto actions = menu->actions();
-    for (int i=0; i<actions.count(); ++i) {
+
+    for (int i = 0; i < actions.count(); ++i) {
         if (actions[i]->data().toString() == Data::Layout::CURRENTACTIVITYID) {
             if (actions[i]->isChecked()) {
                 QFont font = actions[i]->font();
@@ -307,7 +312,7 @@ void Activities::paint(QPainter *painter, const QStyleOptionViewItem &option, co
 
     Latte::Data::ActivitiesTable allActivitiesTable = index.data(Model::Layouts::ALLACTIVITIESDATAROLE).value<Latte::Data::ActivitiesTable>();
 
-    for (int i=0; i<assignedIds.count(); ++i) {
+    for (int i = 0; i < assignedIds.count(); ++i) {
         assignedActivities << allActivitiesTable[assignedIds[i]];
     }
 
@@ -326,7 +331,7 @@ QString Activities::joinedActivities(const QList<Latte::Data::Activity> &activit
     QString finalText;
 
 
-    for (int i=0; i<activities.count(); ++i) {
+    for (int i = 0; i < activities.count(); ++i) {
         bool bold{false};
         bool italic = (!originalIds.contains(activities[i].id));
 

@@ -50,14 +50,14 @@ Synchronizer::Synchronizer(QObject *parent)
             this, &Synchronizer::onActivityRemoved);
 
     connect(m_manager->corona()->activitiesConsumer(), &KActivities::Consumer::currentActivityChanged,
-            this, [&]() {
+    this, [&]() {
         if (m_manager->memoryUsage() == MemoryUsage::MultipleLayouts) {
             syncMultipleLayoutsToActivities();
         }
     });
 
     connect(m_manager->corona()->activitiesConsumer(), &KActivities::Consumer::activitiesChanged,
-            this, [&](const QStringList &) {
+    this, [&](const QStringList &) {
         if (m_manager->memoryUsage() == MemoryUsage::MultipleLayouts) {
             syncMultipleLayoutsToActivities();
         }
@@ -94,7 +94,7 @@ bool Synchronizer::layoutExists(QString layoutName) const
 
 bool Synchronizer::isAssigned(QString layoutName) const
 {
-    for(auto activityid : m_assignedLayouts.keys()) {
+    for (auto activityid : m_assignedLayouts.keys()) {
         if (m_assignedLayouts[activityid].contains(layoutName)) {
             return true;
         }
@@ -136,7 +136,7 @@ QStringList Synchronizer::freeActivities()
 {
     QStringList frees = activities();
 
-    for(auto assigned : m_assignedLayouts.keys()) {
+    for (auto assigned : m_assignedLayouts.keys()) {
         frees.removeAll(assigned);
     }
 
@@ -144,7 +144,7 @@ QStringList Synchronizer::freeActivities()
 }
 
 QStringList Synchronizer::runningActivities()
-{   
+{
     return m_manager->corona()->activitiesConsumer()->activities();
 }
 
@@ -166,7 +166,7 @@ QStringList Synchronizer::validActivities(const QStringList &layoutActivities)
     QStringList valids;
     QStringList allactivities = activities();
 
-    for(auto activity : layoutActivities) {
+    for (auto activity : layoutActivities) {
         if (allactivities.contains(activity)) {
             valids << activity;
         }
@@ -215,7 +215,7 @@ QStringList Synchronizer::menuLayouts() const
 {
     QStringList menulayouts;
 
-    for (int i=0; i<m_layouts.rowCount(); ++i) {
+    for (int i = 0; i < m_layouts.rowCount(); ++i) {
         if (!m_layouts[i].isShownInMenu) {
             continue;
         }
@@ -277,7 +277,7 @@ void Synchronizer::updateLayoutsTable()
     }
 
     for (int i = 0; i < m_layouts.rowCount(); ++i) {
-        if ((m_layouts[i].errors>0 || m_layouts[i].warnings>0) && !m_layouts[i].isActive) {
+        if ((m_layouts[i].errors > 0 || m_layouts[i].warnings > 0) && !m_layouts[i].isActive) {
             CentralLayout central(this, m_layouts[i].id);
             m_layouts[i].errors = central.errors().count();
             m_layouts[i].warnings = central.warnings().count();
@@ -341,7 +341,7 @@ QList<Latte::View *> Synchronizer::currentViews() const
 {
     QList<Latte::View *> views;
 
-    for(auto layout : currentLayouts()) {
+    for (auto layout : currentLayouts()) {
         views << layout->latteViews();
     }
 
@@ -352,7 +352,7 @@ QList<Latte::View *> Synchronizer::currentOriginalViews() const
 {
     QList<Latte::View *> views;
 
-    for(auto layout : currentLayouts()) {
+    for (auto layout : currentLayouts()) {
         views << layout->onlyOriginalViews();
     }
 
@@ -363,7 +363,7 @@ QList<Latte::View *> Synchronizer::currentViewsWithPlasmaShortcuts() const
 {
     QList<Latte::View *> views;
 
-    for(auto layout : currentLayouts()) {
+    for (auto layout : currentLayouts()) {
         views << layout->viewsWithPlasmaShortcuts();
     }
 
@@ -384,7 +384,7 @@ QList<Latte::View *> Synchronizer::viewsBasedOnActivityId(const QString &id) con
 {
     QList<Latte::View *> views;
 
-    for(auto layout : centralLayoutsForActivity(id)) {
+    for (auto layout : centralLayoutsForActivity(id)) {
         if (m_centralLayouts.contains(layout)) {
             views << layout->latteViews();
         }
@@ -453,7 +453,7 @@ void Synchronizer::onActivityRemoved(const QString &activityid)
     //! remove any other explicit set layouts for the current activity
     QStringList explicits = m_assignedLayouts[activityid];
 
-    for(auto explicitlayoutname : explicits) {
+    for (auto explicitlayoutname : explicits) {
         QString explicitlayoutid = m_layouts.idForName(explicitlayoutname);
 
         m_layouts[explicitlayoutid].activities.removeAll(activityid);
@@ -469,7 +469,7 @@ void Synchronizer::onActivityRemoved(const QString &activityid)
 
     reloadAssignedLayouts();
 
-    for(auto freelayoutname : freelayoutnames) {
+    for (auto freelayoutname : freelayoutnames) {
         //! inform free activities layouts that their activities probably changed
         CentralLayout *central = centralLayout(freelayoutname);
 
@@ -533,7 +533,7 @@ void Synchronizer::unloadCentralLayout(CentralLayout *layout)
 {
     int pos = m_centralLayouts.indexOf(layout);
 
-    if (pos>=0) {
+    if (pos >= 0) {
         CentralLayout *central = m_centralLayouts.takeAt(pos);
 
         if (m_multipleModeInitialized && !m_manager->corona()->inQuit()) {
@@ -593,7 +593,7 @@ void Synchronizer::reloadAssignedLayouts()
 {
     m_assignedLayouts.clear();
 
-    for (int i=0; i< m_layouts.rowCount(); ++i) {
+    for (int i = 0; i < m_layouts.rowCount(); ++i) {
         for (const auto &activity : m_layouts[i].activities) {
             if (m_assignedLayouts.contains(activity)) {
                 m_assignedLayouts[activity] << m_layouts[i].name;
@@ -608,6 +608,7 @@ void Synchronizer::unloadLayouts()
 {
     //! Unload all CentralLayouts
     int guard = 0;
+
     while (!m_centralLayouts.isEmpty() && guard++ < 10000) {
         CentralLayout *layout = m_centralLayouts.at(0);
         unloadCentralLayout(layout);
@@ -626,13 +627,13 @@ void Synchronizer::unloadPreloadedLayouts()
     QStringList currentnames;
     QStringList preloadednames = Layouts::Storage::self()->storedLayoutsInMultipleFile();
 
-    for(auto l : m_centralLayouts) {
+    for (auto l : m_centralLayouts) {
         if (l) {
             currentnames << l->name();
         }
     }
 
-    for(auto lname : preloadednames) {
+    for (auto lname : preloadednames) {
         if (!currentnames.contains(lname)) {
             Layouts::Storage::self()->moveToLayoutFile(lname);
         }
@@ -641,7 +642,7 @@ void Synchronizer::unloadPreloadedLayouts()
 
 bool Synchronizer::memoryInitialized() const
 {
-    return ((m_manager->memoryUsage() == MemoryUsage::SingleLayout && m_centralLayouts.size()>0)
+    return ((m_manager->memoryUsage() == MemoryUsage::SingleLayout && m_centralLayouts.size() > 0)
             || (m_manager->memoryUsage() == MemoryUsage::MultipleLayouts && m_multipleModeInitialized));
 }
 
@@ -744,7 +745,7 @@ bool Synchronizer::switchToLayoutInSingleMode(QString layoutName)
         return false;
     }
 
-    if (m_centralLayouts.size()>0 && m_centralLayouts[0]->name() == layoutName) {
+    if (m_centralLayouts.size() > 0 && m_centralLayouts[0]->name() == layoutName) {
         return true;
     }
 
@@ -823,7 +824,7 @@ bool Synchronizer::switchToLayoutInMultipleModeBasedOnActivities(const QString &
             //! remove any other explicit set layouts for the current activity
             QStringList explicits = m_assignedLayouts[currentactivityid];
 
-            for(auto explicitlayoutname : explicits) {
+            for (auto explicitlayoutname : explicits) {
                 QString explicitlayoutid = m_layouts.idForName(explicitlayoutname);
 
                 m_layouts[explicitlayoutid].activities.removeAll(currentactivityid);
@@ -833,13 +834,14 @@ bool Synchronizer::switchToLayoutInMultipleModeBasedOnActivities(const QString &
         }
 
         QStringList freelayoutnames;
+
         if (m_assignedLayouts.contains(Data::Layout::FREEACTIVITIESID)) {
             freelayoutnames = m_assignedLayouts[Data::Layout::FREEACTIVITIESID];
         }
 
         reloadAssignedLayouts();
 
-        for(auto freelayoutname : freelayoutnames) {
+        for (auto freelayoutname : freelayoutnames) {
             //! inform free activities layouts that their activities probably changed
             CentralLayout *central = centralLayout(freelayoutname);
 
@@ -926,7 +928,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
     }
 
     //! discover ForFreeActivities layouts
-    if (m_assignedLayouts.contains(Data::Layout::FREEACTIVITIESID) && freeRunningActivities().count()>0) {
+    if (m_assignedLayouts.contains(Data::Layout::FREEACTIVITIESID) && freeRunningActivities().count() > 0) {
         layoutNamesToLoad << m_assignedLayouts[Data::Layout::FREEACTIVITIESID];
     }
 
@@ -978,9 +980,11 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
                 //! Step4: layout is added in manager and is accessible for others to find
                 //! Step5: layout is attaching its initial containmens and is now considered ACTIVE
                 newLayout->setCorona(m_manager->corona()); //step1
+
                 if (!preloadedLayouts.contains(layoutname)) {
                     newLayout->importToCorona();           //step2
                 }
+
                 newLayout->initCorona();                   //step3
                 addLayout(newLayout);                      //step4
                 newLayout->initContainments();             //step5
@@ -994,7 +998,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
         }
     }
 
-    if (newlyActivatedLayouts.count()>0 && m_manager->corona()->universalSettings()->showInfoWindow()) {
+    if (newlyActivatedLayouts.count() > 0 && m_manager->corona()->universalSettings()->showInfoWindow()) {
         m_manager->showInfoWindow(i18np("Activating layout: <b>%2</b> ...",
                                         "Activating layouts: <b>%2</b> ...",
                                         newlyActivatedLayouts.count(),
@@ -1044,9 +1048,11 @@ void Synchronizer::unloadLayouts(const QStringList &layoutNames, const QStringLi
 
             layout->unloadContainments();
             layout->unloadLatteViews();
+
             if (!m_manager->corona()->inQuit()) {
                 m_manager->clearUnloadedContainmentsFromLinkedFile(layout->unloadedContainmentsIds());
             }
+
             layout->deleteLater();
         } else if (preloadedLayouts.contains(layoutname)) {
             Layouts::Storage::self()->moveToLayoutFile(layoutname);

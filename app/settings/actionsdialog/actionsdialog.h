@@ -45,7 +45,7 @@ protected:
 
 private Q_SLOTS:
     void onCancel();
-   // void onDataChanged();
+    // void onDataChanged();
     void onReset();
 
 private:

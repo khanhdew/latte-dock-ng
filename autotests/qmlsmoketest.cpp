@@ -47,13 +47,11 @@ class ParabolicTargetStub : public QObject
     Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
 
 public:
-    qreal zoom() const
-    {
+    qreal zoom() const {
         return m_zoom;
     }
 
-    void setZoom(qreal zoom)
-    {
+    void setZoom(qreal zoom) {
         if (qFuzzyCompare(m_zoom, zoom)) {
             return;
         }
@@ -74,23 +72,19 @@ class EventSinkStub : public QObject
     Q_OBJECT
 
 public:
-    Q_INVOKABLE void addEvent(const QString &)
-    {
+    Q_INVOKABLE void addEvent(const QString &) {
         ++m_addCount;
     }
 
-    Q_INVOKABLE void removeEvent(const QString &)
-    {
+    Q_INVOKABLE void removeEvent(const QString &) {
         ++m_removeCount;
     }
 
-    int addCount() const
-    {
+    int addCount() const {
         return m_addCount;
     }
 
-    int removeCount() const
-    {
+    int removeCount() const {
         return m_removeCount;
     }
 
@@ -107,21 +101,18 @@ class ParabolicAbilityStub : public QObject
     Q_PROPERTY(bool isEnabled READ isEnabled CONSTANT)
 
 public:
-    QVariantMap factor() const
-    {
+    QVariantMap factor() const {
         return QVariantMap{
             {QStringLiteral("zoom"), 1.6},
             {QStringLiteral("marginThicknessZoomInPercentage"), 0.0},
         };
     }
 
-    bool directRenderingEnabled() const
-    {
+    bool directRenderingEnabled() const {
         return m_directRenderingEnabled;
     }
 
-    void setDirectRenderingEnabled(bool enabled)
-    {
+    void setDirectRenderingEnabled(bool enabled) {
         if (m_directRenderingEnabled == enabled) {
             return;
         }
@@ -130,8 +121,7 @@ public:
         Q_EMIT directRenderingEnabledChanged();
     }
 
-    bool isEnabled() const
-    {
+    bool isEnabled() const {
         return true;
     }
 
@@ -169,67 +159,71 @@ class AbilityItemStub : public QObject
 public:
     explicit AbilityItemStub(QObject *parabolicItem, QObject *parent = nullptr)
         : QObject(parent)
-        , m_parabolicItem(parabolicItem)
-    {
+        , m_parabolicItem(parabolicItem) {
     }
 
-    QObject *parabolicItem() const
-    {
+    QObject *parabolicItem() const {
         return m_parabolicItem;
     }
 
-    QVariantMap abilities() const
-    {
+    QVariantMap abilities() const {
         return QVariantMap{
-            {QStringLiteral("metrics"),
-             QVariantMap{
-                 {QStringLiteral("iconSize"), 48},
-                 {QStringLiteral("mask"),
-                  QVariantMap{{QStringLiteral("thickness"), QVariantMap{{QStringLiteral("normalForItems"), 48}, {QStringLiteral("zoomedForItems"), 64}}}}},
-                 {QStringLiteral("margin"), QVariantMap{{QStringLiteral("screenEdge"), 0}, {QStringLiteral("tailThickness"), 0}}},
-                 {QStringLiteral("marginsArea"), QVariantMap{{QStringLiteral("iconSize"), 48}, {QStringLiteral("tailThickness"), 0}}},
-                 {QStringLiteral("totals"),
-                  QVariantMap{{QStringLiteral("length"), 48}, {QStringLiteral("thicknessEdges"), 0}, {QStringLiteral("lengthPaddings"), 0}}},
-             }},
+            {
+                QStringLiteral("metrics"),
+                QVariantMap{
+                    {QStringLiteral("iconSize"), 48},
+                    {
+                        QStringLiteral("mask"),
+                        QVariantMap{{QStringLiteral("thickness"), QVariantMap{{QStringLiteral("normalForItems"), 48}, {QStringLiteral("zoomedForItems"), 64}}}}
+                    },
+                    {QStringLiteral("margin"), QVariantMap{{QStringLiteral("screenEdge"), 0}, {QStringLiteral("tailThickness"), 0}}},
+                    {QStringLiteral("marginsArea"), QVariantMap{{QStringLiteral("iconSize"), 48}, {QStringLiteral("tailThickness"), 0}}},
+                    {
+                        QStringLiteral("totals"),
+                        QVariantMap{{QStringLiteral("length"), 48}, {QStringLiteral("thicknessEdges"), 0}, {QStringLiteral("lengthPaddings"), 0}}
+                    },
+                }
+            },
             {QStringLiteral("parabolic"), QVariant::fromValue(static_cast<QObject *>(const_cast<ParabolicAbilityStub *>(&m_parabolic)))},
-            {QStringLiteral("animations"),
-             QVariantMap{{QStringLiteral("needBothAxis"), QVariant::fromValue(static_cast<QObject *>(const_cast<EventSinkStub *>(&m_needBothAxis)))}}},
-            {QStringLiteral("myView"),
-             QVariantMap{{QStringLiteral("itemShadow"), QVariantMap{{QStringLiteral("isEnabled"), false}, {QStringLiteral("shadowColor"), QColor(Qt::black)}}},
-                         {QStringLiteral("badgesIn3DStyle"), false}}},
+            {
+                QStringLiteral("animations"),
+                QVariantMap{{QStringLiteral("needBothAxis"), QVariant::fromValue(static_cast<QObject *>(const_cast<EventSinkStub *>(&m_needBothAxis)))}}
+            },
+            {
+                QStringLiteral("myView"),
+                QVariantMap{{QStringLiteral("itemShadow"), QVariantMap{{QStringLiteral("isEnabled"), false}, {QStringLiteral("shadowColor"), QColor(Qt::black)}}},
+                    {QStringLiteral("badgesIn3DStyle"), false}}
+            },
             {QStringLiteral("environment"), QVariantMap{{QStringLiteral("isGraphicsSystemAccelerated"), false}}},
             {QStringLiteral("indexer"), QVariantMap{{QStringLiteral("inMarginsArea"), false}}},
             {QStringLiteral("debug"), QVariantMap{{QStringLiteral("graphicsEnabled"), false}}},
-            {QStringLiteral("shortcuts"),
-             QVariantMap{{QStringLiteral("showPositionShortcutBadges"), false},
-                         {QStringLiteral("isEnabled"), false},
-                         {QStringLiteral("badges"), QStringList{}},
-                         {QStringLiteral("shortcutIndex"), QVariant::fromValue(static_cast<QObject *>(const_cast<AbilityItemStub *>(this)))}}},
+            {
+                QStringLiteral("shortcuts"),
+                QVariantMap{{QStringLiteral("showPositionShortcutBadges"), false},
+                    {QStringLiteral("isEnabled"), false},
+                    {QStringLiteral("badges"), QStringList{}},
+                    {QStringLiteral("shortcutIndex"), QVariant::fromValue(static_cast<QObject *>(const_cast<AbilityItemStub *>(this)))}}
+            },
         };
     }
 
-    int animationTime() const
-    {
+    int animationTime() const {
         return 10;
     }
 
-    bool isHorizontal() const
-    {
+    bool isHorizontal() const {
         return true;
     }
 
-    bool isVertical() const
-    {
+    bool isVertical() const {
         return false;
     }
 
-    bool isVisible() const
-    {
+    bool isVisible() const {
         return m_visible;
     }
 
-    void setVisible(bool visible)
-    {
+    void setVisible(bool visible) {
         if (m_visible == visible) {
             return;
         }
@@ -238,88 +232,71 @@ public:
         Q_EMIT visibleChanged();
     }
 
-    bool isSeparator() const
-    {
+    bool isSeparator() const {
         return false;
     }
 
-    bool isHidden() const
-    {
+    bool isHidden() const {
         return false;
     }
 
-    int location() const
-    {
+    int location() const {
         return 4;
     }
 
-    qreal iconOffsetX() const
-    {
+    qreal iconOffsetX() const {
         return 0;
     }
 
-    qreal iconOffsetY() const
-    {
+    qreal iconOffsetY() const {
         return 0;
     }
 
-    int iconTransformOrigin() const
-    {
+    int iconTransformOrigin() const {
         return 4;
     }
 
-    qreal iconOpacity() const
-    {
+    qreal iconOpacity() const {
         return 1.0;
     }
 
-    qreal iconRotation() const
-    {
+    qreal iconRotation() const {
         return 0;
     }
 
-    qreal iconScale() const
-    {
+    qreal iconScale() const {
         return 1.0;
     }
 
-    QObject *contentItem() const
-    {
+    QObject *contentItem() const {
         return nullptr;
     }
 
-    bool isMonochromaticForcedContentItem() const
-    {
+    bool isMonochromaticForcedContentItem() const {
         return false;
     }
 
-    QObject *monochromizedItem() const
-    {
+    QObject *monochromizedItem() const {
         return nullptr;
     }
 
-    int itemIndex() const
-    {
+    int itemIndex() const {
         return 1;
     }
 
-    bool parabolicAreaContainsMouse() const
-    {
+    bool parabolicAreaContainsMouse() const {
         return false;
     }
 
-    Q_INVOKABLE int shortcutIndex(int) const
-    {
+    Q_INVOKABLE int shortcutIndex(int) const {
         return -1;
     }
 
-    int needBothAxisAddCount() const
-    {
+    int needBothAxisAddCount() const {
         return m_needBothAxis.addCount();
     }
 
-    int needBothAxisRemoveCount() const
-    {
+    int needBothAxisRemoveCount() const {
         return m_needBothAxis.removeCount();
     }
 
@@ -341,8 +318,7 @@ class PlasmoidStub : public QObject
     Q_OBJECT
 
 public:
-    void emitFormFactorChanged()
-    {
+    void emitFormFactorChanged() {
         Q_EMIT formFactorChanged();
     }
 
@@ -359,28 +335,23 @@ class LaunchersConfigurationStub : public QObject
 public:
     explicit LaunchersConfigurationStub(QStringList launchers, QObject *parent = nullptr)
         : QObject(parent)
-        , m_launchers(std::move(launchers))
-    {
+        , m_launchers(std::move(launchers)) {
     }
 
-    QStringList launchers59() const
-    {
+    QStringList launchers59() const {
         return m_launchers;
     }
 
-    void setLaunchers59(const QStringList &launchers)
-    {
+    void setLaunchers59(const QStringList &launchers) {
         m_launchers = launchers;
         Q_EMIT launchers59Changed();
     }
 
-    bool userConfiguring() const
-    {
+    bool userConfiguring() const {
         return m_userConfiguring;
     }
 
-    void setUserConfiguring(bool userConfiguring)
-    {
+    void setUserConfiguring(bool userConfiguring) {
         if (m_userConfiguring == userConfiguring) {
             return;
         }
@@ -407,17 +378,14 @@ class LaunchersPlasmoidStub : public QObject
 public:
     explicit LaunchersPlasmoidStub(QStringList launchers, QObject *parent = nullptr)
         : QObject(parent)
-        , m_configuration(std::move(launchers), this)
-    {
+        , m_configuration(std::move(launchers), this) {
     }
 
-    int id() const
-    {
+    int id() const {
         return 1;
     }
 
-    QObject *configuration()
-    {
+    QObject *configuration() {
         return &m_configuration;
     }
 
@@ -436,13 +404,11 @@ class MyViewReadyStub : public QObject
     Q_PROPERTY(bool isReady READ isReady WRITE setReady NOTIFY isReadyChanged)
 
 public:
-    bool isReady() const
-    {
+    bool isReady() const {
         return m_ready;
     }
 
-    void setReady(bool ready)
-    {
+    void setReady(bool ready) {
         if (m_ready == ready) {
             return;
         }
@@ -464,8 +430,7 @@ class AppletAbilitiesStub : public QObject
     Q_PROPERTY(QObject *myView READ myView CONSTANT)
 
 public:
-    QObject *myView()
-    {
+    QObject *myView() {
         return &m_myView;
     }
 
@@ -495,96 +460,81 @@ class TaskItemStub : public QObject
 public:
     explicit TaskItemStub(QObject *parabolicItem, QObject *parent = nullptr)
         : QObject(parent)
-        , m_parabolicItem(parabolicItem)
-    {
+        , m_parabolicItem(parabolicItem) {
     }
 
-    QObject *parabolicItem() const
-    {
+    QObject *parabolicItem() const {
         return m_parabolicItem;
     }
 
-    QVariantMap abilities() const
-    {
+    QVariantMap abilities() const {
         return QVariantMap{
-            {QStringLiteral("animations"),
-             QVariantMap{
-                 {QStringLiteral("speedFactor"), QVariantMap{{QStringLiteral("normal"), 1}, {QStringLiteral("current"), 1}}},
-                 {QStringLiteral("duration"), QVariantMap{{QStringLiteral("large"), 100}}},
-                 {QStringLiteral("needLength"), QVariant::fromValue(static_cast<QObject *>(const_cast<TaskItemStub *>(this)))},
-             }},
+            {
+                QStringLiteral("animations"),
+                QVariantMap{
+                    {QStringLiteral("speedFactor"), QVariantMap{{QStringLiteral("normal"), 1}, {QStringLiteral("current"), 1}}},
+                    {QStringLiteral("duration"), QVariantMap{{QStringLiteral("large"), 100}}},
+                    {QStringLiteral("needLength"), QVariant::fromValue(static_cast<QObject *>(const_cast<TaskItemStub *>(this)))},
+                }
+            },
             {QStringLiteral("metrics"), QVariantMap{{QStringLiteral("iconSize"), 48}}},
             {QStringLiteral("launchers"), QVariant::fromValue(static_cast<QObject *>(const_cast<TaskItemStub *>(this)))},
         };
     }
 
-    bool parabolicAreaIsCurrent() const
-    {
+    bool parabolicAreaIsCurrent() const {
         return m_parabolicAreaIsCurrent;
     }
 
-    void setParabolicAreaIsCurrent(bool current)
-    {
+    void setParabolicAreaIsCurrent(bool current) {
         m_parabolicAreaIsCurrent = current;
         Q_EMIT parabolicAreaChanged();
     }
 
-    bool parabolicAreaContainsMouse() const
-    {
+    bool parabolicAreaContainsMouse() const {
         return m_parabolicAreaContainsMouse;
     }
 
-    void setParabolicAreaContainsMouse(bool containsMouse)
-    {
+    void setParabolicAreaContainsMouse(bool containsMouse) {
         m_parabolicAreaContainsMouse = containsMouse;
         Q_EMIT parabolicAreaChanged();
     }
 
-    bool isVertical() const
-    {
+    bool isVertical() const {
         return false;
     }
 
-    bool isWindow() const
-    {
+    bool isWindow() const {
         return true;
     }
 
-    bool isStartup() const
-    {
+    bool isStartup() const {
         return false;
     }
 
-    bool isLauncher() const
-    {
+    bool isLauncher() const {
         return false;
     }
 
-    bool isSeparator() const
-    {
+    bool isSeparator() const {
         return false;
     }
 
-    QString launcherUrl() const
-    {
+    QString launcherUrl() const {
         return QStringLiteral("applications:test.desktop");
     }
 
-    QString launcherUrlWithIcon() const
-    {
+    QString launcherUrlWithIcon() const {
         return launcherUrl();
     }
 
-    Q_INVOKABLE void addEvent(const QString &)
-    {
+    Q_INVOKABLE void addEvent(const QString &) {
     }
 
-    Q_INVOKABLE void removeEvent(const QString &)
-    {
+    Q_INVOKABLE void removeEvent(const QString &) {
     }
 
-    Q_INVOKABLE bool inCurrentActivity(const QString &) const
-    {
+    Q_INVOKABLE bool inCurrentActivity(const QString &) const {
         return true;
     }
 
@@ -613,10 +563,15 @@ class RootStub : public QObject
 
 public:
     bool newWindowSlidingEnabled() const { return true; }
+
     bool vertical() const { return false; }
+
     bool inActivityChange() const { return false; }
+
     bool inDraggingPhase() const { return false; }
+
     bool showWindowsOnlyFromLaunchers() const { return false; }
+
     bool disableAllWindowsFunctionality() const { return false; }
 };
 
@@ -626,10 +581,15 @@ class TasksExtendedManagerStub : public QObject
 
 public:
     Q_INVOKABLE bool toBeAddedLauncherExists(const QString &) const { return false; }
+
     Q_INVOKABLE void removeToBeAddedLauncher(const QString &) {}
+
     Q_INVOKABLE bool immediateLauncherExists(const QString &) const { return false; }
+
     Q_INVOKABLE void removeImmediateLauncher(const QString &) {}
+
     Q_INVOKABLE QVariantMap getFrozenTask(const QString &) const { return QVariantMap{{QStringLiteral("zoom"), 1.5}}; }
+
     Q_INVOKABLE void removeFrozenTask(const QString &) {}
 };
 
@@ -639,6 +599,7 @@ class TasksModelStub : public QObject
 
 public:
     Q_INVOKABLE int launcherPosition(const QString &) const { return -1; }
+
     Q_INVOKABLE QStringList launcherActivities(const QString &) const { return {}; }
 };
 
@@ -649,39 +610,32 @@ class TasksModelForLaunchersStub : public QObject
     Q_PROPERTY(int count READ count CONSTANT)
 
 public:
-    QStringList launcherList() const
-    {
+    QStringList launcherList() const {
         return m_launcherList;
     }
 
-    void setLauncherList(const QStringList &launcherList)
-    {
+    void setLauncherList(const QStringList &launcherList) {
         m_launcherList = launcherList;
         Q_EMIT launcherListChanged();
     }
 
-    int count() const
-    {
+    int count() const {
         return m_launcherList.count();
     }
 
-    int syncCount() const
-    {
+    int syncCount() const {
         return m_syncCount;
     }
 
-    Q_INVOKABLE int launcherPosition(const QString &launcher) const
-    {
+    Q_INVOKABLE int launcherPosition(const QString &launcher) const {
         return m_launcherList.indexOf(launcher);
     }
 
-    Q_INVOKABLE QStringList launcherActivities(const QString &) const
-    {
+    Q_INVOKABLE QStringList launcherActivities(const QString &) const {
         return {};
     }
 
-    Q_INVOKABLE void syncLaunchers()
-    {
+    Q_INVOKABLE void syncLaunchers() {
         ++m_syncCount;
     }
 
@@ -722,15 +676,18 @@ static std::unique_ptr<QObject> createQmlObject(QQmlEngine &engine, const QByteA
     QQmlComponent component(&engine);
     component.setData(source, url);
     std::unique_ptr<QObject> object(component.create());
+
     if (!object) {
         qWarning() << component.errors();
     }
+
     return object;
 }
 
 static bool writeTextFile(const QString &path, const QByteArray &contents)
 {
     QFile file(path);
+
     if (!file.open(QFile::WriteOnly | QFile::Truncate)) {
         return false;
     }
@@ -969,8 +926,8 @@ void QmlSmokeTest::compactAppletPopupSizingLoadsFromSource()
     QVERIFY(object);
 
     std::unique_ptr<QObject> fullRepresentation = createQmlObject(
-        engine,
-        R"(
+            engine,
+            R"(
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
@@ -985,20 +942,20 @@ Item {
     Layout.maximumHeight: 300
 }
 )",
-        QUrl(QStringLiteral("qrc:/compact-full-representation.qml")));
+            QUrl(QStringLiteral("qrc:/compact-full-representation.qml")));
     QVERIFY(fullRepresentation);
     QVERIFY(object->setProperty("fullRepresentation", QVariant::fromValue(fullRepresentation.get())));
 
     std::unique_ptr<QObject> appletItem = createQmlObject(
-        engine,
-        R"(
+            engine,
+            R"(
 import QtQuick 2.15
 
 Item {
     property string pluginName: ""
 }
 )",
-        QUrl(QStringLiteral("qrc:/compact-applet-item.qml")));
+            QUrl(QStringLiteral("qrc:/compact-applet-item.qml")));
     QVERIFY(appletItem);
     QVERIFY(object->setProperty("appletItem", QVariant::fromValue(appletItem.get())));
 
@@ -1336,6 +1293,7 @@ void QmlSmokeTest::tasksConfigClickActionModelOrderMatchesEnum()
 
     // Verify items appear in the correct order within the model array
     int lastPos = modelBracket;
+
     for (const auto &action : orderedActions) {
         int pos = source.indexOf(action, lastPos);
         QVERIFY2(pos > 0 && pos < modelEnd,

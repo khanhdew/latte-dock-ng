@@ -42,12 +42,11 @@ namespace Layout {
 //! SCREEN_NAME -> EDGE -> VIEWID
 typedef QHash<QString, QHash<Plasma::Types::Location, QList<uint>>> ViewsMap;
 
-class GenericLayout : public AbstractLayout
-{
+class GenericLayout : public AbstractLayout {
     Q_OBJECT
     Q_PROPERTY(int viewsCount READ viewsCount NOTIFY viewsCountChanged)
 
-public:   
+public:
     GenericLayout(QObject *parent, QString layoutFile, QString assignedName = QString());
     ~GenericLayout() override;
 
@@ -89,9 +88,9 @@ public:
     Plasma::Containment *containmentForId(uint id) const;
     QList<Plasma::Containment *> subContainmentsOf(uint id) const;
 
-    static bool viewAtLowerScreenPriority(Latte::View *test, Latte::View *base, QScreen *primaryScreen);
-    static bool viewAtLowerEdgePriority(Latte::View *test, Latte::View *base);
-    static QList<Latte::View *> sortedLatteViews(QList<Latte::View *> views, QScreen *primaryScreen);
+    static bool viewAtLowerScreenPriority(Latte::View * test, Latte::View * base, QScreen * primaryScreen);
+    static bool viewAtLowerEdgePriority(Latte::View * test, Latte::View * base);
+    static QList<Latte::View *> sortedLatteViews(QList<Latte::View *> views, QScreen * primaryScreen);
 
     QList<Latte::View *> sortedLatteViews();
     virtual QList<Latte::View *> viewsWithPlasmaShortcuts();
@@ -108,35 +107,35 @@ public:
     void unloadLatteViews();
     void unlock(); //! make it writable which it should be the default
 
-    virtual void setLastConfigViewFor(Latte::View *view);
-    virtual Latte::View *lastConfigViewFor();
+    virtual void setLastConfigViewFor(Latte::View * view);
+    virtual Latte::View * lastConfigViewFor();
 
     //! this function needs the layout to have first set the corona through setCorona() function
-    virtual void addView(Plasma::Containment *containment);
-    void recreateView(Plasma::Containment *containment, bool delayed = true);
-    bool hasLatteView(Plasma::Containment *containment);
+    virtual void addView(Plasma::Containment * containment);
+    void recreateView(Plasma::Containment * containment, bool delayed = true);
+    bool hasLatteView(Plasma::Containment * containment);
 
-    bool newView(const QString &templateName);
-    Data::View newView(const Latte::Data::View &nextViewData);
-    void removeView(const Latte::Data::View &viewData);
-    void removeViewWithoutDestroyingContainment(const Latte::Data::View &viewData);
-    void updateView(const Latte::Data::View &viewData);
+    bool newView(const QString & templateName);
+    Data::View newView(const Latte::Data::View & nextViewData);
+    void removeView(const Latte::Data::View & viewData);
+    void removeViewWithoutDestroyingContainment(const Latte::Data::View & viewData);
+    void updateView(const Latte::Data::View & viewData);
     QString storedView(const int &containmentId); //returns temp filepath containing all view data
     void removeOrphanedSubContainment(const int &containmentId);
 
     //! Available edges for specific view in that screen
-    virtual QList<Plasma::Types::Location> availableEdgesForView(QScreen *scr, Latte::View *forView) const;
+    virtual QList<Plasma::Types::Location> availableEdgesForView(QScreen * scr, Latte::View * forView) const;
     //! All free edges in that screen
-    virtual QList<Plasma::Types::Location> freeEdges(QScreen *scr) const;
+    virtual QList<Plasma::Types::Location> freeEdges(QScreen * scr) const;
     virtual QList<Plasma::Types::Location> freeEdges(int screen) const;
 
     //! Bind this latteView and its relevant containments(including subcontainments)
     //! to this layout. It is used for moving a Latte::View from layout to layout)
-    void assignToLayout(Latte::View *latteView, QList<Plasma::Containment *> containments);
+    void assignToLayout(Latte::View * latteView, QList<Plasma::Containment *> containments);
     //! Unassign that latteView from this layout (this is used for moving a latteView
     //! from layout to layout) and returns all the containments relevant to
     //! that latteView
-    QList<Plasma::Containment *> unassignFromLayout(Plasma::Containment *latteContainment);
+    QList<Plasma::Containment *> unassignFromLayout(Plasma::Containment * latteContainment);
 
     QList<int> viewsExplicitScreens();
 
@@ -158,11 +157,11 @@ Q_SIGNALS:
     void viewEdgeChanged();
 
     //! used from ConfigView(s) in order to be informed which is one should be shown
-    void lastConfigViewForChanged(Latte::View *view);
+    void lastConfigViewForChanged(Latte::View * view);
 
     //! used from LatteView(s) in order to exist only one each time that has the highest priority
     //! to use the global shortcuts activations
-    void preferredViewForShortcutsChanged(Latte::View *view);
+    void preferredViewForShortcutsChanged(Latte::View * view);
 
 protected:
     void updateLastUsedActivity();
@@ -176,11 +175,11 @@ protected:
     QHash<const Plasma::Containment *, Latte::View *> m_waitingLatteViews;
 
 private Q_SLOTS:
-    void addContainment(Plasma::Containment *containment);
-    void appletCreated(Plasma::Applet *applet);
+    void addContainment(Plasma::Containment * containment);
+    void appletCreated(Plasma::Applet * applet);
     void destroyedChanged(bool destroyed);
-    void containmentDestroyed(QObject *cont);
-    void onLastConfigViewChangedFrom(Latte::View *view);
+    void containmentDestroyed(QObject * cont);
+    void onLastConfigViewChangedFrom(Latte::View * view);
 
 private:
     //! It can be used in order for LatteViews to not be created automatically when
@@ -191,18 +190,18 @@ private:
     bool explicitDockOccupyEdge(int screen, Plasma::Types::Location location) const;
     bool primaryDockOccupyEdge(Plasma::Types::Location location) const;
 
-    bool viewDataAtLowerEdgePriority(const Latte::Data::View &test, const Latte::Data::View &base) const;
-    bool viewDataAtLowerScreenPriority(const Latte::Data::View &test, const Latte::Data::View &base) const;
-    bool viewDataAtLowerStatePriority(const Latte::Data::View &test, const Latte::Data::View &base) const;
+    bool viewDataAtLowerEdgePriority(const Latte::Data::View & test, const Latte::Data::View & base) const;
+    bool viewDataAtLowerScreenPriority(const Latte::Data::View & test, const Latte::Data::View & base) const;
+    bool viewDataAtLowerStatePriority(const Latte::Data::View & test, const Latte::Data::View & base) const;
 
-    bool mapContainsId(const ViewsMap *map, uint viewId) const;
-    QString mapScreenName(const ViewsMap *map, uint viewId) const;
+    bool mapContainsId(const ViewsMap * map, uint viewId) const;
+    QString mapScreenName(const ViewsMap * map, uint viewId) const;
 
-    QList<int> subContainmentsOf(Plasma::Containment *containment) const;
+    QList<int> subContainmentsOf(Plasma::Containment * containment) const;
 
     QList<Latte::Data::View> sortedViewsData(const QList<Latte::Data::View> &viewsData);
 
-    void destroyContainment(Plasma::Containment *containment);
+    void destroyContainment(Plasma::Containment * containment);
 
 private:
     bool m_blockAutomaticLatteViewCreation{false};

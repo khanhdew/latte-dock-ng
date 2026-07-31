@@ -28,10 +28,8 @@
 
 #include <memory>
 
-namespace Latte
-{
-namespace Tasks
-{
+namespace Latte {
+namespace Tasks {
 
 namespace KAStats = KActivities::Stats;
 using namespace KAStats;
@@ -368,6 +366,7 @@ QUrl ContextMenuActionsBackend::toUrl(const QVariant &value)
 
     if (value.canConvert<QUrl>()) {
         const QUrl url = value.toUrl();
+
         if (url.isValid()) {
             return url;
         }
@@ -397,6 +396,7 @@ QUrl ContextMenuActionsBackend::tryDecodeApplicationsUrl(const QUrl &launcherUrl
 
         if (menuId.isEmpty()) {
             menuId = launcherUrl.toString(QUrl::RemoveScheme | QUrl::RemoveQuery | QUrl::RemoveFragment);
+
             while (menuId.startsWith(QLatin1Char('/'))) {
                 menuId.remove(0, 1);
             }
@@ -438,6 +438,7 @@ QUrl ContextMenuActionsBackend::tryDecodeApplicationsUrl(const QUrl &launcherUrl
                 }
 
                 const QString desktopPath = QStandardPaths::locate(QStandardPaths::ApplicationsLocation, candidate);
+
                 if (!desktopPath.isEmpty()) {
                     return QUrl::fromLocalFile(desktopPath);
                 }
@@ -498,6 +499,7 @@ KService::Ptr ContextMenuActionsBackend::serviceFromLauncherUrl(const QUrl &laun
         }
 
         const QString fileName = QFileInfo(desktopPath).fileName();
+
         if (!fileName.isEmpty()) {
             if (KService::Ptr service = KService::serviceByStorageId(fileName)) {
                 return service;

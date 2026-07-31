@@ -21,9 +21,10 @@
 namespace Latte {
 namespace Quick {
 
-class Dialog : public PlasmaQuick::Dialog {
+class Dialog : public PlasmaQuick::Dialog
+{
     Q_OBJECT
-    Q_PROPERTY (bool containsMouse READ containsMouse NOTIFY containsMouseChanged)
+    Q_PROPERTY(bool containsMouse READ containsMouse NOTIFY containsMouseChanged)
 
     //! it is used instead of location property in order to not break borders drawing
     Q_PROPERTY(Plasma::Types::Location edge READ edge WRITE setEdge NOTIFY edgeChanged)
@@ -43,7 +44,7 @@ Q_SIGNALS:
     void edgeChanged();
 
 protected:
-  //  void adjustGeometry(const QRect &geom) override;
+    //  void adjustGeometry(const QRect &geom) override;
 
     bool event(QEvent *e) override;
 

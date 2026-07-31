@@ -16,8 +16,7 @@ namespace ActionsDialog {
 class ActionListWidgetItem : public QListWidgetItem
 {
 public:
-    enum ActionUserRoles
-    {
+    enum ActionUserRoles {
         IDROLE = Qt::UserRole + 1,
         ORDERROLE
     };
@@ -30,4 +29,5 @@ public:
 }
 }
 }
+
 #endif

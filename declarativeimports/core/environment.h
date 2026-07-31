@@ -15,7 +15,7 @@
 #include <QVariant>
 
 
-namespace Latte{
+namespace Latte {
 
 class Environment final: public QObject
 {

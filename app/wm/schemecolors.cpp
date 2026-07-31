@@ -147,7 +147,7 @@ void SchemeColors::setSchemeFile(QString file)
 QString SchemeColors::possibleSchemeFile(QString scheme)
 {
     if (scheme == QLatin1String("kdeglobals")
-            || (scheme.endsWith(QStringLiteral("kdeglobals")) && QFileInfo(scheme).exists()) ) {
+        || (scheme.endsWith(QStringLiteral("kdeglobals")) && QFileInfo(scheme).exists())) {
         // do nothing, accept kdeglobals case
     } else if (scheme.startsWith(QLatin1Char('/')) && scheme.endsWith(QStringLiteral("colors")) && QFileInfo(scheme).exists()) {
         return scheme;
@@ -157,7 +157,7 @@ QString SchemeColors::possibleSchemeFile(QString scheme)
     QString tempScheme = scheme;
 
     if (scheme == QLatin1String("kdeglobals")
-            || (scheme.endsWith(QStringLiteral("kdeglobals")) && QFileInfo(scheme).exists()) ) {
+        || (scheme.endsWith(QStringLiteral("kdeglobals")) && QFileInfo(scheme).exists())) {
         QString settingsFile = Latte::configPath() + QLatin1String("/kdeglobals");
 
         bool supportsAutoAccentColor{false}; // introduced on plasma 5.25

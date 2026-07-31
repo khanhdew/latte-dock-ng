@@ -35,6 +35,7 @@ namespace Settings {
 namespace Handler {
 class ViewsHandler;
 }
+
 namespace View {
 class ViewsTableView;
 }
@@ -107,9 +108,9 @@ private:
 
     void showDefaultInlineMessageValidator();
     void showDefaultPersistentErrorWarningInlineMessage(const QString &messageText,
-                                                        const KMessageWidget::MessageType &messageType,
-                                                        QList<QAction *> extraActions = QList<QAction *>(),
-                                                        const bool &showOpenLayoutAction = true);
+            const KMessageWidget::MessageType &messageType,
+            QList<QAction *> extraActions = QList<QAction *>(),
+            const bool &showOpenLayoutAction = true);
 
 
 private Q_SLOTS:

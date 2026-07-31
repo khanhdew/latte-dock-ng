@@ -155,8 +155,8 @@ QPoint ContextMenuLayerQuickItem::popUpTopLeft(Plasma::Applet *applet, const QRe
     int menuLength = (m_latteView->formFactor() == Plasma::Types::Horizontal ? popUpRect.width() : popUpRect.height());
 
     if ((itemLength > menuLength)
-            || (applet == m_latteView->containment())
-            || (m_latteView && Layouts::Storage::self()->isSubContainment(m_latteView->corona(), applet)) ) {
+        || (applet == m_latteView->containment())
+        || (m_latteView && Layouts::Storage::self()->isSubContainment(m_latteView->corona(), applet))) {
         return popUpRelevantToGlobalPoint(globalItemRect, popUpRect);
     } else {
         return popUpRelevantToParent(globalItemRect, popUpRect);
@@ -223,6 +223,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
         // so handle this action directly.
         if (m_closeActiveWindowEnabled && event->button() == Qt::MiddleButton) {
             auto *tracker = m_latteView->windowsTracker()->currentScreen();
+
             if (tracker && tracker->lastActiveWindow()) {
                 tracker->lastActiveWindow()->requestClose();
             }
@@ -284,18 +285,23 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
 
     if (!applet) {
         QPointF sp = event->scenePosition();
-        std::function<QQuickItem*(QQuickItem*)> findApplet = [&](QQuickItem *p) -> QQuickItem* {
+        std::function<QQuickItem*(QQuickItem*)> findApplet = [&](QQuickItem * p) -> QQuickItem* {
             for (auto *c : p->childItems()) {
                 auto *ai = qobject_cast<PlasmaQuick::AppletQuickItem *>(c);
+
                 if (ai && ai->applet() && ai->applet() != m_latteView->containment()
                     && ai->isVisible() && ai->contains(ai->mapFromScene(sp)))
                     return c;
+
                 auto *f = findApplet(c);
+
                 if (f) return f;
             }
+
             return nullptr;
         };
         QQuickItem *found = findApplet(m_latteView->contentItem());
+
         if (found) {
             auto *ai = qobject_cast<PlasmaQuick::AppletQuickItem *>(found);
             applet = const_cast<Plasma::Applet *>(ai->applet());
@@ -369,7 +375,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
     if (applet) {
         globalPos = popUpTopLeft(applet, popUpRect);
     } else {
-        globalPos = popUpRelevantToGlobalPoint(QRect(0,0,0,0), popUpRect);
+        globalPos = popUpRelevantToGlobalPoint(QRect(0, 0, 0, 0), popUpRect);
     }
 
     //qCDebug(latteQml) << "7...";
@@ -468,7 +474,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
     QAction *containmentAction = desktopMenu->menuAction();
     containmentAction->setText(i18nc("%1 is the name of the containment", "%1 Options", m_latteView->containment()->title()));
 
-    if (desktopMenu->actions().count()>1) { /*take into account the Applet Name Section*/
+    if (desktopMenu->actions().count() > 1) { /*take into account the Applet Name Section*/
         addContainmentActions(containmentAction->menu(), event);
     }
 
@@ -500,6 +506,7 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
     // the user remove widgets without entering edit mode.
     {
         QAction *closeApplet = applet->internalAction(QStringLiteral("remove"));
+
         if (closeApplet && closeApplet->isEnabled()) {
             // Hide the applet container immediately so dock space is
             // reclaimed, but do NOT destroy it — the user may undo via
@@ -520,33 +527,39 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
                 // Undo: Plasma emits destroyedChanged(false) when the user
                 // clicks the Undo notification.
                 *undoConn = QObject::connect(applet, &Plasma::Applet::destroyedChanged,
-                    [applet, layoutMgr, undoConn, destroyConn](bool destroyed) {
-                        if (!destroyed && layoutMgr) {
-                            QMetaObject::invokeMethod(layoutMgr,
-                                                      "showAppletItem",
-                                                      Qt::DirectConnection,
-                                                      Q_ARG(QObject *, applet));
-                        }
-                        QObject::disconnect(*undoConn);
-                        QObject::disconnect(*destroyConn);
-                    });
+                                             [applet, layoutMgr, undoConn, destroyConn](bool destroyed)
+                {
+                    if (!destroyed && layoutMgr) {
+                        QMetaObject::invokeMethod(layoutMgr,
+                                                  "showAppletItem",
+                                                  Qt::DirectConnection,
+                                                  Q_ARG(QObject *, applet));
+                    }
+
+                    QObject::disconnect(*undoConn);
+                    QObject::disconnect(*destroyConn);
+                });
 
                 // Final destruction: notification dismissed or timed out.
                 *destroyConn = QObject::connect(applet, &QObject::destroyed,
-                    [applet, layoutMgr, undoConn, destroyConn]() {
-                        if (layoutMgr) {
-                            QMetaObject::invokeMethod(layoutMgr,
-                                                      "removeAppletItem",
-                                                      Qt::DirectConnection,
-                                                      Q_ARG(QObject *, applet));
-                        }
-                        QObject::disconnect(*undoConn);
-                        QObject::disconnect(*destroyConn);
-                    });
+                                                [applet, layoutMgr, undoConn, destroyConn]()
+                {
+                    if (layoutMgr) {
+                        QMetaObject::invokeMethod(layoutMgr,
+                                                  "removeAppletItem",
+                                                  Qt::DirectConnection,
+                                                  Q_ARG(QObject *, applet));
+                    }
+
+                    QObject::disconnect(*undoConn);
+                    QObject::disconnect(*destroyConn);
+                });
             });
+
             if (!desktopMenu->isEmpty()) {
                 desktopMenu->addSeparator();
             }
+
             desktopMenu->addAction(closeApplet);
         }
     }
@@ -559,7 +572,7 @@ void ContextMenuLayerQuickItem::addContainmentActions(QMenu *desktopMenu, QEvent
     }
 
     if (m_latteView->containment()->corona()->immutability() != Plasma::Types::Mutable &&
-            !KAuthorized::authorizeAction(QStringLiteral("plasma/containment_actions"))) {
+        !KAuthorized::authorizeAction(QStringLiteral("plasma/containment_actions"))) {
         //qCDebug(latteQml) << "immutability";
         return;
     }

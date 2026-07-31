@@ -132,13 +132,13 @@ void ScreensHandler::save()
 bool ScreensHandler::removalConfirmation(const QStringList &screens) const
 {
     return (KMessageBox::questionTwoActions(m_dialog,
-                                     i18np("You are going to <b>remove %2</b> reference completely.<br/>Would you like to continue?",
-                                           "You are going to <b>remove %2</b> references completely.<br/>Would you like to continue?",
-                                           screens.count(),
-                                           screens.join(QStringLiteral(", "))),
-                                     i18n("Approve Removal"),
-                                     KGuiItem(i18n("Remove"), QStringLiteral("edit-delete")),
-                                     KStandardGuiItem::cancel()) == KMessageBox::PrimaryAction);
+                                            i18np("You are going to <b>remove %2</b> reference completely.<br/>Would you like to continue?",
+                                                    "You are going to <b>remove %2</b> references completely.<br/>Would you like to continue?",
+                                                    screens.count(),
+                                                    screens.join(QStringLiteral(", "))),
+                                            i18n("Approve Removal"),
+                                            KGuiItem(i18n("Remove"), QStringLiteral("edit-delete")),
+                                            KStandardGuiItem::cancel()) == KMessageBox::PrimaryAction);
 }
 
 }

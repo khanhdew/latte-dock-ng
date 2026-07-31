@@ -135,11 +135,13 @@ private:
 
     //! Cache last strut parameters per view to avoid recreating GhostWindow
     //! (a heavy QQuickView with Wayland layer-shell surface) when nothing changed.
-    struct StrutCacheEntry {
+    struct StrutCacheEntry
+    {
         QRect rect;
         Plasma::Types::Location location{Plasma::Types::Floating};
         QString screenName;
     };
+
     mutable QHash<QWindow *, StrutCacheEntry> m_strutCache;
 
     QPointer<KWayland::Client::PlasmaWindowManagement> m_windowManagement;

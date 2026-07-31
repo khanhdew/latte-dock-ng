@@ -33,11 +33,15 @@ AlternativesHelper::~AlternativesHelper()
 QStringList AlternativesHelper::appletProvides() const
 {
     const auto val = m_applet->pluginMetaData().rawData().value(QStringLiteral("X-Plasma-Provides"));
+
     if (val.isArray()) {
         QStringList result;
+
         for (const auto &v : val.toArray()) result << v.toString();
+
         return result;
     }
+
     return val.toString().split(QLatin1Char(','), Qt::SkipEmptyParts);
 }
 

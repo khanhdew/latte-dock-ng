@@ -35,23 +35,27 @@ static QStringList ACTIONSEDITORDER = {LAYOUTSACTION,
                                        ADDVIEWACTION,
                                        MOVEVIEWACTION,
                                        EXPORTVIEWTEMPLATEACTION,
-                                       REMOVEVIEWACTION};
+                                       REMOVEVIEWACTION
+                                      };
 
 static QStringList ACTIONSALWAYSVISIBLE = {LAYOUTSACTION,
                                            PREFERENCESACTION,
                                            QUITLATTEACTION,
                                            SEPARATOR1ACTION,
                                            ADDWIDGETSACTION,
-                                           ADDVIEWACTION};
+                                           ADDVIEWACTION
+                                          };
 
 static QStringList ACTIONSALWAYSHIDDEN = {PRINTACTION};
 
 static QStringList ACTIONSVISIBLEONLYINEDIT = {MOVEVIEWACTION,
                                                EXPORTVIEWTEMPLATEACTION,
-                                               REMOVEVIEWACTION};
+                                               REMOVEVIEWACTION
+                                              };
 
 static QStringList ACTIONSSPECIAL = {SECTIONACTION,
-                                     EDITVIEWACTION};
+                                     EDITVIEWACTION
+                                    };
 
 }
 }

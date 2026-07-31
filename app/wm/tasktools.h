@@ -13,10 +13,8 @@
 #include <KService>
 #include <KSharedConfig>
 
-namespace Latte
-{
-namespace WindowSystem
-{
+namespace Latte {
+namespace WindowSystem {
 
 struct AppData
 {
@@ -29,8 +27,8 @@ struct AppData
 };
 
 enum UrlComparisonMode {
-     Strict = 0,
-     IgnoreQueryItems
+    Strict = 0,
+    IgnoreQueryItems
 };
 
 /**
@@ -81,7 +79,7 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon = QIcon());
  * owning the window.
  */
 QUrl windowUrlFromMetadata(const QString &appId, quint32 pid = 0,
-    KSharedConfig::Ptr config = KSharedConfig::Ptr(), const QString &xWindowsWMClassName = QString());
+                           KSharedConfig::Ptr config = KSharedConfig::Ptr(), const QString &xWindowsWMClassName = QString());
 
 /**
  * Returns a list of (usually application) KService instances for the
@@ -94,7 +92,7 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid = 0,
  * @returns A list of KService instances.
  */
 KService::List servicesFromPid(quint32 pid,
-    KSharedConfig::Ptr rulesConfig = KSharedConfig::Ptr());
+                               KSharedConfig::Ptr rulesConfig = KSharedConfig::Ptr());
 
 /**
  * Returns a list of (usually application) KService instances for the
@@ -118,7 +116,7 @@ KService::List servicesFromPid(quint32 pid,
  * @returns A list of KService instances.
  */
 KService::List servicesFromCmdLine(const QString &cmdLine, const QString &processName,
-    KSharedConfig::Ptr rulesConfig = KSharedConfig::Ptr());
+                                   KSharedConfig::Ptr rulesConfig = KSharedConfig::Ptr());
 
 /**
  * Returns an application id for an URL using the preferred:// scheme.
@@ -180,4 +178,5 @@ QString defaultApplication(const QUrl &url);
 //    const QList<QUrl> &urls = QList<QUrl>());
 }
 }
+
 #endif

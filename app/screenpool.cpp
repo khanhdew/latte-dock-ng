@@ -93,7 +93,7 @@ void ScreenPool::onPrimaryOutputNameChanged(const QString &oldOutputName, const 
 
 void ScreenPool::onScreenAdded(const QScreen *screen)
 {
-    connect(screen, &QScreen::geometryChanged, this, [&, screen]() {
+    connect(screen, &QScreen::geometryChanged, this, [ &, screen]() {
         updateScreenGeometry(screen);
     });
 }
@@ -130,7 +130,7 @@ void ScreenPool::updateScreenGeometry(const int &screenId, const QRect &screenGe
 
 
 Latte::Data::ScreensTable ScreenPool::screensTable()
-{   
+{
     return m_screensTable;
 }
 
@@ -148,7 +148,7 @@ void ScreenPool::reload(QString path)
 
 void ScreenPool::removeScreens(const Latte::Data::ScreensTable &obsoleteScreens)
 {
-    for (int i=0; i<obsoleteScreens.rowCount(); ++i) {
+    for (int i = 0; i < obsoleteScreens.rowCount(); ++i) {
         if (!m_screensTable.containsId(obsoleteScreens[i].id)) {
             return;
         }
@@ -184,8 +184,9 @@ void ScreenPool::save()
 {
     QMap<int, QString>::const_iterator i;
 
-    for (int i=0; i<m_screensTable.rowCount(); ++i) {
+    for (int i = 0; i < m_screensTable.rowCount(); ++i) {
         Data::Screen screenRecord = m_screensTable[i];
+
         if (screenRecord.id.toInt() >= FIRSTSCREENID) {
             m_configGroup.writeEntry(screenRecord.id, screenRecord.serialize());
         }
@@ -230,7 +231,7 @@ int ScreenPool::id(const QString &connector) const
 }
 
 QString ScreenPool::connector(int id) const
-{   
+{
     QString idStr = QString::number(id);
     return (m_screensTable.containsId(idStr) ? m_screensTable[idStr].name : QString());
 }
@@ -240,7 +241,7 @@ int ScreenPool::firstAvailableId() const
     //start counting from 10, first numbers will be used for special cases e.g. primaryScreen, id=0
     int availableId = FIRSTSCREENID;
 
-    for (int row=0; row<m_screensTable.rowCount(); ++row) {
+    for (int row = 0; row < m_screensTable.rowCount(); ++row) {
         if (!m_screensTable.containsId(QString::number(availableId))) {
             return availableId;
         }
@@ -253,7 +254,7 @@ int ScreenPool::firstAvailableId() const
 
 bool ScreenPool::hasScreenId(int screenId) const
 {
-    return ((screenId>=0) && m_screensTable.containsId(QString::number(screenId)));
+    return ((screenId >= 0) && m_screensTable.containsId(QString::number(screenId)));
 }
 
 bool ScreenPool::isScreenActive(int screenId) const

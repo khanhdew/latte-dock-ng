@@ -48,7 +48,7 @@ public Q_SLOTS:
     void cleanClones();
 
 Q_SIGNALS:
-    void screensGroupChanged();    
+    void screensGroupChanged();
 
 private Q_SLOTS:
     void syncClonesToScreens();

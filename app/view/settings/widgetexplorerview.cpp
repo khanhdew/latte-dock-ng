@@ -43,8 +43,8 @@ QString defaultWaylandDisplay()
 
     const QDir dir(runtimeDir);
     const QStringList candidates = dir.entryList({QStringLiteral("wayland-*")},
-                                                 QDir::System | QDir::Files | QDir::NoDotAndDotDot,
-                                                 QDir::Name);
+                                   QDir::System | QDir::Files | QDir::NoDotAndDotDot,
+                                   QDir::Name);
 
     for (const QString &candidate : candidates) {
         if (!candidate.endsWith(QStringLiteral(".lock"))) {
@@ -126,7 +126,7 @@ bool WidgetExplorerView::openGetNewWidgetsDialog()
     }
 
     if (environment.value(QStringLiteral("QT_QPA_PLATFORM")).isEmpty()
-            && !environment.value(QStringLiteral("WAYLAND_DISPLAY")).isEmpty()) {
+        && !environment.value(QStringLiteral("WAYLAND_DISPLAY")).isEmpty()) {
         environment.insert(QStringLiteral("QT_QPA_PLATFORM"), QStringLiteral("wayland"));
     }
 
@@ -162,7 +162,7 @@ QRect WidgetExplorerView::availableScreenGeometry() const
 {
     int currentScrId = m_latteView->positioner()->currentScreenId();
 
-    QList<Latte::Types::Visibility> ignoreModes{Latte::Types::SidebarOnDemand,Latte::Types::SidebarAutoHide};
+    QList<Latte::Types::Visibility> ignoreModes{Latte::Types::SidebarOnDemand, Latte::Types::SidebarAutoHide};
 
     if (m_latteView->visibility() && m_latteView->visibility()->isSidebar()) {
         ignoreModes.removeAll(Latte::Types::SidebarOnDemand);
@@ -179,11 +179,12 @@ void WidgetExplorerView::syncGeometry()
     if (!m_latteView || !m_latteView->layout() || !m_latteView->containment() || !rootObject()) {
         return;
     }
+
     const QSize size(rootObject()->width(), rootObject()->height());
     auto availGeometry = availableScreenGeometry();
 
     int margin = availGeometry.height() == m_latteView->screenGeometry().height() ? kWidgetExplorerVerticalMargin : 0;
-    auto geometry = QRect(availGeometry.x(), availGeometry.y(), size.width(), availGeometry.height()-margin);
+    auto geometry = QRect(availGeometry.x(), availGeometry.y(), size.width(), availGeometry.height() - margin);
 
     updateEnabledBorders();
 
@@ -266,7 +267,7 @@ void WidgetExplorerView::updateEffects()
 
     QRegion mask = m_background->mask();
 
-    QRegion fixedMask = mask.isNull() ? QRegion(QRect(0,0,width(),height())) : mask;
+    QRegion fixedMask = mask.isNull() ? QRegion(QRect(0, 0, width(), height())) : mask;
 
     if (!fixedMask.isEmpty()) {
         setMask(fixedMask);
@@ -324,6 +325,7 @@ void WidgetExplorerView::updateEnabledBorders()
         if (isVisible()) {
             m_enabledBorders = borders;
         }
+
         m_corona->dialogShadows()->addWindow(this, m_enabledBorders);
 
         Q_EMIT enabledBordersChanged();

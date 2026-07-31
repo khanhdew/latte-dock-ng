@@ -23,8 +23,7 @@ class Applets : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    enum AppletsRoles
-    {
+    enum AppletsRoles {
         IDROLE = Qt::UserRole + 1,
         NAMEROLE,
         ICONROLE,
@@ -33,8 +32,7 @@ public:
         DESCRIPTIONROLE
     };
 
-    enum Columns
-    {
+    enum Columns {
         NAMECOLUMN = 0
     };
 

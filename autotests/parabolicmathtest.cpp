@@ -105,6 +105,7 @@ void ParabolicMathTest::zoomIsRoundedToMakeEvenIconSize()
 void ParabolicMathTest::zoomIncrementsAreMonotonic()
 {
     qreal prev = parabolicZoomFactor(0, 48.0);
+
     for (int level = 1; level <= 300; level += 10) {
         const qreal curr = parabolicZoomFactor(level, 48.0);
         QVERIFY2(curr >= prev, qPrintable(QStringLiteral("not monotonic at %1").arg(level)));

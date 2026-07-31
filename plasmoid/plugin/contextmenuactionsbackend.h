@@ -14,10 +14,8 @@
 // KDE
 #include <KService>
 
-namespace Latte
-{
-namespace Tasks
-{
+namespace Latte {
+namespace Tasks {
 
 class ContextMenuActionsBackend : public QObject
 {

@@ -19,12 +19,13 @@ namespace Ui {
 class ScreensDialog;
 }
 
-namespace Latte{
-namespace Settings{
+namespace Latte {
+namespace Settings {
 namespace Model {
 class Screens;
 }
-namespace Dialog{
+
+namespace Dialog {
 class ScreensDialog;
 }
 }

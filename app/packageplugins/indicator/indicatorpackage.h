@@ -19,10 +19,11 @@ class IndicatorPackage : public KPackage::PackageStructure
     Q_OBJECT
 
 public:
-    explicit IndicatorPackage(QObject *parent, const QVariantList &args );
+    explicit IndicatorPackage(QObject *parent, const QVariantList &args);
 
     void initPackage(KPackage::Package *package) override;
 };
 
 }
+
 #endif // INDICATORPACKAGE_H

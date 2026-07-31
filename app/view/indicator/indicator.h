@@ -22,8 +22,7 @@
 #include <KConfigLoader>
 #include <KPluginMetaData>
 
-namespace KDeclarative
-{
+namespace KDeclarative {
 class ConfigPropertyMap;
 class QmlObjectSharedEngine;
 }

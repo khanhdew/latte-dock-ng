@@ -100,14 +100,16 @@ QString standardPath(QString subPath, bool localfirst)
 
     if (localfirst) {
         for (const auto &pt : paths) {
-            QString ptF = pt + separator +subPath;
+            QString ptF = pt + separator + subPath;
+
             if (QFileInfo(ptF).exists()) {
                 return ptF;
             }
         }
     } else {
-        for (int i=paths.count()-1; i>=0; i--) {
-            QString ptF = paths[i] + separator +subPath;
+        for (int i = paths.count() - 1; i >= 0; i--) {
+            QString ptF = paths[i] + separator + subPath;
+
             if (QFileInfo(ptF).exists()) {
                 return ptF;
             }

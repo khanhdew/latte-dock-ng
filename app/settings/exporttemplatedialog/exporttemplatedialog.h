@@ -29,6 +29,7 @@ namespace Settings {
 namespace Controller {
 class Layouts;
 }
+
 namespace Handler {
 class ExportTemplateHandler;
 }

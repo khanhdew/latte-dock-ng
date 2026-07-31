@@ -26,7 +26,7 @@ HeaderView::HeaderView(Qt::Orientation orientation, QWidget *parent)
 }
 
 void HeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
-{   
+{
     painter->setRenderHint(QPainter::Antialiasing, true);
 
     if (logicalIndex == Model::Layouts::BACKGROUNDCOLUMN) {
@@ -38,8 +38,8 @@ void HeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalI
             QHeaderView::paintSection(painter, rect, Model::Layouts::HIDDENTEXTCOLUMN);
 
             int margin = 4;
-            int thick = rect.height() - 2*margin;
-            int iX = rect.x() + (rect.width()/2) - (thick/2);
+            int thick = rect.height() - 2 * margin;
+            int iX = rect.x() + (rect.width() / 2) - (thick / 2);
 
             painter->drawPixmap(QRect(iX, rect.y() + margin, thick, thick), icon.pixmap(thick, thick, QIcon::Normal));
             return;

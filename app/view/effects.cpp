@@ -443,11 +443,11 @@ QRegion Effects::maskCombinedRegion()
 {
     QRegion region = m_mask;
 
-    for(auto subregion : m_subtractedMaskRegions) {
+    for (auto subregion : m_subtractedMaskRegions) {
         region = region.subtracted(subregion);
     }
 
-    for(auto subregion : m_unitedMaskRegions) {
+    for (auto subregion : m_unitedMaskRegions) {
         region = region.united(subregion);
     }
 
@@ -456,7 +456,7 @@ QRegion Effects::maskCombinedRegion()
 
 void Effects::updateBackgroundCorners()
 {
-    if (m_backgroundRadius<0) {
+    if (m_backgroundRadius < 0) {
         return;
     }
 
@@ -500,6 +500,7 @@ void Effects::updateEffects()
         // Only skip when the user explicitly set near-opaque (>= 95%).
         bool skipForGhosting = (m_backgroundOpacity != -1.0f
                                 && m_backgroundOpacity >= 0.95f);
+
         if (!m_rect.isNull() && !m_rect.isEmpty()
             && m_rect != VisibilityManager::ISHIDDENMASK
             && !skipForGhosting) {
@@ -507,7 +508,7 @@ void Effects::updateEffects()
 
             if (m_backgroundRadiusEnabled) {
                 //! CustomBackground way
-                backMask = customMask(QRect(0,0,m_rect.width(), m_rect.height()));
+                backMask = customMask(QRect(0, 0, m_rect.width(), m_rect.height()));
             } else {
                 //! Plasma::Theme way
                 //! this is used when compositing is disabled and provides
@@ -521,6 +522,7 @@ void Effects::updateEffects()
                     clearEffects = true;
                 } else {
                     const QVariant maskProperty = m_panelBackgroundSvg->property("mask");
+
                     if (maskProperty.metaType().id() == QMetaType::QRegion) {
                         backMask = maskProperty.value<QRegion>();
                     }
@@ -544,11 +546,11 @@ void Effects::updateEffects()
                 clearEffects = false;
                 KWindowEffects::enableBlurBehind(m_view, true, fixedMask);
                 KWindowEffects::enableBackgroundContrast(m_view,
-                                                         m_theme.backgroundContrastEnabled(),
-                                                         m_backEffectContrast,
-                                                         m_backEffectIntesity,
-                                                         m_backEffectSaturation,
-                                                         fixedMask);
+                        m_theme.backgroundContrastEnabled(),
+                        m_backEffectContrast,
+                        m_backEffectIntesity,
+                        m_backEffectSaturation,
+                        fixedMask);
             }
         }
     }
@@ -567,21 +569,21 @@ KSvg::FrameSvg::EnabledBorders Effects::enabledBorders() const
 
 qreal Effects::currentMidValue(const qreal &max, const qreal &factor, const qreal &min) const
 {
-    if (max==min || factor==0) {
+    if (max == min || factor == 0) {
         return min;
     }
 
     qreal space = 0;
     qreal distance = 0;
 
-    if (max<min) {
-        space = min-max;
-        distance = factor*space;
-        return 1-distance;
+    if (max < min) {
+        space = min - max;
+        distance = factor * space;
+        return 1 - distance;
     } else {
-        space = max-min;
-        distance = factor*space;
-        return 1+distance;
+        space = max - min;
+        distance = factor * space;
+        return 1 + distance;
     }
 }
 
@@ -639,24 +641,24 @@ void Effects::updateEnabledBorders()
 
     if (!m_view->screenEdgeMarginEnabled()) {
         switch (m_view->location()) {
-        case Plasma::Types::TopEdge:
-            borders &= ~KSvg::FrameSvg::TopBorder;
-            break;
+            case Plasma::Types::TopEdge:
+                borders &= ~KSvg::FrameSvg::TopBorder;
+                break;
 
-        case Plasma::Types::LeftEdge:
-            borders &= ~KSvg::FrameSvg::LeftBorder;
-            break;
+            case Plasma::Types::LeftEdge:
+                borders &= ~KSvg::FrameSvg::LeftBorder;
+                break;
 
-        case Plasma::Types::RightEdge:
-            borders &= ~KSvg::FrameSvg::RightBorder;
-            break;
+            case Plasma::Types::RightEdge:
+                borders &= ~KSvg::FrameSvg::RightBorder;
+                break;
 
-        case Plasma::Types::BottomEdge:
-            borders &= ~KSvg::FrameSvg::BottomBorder;
-            break;
+            case Plasma::Types::BottomEdge:
+                borders &= ~KSvg::FrameSvg::BottomBorder;
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
     }
 
@@ -701,10 +703,10 @@ void Effects::updateEnabledBorders()
         }
     }
 
-    m_hasTopLeftCorner =  (borders == KSvg::FrameSvg::AllBorders) || ((borders & KSvg::FrameSvg::TopBorder) && (borders & KSvg::FrameSvg::LeftBorder));
-    m_hasTopRightCorner =  (borders == KSvg::FrameSvg::AllBorders) || ((borders & KSvg::FrameSvg::TopBorder) && (borders & KSvg::FrameSvg::RightBorder));
-    m_hasBottomLeftCorner =  (borders == KSvg::FrameSvg::AllBorders) || ((borders & KSvg::FrameSvg::BottomBorder) && (borders & KSvg::FrameSvg::LeftBorder));
-    m_hasBottomRightCorner =  (borders == KSvg::FrameSvg::AllBorders) || ((borders & KSvg::FrameSvg::BottomBorder) && (borders & KSvg::FrameSvg::RightBorder));
+    m_hasTopLeftCorner = (borders == KSvg::FrameSvg::AllBorders) || ((borders & KSvg::FrameSvg::TopBorder) && (borders & KSvg::FrameSvg::LeftBorder));
+    m_hasTopRightCorner = (borders == KSvg::FrameSvg::AllBorders) || ((borders & KSvg::FrameSvg::TopBorder) && (borders & KSvg::FrameSvg::RightBorder));
+    m_hasBottomLeftCorner = (borders == KSvg::FrameSvg::AllBorders) || ((borders & KSvg::FrameSvg::BottomBorder) && (borders & KSvg::FrameSvg::LeftBorder));
+    m_hasBottomRightCorner = (borders == KSvg::FrameSvg::AllBorders) || ((borders & KSvg::FrameSvg::BottomBorder) && (borders & KSvg::FrameSvg::RightBorder));
 
     if (m_enabledBorders != borders) {
         m_enabledBorders = borders;
@@ -714,6 +716,7 @@ void Effects::updateEnabledBorders()
 
     m_bordersCacheValid = true;
 }
+
 //!END draw panel shadows outside the dock window
 
 }

@@ -42,31 +42,31 @@ void  AllScreensTracker::init()
         }
     });
 
-    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::informationAnnouncedForLayout, this, [this](const Latte::Layout::GenericLayout *layout) {
+    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::informationAnnouncedForLayout, this, [this](const Latte::Layout::GenericLayout * layout) {
         if (m_latteView->layout() == layout) {
             initSignalsForInformation();
         }
     });
 
-    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::activeWindowMaximizedChangedForLayout, this, [this](const Latte::Layout::GenericLayout *layout) {
+    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::activeWindowMaximizedChangedForLayout, this, [this](const Latte::Layout::GenericLayout * layout) {
         if (m_latteView->layout() == layout) {
             Q_EMIT activeWindowMaximizedChanged();
         }
     });
 
-    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::existsWindowActiveChangedForLayout, this, [this](const Latte::Layout::GenericLayout *layout) {
+    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::existsWindowActiveChangedForLayout, this, [this](const Latte::Layout::GenericLayout * layout) {
         if (m_latteView->layout() == layout) {
             Q_EMIT existsWindowActiveChanged();
         }
     });
 
-    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::existsWindowMaximizedChangedForLayout, this, [this](const Latte::Layout::GenericLayout *layout) {
+    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::existsWindowMaximizedChangedForLayout, this, [this](const Latte::Layout::GenericLayout * layout) {
         if (m_latteView->layout() == layout) {
             Q_EMIT existsWindowMaximizedChanged();
         }
     });
 
-    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::activeWindowSchemeChangedForLayout, this, [this](const Latte::Layout::GenericLayout *layout) {
+    connect(m_wm->windowsTracker(), &WindowSystem::Tracker::Windows::activeWindowSchemeChangedForLayout, this, [this](const Latte::Layout::GenericLayout * layout) {
         if (m_latteView->layout() == layout) {
             Q_EMIT activeWindowSchemeChanged();
         }

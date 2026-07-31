@@ -30,6 +30,7 @@ QString nameOfConfigFile(const QString &fileName)
 FileVersion fileVersion(const QString &file, KSharedConfig::Ptr config = {})
 {
     auto cfg = config ? config : KSharedConfig::openConfig(file);
+
     if (!QFile::exists(file))
         return Unknown;
 
@@ -38,26 +39,28 @@ FileVersion fileVersion(const QString &file, KSharedConfig::Ptr config = {})
         int v = lg.readEntry(QStringLiteral("version"), 1);
         return (v == 2) ? LayoutV2 : Unknown;
     }
+
     if (file.endsWith(QStringLiteral(".latterc"))) {
         KConfigGroup lg(cfg, QStringLiteral("LayoutSettings"));
         int v = lg.readEntry(QStringLiteral("version"), 1);
         return (v == 2) ? ConfigV2 : Unknown;
     }
+
     return Unknown;
 }
 
 QString layoutUserFilePath(const QString &layoutName)
 {
     return layoutName.isEmpty() ? QString()
-        : QStringLiteral("/tmp/latte-test/latte/") + layoutName + QStringLiteral(".layout.latte");
+           : QStringLiteral("/tmp/latte-test/latte/") + layoutName + QStringLiteral(".layout.latte");
 }
 
 //! Replicates the autostart management logic from Importer::isAutostartEnabled /
 //! enableAutostart / disableAutostart, operating on a caller-provided config
 //! directory so tests can use QTemporaryDir without touching the real ~/.config.
 
-static const char * const kAutostartFileName = "org.kde.latte-dock.desktop";
-static const char * const kDeprecatedFileName = "latte-dock.desktop";
+static const char *const kAutostartFileName = "org.kde.latte-dock.desktop";
+static const char *const kDeprecatedFileName = "latte-dock.desktop";
 
 QString autostartFilePath(const QString &configDir)
 {
@@ -78,6 +81,7 @@ void enableAutostart(const QString &configDir, const QString &sourceDesktopFile)
 {
     //! Remove deprecated file
     QFile deprecated(deprecatedAutostartFilePath(configDir));
+
     if (deprecated.exists()) {
         deprecated.remove();
     }
@@ -96,6 +100,7 @@ void enableAutostart(const QString &configDir, const QString &sourceDesktopFile)
             if (autostartInfo.lastModified() >= sourceInfo.lastModified()) {
                 return; // up to date
             }
+
             QFile::remove(autostartFile);
         }
 
@@ -106,11 +111,13 @@ void enableAutostart(const QString &configDir, const QString &sourceDesktopFile)
 void disableAutostart(const QString &configDir)
 {
     QFile deprecated(deprecatedAutostartFilePath(configDir));
+
     if (deprecated.exists()) {
         deprecated.remove();
     }
 
     QFile autostartFile(autostartFilePath(configDir));
+
     if (autostartFile.exists()) {
         autostartFile.remove();
     }
@@ -118,7 +125,8 @@ void disableAutostart(const QString &configDir)
 
 } // namespace ImporterLogic
 
-class ImporterLogicTest : public QObject {
+class ImporterLogicTest : public QObject
+{
     Q_OBJECT
 private Q_SLOTS:
     void nameStripsPathAndExtension();

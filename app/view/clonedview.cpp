@@ -30,9 +30,9 @@ namespace Latte {
 const int ClonedView::ERRORAPPLETID;
 
 QStringList ClonedView::CONTAINMENTMANUALSYNCEDPROPERTIES = QStringList()
-        << QStringLiteral("appletOrder")
-        << QStringLiteral("lockedZoomApplets")
-        << QStringLiteral("userBlocksColorizingApplets");  
+    << QStringLiteral("appletOrder")
+    << QStringLiteral("lockedZoomApplets")
+    << QStringLiteral("userBlocksColorizingApplets");
 
 ClonedView::ClonedView(Plasma::Corona *corona, Latte::OriginalView *originalView, QScreen *targetScreen)
     : View(corona, targetScreen),
@@ -51,8 +51,8 @@ void ClonedView::initSync()
     connect(m_originalView, &View::containmentChanged, this, &View::groupIdChanged);
 
     m_originalInitialized = m_originalView
-            && m_originalView->extendedInterface()
-            && m_originalView->extendedInterface()->isInitialized();
+                            && m_originalView->extendedInterface()
+                            && m_originalView->extendedInterface()->isInitialized();
     m_cloneInitialized = extendedInterface() && extendedInterface()->isInitialized();
 
     //! Update Visibility From Original
@@ -86,11 +86,14 @@ void ClonedView::initSync()
     connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::initializationCompleted, this, [this]() {
         m_cloneInitialized = true;
         updateAppletIdsHash();
+
         if (structuralSyncReady()) {
             onOriginalAppletsOrderChanged();
         }
+
         debugSyncState(QStringLiteral("clone initialization completed"));
     });
+
     connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletsOrderChanged, this, &ClonedView::updateAppletIdsHash);
     connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletInScheduledDestructionChanged, this, &ClonedView::onCloneAppletInScheduledDestructionChanged);
     connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletRemoved, this, &ClonedView::onCloneAppletRemoved);
@@ -106,8 +109,10 @@ void ClonedView::initSync()
             }
         }
     });
-    connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletCreated, this, [this](const QString &pluginId) {
+
+    connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletCreated, this, [this](const QString & pluginId) {
         debugSyncState(QStringLiteral("clone appletCreated %1").arg(pluginId));
+
         if (m_syncingFromOriginal) {
             return;
         }
@@ -115,8 +120,9 @@ void ClonedView::initSync()
         m_originalView->addApplet(pluginId, containment()->id());
     });
 
-    connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletDropped, this, [this](QObject *data, int x, int y) {
+    connect(extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletDropped, this, [this](QObject * data, int x, int y) {
         debugSyncState(QStringLiteral("clone appletDropped %1,%2").arg(x).arg(y));
+
         if (m_syncingFromOriginal) {
             return;
         }
@@ -145,24 +151,29 @@ void ClonedView::initSync()
     connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::initializationCompleted, this, [this]() {
         m_originalInitialized = true;
         updateAppletIdsHash();
+
         if (structuralSyncReady()) {
             onOriginalAppletsOrderChanged();
         }
+
         debugSyncState(QStringLiteral("original initialization completed"));
     });
+
     connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletDataCreated, this, [this]() {
         if (refreshAppletIdsHash()) {
             onOriginalAppletsOrderChanged();
         }
     });
-    connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletCreated, this->extendedInterface(), [this](const QString &pluginId) {
+
+    connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletCreated, this->extendedInterface(), [this](const QString & pluginId) {
         debugSyncState(QStringLiteral("original appletCreated %1").arg(pluginId));
         m_syncingFromOriginal = true;
         extendedInterface()->addApplet(pluginId);
         m_syncingFromOriginal = false;
         onOriginalAppletsOrderChanged();
     });
-    connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletDropped, this->extendedInterface(), [this](QObject *data, int x, int y) {
+
+    connect(m_originalView->extendedInterface(), &Latte::ViewPart::ContainmentInterface::appletDropped, this->extendedInterface(), [this](QObject * data, int x, int y) {
         debugSyncState(QStringLiteral("original appletDropped %1,%2").arg(x).arg(y));
         m_syncingFromOriginal = true;
         extendedInterface()->addApplet(data, x, y);
@@ -221,6 +232,7 @@ bool ClonedView::hasOriginalAppletId(const int &clonedid)
     }
 
     QHash<int, int>::const_iterator i = m_currentAppletIds.constBegin();
+
     while (i != m_currentAppletIds.constEnd()) {
         if (i.value() == clonedid) {
             return true;
@@ -239,6 +251,7 @@ int ClonedView::originalAppletId(const int &clonedid)
     }
 
     QHash<int, int>::const_iterator i = m_currentAppletIds.constBegin();
+
     while (i != m_currentAppletIds.constEnd()) {
         if (i.value() == clonedid) {
             return i.key();
@@ -253,9 +266,10 @@ int ClonedView::originalAppletId(const int &clonedid)
 
 bool ClonedView::isTranslatableToClonesOrder(const QList<int> &originalOrder)
 {
-    for(int i=0; i<originalOrder.count(); ++i) {
+    for (int i = 0; i < originalOrder.count(); ++i) {
         int oid = originalOrder[i];
-        if (oid < 0 ) {
+
+        if (oid < 0) {
             continue;
         }
 
@@ -269,9 +283,10 @@ bool ClonedView::isTranslatableToClonesOrder(const QList<int> &originalOrder)
 
 bool ClonedView::isTranslatableToOriginalsOrder(const QList<int> &clonedOrder)
 {
-    for(int i=0; i<clonedOrder.count(); ++i) {
+    for (int i = 0; i < clonedOrder.count(); ++i) {
         int cid = clonedOrder[i];
-        if (cid < 0 ) {
+
+        if (cid < 0) {
             continue;
         }
 
@@ -308,8 +323,8 @@ bool ClonedView::refreshAppletIdsHash()
         ViewPart::AppletInterfaceData clonedapplet = extendedInterface()->appletDataForId(it.value());
 
         if (originalapplet.id > 0
-                && clonedapplet.id > 0
-                && appletSyncKey(originalapplet) == appletSyncKey(clonedapplet)) {
+            && clonedapplet.id > 0
+            && appletSyncKey(originalapplet) == appletSyncKey(clonedapplet)) {
             nextAppletIds[it.key()] = it.value();
             usedClonedIds.insert(it.value());
         }
@@ -325,9 +340,9 @@ bool ClonedView::refreshAppletIdsHash()
         ViewPart::AppletInterfaceData clonedapplet = extendedInterface()->appletDataForId(cid);
 
         if (originalapplet.id > 0
-                && clonedapplet.id > 0
-                && appletSyncKey(originalapplet) == appletSyncKey(clonedapplet)
-                && !usedClonedIds.contains(cid)) {
+            && clonedapplet.id > 0
+            && appletSyncKey(originalapplet) == appletSyncKey(clonedapplet)
+            && !usedClonedIds.contains(cid)) {
             nextAppletIds[oid] = cid;
             usedClonedIds.insert(cid);
         }
@@ -340,6 +355,7 @@ bool ClonedView::refreshAppletIdsHash()
 
         ViewPart::AppletInterfaceData originalapplet = m_originalView->extendedInterface()->appletDataForId(oid);
         const QString originalKey = appletSyncKey(originalapplet);
+
         if (originalapplet.id <= 0 || originalKey.isEmpty()) {
             continue;
         }
@@ -350,6 +366,7 @@ bool ClonedView::refreshAppletIdsHash()
             }
 
             ViewPart::AppletInterfaceData clonedapplet = extendedInterface()->appletDataForId(cid);
+
             if (clonedapplet.id > 0 && originalKey == appletSyncKey(clonedapplet)) {
                 nextAppletIds[originalapplet.id] = clonedapplet.id;
                 usedClonedIds.insert(clonedapplet.id);
@@ -367,9 +384,10 @@ QList<int> ClonedView::translateToClonesOrder(const QList<int> &originalIds)
 {
     QList<int> ids;
 
-    for (int i=0; i<originalIds.count(); ++i) {
+    for (int i = 0; i < originalIds.count(); ++i) {
         int originalid = originalIds[i];
-        if (originalid < 0 ) {
+
+        if (originalid < 0) {
             ids << originalid;
             continue;
         }
@@ -386,14 +404,16 @@ QList<int> ClonedView::translateToOriginalsOrder(const QList<int> &clonedIds)
 {
     QList<int> ids;
 
-    for (int i=0; i<clonedIds.count(); ++i) {
+    for (int i = 0; i < clonedIds.count(); ++i) {
         int clonedid = clonedIds[i];
-        if (clonedid < 0 ) {
+
+        if (clonedid < 0) {
             ids << clonedid;
             continue;
         }
 
         int originalid = originalAppletId(clonedid);
+
         if (originalid > 0) {
             ids << originalid;
         }
@@ -433,6 +453,7 @@ QList<int> ClonedView::orderWithUnmappedAppletsPreserved(const QList<int> &sourc
             result << translated[translatedIndex];
             ++translatedIndex;
         }
+
         // Mapped but no translated source entry: the applet was removed
         // on the source side — drop it from the result.
     }
@@ -454,15 +475,15 @@ bool ClonedView::structuralSyncReady() const
 void ClonedView::debugSyncState(const QString &where) const
 {
     qCDebug(latteView) << "org.kde.sync"
-             << where
-             << "originalContainment" << (m_originalView && m_originalView->containment() ? m_originalView->containment()->id() : 0)
-             << "cloneContainment" << (containment() ? containment()->id() : 0)
-             << "screen" << (screen() ? screen()->name() : QStringLiteral("<none>"))
-             << "originalInitialized" << m_originalInitialized
-             << "cloneInitialized" << m_cloneInitialized
-             << "mapping" << m_currentAppletIds
-             << "originalOrder" << (m_originalView && m_originalView->extendedInterface() ? m_originalView->extendedInterface()->appletsOrder() : QList<int>())
-             << "cloneOrder" << (extendedInterface() ? extendedInterface()->appletsOrder() : QList<int>());
+                       << where
+                       << "originalContainment" << (m_originalView && m_originalView->containment() ? m_originalView->containment()->id() : 0)
+                       << "cloneContainment" << (containment() ? containment()->id() : 0)
+                       << "screen" << (screen() ? screen()->name() : QStringLiteral("<none>"))
+                       << "originalInitialized" << m_originalInitialized
+                       << "cloneInitialized" << m_cloneInitialized
+                       << "mapping" << m_currentAppletIds
+                       << "originalOrder" << (m_originalView && m_originalView->extendedInterface() ? m_originalView->extendedInterface()->appletsOrder() : QList<int>())
+                       << "cloneOrder" << (extendedInterface() ? extendedInterface()->appletsOrder() : QList<int>());
 }
 
 void ClonedView::showConfigurationInterface(Plasma::Applet *applet)
@@ -479,6 +500,7 @@ void ClonedView::showConfigurationInterface(Plasma::Applet *applet)
 void ClonedView::onCloneAppletRemoved(const int &id)
 {
     debugSyncState(QStringLiteral("onCloneAppletRemoved %1").arg(id));
+
     if (m_cloneRemovalsFromOriginal.remove(id) || m_syncingFromOriginal || !structuralSyncReady()) {
         debugSyncState(QStringLiteral("onCloneAppletRemoved blocked %1").arg(id));
         return;
@@ -512,6 +534,7 @@ void ClonedView::onCloneAppletInScheduledDestructionChanged(const int &id, const
 void ClonedView::onOriginalAppletRemoved(const int &id)
 {
     debugSyncState(QStringLiteral("onOriginalAppletRemoved %1").arg(id));
+
     if (!structuralSyncReady()) {
         debugSyncState(QStringLiteral("onOriginalAppletRemoved blocked not ready %1").arg(id));
         return;
@@ -575,6 +598,7 @@ void ClonedView::updateOriginalAppletConfigProperty(const int &clonedid, const Q
 void ClonedView::onCloneAppletsOrderChanged()
 {
     debugSyncState(QStringLiteral("onCloneAppletsOrderChanged"));
+
     if (m_syncingFromOriginal || !structuralSyncReady()) {
         debugSyncState(QStringLiteral("onCloneAppletsOrderChanged blocked"));
         return;
@@ -616,6 +640,7 @@ void ClonedView::onCloneAppletsDisabledColoringChanged(const QList<int> &cloneda
 void ClonedView::onOriginalAppletsOrderChanged()
 {
     debugSyncState(QStringLiteral("onOriginalAppletsOrderChanged"));
+
     if (!structuralSyncReady()) {
         updateAppletIdsHash();
         debugSyncState(QStringLiteral("onOriginalAppletsOrderChanged blocked"));

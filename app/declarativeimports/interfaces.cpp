@@ -9,7 +9,7 @@
 
 #include <PlasmaQuick/AppletQuickItem>
 
-namespace Latte{
+namespace Latte {
 
 Interfaces::Interfaces(QObject *parent)
     : QObject(parent)
@@ -179,6 +179,7 @@ void Interfaces::setPlasmoidInterface(QObject *interface)
     if (m_plasmoidInterface && m_plasmoidInterface != m_plasmoid) {
         m_plasmoidInterface->removeEventFilter(this);
     }
+
     if (m_plasmoid) {
         m_plasmoid->removeEventFilter(this);
     }
@@ -225,18 +226,18 @@ bool Interfaces::eventFilter(QObject *watched, QEvent *event)
         syncPlasmoidObjects();
     } else if (watched == m_plasmoid) {
         if (propName == "_latte_view_object"
-                || propName == "_latte_globalShortcuts_object"
-                || propName == "_latte_layoutsManager_object"
-                || propName == "_latte_themeExtended_object"
-                || propName == "_latte_universalSettings_object") {
+            || propName == "_latte_globalShortcuts_object"
+            || propName == "_latte_layoutsManager_object"
+            || propName == "_latte_themeExtended_object"
+            || propName == "_latte_universalSettings_object") {
             syncPlasmoidObjects();
         }
     } else if (watched == m_plasmoidInterface) {
         if (propName == "_latte_view_object"
-                || propName == "_latte_globalShortcuts_object"
-                || propName == "_latte_layoutsManager_object"
-                || propName == "_latte_themeExtended_object"
-                || propName == "_latte_universalSettings_object") {
+            || propName == "_latte_globalShortcuts_object"
+            || propName == "_latte_layoutsManager_object"
+            || propName == "_latte_themeExtended_object"
+            || propName == "_latte_universalSettings_object") {
             syncPlasmoidObjects();
         }
     }

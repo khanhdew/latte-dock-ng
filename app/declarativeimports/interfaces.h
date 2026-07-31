@@ -14,7 +14,7 @@
 // Plasma
 #include <PlasmaQuick/AppletQuickItem>
 
-namespace Latte{
+namespace Latte {
 
 class Interfaces: public QObject
 {

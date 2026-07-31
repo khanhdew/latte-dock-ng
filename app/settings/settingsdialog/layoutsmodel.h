@@ -32,8 +32,7 @@ class Layouts : public QAbstractTableModel
 
 public:
 
-    enum Columns
-    {
+    enum Columns {
         IDCOLUMN = 0,
         HIDDENTEXTCOLUMN,
         BACKGROUNDCOLUMN,
@@ -42,8 +41,7 @@ public:
         ACTIVITYCOLUMN
     };
 
-    enum LayoutUserRoles
-    {
+    enum LayoutUserRoles {
         IDROLE = Qt::UserRole + 1,
         ISACTIVEROLE,
         ISCONSIDEREDACTIVEROLE,
@@ -63,8 +61,7 @@ public:
         WARNINGSROLE
     };
 
-    enum SortingPriority
-    {
+    enum SortingPriority {
         NORMALPRIORITY = 8000,
         MEDIUMPRIORITY = 6000,
         HIGHPRIORITY = 4000,

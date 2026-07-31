@@ -49,7 +49,7 @@ public Q_SLOTS:
 
     Q_INVOKABLE void addLauncher(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher);
     Q_INVOKABLE void removeLauncher(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher);
-    Q_INVOKABLE void addLauncherToActivity(QString layoutName, uint senderId, int launcherGroup,QString launcherGroupId, QString launcher, QString activity);
+    Q_INVOKABLE void addLauncherToActivity(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, QString activity);
     Q_INVOKABLE void removeLauncherFromActivity(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QString launcher, QString activity);
     Q_INVOKABLE void urlsDropped(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QStringList urls);
     Q_INVOKABLE void validateLaunchersOrder(QString layoutName, uint senderId, int launcherGroup, QString launcherGroupId, QStringList launchers);

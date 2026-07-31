@@ -22,7 +22,8 @@ namespace Settings {
 namespace View {
 namespace Widget {
 
-class CustomMenuItemWidget : public QWidget {
+class CustomMenuItemWidget : public QWidget
+{
     Q_OBJECT
 
 public:

@@ -23,12 +23,10 @@ class WaylandPrimaryOutput : public QObject, public QtWayland::kde_primary_outpu
 public:
     WaylandPrimaryOutput(struct ::wl_registry *registry, int id, int version, QObject *parent)
         : QObject(parent)
-        , QtWayland::kde_primary_output_v1(registry, id, version)
-    {
+        , QtWayland::kde_primary_output_v1(registry, id, version) {
     }
 
-    void kde_primary_output_v1_primary_output(const QString &outputName) override
-    {
+    void kde_primary_output_v1_primary_output(const QString &outputName) override {
         Q_EMIT primaryOutputChanged(outputName);
     }
 
@@ -46,20 +44,18 @@ class WaylandOutputOrder : public QObject, public QtWayland::kde_output_order_v1
 public:
     WaylandOutputOrder(struct ::wl_registry *registry, int id, int version, QObject *parent)
         : QObject(parent)
-        , QtWayland::kde_output_order_v1(registry, id, version)
-    {
+        , QtWayland::kde_output_order_v1(registry, id, version) {
     }
 
-    void kde_output_order_v1_output(const QString &outputName) override
-    {
+    void kde_output_order_v1_output(const QString &outputName) override {
         m_pending.append(outputName);
     }
 
-    void kde_output_order_v1_done() override
-    {
+    void kde_output_order_v1_done() override {
         if (!m_pending.isEmpty()) {
             Q_EMIT primaryOutputChanged(m_pending.first());
         }
+
         m_pending.clear();
     }
 
@@ -79,7 +75,7 @@ PrimaryOutputWatcher::PrimaryOutputWatcher(QObject *parent)
         m_primaryOutputName = qGuiApp->primaryScreen()->name();
     }
 
-    connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, [this](QScreen *newPrimary) {
+    connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, [this](QScreen * newPrimary) {
         if (newPrimary) {
             setPrimaryOutputName(newPrimary->name());
         }
@@ -100,6 +96,7 @@ void PrimaryOutputWatcher::setPrimaryOutputName(const QString &newOutputName)
 void PrimaryOutputWatcher::setupRegistry()
 {
     auto m_connection = KWayland::Client::ConnectionThread::fromApplication(this);
+
     if (!m_connection) {
         return;
     }
@@ -108,12 +105,13 @@ void PrimaryOutputWatcher::setupRegistry()
     // have parameters that are coherent
     m_primaryOutputName = qGuiApp->primaryScreen()->name();
     m_registry = new KWayland::Client::Registry(this);
-    connect(m_registry, &KWayland::Client::Registry::interfaceAnnounced, this, [this](const QByteArray &interface, quint32 name, quint32 version) {
+    connect(m_registry, &KWayland::Client::Registry::interfaceAnnounced, this, [this](const QByteArray & interface, quint32 name, quint32 version) {
         // Both protocols ultimately call setPrimaryOutputName via the same
         // lambda below. Plasma 6 KWin only ships kde_output_order_v1; older
         // sessions still have kde_primary_output_v1.
-        auto applyPrimary = [this](const QString &outputName) {
+        auto applyPrimary = [this](const QString & outputName) {
             m_primaryOutputWayland = outputName;
+
             // Only set the outputName when there's a QScreen attached to it
             if (screenForName(outputName)) {
                 setPrimaryOutputName(outputName);
@@ -130,7 +128,7 @@ void PrimaryOutputWatcher::setupRegistry()
     });
 
     // In case the outputName was received before Qt reported the screen
-    connect(qGuiApp, &QGuiApplication::screenAdded, this, [this](QScreen *screen) {
+    connect(qGuiApp, &QGuiApplication::screenAdded, this, [this](QScreen * screen) {
         if (screen->name() == m_primaryOutputWayland) {
             setPrimaryOutputName(m_primaryOutputWayland);
         }
@@ -143,21 +141,25 @@ void PrimaryOutputWatcher::setupRegistry()
 QScreen *PrimaryOutputWatcher::screenForName(const QString &outputName) const
 {
     const auto screens = qGuiApp->screens();
+
     for (auto screen : screens) {
         if (screen->name() == outputName) {
             return screen;
         }
     }
+
     return nullptr;
 }
 
 QScreen *PrimaryOutputWatcher::primaryScreen() const
 {
     auto screen = screenForName(m_primaryOutputName);
+
     if (!screen) {
         qCDebug(latteApp) << "PrimaryOutputWatcher: Could not find primary screen:" << m_primaryOutputName;
         return qGuiApp->primaryScreen();
     }
+
     return screen;
 }
 

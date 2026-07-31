@@ -233,7 +233,7 @@ QList<Plasma::Types::Location> AbstractLayout::combinedFreeEdges(const QList<Pla
 {
     QList<Plasma::Types::Location> validFreeEdges;
 
-    for (int i=0; i<edges1.count(); ++i) {
+    for (int i = 0; i < edges1.count(); ++i) {
         if (edges2.contains(edges1[i])) {
             validFreeEdges << edges1[i];
         }
@@ -300,6 +300,7 @@ void AbstractLayout::saveConfig()
         scmfile.remove(0, QDir::homePath().size());
         scmfile = QLatin1Char('~') + scmfile;
     }
+
     m_layoutGroup.writeEntry(QStringLiteral("schemeFile"), scmfile == Data::Layout::DEFAULTSCHEMEFILE ? QString() : scmfile);
 
     m_layoutGroup.sync();

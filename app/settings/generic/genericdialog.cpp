@@ -44,7 +44,7 @@ KMessageWidget *GenericDialog::initMessageWidget()
     }
 
     auto messagewidget = new KMessageWidget(this);
-    vLayout->insertWidget(vLayout->count()-1, messagewidget);
+    vLayout->insertWidget(vLayout->count() - 1, messagewidget);
     connect(messagewidget, &KMessageWidget::hideAnimationFinished, messagewidget, &QObject::deleteLater);
 
     return messagewidget;
@@ -61,10 +61,10 @@ KMessageBox::ButtonCode GenericDialog::saveChangesConfirmation(const QString &te
     QString dialogtext = text.isEmpty() ? i18n("The settings have changed.<br/>Do you want to apply the changes or discard them?") : text;
 
     return KMessageBox::questionTwoActionsCancel(this,
-                                           dialogtext,
-                                           i18n("Apply Settings"),
-                                           KStandardGuiItem::apply(),
-                                           KStandardGuiItem::discard());
+            dialogtext,
+            i18n("Apply Settings"),
+            KStandardGuiItem::apply(),
+            KStandardGuiItem::discard());
 }
 
 void GenericDialog::showInlineMessage(const QString &msg, const KMessageWidget::MessageType &type, const bool &isPersistent, QList<QAction *> actions)
@@ -93,7 +93,7 @@ void GenericDialog::showInlineMessage(const QString &msg, const KMessageWidget::
         }
     }
 
-    messagewidget->setCloseButtonVisible(actions.count()==0);
+    messagewidget->setCloseButtonVisible(actions.count() == 0);
 
     if (actions.count() > 0) {
         QAction *cancelaction = new QAction(i18n("Hide"), this);
@@ -101,7 +101,7 @@ void GenericDialog::showInlineMessage(const QString &msg, const KMessageWidget::
         actions << cancelaction;
     }
 
-    for (int i=0; i<actions.count(); ++i) {
+    for (int i = 0; i < actions.count(); ++i) {
         connect(actions[i], &QAction::triggered, messagewidget, &KMessageWidget::animatedHide);
         messagewidget->addAction(actions[i]);
     }
@@ -124,8 +124,8 @@ void GenericDialog::showInlineMessage(const QString &msg, const KMessageWidget::
         QTimer *hidetimer = new QTimer(messagewidget);
         hidetimer->setInterval(hideInterval);
 
-        connect(hidetimer, &QTimer::timeout, this, [&, messagewidget]() {
-                messagewidget->animatedHide();
+        connect(hidetimer, &QTimer::timeout, this, [ &, messagewidget]() {
+            messagewidget->animatedHide();
         });
 
         hidetimer->start();

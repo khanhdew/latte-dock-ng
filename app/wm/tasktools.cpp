@@ -22,13 +22,10 @@
 #include <QScreen>
 #include <QUrlQuery>
 
-namespace Latte
-{
-namespace WindowSystem
-{
+namespace Latte {
+namespace WindowSystem {
 
-namespace
-{
+namespace {
 KService::Ptr serviceFromIdOrDesktopEntry(const QString &input)
 {
     QString token = input.trimmed();
@@ -42,21 +39,24 @@ KService::Ptr serviceFromIdOrDesktopEntry(const QString &input)
     }
 
     const QStringList commandParts = token.split(QRegularExpression(QStringLiteral("\\s+")), Qt::SkipEmptyParts);
+
     if (!commandParts.isEmpty()) {
         token = commandParts.first();
     }
 
     token = QFileInfo(token).fileName();
+
     if (token.isEmpty()) {
         return KService::Ptr();
     }
 
-    auto findById = [](const QString &id) -> KService::Ptr {
+    auto findById = [](const QString & id) -> KService::Ptr {
         if (KService::Ptr service = KService::serviceByStorageId(id)) {
             return service;
         }
 
-        if (KService::Ptr service = KService::serviceByMenuId(id)) {
+        if (KService::Ptr service = KService::serviceByMenuId(id))
+        {
             return service;
         }
 
@@ -68,8 +68,8 @@ KService::Ptr serviceFromIdOrDesktopEntry(const QString &input)
     }
 
     const QString desktopId = token.endsWith(QLatin1String(".desktop"), Qt::CaseInsensitive)
-            ? token
-            : token + QLatin1String(".desktop");
+                              ? token
+                              : token + QLatin1String(".desktop");
 
     if (KService::Ptr service = findById(desktopId)) {
         return service;
@@ -77,11 +77,11 @@ KService::Ptr serviceFromIdOrDesktopEntry(const QString &input)
 
     const QString desktopEntryName = desktopId.left(desktopId.length() - 8);
 
-    KService::List candidates = KApplicationTrader::query([desktopEntryName](const KService::Ptr &s) {
+    KService::List candidates = KApplicationTrader::query([desktopEntryName](const KService::Ptr & s) {
         const QString entryName = s->desktopEntryName();
         return !s->noDisplay()
-                && (entryName.compare(desktopEntryName, Qt::CaseInsensitive) == 0
-                    || entryName.startsWith(desktopEntryName + QLatin1Char('-'), Qt::CaseInsensitive));
+               && (entryName.compare(desktopEntryName, Qt::CaseInsensitive) == 0
+                   || entryName.startsWith(desktopEntryName + QLatin1Char('-'), Qt::CaseInsensitive));
     });
 
     if (candidates.isEmpty()) {
@@ -136,11 +136,11 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
 
             // Final fallback: match by desktop entry name or its distro-specific
             // suffix variants (e.g. "foo" -> "foo-esr").
-            KService::List candidates = KApplicationTrader::query([desktopEntryName](const KService::Ptr &s) {
+            KService::List candidates = KApplicationTrader::query([desktopEntryName](const KService::Ptr & s) {
                 const QString entryName = s->desktopEntryName();
                 return !s->noDisplay()
-                    && (entryName.compare(desktopEntryName, Qt::CaseInsensitive) == 0
-                        || entryName.startsWith(desktopEntryName + QLatin1Char('-'), Qt::CaseInsensitive));
+                       && (entryName.compare(desktopEntryName, Qt::CaseInsensitive) == 0
+                           || entryName.startsWith(desktopEntryName + QLatin1Char('-'), Qt::CaseInsensitive));
             });
 
             if (!candidates.isEmpty()) {
@@ -163,6 +163,7 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
             data.id = service->storageId();
 
             const QString menuId = service->menuId();
+
             if (!menuId.isEmpty()) {
                 data.url = QUrl(QLatin1String("applications:") + menuId);
             } else if (!service->entryPath().isEmpty()) {
@@ -197,6 +198,7 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
             }
         } else {
             KDesktopFile f(url.toLocalFile());
+
             if (f.tryExec()) {
                 data.name = f.readName();
                 data.genericName = f.readGenericName();
@@ -249,7 +251,7 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
 }
 
 QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
-    KSharedConfig::Ptr rulesConfig, const QString &xWindowsWMClassName)
+                           KSharedConfig::Ptr rulesConfig, const QString &xWindowsWMClassName)
 {
     if (!rulesConfig) {
         return QUrl();
@@ -278,7 +280,7 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
     // map the Wine version reliably to the latter.
     // In lieu of this weighing we just used whatever KServiceTypeTrader returned first,
     // so what we do here can be no worse.
-    auto sortServicesByMenuId = [](KService::List &services, const QString &key) {
+    auto sortServicesByMenuId = [](KService::List & services, const QString & key) {
         if (services.count() == 1) {
             return;
         }
@@ -350,28 +352,33 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
             // Source: https://specifications.freedesktop.org/startup-notification-spec/startup-notification-0.1.txt
             if (services.isEmpty()) {
                 services =
-                    KApplicationTrader::query([appId](const KService::Ptr &s) { return !s->exec().isEmpty() && s->property<QString>(QStringLiteral("StartupWMClass")).compare(appId, Qt::CaseInsensitive) == 0; });
+                KApplicationTrader::query([appId](const KService::Ptr & s) { return !s->exec().isEmpty() && s->property<QString>(QStringLiteral("StartupWMClass")).compare(appId, Qt::CaseInsensitive) == 0; });
+
                 sortServicesByMenuId(services, appId);
             }
 
             if (services.isEmpty() && !xWindowsWMClassName.isEmpty()) {
-                services = KApplicationTrader::query([xWindowsWMClassName](const KService::Ptr &s) { return !s->exec().isEmpty() && s->property<QString>(QStringLiteral("StartupWMClass")).compare(xWindowsWMClassName, Qt::CaseInsensitive) == 0; });
+                services = KApplicationTrader::query([xWindowsWMClassName](const KService::Ptr & s) { return !s->exec().isEmpty() && s->property<QString>(QStringLiteral("StartupWMClass")).compare(xWindowsWMClassName, Qt::CaseInsensitive) == 0; });
+
                 sortServicesByMenuId(services, xWindowsWMClassName);
             }
 
             // Evaluate rewrite rules from config.
             if (services.isEmpty()) {
                 KConfigGroup rewriteRulesGroup(rulesConfig, QStringLiteral("Rewrite Rules"));
+
                 if (rewriteRulesGroup.hasGroup(appId)) {
                     KConfigGroup rewriteGroup(&rewriteRulesGroup, appId);
 
                     const QStringList &rules = rewriteGroup.groupList();
+
                     for (const QString &rule : rules) {
                         KConfigGroup ruleGroup(&rewriteGroup, rule);
 
                         const QString propertyConfig = ruleGroup.readEntry(QStringLiteral("Property"), QString());
 
                         QString matchProperty;
+
                         if (propertyConfig == QLatin1String("ClassClass")) {
                             matchProperty = appId;
                         } else if (propertyConfig == QLatin1String("ClassName")) {
@@ -383,6 +390,7 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
                         }
 
                         const QString serviceSearchIdentifier = ruleGroup.readEntry(QStringLiteral("Identifier"), QString());
+
                         if (serviceSearchIdentifier.isEmpty()) {
                             continue;
                         }
@@ -392,18 +400,21 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
 
                         if (match.hasMatch()) {
                             const QString actualMatch = match.captured(QStringLiteral("match"));
+
                             if (actualMatch.isEmpty()) {
                                 continue;
                             }
 
                             QString rewrittenString = ruleGroup.readEntry(QStringLiteral("Target")).arg(actualMatch);
+
                             // If no "Target" is provided, instead assume the matched property (appId/xWindowsWMClassName).
                             if (rewrittenString.isEmpty()) {
                                 rewrittenString = matchProperty;
                             }
 
                             services =
-                                KApplicationTrader::query([rewrittenString, serviceSearchIdentifier](const KService::Ptr &s) { return !s->exec().isEmpty() && s->property<QString>(serviceSearchIdentifier).compare(rewrittenString, Qt::CaseInsensitive) == 0; });
+                            KApplicationTrader::query([rewrittenString, serviceSearchIdentifier](const KService::Ptr & s) { return !s->exec().isEmpty() && s->property<QString>(serviceSearchIdentifier).compare(rewrittenString, Qt::CaseInsensitive) == 0; });
+
                             sortServicesByMenuId(services, serviceSearchIdentifier);
 
                             if (!services.isEmpty()) {
@@ -431,20 +442,23 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
 
             // Try matching mapped name against DesktopEntryName.
             if (!mapped.isEmpty() && services.isEmpty()) {
-                services = KApplicationTrader::query([mapped](const KService::Ptr &s) { return !s->exec().isEmpty() && s->desktopEntryName().compare(mapped, Qt::CaseInsensitive) == 0 && !s->noDisplay(); });
+                services = KApplicationTrader::query([mapped](const KService::Ptr & s) { return !s->exec().isEmpty() && s->desktopEntryName().compare(mapped, Qt::CaseInsensitive) == 0 && !s->noDisplay(); });
+
                 sortServicesByMenuId(services, mapped);
             }
 
             // Try matching mapped name against 'Name'.
             if (!mapped.isEmpty() && services.isEmpty()) {
                 services =
-                    KApplicationTrader::query([mapped](const KService::Ptr &s) { return !s->exec().isEmpty() && s->name().compare(mapped, Qt::CaseInsensitive) == 0 && !s->noDisplay(); });
+                KApplicationTrader::query([mapped](const KService::Ptr & s) { return !s->exec().isEmpty() && s->name().compare(mapped, Qt::CaseInsensitive) == 0 && !s->noDisplay(); });
+
                 sortServicesByMenuId(services, mapped);
             }
 
             // Try matching appId against DesktopEntryName.
             if (services.isEmpty()) {
-                services = KApplicationTrader::query([appId](const KService::Ptr &s) { return !s->exec().isEmpty() && s->desktopEntryName().compare(appId, Qt::CaseInsensitive) == 0; });
+                services = KApplicationTrader::query([appId](const KService::Ptr & s) { return !s->exec().isEmpty() && s->desktopEntryName().compare(appId, Qt::CaseInsensitive) == 0; });
+
                 sortServicesByMenuId(services, appId);
             }
 
@@ -452,7 +466,8 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
             // This has a shaky chance of success as appId is untranslated, but 'Name' may be localized.
             if (services.isEmpty()) {
                 services =
-                    KApplicationTrader::query([appId](const KService::Ptr &s) { return !s->exec().isEmpty() && s->name().compare(appId, Qt::CaseInsensitive) == 0 && !s->noDisplay(); });
+                KApplicationTrader::query([appId](const KService::Ptr & s) { return !s->exec().isEmpty() && s->name().compare(appId, Qt::CaseInsensitive) == 0 && !s->noDisplay(); });
+
                 sortServicesByMenuId(services, appId);
             }
 
@@ -495,14 +510,18 @@ QUrl windowUrlFromMetadata(const QString &appId, quint32 pid,
     // - in the following code *.appId can match org.kde.dragonplayer though
     if (services.isEmpty() || services.at(0)->desktopEntryName().isEmpty()) {
         auto matchingServices =
-            KApplicationTrader::query([appId](const KService::Ptr &s) { return !s->exec().isEmpty() && s->desktopEntryName().contains(appId, Qt::CaseInsensitive); });
+        KApplicationTrader::query([appId](const KService::Ptr & s) { return !s->exec().isEmpty() && s->desktopEntryName().contains(appId, Qt::CaseInsensitive); });
+
         QMutableListIterator<KService::Ptr> it(matchingServices);
+
         while (it.hasNext()) {
             auto service = it.next();
+
             if (!service->desktopEntryName().endsWith(QStringLiteral(".") + appId)) {
                 it.remove();
             }
         }
+
         // Exactly one match is expected, otherwise we discard the results as to reduce
         // the likelihood of false-positive mappings. Since we essentially eliminate the
         // uniqueness that RDN is meant to bring to the table we could potentially end
@@ -551,30 +570,37 @@ KService::List servicesFromPid(quint32 pid, KSharedConfig::Ptr rulesConfig)
 
     // Read the BAMF_DESKTOP_FILE_HINT environment variable which contains the actual desktop file path for Snaps.
     QFile environFile(QStringLiteral("/proc/%1/environ").arg(pid));
+
     if (environFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         const QByteArray bamfDesktopFileHint = QByteArrayLiteral("BAMF_DESKTOP_FILE_HINT");
 
         const auto lines = environFile.readAll().split('\0');
+
         for (const QByteArray &line : lines) {
             const int equalsIdx = line.indexOf('=');
+
             if (equalsIdx <= 0) {
                 continue;
             }
 
             const QByteArray key = line.left(equalsIdx);
+
             if (key == bamfDesktopFileHint) {
                 const QByteArray value = line.mid(equalsIdx + 1);
 
                 KService::Ptr service = KService::serviceByDesktopPath(QString::fromUtf8(value));
+
                 if (service) {
                     return {service};
                 }
+
                 break;
             }
         }
     }
 
     auto proc = KProcessList::processInfo(pid);
+
     if (!proc.isValid()) {
         return KService::List();
     }
@@ -589,7 +615,7 @@ KService::List servicesFromPid(quint32 pid, KSharedConfig::Ptr rulesConfig)
 }
 
 KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &processName,
-    KSharedConfig::Ptr rulesConfig)
+                                   KSharedConfig::Ptr rulesConfig)
 {
     QString cmdLine = _cmdLine;
     KService::List services;
@@ -601,7 +627,7 @@ KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &proce
     const int firstSpace = cmdLine.indexOf(QLatin1Char(' '));
     int slash = 0;
 
-    services = KApplicationTrader::query([cmdLine](const KService::Ptr &s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
+    services = KApplicationTrader::query([cmdLine](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
 
     if (services.isEmpty()) {
         // Could not find with complete command line, so strip out the path part ...
@@ -609,7 +635,7 @@ KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &proce
 
         if (slash > 0) {
             services =
-                KApplicationTrader::query([&cmdLine, slash](const KService::Ptr &s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine.mid(slash + 1)); });
+            KApplicationTrader::query([&cmdLine, slash](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine.mid(slash + 1)); });
         }
     }
 
@@ -617,13 +643,13 @@ KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &proce
         // Could not find with arguments, so try without ...
         cmdLine.truncate(firstSpace);
 
-        services = KApplicationTrader::query([cmdLine](const KService::Ptr &s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
+        services = KApplicationTrader::query([cmdLine](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
 
         if (services.isEmpty()) {
             slash = cmdLine.lastIndexOf(QLatin1Char('/'));
 
             if (slash > 0) {
-                services = KApplicationTrader::query([&cmdLine, slash](const KService::Ptr &s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine.mid(slash + 1)); });
+                services = KApplicationTrader::query([&cmdLine, slash](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine.mid(slash + 1)); });
             }
         }
     }

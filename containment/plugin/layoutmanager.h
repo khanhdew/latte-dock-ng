@@ -20,12 +20,12 @@ namespace Plasma {
 class Containment;
 }
 
-namespace Latte{
-namespace Containment{
+namespace Latte {
+namespace Containment {
 
 class LayoutManager : public QObject
 {
-  Q_OBJECT  
+    Q_OBJECT
     Q_PROPERTY(QObject *plasmoidObj READ plasmoid() WRITE setPlasmoid NOTIFY plasmoidChanged)
 
     Q_PROPERTY(QQuickItem *rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
@@ -241,4 +241,5 @@ private:
 };
 }
 }
+
 #endif // CONTAINMENTLAYOUTMANAGER_H

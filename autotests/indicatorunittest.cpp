@@ -39,6 +39,7 @@ QString writeFile(const QString &path, const QByteArray &contents)
     QDir().mkpath(QFileInfo(path).absolutePath());
 
     QFile file(path);
+
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         return QString();
     }
@@ -50,6 +51,7 @@ QString writeFile(const QString &path, const QByteArray &contents)
 QString createIndicatorArchive(const QString &archivePath, const QString &rootDirectory, const QString &pluginId)
 {
     KZip archive(archivePath);
+
     if (!archive.open(QIODevice::WriteOnly)) {
         return QString();
     }
@@ -134,8 +136,8 @@ void IndicatorUnitTest::importIndicatorFileInstallsZipIntoIsolatedDataPath()
 
     const QString pluginId = QStringLiteral("org.kde.latte.testimport");
     const QString archivePath = createIndicatorArchive(archiveRoot.path() + QStringLiteral("/indicator.zip"),
-                                                       QStringLiteral("testimport"),
-                                                       pluginId);
+                                QStringLiteral("testimport"),
+                                pluginId);
     QVERIFY(!archivePath.isEmpty());
 
     QCOMPARE(static_cast<int>(Latte::Indicator::Factory::importIndicatorFile(archivePath)),
@@ -203,8 +205,8 @@ void IndicatorUnitTest::importIndicatorFileReportsUpdatedStateForExistingIndicat
     QVERIFY(archiveRoot.isValid());
 
     const QString archivePath = createIndicatorArchive(archiveRoot.path() + QStringLiteral("/indicator.zip"),
-                                                       QStringLiteral("updateimport"),
-                                                       pluginId);
+                                QStringLiteral("updateimport"),
+                                pluginId);
     QVERIFY(!archivePath.isEmpty());
 
     QCOMPARE(static_cast<int>(Latte::Indicator::Factory::importIndicatorFile(archivePath)),

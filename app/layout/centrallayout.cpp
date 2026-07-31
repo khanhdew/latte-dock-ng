@@ -80,7 +80,7 @@ void CentralLayout::setShowInMenu(bool show)
 
 bool CentralLayout::isCurrent()
 {
-   QStringList appliedactivities = appliedActivities();
+    QStringList appliedactivities = appliedActivities();
 
     return (appliedactivities.contains(Data::Layout::ALLACTIVITIESID)
             || appliedactivities.contains(m_corona->activitiesConsumer()->currentActivity()));

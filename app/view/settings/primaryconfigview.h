@@ -47,7 +47,7 @@ namespace Latte {
 namespace ViewPart {
 class CanvasConfigView;
 
-namespace Config{
+namespace Config {
 class IndicatorUiManager;
 }
 }
@@ -93,7 +93,7 @@ public:
 public Q_SLOTS:
     Q_INVOKABLE void syncGeometry() override;
     Q_INVOKABLE void hideConfigWindow();
-    Q_INVOKABLE void setSticker(bool blockFocusLost);    
+    Q_INVOKABLE void setSticker(bool blockFocusLost);
     Q_INVOKABLE void updateEffects();
 
 Q_SIGNALS:
@@ -150,4 +150,5 @@ private:
 
 }
 }
+
 #endif //PRIMARYCONFIGVIEW_H

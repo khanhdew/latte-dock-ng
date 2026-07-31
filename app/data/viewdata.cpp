@@ -123,25 +123,25 @@ View &View::operator=(View &&rhs)
 bool View::operator==(const View &rhs) const
 {
     return (id == rhs.id)
-            && (name == rhs.name)
-            //&& (isActive == rhs.isActive) /*Disabled because this is not needed in order to track view changes for saving*/
-            //&& (isMoveOrigin == rhs.isMoveOrigin) /*Disabled because this is not needed in order to track view changes for saving*/
-            //&& (isMoveDestination == rhs.isMoveDestination) /*Disabled because this is not needed in order to track view changes for saving*/
-            && (onPrimary == rhs.onPrimary)
-            && (isClonedFrom == rhs.isClonedFrom)
-            && (screen == rhs.screen)
-            && (screenEdgeMargin == rhs.screenEdgeMargin)
-            && (screensGroup == rhs.screensGroup)
-            && (maxLength == rhs.maxLength)
-            && (edge == rhs.edge)
-            && (alignment == rhs.alignment)
-            && (m_state == rhs.m_state)
-            && (m_originFile == rhs.m_originFile)
-            && (m_originLayout == rhs.m_originLayout)
-            && (m_originView == rhs.m_originView)
-            //&& (errors == rhs.errors) /*Disabled because this is not needed in order to track view changes for saving*/
-            //&& (warnings == rhs.warnings) /*Disabled because this is not needed in order to track view changes for saving*/
-            && (subcontainments == rhs.subcontainments);
+           && (name == rhs.name)
+           //&& (isActive == rhs.isActive) /*Disabled because this is not needed in order to track view changes for saving*/
+           //&& (isMoveOrigin == rhs.isMoveOrigin) /*Disabled because this is not needed in order to track view changes for saving*/
+           //&& (isMoveDestination == rhs.isMoveDestination) /*Disabled because this is not needed in order to track view changes for saving*/
+           && (onPrimary == rhs.onPrimary)
+           && (isClonedFrom == rhs.isClonedFrom)
+           && (screen == rhs.screen)
+           && (screenEdgeMargin == rhs.screenEdgeMargin)
+           && (screensGroup == rhs.screensGroup)
+           && (maxLength == rhs.maxLength)
+           && (edge == rhs.edge)
+           && (alignment == rhs.alignment)
+           && (m_state == rhs.m_state)
+           && (m_originFile == rhs.m_originFile)
+           && (m_originLayout == rhs.m_originLayout)
+           && (m_originView == rhs.m_originView)
+           //&& (errors == rhs.errors) /*Disabled because this is not needed in order to track view changes for saving*/
+           //&& (warnings == rhs.warnings) /*Disabled because this is not needed in order to track view changes for saving*/
+           && (subcontainments == rhs.subcontainments);
 }
 
 bool View::operator!=(const View &rhs) const
@@ -157,11 +157,12 @@ View::operator QString() const
     result += QLatin1String(" : ");
     result += isActive ? QStringLiteral("Active") : QStringLiteral("Inactive");
     result += QLatin1String(" : ");
-    if (m_state==OriginFromLayout && isMoveOrigin && isMoveDestination) {
+
+    if (m_state == OriginFromLayout && isMoveOrigin && isMoveDestination) {
         result += QStringLiteral(" ↑↓ ");
-    } else if (m_state==OriginFromLayout && isMoveOrigin) {
+    } else if (m_state == OriginFromLayout && isMoveOrigin) {
         result += QStringLiteral(" ↑ ");
-    } else if (m_state==OriginFromLayout && isMoveDestination) {
+    } else if (m_state == OriginFromLayout && isMoveDestination) {
         result += QStringLiteral(" ↓ ");
     } else {
         result += QLatin1String(" - ");
@@ -180,6 +181,7 @@ View::operator QString() const
     }
 
     result += QLatin1String(" : ");
+
     if (isCloned()) {
         result += QLatin1String("Cloned from:") + QString::number(isClonedFrom);
     } else {
@@ -187,6 +189,7 @@ View::operator QString() const
     }
 
     result += QLatin1String(" : ");
+
     if (screensGroup == Latte::Types::SingleScreenGroup) {
         result += onPrimary ? QStringLiteral("Primary") : QStringLiteral("Explicit");
     } else if (screensGroup == Latte::Types::AllScreensGroup) {
@@ -199,6 +202,7 @@ View::operator QString() const
     result += QLatin1String(" : ");
     result += QString::number(screen);
     result += QLatin1String(" : ");
+
     if (edge == Plasma::Types::BottomEdge) {
         result += QLatin1String("BottomEdge");
     } else if (edge == Plasma::Types::TopEdge) {

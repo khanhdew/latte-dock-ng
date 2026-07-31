@@ -20,8 +20,8 @@
 #define BASELINESHADOWTHRESHOLD 5
 
 #if defined(Q_CC_CLANG)
-QT_WARNING_PUSH
-QT_WARNING_DISABLE_CLANG("-Wcast-align")
+    QT_WARNING_PUSH
+    QT_WARNING_DISABLE_CLANG("-Wcast-align")
 #endif
 
 namespace Latte {
@@ -135,10 +135,10 @@ void PanelBackground::updateMaxOpacity(KSvg::Svg *svg)
 
     //! calculating the mid opacity (this is needed in order to handle Oxygen
     //! that has different opacity levels in the same center element)
-    for (int row=0; row<2; ++row) {
+    for (int row = 0; row < 2; ++row) {
         QRgb *line = reinterpret_cast<QRgb *>(center.scanLine(row));
 
-        for (int col=0; col<CENTERWIDTH; ++col) {
+        for (int col = 0; col < CENTERWIDTH; ++col) {
             QRgb pixelData = line[col];
             alphasum += static_cast<float>(qAlpha(pixelData)) / 255.0f;
         }
@@ -184,8 +184,8 @@ void PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
         corner.convertTo(QImage::Format_ARGB32_Premultiplied);
     }
 
-    int baseRow = (topLeftCorner ? corner.height()-1 : 0);
-    int baseCol = (topLeftCorner ? corner.width()-1 : 0);
+    int baseRow = (topLeftCorner ? corner.height() - 1 : 0);
+    int baseCol = (topLeftCorner ? corner.width() - 1 : 0);
 
     int baseLineLength = 0;
     int roundnessLines = 0;
@@ -204,7 +204,7 @@ void PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
 
             if (qAlpha(basePoint) > 0) {
                 //! calculate the mask baseLine length
-                for(int c = baseCol; c>=0; --c) {
+                for (int c = baseCol; c >= 0; --c) {
                     QRgb point = line[c];
 
                     if (qAlpha(point) > 0) {
@@ -217,13 +217,14 @@ void PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
 
             qCDebug(lattePlasma) << " TOP LEFT CORNER MASK base line length :: " << baseLineLength;
 
-            if (baseLineLength>0) {
+            if (baseLineLength > 0) {
                 int headLimitR = baseRow;
                 int tailLimitR = baseRow;
 
-                for (int r = baseRow-1; r>=0; --r) {
+                for (int r = baseRow - 1; r >= 0; --r) {
                     QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(r));
                     QRgb fpoint = line[baseCol];
+
                     if (qAlpha(fpoint) == 0) {
                         //! a line that is not part of the roundness because its first pixel is fully transparent
                         break;
@@ -234,7 +235,7 @@ void PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
 
                 int c = qMax(0, corner.width() - baseLineLength);
 
-                for (int r = baseRow-1; r>=0; --r) {
+                for (int r = baseRow - 1; r >= 0; --r) {
                     QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(r));
                     QRgb point = line[c];
 
@@ -257,8 +258,8 @@ void PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
         QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(baseRow));
         QRgb basePoint = line[baseCol];
 
-        QRgb *isRoundedLine = reinterpret_cast<QRgb *>(corner.scanLine(corner.height())-1);
-        QRgb isRoundedPoint = isRoundedLine[corner.width()-1];
+        QRgb *isRoundedLine = reinterpret_cast<QRgb *>(corner.scanLine(corner.height()) - 1);
+        QRgb isRoundedPoint = isRoundedLine[corner.width() - 1];
 
         //! If there is roundness, if that point is not fully transparent then
         //! there is no roundness
@@ -266,7 +267,7 @@ void PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
 
             if (qAlpha(basePoint) > 0) {
                 //! calculate the mask baseLine length
-                for(int c = baseCol; c<corner.width(); ++c) {
+                for (int c = baseCol; c < corner.width(); ++c) {
                     QRgb point = line[c];
 
                     if (qAlpha(point) > 0) {
@@ -279,13 +280,14 @@ void PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
 
             qCDebug(lattePlasma) << " BOTTOM RIGHT CORNER MASK base line length :: " << baseLineLength;
 
-            if (baseLineLength>0) {
+            if (baseLineLength > 0) {
                 int headLimitR = 0;
                 int tailLimitR = 0;
 
-                for (int r = baseRow+1; r<=corner.height(); ++r) {
+                for (int r = baseRow + 1; r <= corner.height(); ++r) {
                     QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(r));
                     QRgb fpoint = line[baseCol];
+
                     if (qAlpha(fpoint) == 0) {
                         //! a line that is not part of the roundness because its first pixel is not transparent
                         break;
@@ -296,7 +298,7 @@ void PanelBackground::updateRoundnessFromMask(KSvg::Svg *svg)
 
                 int c = baseLineLength - 1;
 
-                for (int r = baseRow+1; r<=corner.height(); ++r) {
+                for (int r = baseRow + 1; r <= corner.height(); ++r) {
                     QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(r));
                     QRgb point = line[c];
 
@@ -350,8 +352,8 @@ void PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
         corner.convertTo(QImage::Format_ARGB32_Premultiplied);
     }
 
-    int baseRow = (topLeftCorner ? corner.height()-1 : 0);
-    int baseCol = (topLeftCorner ? corner.width()-1 : 0);
+    int baseRow = (topLeftCorner ? corner.height() - 1 : 0);
+    int baseCol = (topLeftCorner ? corner.width() - 1 : 0);
 
     int baseLineLength = 0;
     int roundnessLines = 0;
@@ -366,7 +368,7 @@ void PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
         if (qAlpha(basePoint) == 0) {
             //! calculate the shadow maxOpacity in the base line
             //! and number of pixels to reach there
-            for(int c = baseCol; c>=0; --c) {
+            for (int c = baseCol; c >= 0; --c) {
                 QRgb point = line[c];
 
                 if (qAlpha(point) > baseShadowMaxOpacity) {
@@ -378,10 +380,11 @@ void PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
 
         qCDebug(lattePlasma) << " TOP LEFT CORNER SHADOW base line length :: " << baseLineLength << " with max shadow opacity : " << baseShadowMaxOpacity;
 
-        if (baseLineLength>0) {
-            for (int r = baseRow-1; r>=0; --r) {
+        if (baseLineLength > 0) {
+            for (int r = baseRow - 1; r >= 0; --r) {
                 QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(r));
                 QRgb fpoint = line[baseCol];
+
                 if (qAlpha(fpoint) != 0) {
                     //! a line that is not part of the roundness because its first pixel is not transparent
                     break;
@@ -390,7 +393,7 @@ void PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
                 int transPixels = 0;
                 int rowMaxOpacity = 0;
 
-                for(int c = baseCol; c>=0; --c) {
+                for (int c = baseCol; c >= 0; --c) {
                     QRgb point = line[c];
 
                     if (qAlpha(point) > rowMaxOpacity) {
@@ -399,7 +402,7 @@ void PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
                     }
                 }
 
-                for(int c = baseCol; c>=(baseCol - baseLineLength + 1); --c) {
+                for (int c = baseCol; c >= (baseCol - baseLineLength + 1); --c) {
                     QRgb point = line[c];
 
                     if (qAlpha(point) != rowMaxOpacity) {
@@ -431,7 +434,7 @@ void PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
 
         if (qAlpha(basePoint) == 0) {
             //! calculate the base line transparent pixels
-            for(int c = baseCol; c<corner.width(); ++c) {
+            for (int c = baseCol; c < corner.width(); ++c) {
                 QRgb point = line[c];
 
                 if (qAlpha(point) > baseShadowMaxOpacity) {
@@ -443,10 +446,11 @@ void PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
 
         qCDebug(lattePlasma) << " BOTTOM RIGHT CORNER SHADOW base line length :: " << baseLineLength << " with max shadow opacity : " << baseShadowMaxOpacity;
 
-        if (baseLineLength>0) {
-            for (int r = baseRow+1; r<=corner.height(); ++r) {
+        if (baseLineLength > 0) {
+            for (int r = baseRow + 1; r <= corner.height(); ++r) {
                 QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(r));
                 QRgb fpoint = line[baseCol];
+
                 if (qAlpha(fpoint) != 0) {
                     //! a line that is not part of the roundness because its first pixel is not transparent
                     break;
@@ -455,7 +459,7 @@ void PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
                 int transPixels = 0;
                 int rowMaxOpacity = 0;
 
-                for(int c = baseCol; c<corner.width(); ++c) {
+                for (int c = baseCol; c < corner.width(); ++c) {
                     QRgb point = line[c];
 
                     if (qAlpha(point) > rowMaxOpacity) {
@@ -464,7 +468,7 @@ void PanelBackground::updateRoundnessFromShadows(KSvg::Svg *svg)
                     }
                 }
 
-                for(int c = baseCol; c<baseLineLength; ++c) {
+                for (int c = baseCol; c < baseLineLength; ++c) {
                     QRgb point = line[c];
 
                     if (qAlpha(point) != rowMaxOpacity) {
@@ -505,7 +509,7 @@ void PanelBackground::updateRoundnessFallback(KSvg::Svg *svg)
         corner.convertTo(QImage::Format_ARGB32_Premultiplied);
     }
 
-    int discovRow = (m_location == Plasma::Types::LeftEdge ? corner.height()-1 : 0);
+    int discovRow = (m_location == Plasma::Types::LeftEdge ? corner.height() - 1 : 0);
     int round{0};
 
     int minOpacity = m_maxOpacity * 255;
@@ -515,7 +519,7 @@ void PanelBackground::updateRoundnessFallback(KSvg::Svg *svg)
         //! first LEFT pixel found
         QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(discovRow));
 
-        for (int col=0; col<corner.width() - 1; ++col) {
+        for (int col = 0; col < corner.width() - 1; ++col) {
             QRgb pixelData = line[col];
 
             if (qAlpha(pixelData) < minOpacity) {
@@ -528,7 +532,8 @@ void PanelBackground::updateRoundnessFallback(KSvg::Svg *svg)
         //! it should be TOPRIGHT corner in that case
         //! first RIGHT pixel found
         QRgb *line = reinterpret_cast<QRgb *>(corner.scanLine(discovRow));
-        for (int col=corner.width()-1; col>0; --col) {
+
+        for (int col = corner.width() - 1; col > 0; --col) {
             QRgb pixelData = line[col];
 
             if (qAlpha(pixelData) < minOpacity) {
@@ -559,7 +564,7 @@ void PanelBackground::updateShadow(KSvg::Svg *svg)
 
     QString borderId{QStringLiteral("shadow-top")};
 
-    if  (m_location == Plasma::Types::TopEdge) {
+    if (m_location == Plasma::Types::TopEdge) {
         borderId = QStringLiteral("shadow-bottom");
     } else if (m_location == Plasma::Types::LeftEdge) {
         borderId = QStringLiteral("shadow-right");
@@ -576,7 +581,7 @@ void PanelBackground::updateShadow(KSvg::Svg *svg)
     //! find shadow size through, plasma theme
     int themeshadowsize{0};
 
-    if  (m_location == Plasma::Types::TopEdge) {
+    if (m_location == Plasma::Types::TopEdge) {
         themeshadowsize = svg->elementSize(element(svg, QStringLiteral("shadow-hint-bottom-margin"))).height();
     } else if (m_location == Plasma::Types::LeftEdge) {
         themeshadowsize = svg->elementSize(element(svg, QStringLiteral("shadow-hint-right-margin"))).width();
@@ -593,7 +598,7 @@ void PanelBackground::updateShadow(KSvg::Svg *svg)
     int lastPixel{-1};
 
     if (horizontal) {
-        for(int y = 0; y<border.height(); ++y) {
+        for (int y = 0; y < border.height(); ++y) {
             QRgb *line = reinterpret_cast<QRgb *>(border.scanLine(y));
             QRgb pixel = line[0];
 
@@ -608,7 +613,8 @@ void PanelBackground::updateShadow(KSvg::Svg *svg)
         }
     } else {
         QRgb *line = reinterpret_cast<QRgb *>(border.scanLine(0));
-        for(int x = 0; x<border.width(); ++x) {
+
+        for (int x = 0; x < border.width(); ++x) {
             QRgb pixel = line[x];
 
             if (qAlpha(pixel) > 0) {
@@ -622,17 +628,17 @@ void PanelBackground::updateShadow(KSvg::Svg *svg)
         }
     }
 
-    discoveredshadowsize = (firstPixel>=0 ? qMax(0, lastPixel - firstPixel + 1) : 0);
+    discoveredshadowsize = (firstPixel >= 0 ? qMax(0, lastPixel - firstPixel + 1) : 0);
 
     m_shadowSize = qMax(themeshadowsize, discoveredshadowsize);
 
     //! find maximum shadow color applied
     int maxopacity{0};
 
-    for (int r=0; r<border.height(); ++r) {
+    for (int r = 0; r < border.height(); ++r) {
         QRgb *line = reinterpret_cast<QRgb *>(border.scanLine(r));
 
-        for(int c = 0; c<border.width(); ++c) {
+        for (int c = 0; c < border.width(); ++c) {
             QRgb pixel = line[c];
 
             if (qAlpha(pixel) > maxopacity) {
@@ -676,15 +682,15 @@ void PanelBackground::update()
 
     qCDebug(lattePlasma) << " PLASMA THEME EXTENDED :: " << m_location << " | roundness:" << m_roundness << " center_max_opacity:" << m_maxOpacity;
     qCDebug(lattePlasma) << " PLASMA THEME EXTENDED :: " << m_location
-             << " | padtop:" << m_paddingTop << " padleft:" << m_paddingLeft
-             << " padbottom:" << m_paddingBottom << " padright:" << m_paddingRight;
+                         << " | padtop:" << m_paddingTop << " padleft:" << m_paddingLeft
+                         << " padbottom:" << m_paddingBottom << " padright:" << m_paddingRight;
     qCDebug(lattePlasma) << " PLASMA THEME EXTENDED :: " << m_location << " | shadowsize:" << m_shadowSize << " shadowcolor:" << m_shadowColor;
 
     backSvg->deleteLater();
 }
 
 #if defined(Q_CC_CLANG)
-QT_WARNING_POP
+    QT_WARNING_POP
 #endif
 
 }

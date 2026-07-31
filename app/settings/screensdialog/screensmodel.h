@@ -24,8 +24,7 @@ class Screens : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    enum ScreensRoles
-    {
+    enum ScreensRoles {
         IDROLE = Qt::UserRole + 1,
         ISSCREENACTIVEROLE,
         ISSELECTEDROLE,
@@ -33,14 +32,12 @@ public:
         SORTINGROLE
     };
 
-    enum Columns
-    {
+    enum Columns {
         SCREENCOLUMN = 0,
         LASTCOLUMN
     };
 
-    enum SortingPriority
-    {
+    enum SortingPriority {
         NORMALPRIORITY = 10,
         MEDIUMPRIORITY = 100,
         HIGHPRIORITY = 1000,
@@ -71,7 +68,7 @@ public:
     Latte::Data::ScreensTable checkedScreens();
 
     void deselectAll();
-    void reset();    
+    void reset();
 
 Q_SIGNALS:
     void screenDataChanged();

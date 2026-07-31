@@ -17,7 +17,7 @@ namespace Tracker {
 
 
 TrackedViewInfo::TrackedViewInfo(Tracker::Windows *tracker, Latte::View *view)
-    : TrackedGeneralInfo(tracker) ,
+    : TrackedGeneralInfo(tracker),
       m_view(view)
 {
     m_activities = m_view->activities();
@@ -136,7 +136,7 @@ Latte::View *TrackedViewInfo::view() const
 }
 
 bool TrackedViewInfo::isTracking(const WindowInfoWrap &winfo) const
-{   
+{
     return  TrackedGeneralInfo::isTracking(winfo)
             && m_screenGeometry.intersects(winfo.geometry());
 }
