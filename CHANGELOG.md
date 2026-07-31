@@ -2,7 +2,7 @@
 
 All notable changes to Latte Dock NG are documented in this file.
 
-## [v1.2.33] - 2026-08-01
+## [v1.2.34] - 2026-08-01
 
 ### Fixed
 - Lowered the minimum Plasma version from 6.5.0 to 6.3.0; Plasma 6.3
