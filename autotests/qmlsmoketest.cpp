@@ -6,6 +6,7 @@
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlEngine>
+#include <QtQml/qqml.h>
 
 #include <QColor>
 #include <QDir>
@@ -18,11 +19,43 @@
 #include <memory>
 #include <utility>
 
+//! Plasma 6.5+ ships org.kde.plasma.plasmoid as a filesystem QML module.
+//! On Plasma 6.3 the module only exists inside a shell context, registered
+//! lazily by PlasmaQuick::AppletQuickItem, so a bare engine used by these
+//! smoke tests cannot resolve the import. Register an empty module so the
+//! import parses; the QML under test reads the "plasmoid" object from its
+//! context property, so no types from the module are required. The
+//! registration is skipped whenever the real module resolves, keeping the
+//! Plasma 6.5+ behavior untouched.
+static void ensurePlasmaPlasmoidModuleAvailable()
+{
+    static bool checked{false};
+
+    if (checked) {
+        return;
+    }
+
+    checked = true;
+
+    //! Probe whether a bare engine can resolve the real module.
+    QQmlEngine probeEngine;
+    QQmlComponent probe(&probeEngine);
+    probe.setData(QByteArrayLiteral("import org.kde.plasma.plasmoid 2.0\nimport QtQml 2.15\nQtObject {}"),
+                  QUrl(QStringLiteral("probe.qml")));
+
+    if (probe.status() == QQmlComponent::Ready) {
+        return;
+    }
+
+    qmlRegisterModule("org.kde.plasma.plasmoid", 2, 0);
+}
+
 class QmlSmokeTest : public QObject
 {
     Q_OBJECT
 
 private Q_SLOTS:
+    void initTestCase();
     void latteCoreQmlPluginLoadsFromBuildTree();
     void restoreAnimationLoadsFromSource();
     void showWindowAnimationFrozenZoomDecisionLoadsFromSource();
@@ -749,6 +782,11 @@ ListModel {
 )"));
 
     engine.addImportPath(importRoot.path());
+}
+
+void QmlSmokeTest::initTestCase()
+{
+    ensurePlasmaPlasmoidModuleAvailable();
 }
 
 void QmlSmokeTest::latteCoreQmlPluginLoadsFromBuildTree()
