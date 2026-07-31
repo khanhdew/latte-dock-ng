@@ -10,6 +10,7 @@
 
 // KDE
 #include <KPackage/PackageLoader>
+#include <KPluginFactory>
 #include <KLocalizedString>
 
 namespace Latte {
