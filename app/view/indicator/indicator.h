@@ -145,8 +145,10 @@ private:
     QString m_type{QStringLiteral("org.kde.latte.default")};
     QString m_customType;
 
-    QPointer<QQmlComponent> m_component;
-    QPointer<QQmlComponent> m_plasmaComponent;
+    //! mutable: the components are created lazily on first access from the
+    //! const component()/plasmaComponent() accessors
+    mutable QPointer<QQmlComponent> m_component;
+    mutable QPointer<QQmlComponent> m_plasmaComponent;
     QPointer<QQmlComponent> m_configUi;
     QPointer<KConfigLoader> m_configLoader;
     QPointer<Latte::Corona> m_corona;

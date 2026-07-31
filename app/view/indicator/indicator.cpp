@@ -224,11 +224,40 @@ IndicatorPart::Resources *Indicator::resources() const
 
 QQmlComponent *Indicator::component() const
 {
+    //! Create the indicator component lazily on first access instead of at
+    //! construction time. The org.kde.plasma.plasmoid QML module is only
+    //! registered by PlasmaQuick once the first AppletQuickItem exists, so
+    //! creating the component early (View construction happens before any
+    //! applet item) fails on Plasma 6.3 with "module is not installed".
+    //! By the time the containment QML instantiates the Indicators ability
+    //! the module is registered and the import resolves.
+    if (!m_component) {
+        const QString uiPath = m_metadata.value(QStringLiteral("X-Latte-MainScript"));
+
+        if (!uiPath.isEmpty()) {
+            const QString fullPath = m_pluginPath + QLatin1String("/package/") + uiPath;
+            m_component = new QQmlComponent(m_view->engine().get(), fullPath);
+        }
+    }
+
     return m_component;
 }
 
 QQmlComponent *Indicator::plasmaComponent() const
 {
+    //! Same lazy creation as component(): the plasma tab style indicator
+    //! package runs in the same engine and must not be created before the
+    //! plasmoid QML module is registered.
+    if (!m_plasmaComponent) {
+        KPluginMetaData metadata = m_corona->indicatorFactory()->metadata(QStringLiteral("org.kde.latte.plasmatabstyle"));
+        QString uiPath = metadata.value(QStringLiteral("X-Latte-MainScript"));
+
+        if (!uiPath.isEmpty()) {
+            uiPath = QFileInfo(metadata.fileName()).absolutePath() + QLatin1String("/package/") + uiPath;
+            m_plasmaComponent = new QQmlComponent(m_view->engine().get(), uiPath);
+        }
+    }
+
     return m_plasmaComponent;
 }
 
@@ -270,13 +299,8 @@ void Indicator::load(QString type)
 void Indicator::updateComponent()
 {
     auto prevComponent = m_component;
-
-    QString uiPath = m_metadata.value(QStringLiteral("X-Latte-MainScript"));
-
-    if (!uiPath.isEmpty()) {
-        uiPath = m_pluginPath + QLatin1String("/package/") + uiPath;
-        m_component = new QQmlComponent(m_view->engine().get(), uiPath);
-    }
+    //! drop the old component and let component() recreate it lazily
+    m_component = nullptr;
 
     if (prevComponent) {
         prevComponent->deleteLater();
@@ -286,14 +310,8 @@ void Indicator::updateComponent()
 void Indicator::loadPlasmaComponent()
 {
     auto prevComponent = m_plasmaComponent;
-
-    KPluginMetaData metadata = m_corona->indicatorFactory()->metadata(QStringLiteral("org.kde.latte.plasmatabstyle"));
-    QString uiPath = metadata.value(QStringLiteral("X-Latte-MainScript"));
-
-    if (!uiPath.isEmpty()) {
-        uiPath = QFileInfo(metadata.fileName()).absolutePath() + QLatin1String("/package/") + uiPath;
-        m_plasmaComponent = new QQmlComponent(m_view->engine().get(), uiPath);
-    }
+    //! drop the old component and let plasmaComponent() recreate it lazily
+    m_plasmaComponent = nullptr;
 
     if (prevComponent) {
         prevComponent->deleteLater();
