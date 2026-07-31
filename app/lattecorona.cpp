@@ -592,12 +592,16 @@ void Corona::unload()
 {
     qDebug() << "unload: removing containments...";
 
-    // Take a copy — the QObject::destroyed signal removes entries
-    // from the live list, but we iterate the snapshot to stay safe
-    // even if a signal connection is severed.
-    const auto snapshot = containments();
-    for (Plasma::Containment *c : snapshot) {
-        delete c;
+    // Delete from the live list: Plasma removes destroyed containments
+    // from its internal list through the QObject::destroyed connection,
+    // so a cascade (a parent containment destroying its applet-owned
+    // subcontainment) never leaves a stale pointer behind.  This form
+    // doesn't crash, while qDeleteAll(containments()) does.  The
+    // iteration cap is a backstop against pathological re-entrant
+    // additions that keep the list non-empty.
+    int guard = 0;
+    while (!containments().isEmpty() && guard++ < 10000) {
+        delete containments().first();
     }
 }
 

@@ -16,6 +16,7 @@
 
 // Qt
 #include <QDir>
+#include <QRandomGenerator>
 
 // KDE
 #include <KDirWatch>
@@ -281,9 +282,15 @@ QString Manager::uniqueLayoutTemplateName(QString name) const
 
     QString namePart = name;
 
-    while (hasLayoutTemplate(name)) {
+    while (hasLayoutTemplate(name) && i < 10000) {
         name = namePart + " - " + QString::number(i);
         i++;
+    }
+
+    if (hasLayoutTemplate(name)) {
+        //! All numbered suffixes are taken — fall back to a random
+        //! suffix instead of returning a name that still exists.
+        name = namePart + " - " + QString::number(QRandomGenerator::global()->generate(), 16);
     }
 
     return name;
@@ -299,9 +306,15 @@ QString Manager::uniqueViewTemplateName(QString name) const
 
     QString namePart = name;
 
-    while (hasViewTemplate(name)) {
+    while (hasViewTemplate(name) && i < 10000) {
         name = namePart + " - " + QString::number(i);
         i++;
+    }
+
+    if (hasViewTemplate(name)) {
+        //! All numbered suffixes are taken — fall back to a random
+        //! suffix instead of returning a name that still exists.
+        name = namePart + " - " + QString::number(QRandomGenerator::global()->generate(), 16);
     }
 
     return name;

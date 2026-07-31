@@ -28,6 +28,7 @@
 // Qt
 #include <QHeaderView>
 #include <QItemSelection>
+#include <QRandomGenerator>
 
 // KDE
 #include <KMessageWidget>
@@ -1016,6 +1017,12 @@ QString Views::uniqueViewName(QString name)
     while (m_model->containsCurrentName(name) && i < 10000) {
         name = namePart + " - " + QString::number(i);
         i++;
+    }
+
+    if (m_model->containsCurrentName(name)) {
+        //! All numbered suffixes are taken — fall back to a random
+        //! suffix instead of returning a name that still exists.
+        name = namePart + " - " + QString::number(QRandomGenerator::global()->generate(), 16);
     }
 
     return name;

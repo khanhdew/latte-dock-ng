@@ -21,6 +21,7 @@
 // Qt
 #include <QFile>
 #include <QLatin1String>
+#include <QRandomGenerator>
 
 // KDE
 #include <KArchive/KTar>
@@ -752,6 +753,12 @@ QString Importer::uniqueLayoutName(QString name)
     while (layoutExists(name) && i < 10000) {
         name = namePart + " - " + QString::number(i);
         i++;
+    }
+
+    if (layoutExists(name)) {
+        //! All numbered suffixes are taken — fall back to a random
+        //! suffix instead of returning a name that still exists.
+        name = namePart + " - " + QString::number(QRandomGenerator::global()->generate(), 16);
     }
 
     return name;

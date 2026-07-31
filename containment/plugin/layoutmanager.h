@@ -12,6 +12,7 @@
 #include <QObject>
 #include <QQmlPropertyMap>
 #include <QQuickItem>
+#include <QSet>
 #include <QTimer>
 #include <QVariant>
 
@@ -160,6 +161,11 @@ private:
     void saveOption(const char *option);
 
     void destroyAppletContainer(QObject *applet);
+
+    //! Shared visited-set across recursion frames so cyclic property
+    //! graphs (e.g. two QML objects exposing each other as "applet")
+    //! cannot recurse forever.
+    QObject *resolveAppletQuickItemObjectInternal(QObject *applet, QSet<QObject *> &visited) const;
 
     void initSaveConnections();
 

@@ -606,6 +606,15 @@ Plasma::Containment *LayoutManager::containmentObject() const
 
 QObject *LayoutManager::resolveAppletQuickItemObject(QObject *applet) const
 {
+    //! One visited-set for the whole resolution walk: a fresh set per
+    //! recursion frame would let cyclic property graphs (e.g. two QML
+    //! objects exposing each other through "applet") recurse forever.
+    QSet<QObject *> visited;
+    return resolveAppletQuickItemObjectInternal(applet, visited);
+}
+
+QObject *LayoutManager::resolveAppletQuickItemObjectInternal(QObject *applet, QSet<QObject *> &visited) const
+{
     static QSet<const QObject *> s_unresolvedLogged;
 
     if (!applet) {
@@ -616,7 +625,6 @@ QObject *LayoutManager::resolveAppletQuickItemObject(QObject *applet) const
         return applet;
     }
 
-    QSet<QObject *> visited;
     visited.insert(applet);
 
     auto resolveFromBackendProperty = [this, applet, &visited](const char *propertyName) -> QObject * {
@@ -636,7 +644,7 @@ QObject *LayoutManager::resolveAppletQuickItemObject(QObject *applet) const
             }
         }
 
-        return resolveAppletQuickItemObject(candidate);
+        return resolveAppletQuickItemObjectInternal(candidate, visited);
     };
 
     if (QObject *resolvedFromApplet = resolveFromBackendProperty("applet")) {

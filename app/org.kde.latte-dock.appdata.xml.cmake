@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component type="addon">
-  <id>org.kde.latte-dock.desktop</id>
+  <id>org.kde.latte-dock</id>
   <extends>org.kde.plasmashell</extends>
   <name>Latte Dock NG</name>
   <name xml:lang="ar">لاتيه</name>
@@ -156,7 +156,9 @@
   <url type="bugtracker">@BUG_ADDRESS@</url>
   <url type="faq">@FAQS@</url>
   <update_contact>ruizhi.zhong88@gmail.com</update_contact>
-  <developer_name>Ruizhi Zhong</developer_name>
+  <developer id="ruizhi.zhong88@gmail.com">
+    <name>Ruizhi Zhong</name>
+  </developer>
   <icon type="stock">latte-dock</icon>
   <project_license>GPL-3.0-only</project_license>
   <metadata_license>CC0-1.0</metadata_license>

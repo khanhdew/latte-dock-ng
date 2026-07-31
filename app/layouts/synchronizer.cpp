@@ -607,9 +607,15 @@ void Synchronizer::reloadAssignedLayouts()
 void Synchronizer::unloadLayouts()
 {
     //! Unload all CentralLayouts
-    while (!m_centralLayouts.isEmpty()) {
+    int guard = 0;
+    while (!m_centralLayouts.isEmpty() && guard++ < 10000) {
         CentralLayout *layout = m_centralLayouts.at(0);
         unloadCentralLayout(layout);
+    }
+
+    if (!m_centralLayouts.isEmpty()) {
+        qWarning() << "unloadLayouts: iteration cap reached,"
+                   << m_centralLayouts.size() << "central layouts still loaded";
     }
 
     m_multipleModeInitialized = false;

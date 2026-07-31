@@ -153,7 +153,7 @@ private Q_SLOTS:
     void importerUniqueLayoutNameHasIterationCap();
     void viewscontrollerUniqueViewNameHasIterationCap();
     void layoutscontrollerUniqueLayoutNameHasIterationCap();
-    void lattecoronaUnloadDrainsFromLocalSnapshot();
+    void lattecoronaUnloadUsesCappedLiveListLoop();
     void lattecoronaScreenForContainmentHasDepthGuard();
     void originalViewCleanClonesDrainsFromLocalCopy();
     void layoutManagerResolveAppletQuickItemUsesVisitedSet();
@@ -2917,16 +2917,18 @@ void SourceContractTest::layoutscontrollerUniqueLayoutNameHasIterationCap()
     QVERIFY(src.contains(QStringLiteral("i < 10000")));
 }
 
-void SourceContractTest::lattecoronaUnloadDrainsFromLocalSnapshot()
+void SourceContractTest::lattecoronaUnloadUsesCappedLiveListLoop()
 {
     QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.cpp"));
     QVERIFY(f.open(QFile::ReadOnly));
     const QString src = QString::fromUtf8(f.readAll());
 
-    // Corona::unload() must drain from a local snapshot rather than
-    // iterating the live containments() list, so a severed
-    // QObject::destroyed signal connection cannot cause an infinite loop.
-    QVERIFY(src.contains(QStringLiteral("snapshot = containments()")));
+    // Corona::unload() must delete from the live containments() list —
+    // a snapshot would double-delete containments destroyed by cascade
+    // through their parent containment — with an iteration cap as a
+    // backstop against pathological re-entrant additions.
+    QVERIFY(src.contains(QStringLiteral("containments().isEmpty()")));
+    QVERIFY(src.contains(QStringLiteral("guard++ < 10000")));
 }
 
 void SourceContractTest::lattecoronaScreenForContainmentHasDepthGuard()
