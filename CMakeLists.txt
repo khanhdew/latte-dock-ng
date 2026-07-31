@@ -48,6 +48,10 @@ include(CTest)
 # the existing qDebug() output volume unchanged while making it filterable
 # via QT_LOGGING_RULES.
 add_library(latteLogging STATIC latte_debug.cpp)
+#! The static library is linked into shared plugins (lattecontainmentplugin,
+#! lattecoreplugin), so it must be position independent; without this the
+#! Fedora rpm package build fails with R_X86_64_32 relocation errors.
+set_target_properties(latteLogging PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_link_libraries(latteLogging PUBLIC Qt6::Core)
 target_include_directories(latteLogging PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
