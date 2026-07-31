@@ -34,6 +34,14 @@ Item{
                 tasksExtendedManager.removeWaitingLauncher(taskItem.launcherUrl);
             }
 
+            //! Safety net for exit paths that do not go through
+            //! parabolicExited: the bounce intentionally kept the click-time
+            //! zoom while direct rendering was disabled, so drop it when the
+            //! pointer is no longer over the item.
+            if (!taskItem.parabolicAreaContainsMouse && !taskItem.parabolicAreaIsCurrent) {
+                taskItem.parabolicItem.zoom = 1;
+            }
+
             taskItem.abilities.parabolic.setDirectRenderingEnabled(false);
             clearAnimationsSignals();
 

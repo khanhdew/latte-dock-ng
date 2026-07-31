@@ -78,6 +78,7 @@ private Q_SLOTS:
     void configInteractionHoverActionNotHardcoded();
     void typesTaskActionEnumCompleteness();
     void parabolicAreaMouseAreaStructuralGuardsPresent();
+    void bounceZoomRestoreGuardsPresent();
 };
 
 class ParabolicTargetStub : public QObject
@@ -1428,6 +1429,33 @@ void QmlSmokeTest::parabolicAreaMouseAreaStructuralGuardsPresent()
     // Visible must still gate on parabolic support (not indexer-supported aka tasks)
     QVERIFY(source.contains(QStringLiteral("parabolicEffectIsSupported")));
     QVERIFY(source.contains(QStringLiteral("!communicator.indexerIsSupported")));
+}
+
+void QmlSmokeTest::bounceZoomRestoreGuardsPresent()
+{
+    // Issue #35: clicking a launcher keeps the click-time zoom while the
+    // bounce runs with direct rendering disabled, so a pointer that leaves
+    // the item must restore the zoom immediately instead of staying
+    // magnified until the animation ends. Verify both restore points:
+    //   1. ParabolicEventsArea.onParabolicExited — immediate restore when
+    //      direct rendering is disabled and the zoom is magnified
+    //   2. LauncherAnimation.onStopped — safety net for exit paths that do
+    //      not go through parabolicExited
+    QFile eventsArea(QStringLiteral(LATTE_PARABOLIC_EVENTS_AREA_QML));
+    QVERIFY(eventsArea.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString eventsAreaSource = QString::fromUtf8(eventsArea.readAll());
+
+    QVERIFY(eventsAreaSource.contains(QStringLiteral("onParabolicExited:")));
+    QVERIFY(eventsAreaSource.contains(QStringLiteral("directRenderingEnabled")));
+    QVERIFY(eventsAreaSource.contains(QStringLiteral("parabolicItem.zoom = 1")));
+
+    QFile launcherAnimation(QStringLiteral(LATTE_LAUNCHER_ANIMATION_QML));
+    QVERIFY(launcherAnimation.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString launcherAnimationSource = QString::fromUtf8(launcherAnimation.readAll());
+
+    QVERIFY(launcherAnimationSource.contains(QStringLiteral("function onStopped()")));
+    QVERIFY(launcherAnimationSource.contains(QStringLiteral("parabolicAreaContainsMouse")));
+    QVERIFY(launcherAnimationSource.contains(QStringLiteral("parabolicItem.zoom = 1")));
 }
 
 QTEST_MAIN(QmlSmokeTest)

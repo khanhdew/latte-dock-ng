@@ -148,6 +148,17 @@ Item {
         if (isThinTooltipEnabled) {
             abilityItem.abilities.thinTooltip.hide(abilityItem.tooltipVisualParent);
         }
+
+        //! While an animation runs with direct rendering disabled (e.g. the
+        //! launcher bounce keeps the click-time zoom so bounce and parabolic
+        //! run concurrently), the zoom gate above refuses to update
+        //! intermediate zoom values, so leaving the item would leave the
+        //! icon stuck magnified until the animation ends. Restore the zoom
+        //! right away; without a running animation direct rendering is
+        //! enabled and this branch is not hit.
+        if (!abilityItem.abilities.parabolic.directRenderingEnabled && abilityItem.parabolicItem.zoom > 1) {
+            abilityItem.parabolicItem.zoom = 1;
+        }
     }
 
     function calculateParabolicScales( currentMousePosition ){
