@@ -69,7 +69,7 @@
         "Description[zh_CN]": "Latte 的 Plasma 标签页风格指示器",
         "Description[zh_TW]": "適用於 Latte 的 Plasma 分頁樣式指示器",
         "EnabledByDefault": true,
-        "Icon": "apps-latte-dock",
+        "Icon": "latte-dock",
         "Id": "org.kde.latte.plasmatabstyle",
         "License": "GPL-2.0-or-later",
         "Name": "Plasma Tab Style",

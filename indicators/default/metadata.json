@@ -69,7 +69,7 @@
         "Description[zh_CN]": "Latte 默认指示器",
         "Description[zh_TW]": "Latte 預設指示器",
         "EnabledByDefault": true,
-        "Icon": "apps-latte-dock",
+        "Icon": "latte-dock",
         "Id": "org.kde.latte.default",
         "License": "GPL-2.0-or-later",
         "Name": "Latte",

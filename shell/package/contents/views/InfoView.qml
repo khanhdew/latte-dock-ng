@@ -43,7 +43,7 @@ KSvg.FrameSvgItem {
                 width: units.iconSizes.huge
                 height: width
 
-                source: "apps-latte-dock"
+                source: "latte-dock"
             }
         }
 
