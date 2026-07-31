@@ -8,6 +8,7 @@
 #include "importer.h"
 
 #include <KConfigGroup>
+#include <KConfigGui/kconfiggui.h>
 #include <KSharedConfig>
 
 #include <QDir>
@@ -19,6 +20,12 @@
 namespace {
 QString s_configPath;
 QStringList s_dataRoots;
+
+//! Force linkage of KConfigGui so its QColor/QFont conversion registration
+//! runs at library load. The test never calls a KConfigGui symbol directly,
+//! so linkers with --as-needed would otherwise drop the dependency and the
+//! KConfigGroup QColor reads would fail with "KConfigGui isn't linked".
+[[maybe_unused]] static const bool s_kconfigGuiLinked = KConfigGui::hasSessionConfig();
 
 QString writeScheme(const QString &path, const QString &name)
 {
