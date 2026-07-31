@@ -60,6 +60,8 @@ private Q_SLOTS:
     void qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable();
     void knsCompatImportsAreAvailableForSystemInstall();
     void layerShellSetScreenGuardPreventsBuildRegression();
+    void genericLayoutUnloadUsesSynchronousDelete();
+    void synchronizerUnloadUsesSynchronousDelete();
     void taskIconsRefreshAfterIconThemeChanges();
     void taskAudioBadgesScaleWithParabolicZoom();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
@@ -813,6 +815,38 @@ void SourceContractTest::taskIconsRefreshAfterIconThemeChanges()
     QVERIFY(environmentSource.contains(QStringLiteral("QIcon::setThemeName(currentIconTheme())")));
     QVERIFY(environmentSource.contains(QStringLiteral("QPixmapCache::clear()")));
     QVERIFY(!environmentSource.contains(QStringLiteral("if (!iconTheme.isEmpty())")));
+}
+
+void SourceContractTest::genericLayoutUnloadUsesSynchronousDelete()
+{
+    //! Layout switching unloads containments in place. Deferred deletion
+    //! left stale containments in the corona registry, which broke the
+    //! unload-to-load sequence and crashed in the
+    //! availableScreenRectChangedFrom signal chain, so the direct delete
+    //! in the unload paths is a regression contract.
+    QFile layout(QStringLiteral(LATTE_SOURCE_DIR "/app/layout/genericlayout.cpp"));
+    QVERIFY(layout.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(layout.readAll());
+
+    QVERIFY(src.contains(QStringLiteral("delete sub;")));
+    QVERIFY(src.contains(QStringLiteral("delete containment;")));
+    QVERIFY(!src.contains(QStringLiteral("sub->deleteLater();")));
+    QVERIFY(!src.contains(QStringLiteral("containment->deleteLater();")));
+}
+
+void SourceContractTest::synchronizerUnloadUsesSynchronousDelete()
+{
+    //! Same rationale as genericLayoutUnloadUsesSynchronousDelete: the
+    //! CentralLayout and its layout wrapper must be destroyed in place
+    //! during unload so a subsequent load never sees stale state.
+    QFile synchronizer(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/synchronizer.cpp"));
+    QVERIFY(synchronizer.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(synchronizer.readAll());
+
+    QVERIFY(src.contains(QStringLiteral("delete central;")));
+    QVERIFY(src.contains(QStringLiteral("delete layout;")));
+    QVERIFY(!src.contains(QStringLiteral("central->deleteLater();")));
+    QVERIFY(!src.contains(QStringLiteral("layout->deleteLater();")));
 }
 
 void SourceContractTest::taskAudioBadgesScaleWithParabolicZoom()
