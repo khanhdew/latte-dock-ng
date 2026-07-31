@@ -2,6 +2,50 @@
 
 All notable changes to Latte Dock NG are documented in this file.
 
+## [v1.2.33] - 2026-08-01
+
+### Fixed
+- Lowered the minimum Plasma version from 6.5.0 to 6.3.0; Plasma 6.3
+  (Debian 13 trixie) is now verified as the minimum supported version,
+  development happens on Plasma 6.5+ / Qt 6.11.
+- Fixed dock indicators disappearing on Plasma 6.3: the
+  org.kde.plasma.plasmoid QML module is only registered lazily by
+  PlasmaQuick on that version, so indicator components are now created on
+  first access instead of at View construction.
+- Fixed the latte_indicator package structure plugin shipping without
+  embedded metadata on Qt 6.8 (moc macro expansion through the compat
+  forwarding header), which made KPackage unable to resolve the
+  "Latte/Indicator" structure.
+- Fixed KNS dialog compatibility overrides never being created on
+  Kirigami 6.12+ where org.kde.kirigami.controls was merged into the
+  main module.
+- Added infinite-loop and recursion guards across the codebase; made the
+  guards regression-safe and repaired distro install contracts.
+- Restored synchronous deletion in layout unload paths; added contracts
+  keeping the behavior stable.
+- Restored KDE compiler enforcement (-Wall, QT_NO_CAST_*, QT_NO_KEYWORDS)
+  and fixed all norm violations; both GCC and Clang build warning-free.
+- Fixed the latte-dock icon reference to the name installed by ECM.
+- Removed a set-but-unused variable that triggered -Wunused-but-set-variable.
+
+### Changed
+- Concurrent parabolic zoom and launcher bounce animation.
+- Bounce animation replaced with a parabolic bounce.
+
+### Build
+- The release .deb is now built on Debian 13 (trixie) with
+  dpkg-shlibdeps versioned dependencies, so the package installs on
+  Debian 13 stable, testing, sid and Ubuntu 26.04+.
+- Linked Qt6::Quick in toolsunittest so tests build on distros with
+  arch-triplet Qt header layouts.
+
+### Test
+- Added contract tests for the infinite-loop guard follow-ups and the
+  layout unload deletion behavior; registered the plasmoid module stub
+  for the smoke tests on Plasma 6.3; forced KConfigGui linkage in
+  schemecolorsunittest for --as-needed linkers. Full ctest suite passes
+  on Plasma 6.3 (Debian 13) and Plasma 6.5+ with both GCC and Clang.
+
 ## [v1.2.17] - 2026-06-28
 
 ### Fixed
