@@ -4,6 +4,7 @@
 */
 
 #include <QFile>
+#include <QStringList>
 #include <QTest>
 
 #include "../app/session/shutdownstate.h"
@@ -158,6 +159,13 @@ private Q_SLOTS:
     void originalViewCleanClonesDrainsFromLocalCopy();
     void layoutManagerResolveAppletQuickItemUsesVisitedSet();
     void levelOptionsHasIsBackgroundIsForegroundReentryGuards();
+
+    // Guard-fix follow-up contracts
+    void templatesmanagerUniqueNameLoopsHaveIterationCaps();
+    void synchronizerUnloadLayoutsHasIterationCap();
+    void uniqueNameExhaustionFallsBackToRandomSuffix();
+    void layoutManagerResolveAppletQuickItemThreadsVisitedSet();
+    void appdataComponentIdKeepsHyphenInLastSegment();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -2979,6 +2987,79 @@ void SourceContractTest::levelOptionsHasIsBackgroundIsForegroundReentryGuards()
     // same value simultaneously.
     QVERIFY(src.contains(QStringLiteral("_updatingBackground")));
     QVERIFY(src.contains(QStringLiteral("_updatingForeground")));
+}
+
+void SourceContractTest::templatesmanagerUniqueNameLoopsHaveIterationCaps()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/templates/templatesmanager.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // The unique template-name loops must be capped like every other
+    // unique-name loop; an unbounded walk would hang when the template
+    // table keeps matching every generated name.
+    QVERIFY(src.contains(QStringLiteral("while (hasLayoutTemplate(name) && i < 10000)")));
+    QVERIFY(src.contains(QStringLiteral("while (hasViewTemplate(name) && i < 10000)")));
+}
+
+void SourceContractTest::synchronizerUnloadLayoutsHasIterationCap()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/synchronizer.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // unloadLayouts must drain the central-layout list with an
+    // iteration cap so re-entrant additions cannot hang shutdown.
+    QVERIFY(src.contains(QStringLiteral("guard++ < 10000")));
+    QVERIFY(src.contains(QStringLiteral("unloadLayouts: iteration cap reached")));
+}
+
+void SourceContractTest::uniqueNameExhaustionFallsBackToRandomSuffix()
+{
+    const QStringList sources = {
+        QStringLiteral("/app/layouts/importer.cpp"),
+        QStringLiteral("/app/settings/settingsdialog/layoutscontroller.cpp"),
+        QStringLiteral("/app/settings/viewsdialog/viewscontroller.cpp"),
+        QStringLiteral("/app/templates/templatesmanager.cpp"),
+    };
+
+    for (const QString &path : sources) {
+        QFile f(QStringLiteral(LATTE_SOURCE_DIR) + path);
+        QVERIFY2(f.open(QFile::ReadOnly), qPrintable(path));
+        const QString src = QString::fromUtf8(f.readAll());
+
+        // After the numbered-suffix loop hits its cap, a random suffix
+        // must be used instead of returning a name that still exists.
+        QVERIFY2(src.contains(QStringLiteral("QRandomGenerator::global()->generate()")),
+                 qPrintable(path));
+    }
+}
+
+void SourceContractTest::layoutManagerResolveAppletQuickItemThreadsVisitedSet()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/layoutmanager.cpp"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // The visited-set must be threaded through recursion frames; a
+    // per-frame set would let A↔B cyclic property graphs recurse forever.
+    QVERIFY(src.contains(QStringLiteral("resolveAppletQuickItemObjectInternal(candidate, visited)")));
+}
+
+void SourceContractTest::appdataComponentIdKeepsHyphenInLastSegment()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR "/app/org.kde.latte-dock.appdata.xml.cmake"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // AppStream only allows hyphens in the last ID segment; the
+    // ".desktop" suffix moved the hyphen out of the last segment and
+    // appstreamcli validation fails on it.  Keep the ID without the
+    // suffix and use a developer block instead of developer_name.
+    QVERIFY(src.contains(QStringLiteral("<id>org.kde.latte-dock</id>")));
+    QVERIFY(!src.contains(QStringLiteral("<id>org.kde.latte-dock.desktop</id>")));
+    QVERIFY(src.contains(QStringLiteral("<developer id=")));
+    QVERIFY(!src.contains(QStringLiteral("<developer_name>")));
 }
 
 QTEST_MAIN(SourceContractTest)
