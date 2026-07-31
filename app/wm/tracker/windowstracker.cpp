@@ -934,7 +934,6 @@ void Windows::updateHints(Latte::View *view)
         return;
     }
 
-    bool foundActive{false};
     bool foundActiveInCurScreen{false};
     bool foundActiveTouchInCurScreen{false};
     bool foundActiveEdgeTouchInCurScreen{false};
@@ -971,10 +970,6 @@ void Windows::updateHints(Latte::View *view)
             || m_wm->hasBlockedTracking(winfo.wid())
             || winfo.isMinimized()) {
             continue;
-        }
-
-        if (isActive(winfo)) {
-            foundActive = true;
         }
 
         if (isActiveInViewScreen(view, winfo)) {
