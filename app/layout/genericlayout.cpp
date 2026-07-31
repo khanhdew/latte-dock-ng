@@ -88,14 +88,14 @@ void GenericLayout::unloadContainments()
         m_unloadedContainmentsIds << QString::number(sub->id());
         subcontainments.removeFirst();
         m_containments.removeAll(sub);
-        sub->deleteLater();
+        delete sub;
     }
 
     while (!m_containments.isEmpty()) {
         Plasma::Containment *containment = m_containments.at(0);
         m_unloadedContainmentsIds << QString::number(containment->id());
         m_containments.removeFirst();
-        containment->deleteLater();
+        delete containment;
     }
 }
 

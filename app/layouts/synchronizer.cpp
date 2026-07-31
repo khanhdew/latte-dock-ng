@@ -547,7 +547,7 @@ void Synchronizer::unloadCentralLayout(CentralLayout *layout)
             m_manager->clearUnloadedContainmentsFromLinkedFile(central->unloadedContainmentsIds(), true);
         }
 
-        central->deleteLater();
+        delete central;
     }
 }
 
@@ -1053,7 +1053,7 @@ void Synchronizer::unloadLayouts(const QStringList &layoutNames, const QStringLi
                 m_manager->clearUnloadedContainmentsFromLinkedFile(layout->unloadedContainmentsIds());
             }
 
-            layout->deleteLater();
+            delete layout;
         } else if (preloadedLayouts.contains(layoutname)) {
             Layouts::Storage::self()->moveToLayoutFile(layoutname);
             //! just make sure that
