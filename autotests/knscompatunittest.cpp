@@ -7,6 +7,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QLibraryInfo>
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTest>
@@ -156,8 +157,22 @@ void KnsCompatUnitTest::latestStampStillRepairsMissingControlsOverride()
 
     ensureKnsCompat();
 
-    QVERIFY(QFile::exists(root + QStringLiteral("/org/kde/kirigami/controls/qmldir")));
-    QVERIFY(QFile::exists(root + QStringLiteral("/org/kde/kirigami/controls/private/globaltoolbar/HandleButton.qml")));
+    //! The templates and newstuff overrides must always be repaired. The
+    //! controls override only exists when the system still ships the legacy
+    //! standalone org.kde.kirigami.controls module; Kirigami >= 6.12 merged
+    //! it into the main module and nothing is created for it.
+    QVERIFY(QFile::exists(root + QStringLiteral("/org/kde/kirigami/templates/qmldir")));
+    QVERIFY(QFile::exists(root + QStringLiteral("/org/kde/newstuff/qmldir")));
+
+    const QString systemControls = QLibraryInfo::path(QLibraryInfo::QmlImportsPath)
+                                   + QStringLiteral("/org/kde/kirigami/controls/qmldir");
+
+    if (QFile::exists(systemControls)) {
+        QVERIFY(QFile::exists(root + QStringLiteral("/org/kde/kirigami/controls/qmldir")));
+        QVERIFY(QFile::exists(root + QStringLiteral("/org/kde/kirigami/controls/private/globaltoolbar/HandleButton.qml")));
+    } else {
+        QVERIFY(!QFile::exists(root + QStringLiteral("/org/kde/kirigami/controls/qmldir")));
+    }
 }
 
 void KnsCompatUnitTest::firstRunWritesPatchedOverridesAndStamp()

@@ -267,6 +267,14 @@ static QStringList systemQmlBaseCandidates()
     return candidates;
 }
 
+//! Kirigami >= 6.12 merged org.kde.kirigami.controls into the main
+//! module (the files moved under org/kde/kirigami/), so the standalone
+//! controls module only exists on older Kirigami versions.
+static bool systemHasLegacyControlsModule(const QString &qmlBase)
+{
+    return QFileInfo(qmlBase + QStringLiteral("/org/kde/kirigami/controls/qmldir")).isFile();
+}
+
 static bool systemQmlBaseIsComplete(const QString &qmlBase)
 {
     if (qmlBase.isEmpty() || !QFileInfo(qmlBase).isDir()) {
@@ -275,13 +283,19 @@ static bool systemQmlBaseIsComplete(const QString &qmlBase)
 
     const QString templatesDir = qmlBase + QStringLiteral("/org/kde/kirigami/templates");
     const QString newstuffDir = qmlBase + QStringLiteral("/org/kde/newstuff");
-    const QString controlsDir = qmlBase + QStringLiteral("/org/kde/kirigami/controls");
+
+    //! Accept both the legacy standalone controls module and the merged
+    //! layout used by Kirigami >= 6.12 (private/globaltoolbar lives inside
+    //! the main org.kde.kirigami module there).
+    const QString mainModule = qmlBase + QStringLiteral("/org/kde/kirigami");
+    const bool controlsPresent = systemHasLegacyControlsModule(qmlBase)
+                                 || (QFileInfo(mainModule + QStringLiteral("/qmldir")).isFile()
+                                     && QFileInfo(mainModule + QStringLiteral("/private/globaltoolbar")).isDir());
 
     return QFileInfo(templatesDir).isDir()
            && QFileInfo(templatesDir + QStringLiteral("/private")).isDir()
            && QFileInfo(newstuffDir).isDir()
-           && QFileInfo(controlsDir).isDir()
-           && QFileInfo(controlsDir + QStringLiteral("/qmldir")).isFile();
+           && controlsPresent;
 }
 
 static QString resolvedSystemQmlBase()
@@ -522,9 +536,14 @@ void ensureKnsCompat()
     const QString newstuffDir = qmlBase + QStringLiteral("/org/kde/newstuff");
     const QString controlsDir = qmlBase + QStringLiteral("/org/kde/kirigami/controls");
 
+    //! The controls override only exists on systems with the legacy
+    //! standalone controls module; on newer Kirigami the files are part of
+    //! the main module and there is nothing to override.
+    const bool legacyControls = systemHasLegacyControlsModule(systemQmlBase);
+
     if (!needsUpdate && QFile::exists(templatesDir + QStringLiteral("/qmldir"))
         && QFile::exists(newstuffDir + QStringLiteral("/qmldir"))
-        && QFile::exists(controlsDir + QStringLiteral("/qmldir"))) {
+        && (!legacyControls || QFile::exists(controlsDir + QStringLiteral("/qmldir")))) {
         return;
     }
 
@@ -586,7 +605,11 @@ void ensureKnsCompat()
     }
 
     // --- Kirigami controls module (with plugin, no prefer; patched HandleButton) ---
+    //! Only applicable to the legacy standalone controls module; on
+    //! Kirigami >= 6.12 the files are part of the main module and the
+    //! HandleButton fix does not apply.
     const QString sysControls = systemQmlBase + QStringLiteral("/org/kde/kirigami/controls");
+    if (legacyControls) {
 
     // Use the system qmldir but strip the prefer line
     {
@@ -616,6 +639,7 @@ void ensureKnsCompat()
     const QDir scPriv(sysControls + QStringLiteral("/private"));
     symlinkPrivDir(scPriv, controlsDir + QStringLiteral("/private"),
                    {QStringLiteral("globaltoolbar/HandleButton.qml")});
+    }
 
     // Write stamp
     QDir().mkpath(QFileInfo(stampPath).absolutePath());
