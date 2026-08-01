@@ -72,7 +72,14 @@ jobs:
                 bash /src/docker/package-arch.sh \"\$VERSION\" /out
               else
                 GEN=\$([ '${{ matrix.format }}' = 'rpm' ] && echo RPM || echo DEB)
-                cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION=\"\$VERSION\"
+                #! The trixie build carries the Debian 13 revision marker
+                #! (+deb13u1, the Debian convention for stable-specific
+                #! rebuilds) in the package version, which flows into both
+                #! the control file and the file name; testing/sid keeps
+                #! the plain -1 release.
+                DEBREL='1'
+                if [ '${{ matrix.distro }}' = 'debian' ]; then DEBREL='1+deb13u1'; fi
+                cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION=\"\$VERSION\" -DCPACK_DEBIAN_PACKAGE_RELEASE=\"\$DEBREL\"
                 cmake --build . --parallel \$(nproc)
                 #! source-install verification on this distro: the install
                 #! must land the binary and the desktop file
@@ -81,15 +88,10 @@ jobs:
                 test -f /usr/share/applications/org.kde.latte-dock.desktop
                 echo SOURCE_INSTALL_OK
                 cpack -G \"\$GEN\"
+                #! The +deb13u1 revision already distinguishes the two deb
+                #! variants, so plain copying keeps the names apart.
                 if [ '${{ matrix.format }}' = 'deb' ]; then
-                  #! The testing/sid variant keeps the plain name (rolling
-                  #! is the default target); only the trixie variant
-                  #! carries the distro suffix.
-                  if [ '${{ matrix.distro }}' = 'debian' ]; then
-                    cp /build/latte-dock-ng_*.deb /out/latte-dock-ng_\"\$VERSION\"-1_debian_amd64.deb
-                  else
-                    cp /build/latte-dock-ng_*.deb /out/
-                  fi
+                  cp /build/latte-dock-ng_*.deb /out/
                 else
                   cp /build/latte-dock-ng*.* /out/
                 fi
@@ -138,11 +140,7 @@ jobs:
             latte-build-${{ matrix.distro }} \
             bash -c "
               set -e
-              if [ '${{ matrix.distro }}' = 'debian' ]; then
-                deb_path=\$(ls /out/latte-dock-ng_*_debian_amd64.deb | head -1)
-              else
-                deb_path=\$(ls /out/latte-dock-ng_*_amd64.deb | grep -v _debian_ | head -1)
-              fi
+              deb_path=\$(ls /out/latte-dock-ng_*.deb | head -1)
               echo '== Versioned deps (must match the libplasma camp of this distro) =='
               dpkg-deb -f \"\$deb_path\" Depends | grep -E 'libplasma6|libplasma7|libqt6core|libc6'
               echo '== Install (apt resolves Depends from the distro repos) =='

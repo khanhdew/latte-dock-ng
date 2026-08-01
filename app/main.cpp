@@ -664,8 +664,12 @@ int main(int argc, char **argv)
             }
 
             if (shuttingDown) {
-                // Phase 1: logout confirmation dialog is showing.
-                // Set the flag but do NOT quit — user may still cancel.
+                // Phase 1: logout confirmed.  ksmserver's isShuttingDown
+                // only turns true after the user confirms (performLogout),
+                // not while the confirmation dialog shows.  Set the flag but
+                // do NOT quit — the logout can still be cancelled through
+                // KWin's "Cancel Logout" notification while it closes the
+                // windows.
                 qInfo() << "[shutdown] isShuttingDown() = true; setting flag (not quitting yet).";
                 markSessionEnding();
 

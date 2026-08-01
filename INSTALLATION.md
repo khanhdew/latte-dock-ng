@@ -8,8 +8,8 @@ Installation
 > soname changed from 6 to 7 between Plasma 6.5 and 6.6 (Debian package
 > `libplasma6` → `libplasma7`), which splits the supported range into two
 > binary-incompatible camps:
-> - **`..._amd64.deb`** (plain name) — built on **Debian sid/forky**, links `libplasma7`; for **Debian testing / sid and Ubuntu 26.04+**.
-> - **`..._debian_amd64.deb`** — built on **Debian 13 (trixie)**, links `libplasma6`; for **Debian 13 (stable)**.
+> - **`..._amd64.deb`** (plain name) — built on **Debian sid**, links `libplasma7`; for **Debian testing / sid and Ubuntu 26.04+**.
+> - **`...-1+deb13u1_amd64.deb`** — built on **Debian 13 (trixie)**, links `libplasma6`; the `+deb13u1` revision marks the **Debian 13 (stable)** build.
 > Do not build either variant on a newer distro than its target — versioned
 > dependencies (`dpkg-shlibdeps`) would raise the lower bound and break
 > installation.
@@ -41,7 +41,7 @@ Prefer the prebuilt deb from the [GitHub release](https://github.com/ruizhi-lab/
 # Debian testing / sid (and Ubuntu 26.04+)
 sudo apt install ./latte-dock-ng_<ver>-1_amd64.deb
 # Debian 13 (stable)
-sudo apt install ./latte-dock-ng_<ver>-1_debian_amd64.deb
+sudo apt install ./latte-dock-ng_<ver>-1+deb13u1_amd64.deb
 ```
 
 ```bash

@@ -2,6 +2,26 @@
 
 All notable changes to Latte Dock NG are documented in this file.
 
+## [v1.2.35] - 2026-08-02
+
+### Fixed
+- Fixed logout, reboot and shutdown hanging on Plasma 6.7: KWin's
+  session shutdown waits for every xdg_toplevel window to close, and the
+  dock views ignored the compositor close request until the
+  session-ending flag was set. The views are now unmapped as soon as the
+  logout is announced and restored if the user cancels.
+- Filtered cosmetic Plasma theme SVG warnings from the debug log.
+- Mirrored system Kirigami template qmldir files in the KNS compat
+  overrides.
+
+### Build
+- CI now builds and runs the full autotest suite (ctest) on every push,
+  pull request and release tag.
+- The Debian 13 (trixie) deb now carries the `+deb13u1` revision marker,
+  per the Debian convention for stable-specific builds; the testing/sid
+  build keeps the plain `-1` name.
+- Documented the two deb variants in the README and installation docs.
+
 ## [v1.2.34] - 2026-08-01
 
 ### Fixed

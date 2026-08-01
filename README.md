@@ -96,8 +96,9 @@ Prebuilt packages are attached to every
   `libplasma6` → `libplasma7`) and the two camps are binary-incompatible:
   - `latte-dock-ng_<ver>-1_amd64.deb` (plain name) — built on Debian sid,
     links `libplasma7`; for **Debian testing / sid and Ubuntu 26.04+**
-  - `latte-dock-ng_<ver>-1_debian_amd64.deb` — built on Debian 13
-    (trixie), links `libplasma6`; for **Debian 13 (stable)**
+  - `latte-dock-ng_<ver>-1+deb13u1_amd64.deb` — built on Debian 13
+    (trixie), links `libplasma6`; the `+deb13u1` revision marks the
+    Debian 13 (stable) build
 - **`.rpm`** — built on Fedora 44; installable on any RPM distro shipping
   Plasma 6.3+ and glibc >= 2.34: Fedora 42+, openSUSE Tumbleweed/Leap 16,
   Mageia 10+

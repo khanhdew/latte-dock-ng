@@ -79,7 +79,11 @@ set(CPACK_RPM_PACKAGE_REQUIRES "libKirigami.so.6, libKF6KCMUtils.so.6, libKF6New
 
 # DEB
 set(CPACK_DEBIAN_PACKAGE_NAME "latte-dock-ng")
-set(CPACK_DEBIAN_PACKAGE_RELEASE "1")
+# Default release; the release workflow overrides it per distro
+# (-DCPACK_DEBIAN_PACKAGE_RELEASE=1+deb13u1 for the trixie build).
+if(NOT CPACK_DEBIAN_PACKAGE_RELEASE)
+    set(CPACK_DEBIAN_PACKAGE_RELEASE "1")
+endif()
 # architecture comes from the mapping at the top of this file
 set(CPACK_DEBIAN_FILE_NAME "${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}-${CPACK_DEBIAN_PACKAGE_RELEASE}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}.deb")
 set(CPACK_DEBIAN_PACKAGE_SECTION "kde")
