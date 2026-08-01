@@ -4,7 +4,15 @@ Installation
 > This fork targets **KDE Plasma 6.3+ on Wayland only** (amd64/x86\_64 architecture). Development happens on Plasma 6.5+ / Qt 6.11; Plasma 6.3 (Debian 13 trixie) is verified as the minimum supported version. X11 and other architectures are not supported.
 > All dependency packages below are Qt6 / KF6. Legacy Qt5/KF5 package names from upstream will not work.
 >
-> The release .deb package is built on **Debian 13 (trixie)** and therefore installs on the whole supported range: **Debian 13 (stable) / testing / sid and Ubuntu 26.04+**. Do not build the package on newer distros — versioned dependencies (`dpkg-shlibdeps`) would raise the lower bound and break installation on trixie.
+> Two .deb variants are attached to each release because the libplasma
+> soname changed from 6 to 7 between Plasma 6.5 and 6.6 (Debian package
+> `libplasma6` → `libplasma7`), which splits the supported range into two
+> binary-incompatible camps:
+> - **`..._debian_amd64.deb`** — built on **Debian 13 (trixie)**, links `libplasma6`; for **Debian 13 (stable)**.
+> - **`..._debian-sid_amd64.deb`** — built on **Debian sid/forky**, links `libplasma7`; for **Debian testing / sid and Ubuntu 26.04+**.
+> Do not build either variant on a newer distro than its target — versioned
+> dependencies (`dpkg-shlibdeps`) would raise the lower bound and break
+> installation.
 
 ## Kubuntu / KDE Neon (26.04+)
 
