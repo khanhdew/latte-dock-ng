@@ -91,11 +91,21 @@ Minimum requirements:
 Prebuilt packages are attached to every
 [GitHub release](https://github.com/ruizhi-lab/latte-dock-ng/releases):
 
-- **`.deb`** — built on Debian 13 (trixie); installable on Debian 13+ and Ubuntu 26.04+
+- **`.deb`** — two variants are provided, because libplasma's soname
+  changed from 6 to 7 between Plasma 6.5 and 6.6 (Debian package
+  `libplasma6` → `libplasma7`) and the two camps are binary-incompatible:
+  - `latte-dock-ng_<ver>-1_amd64.deb` (plain name) — built on Debian sid,
+    links `libplasma7`; for **Debian testing / sid and Ubuntu 26.04+**
+  - `latte-dock-ng_<ver>-1_debian_amd64.deb` — built on Debian 13
+    (trixie), links `libplasma6`; for **Debian 13 (stable)**
 - **`.rpm`** — built on Fedora 44; installable on any RPM distro shipping
   Plasma 6.3+ and glibc >= 2.34: Fedora 42+, openSUSE Tumbleweed/Leap 16,
   Mageia 10+
 - **`pkg.tar.zst`** — Arch Linux
+
+Every package format is install-checked automatically on its target
+distro before release: source install, package-manager install
+(apt / dnf / pacman) and a headless launch.
 
 The RPM requires glibc >= 2.34, a toolchain artifact
 (`__libc_start_main@GLIBC_2.34` from the build host's crt1) present in every

@@ -35,6 +35,15 @@ sudo apt install \
 
 Debian 13 (trixie) ships Plasma 6.3.6 and is the minimum supported version; the same build instructions apply to testing and sid.
 
+Prefer the prebuilt deb from the [GitHub release](https://github.com/ruizhi-lab/latte-dock-ng/releases) — see the two-variant note at the top of this page:
+
+```bash
+# Debian testing / sid (and Ubuntu 26.04+)
+sudo apt install ./latte-dock-ng_<ver>-1_amd64.deb
+# Debian 13 (stable)
+sudo apt install ./latte-dock-ng_<ver>-1_debian_amd64.deb
+```
+
 ```bash
 sudo apt install \
   cmake extra-cmake-modules \
