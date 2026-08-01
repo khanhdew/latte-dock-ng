@@ -16,7 +16,7 @@
 #include <QStandardPaths>
 #include <QTextStream>
 
-static constexpr int kCompatVersion = 8;
+static constexpr int kCompatVersion = 9;
 
 //! Patched DrawerHandle.qml — Qt 6.10 removed DragHandler.xAxis.onActiveValueChanged.
 //! Use DragHandler.onActiveTranslationChanged instead.
@@ -191,6 +191,7 @@ typeinfo KirigamiTemplates.qmltypes
 AbstractApplicationHeader 2.0 AbstractApplicationHeader.qml
 AbstractCard 2.0 AbstractCard.qml
 singleton AppHeaderSizeGroup 2.0 AppHeaderSizeGroup.qml
+Badge 2.0 Badge.qml
 Chip 2.0 Chip.qml
 Heading 2.0 Heading.qml
 InlineMessage 2.0 InlineMessage.qml
@@ -443,6 +444,28 @@ Item {
 
 static bool symlinkChecked(const QString &target, const QString &link);
 
+//! Build the compat templates qmldir: mirror the system type list so types
+//! added by newer Kirigami releases (e.g. Badge, used by controls/Badge.qml
+//! via KT.Badge) keep resolving inside latte. The "prefer" line is stripped
+//! so the user-local override files win over the qrc resources, and the
+//! plugin lines are dropped because the override dir has no plugin. Falls
+//! back to a static list when the system qmldir is unavailable.
+static QString templatesQmldirForSystem(const QString &systemQmldirPath)
+{
+    QFile systemQmldir(systemQmldirPath);
+
+    if (systemQmldir.open(QFile::ReadOnly)) {
+        QString text = QString::fromUtf8(systemQmldir.readAll());
+        text.remove(QRegularExpression(QStringLiteral("^prefer .*\n?"), QRegularExpression::MultilineOption));
+        text.remove(QRegularExpression(QStringLiteral("^linktarget .*\n?"), QRegularExpression::MultilineOption));
+        text.remove(QRegularExpression(QStringLiteral("^optional plugin .*\n?"), QRegularExpression::MultilineOption));
+        text.remove(QRegularExpression(QStringLiteral("^classname .*\n?"), QRegularExpression::MultilineOption));
+        return text;
+    }
+
+    return QLatin1String(kTemplatesQmldir);
+}
+
 //! Recursively symlink a private QML directory, skipping specified paths.
 static void symlinkPrivDir(const QDir &srcDir, const QString &dstPath, const QStringList &skipPaths)
 {
@@ -552,7 +575,7 @@ void ensureKnsCompat()
     // --- Kirigami templates module (pure filesystem, no plugin) ---
     const QString sysTemplates = systemQmlBase + QStringLiteral("/org/kde/kirigami/templates");
 
-    writeIfChanged(templatesDir + QStringLiteral("/qmldir"), QLatin1String(kTemplatesQmldir));
+    writeIfChanged(templatesDir + QStringLiteral("/qmldir"), templatesQmldirForSystem(sysTemplates + QStringLiteral("/qmldir")));
 
     // Write patched DrawerHandle.qml FIRST (before symlinking the rest)
     writeIfChanged(templatesDir + QStringLiteral("/private/DrawerHandle.qml"), QLatin1String(kPatchedDrawerHandle));

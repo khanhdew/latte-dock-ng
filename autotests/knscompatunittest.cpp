@@ -7,6 +7,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QLibraryInfo>
 #include <QStandardPaths>
 #include <QTemporaryDir>
@@ -28,6 +29,7 @@ private Q_SLOTS:
     void ignoresRelativeConfiguredUserQmlRoot();
     void replacesSymlinkedPatchedFilesWithoutTouchingTarget();
     void missingSystemQmlRootDoesNotCreatePartialOverrides();
+    void systemTemplatesQmldirMirrorsNewTypes();
 
 private:
     void isolateHomeAndData(QTemporaryDir &home, QTemporaryDir &data);
@@ -210,7 +212,7 @@ void KnsCompatUnitTest::firstRunWritesPatchedOverridesAndStamp()
     QFile stamp(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
                 + QStringLiteral("/latte-dock-ng/kns-compat.stamp"));
     QVERIFY(stamp.open(QFile::ReadOnly));
-    QCOMPARE(stamp.readAll().trimmed(), QByteArray("8"));
+    QCOMPARE(stamp.readAll().trimmed(), QByteArray("9"));
 }
 
 void KnsCompatUnitTest::optOutDoesNotWriteOverrides()
@@ -363,6 +365,44 @@ void KnsCompatUnitTest::missingSystemQmlRootDoesNotCreatePartialOverrides()
     QVERIFY(!QFile::exists(qmlRoot() + QStringLiteral("/org/kde/kirigami/templates/qmldir")));
     QVERIFY(!QFile::exists(qmlRoot() + QStringLiteral("/org/kde/newstuff/qmldir")));
     QVERIFY(!QFile::exists(qmlRoot() + QStringLiteral("/org/kde/kirigami/controls/qmldir")));
+}
+
+void KnsCompatUnitTest::systemTemplatesQmldirMirrorsNewTypes()
+{
+    QTemporaryDir home;
+    QTemporaryDir data;
+    QTemporaryDir systemQml;
+    isolateHomeAndData(home, data);
+    QVERIFY(systemQml.isValid());
+    createSystemQmlRoot(systemQml.path());
+    qputenv("LATTE_KNS_COMPAT_SYSTEM_QML_ROOTS", QFile::encodeName(systemQml.path()));
+
+    //! A system templates qmldir that declares a type added after the
+    //! original hardcoded list (e.g. Badge, used by kicker/kickoff via
+    //! controls/Badge.qml -> KT.Badge). The compat layer must mirror the
+    //! system type list, otherwise widgets using Kirigami.Badge fail to
+    //! load inside latte (empty dock slots).
+    const QString sysTemplatesQmldir = systemQml.path() + QStringLiteral("/org/kde/kirigami/templates/qmldir");
+    QVERIFY(QDir().mkpath(QFileInfo(sysTemplatesQmldir).absolutePath()));
+    QFile qmldir(sysTemplatesQmldir);
+    QVERIFY(qmldir.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    qmldir.write(QByteArrayLiteral("module org.kde.kirigami.templates\n"
+                                   "typeinfo KirigamiTemplates.qmltypes\n"
+                                   "prefer :/qt/qml/org/kde/kirigami/templates/\n"
+                                   "AbstractCard 2.0 AbstractCard.qml\n"
+                                   "Badge 2.0 Badge.qml\n"
+                                   "Heading 2.0 Heading.qml\n"));
+    qmldir.close();
+
+    ensureKnsCompat();
+
+    const QString compatQmldir = qmlRoot() + QStringLiteral("/org/kde/kirigami/templates/qmldir");
+    QFile compat(compatQmldir);
+    QVERIFY(compat.open(QIODevice::ReadOnly));
+    const QByteArray compatText = compat.readAll();
+    QVERIFY(compatText.contains("Badge 2.0 Badge.qml"));
+    QVERIFY(compatText.contains("AbstractCard 2.0 AbstractCard.qml"));
+    QVERIFY(!compatText.contains("prefer "));
 }
 
 QTEST_GUILESS_MAIN(KnsCompatUnitTest)
