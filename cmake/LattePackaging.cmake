@@ -40,15 +40,16 @@ set(CPACK_RPM_PACKAGE_NAME "latte-dock-ng")
 # switching build hosts). This never blocks a Plasma 6.3+ distro — the oldest
 # of them (Mageia 10) ships glibc 2.38. openSUSE Leap 15.x is unsupported for
 # shipping Plasma 5.27, not because of glibc.
-# %{?dist} appends the build distro to the release (e.g. 1.fc44), keeping the
-# NEVRA distinct when the same version is packaged for different distros
-# (Fedora/openSUSE). If a release must ever be re-issued for the same version
-# (e.g. a broken package was published), bump the release number first —
-# package managers treat an identical NEVRA as "already installed".
-set(CPACK_RPM_PACKAGE_RELEASE "1%{?dist}")
-# Let rpmbuild expand the release macro in the file name; a literal name
-# would embed the unexpanded "1%{?dist}".
-set(CPACK_RPM_FILE_NAME "RPM-DEFAULT")
+# A single RPM is built once per version on the Fedora container and must
+# install on Fedora, openSUSE and Mageia alike, so no %{?dist} dist tag is
+# used and the file name stays distro-neutral. If the build is ever split
+# into one RPM per distro, switch the release to "1%{?dist}" and the file
+# name to "RPM-DEFAULT" to keep the NEVRA distinct. Whenever the same version
+# must be re-issued (e.g. a broken package was published), bump the release
+# number first — package managers treat an identical NEVRA as "already
+# installed".
+set(CPACK_RPM_PACKAGE_RELEASE "1")
+set(CPACK_RPM_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_RPM_PACKAGE_RELEASE}.${CPACK_RPM_PACKAGE_ARCHITECTURE}.rpm")
 set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0-or-later")
 set(CPACK_RPM_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION}")
 set(CPACK_RPM_PACKAGE_URL "${WEBSITE}")
