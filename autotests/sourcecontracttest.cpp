@@ -32,6 +32,7 @@ private Q_SLOTS:
     void sessionShutdownQuitDecisionMatrix_data();
     void sessionShutdownQuitDecisionMatrix();
     void sessionShutdownHandlingMatchesStableWaylandPath();
+    void sessionShutdownPollerHidesViewsAndRestoresOnCancel();
     void itemsAlignmentIsSeparateAndJustifyOnly();
     void itemsAlignmentNormalizesDirectionsByFormFactor();
     void itemsAlignmentConfigDefaultsToCenter();
@@ -682,6 +683,30 @@ void SourceContractTest::sessionShutdownHandlingMatchesStableWaylandPath()
     QVERIFY(viewSource.contains(QStringLiteral("qEnvironmentVariableIntValue(\"LATTE_SESSION_ENDING\") == 1")));
     QVERIFY(viewSource.contains(QStringLiteral("qApp->property(\"latte_session_ending\").toBool()")));
     QVERIFY(viewSource.contains(QStringLiteral("QMetaObject::invokeMethod(qGuiApp, &QCoreApplication::quit, Qt::QueuedConnection);")));
+}
+
+void SourceContractTest::sessionShutdownPollerHidesViewsAndRestoresOnCancel()
+{
+    QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(mainSourceFile.open(QFile::ReadOnly));
+    const QString mainSource = QString::fromUtf8(mainSourceFile.readAll());
+
+    //! Phase 1 (logout announced): the poller must unmap all views so KWin's
+    //! closeWaylandWindows() never waits on the dock windows during shutdown.
+    const int phase1Log = mainSource.indexOf(QStringLiteral("[shutdown] isShuttingDown() = true; setting flag (not quitting yet)."));
+    const int flagSet = mainSource.indexOf(QStringLiteral("markSessionEnding();"), phase1Log);
+    const int hideViews = mainSource.indexOf(QStringLiteral("synchronizer()->hideAllViews();"), flagSet);
+    QVERIFY(phase1Log >= 0);
+    QVERIFY(flagSet > phase1Log);
+    QVERIFY(hideViews > flagSet);
+
+    //! Cancel branch: views hidden by the announcement must be restored.
+    const int cancelLog = mainSource.indexOf(QStringLiteral("[shutdown] logout cancelled; clearing session-ending flag."));
+    const int currentViews = mainSource.indexOf(QStringLiteral("synchronizer()->currentViews()"), cancelLog);
+    const int restoreViews = mainSource.indexOf(QStringLiteral("view->setVisible(true)"), currentViews);
+    QVERIFY(cancelLog >= 0);
+    QVERIFY(currentViews > cancelLog);
+    QVERIFY(restoreViews > currentViews);
 }
 
 void SourceContractTest::qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable()

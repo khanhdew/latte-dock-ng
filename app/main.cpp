@@ -13,8 +13,10 @@
 #include "knscompat.h"
 #include "lattecorona.h"
 #include "layouts/importer.h"
+#include "layouts/manager.h"
 #include "session/shutdownstate.h"
 #include "templates/templatesmanager.h"
+#include "view/view.h"
 #include "wm/abstractwindowinterface.h"
 
 // C
@@ -637,6 +639,18 @@ int main(int argc, char **argv)
                     app.setProperty("latte_session_ending", false);
                     qunsetenv("LATTE_SESSION_ENDING");
                     sessionShutdownSawBlockingWindows = false;
+
+                    //! Restore the views that were hidden when the logout was announced.
+                    if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
+                        const auto views = manager->synchronizer()->currentViews();
+
+                        for (Latte::View *view : views) {
+                            if (!view->isVisible()) {
+                                view->setVisible(true);
+                            }
+                        }
+                    }
+
                     return;
                 }
 
@@ -654,6 +668,18 @@ int main(int argc, char **argv)
                 // Set the flag but do NOT quit — user may still cancel.
                 qInfo() << "[shutdown] isShuttingDown() = true; setting flag (not quitting yet).";
                 markSessionEnding();
+
+                //! KWin's session shutdown waits for every xdg_toplevel window
+                //! to close (org.kde.KWin.Session.closeWaylandWindows): it
+                //! closes the windows, waits 10s, shows a "Cancel Logout /
+                //! Log Out Anyway" notification, then waits indefinitely.
+                //! Latte dock views are xdg_toplevel windows, so unmap them
+                //! as soon as the logout is announced — otherwise the whole
+                //! shutdown blocks on the dock.  The poller re-shows them if
+                //! the user cancels the confirmation.
+                if (auto *manager = corona.layoutsManager(); manager && manager->synchronizer()) {
+                    manager->synchronizer()->hideAllViews();
+                }
             }
         });
 
