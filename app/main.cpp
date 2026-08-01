@@ -945,6 +945,11 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
         || msg.contains(QStringLiteral("qrc:/qt/qml/org/kde/plasma/components/ScrollView.qml"))
         || msg.contains(QStringLiteral("qrc:/qt/qml/org/kde/plasma/components/ScrollBar.qml"))
         || msg.startsWith(QStringLiteral("QFont::setPointSizeF: Point size <= 0 (0.000000), must be greater than 0"))
+        // Plasma theme SVG rendering — cosmetic only: an SVG element with
+        // invalid path data is truncated, and an oversized render request
+        // (transient dock geometry during startup) is refused.
+        || msg.startsWith(QStringLiteral("Invalid path data; path truncated."))
+        || msg == QStringLiteral("The requested buffer size is too big, ignoring")
         || (msg.contains(QStringLiteral("QModelIndex(")) && msg.contains(QStringLiteral("is not valid (expected valid)")))
         || (msg.contains(QStringLiteral("Member palette of the object")) && msg.contains(QStringLiteral("overrides a member of the base object")))
         // Property shadowing in KDE frameworks — not actionable in this project.
