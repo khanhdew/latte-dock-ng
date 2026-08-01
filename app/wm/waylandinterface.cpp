@@ -531,7 +531,7 @@ void WaylandInterface::setViewExtraFlags(QObject *view, bool isPanelWindow, Latt
         //!  1. View at the end MUST NOT HAVE FOCUSABILITY (issue example: clicking a single active task is not minimized)
         //!  2. View at the end MUST BE AT THE BOTTOM of windows stack
 
-        QTimer::singleShot(50, [this, surface]() {
+        QTimer::singleShot(50, [surface]() {
             surface->setRole(PlasmaShellSurface::Role::ToolTip);
         });
     }

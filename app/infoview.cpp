@@ -34,9 +34,10 @@ namespace Latte {
 
 InfoView::InfoView(Latte::Corona *corona, QString message, QScreen *screen, QWindow *parent)
     : QQuickView(parent),
-      m_corona(corona),
+      //! initialized in declaration order to satisfy -Wreorder on GCC 14
       m_message(message),
-      m_screen(screen)
+      m_screen(screen),
+      m_corona(corona)
 {
     m_id = QString::number(QRandomGenerator::global()->bounded(1000));
 

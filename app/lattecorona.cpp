@@ -344,20 +344,20 @@ namespace Latte {
 Corona::Corona(bool defaultLayoutOnStartup, QString layoutNameOnStartUp, QString addViewTemplateName, int userSetMemoryUsage, QObject *parent)
     : Plasma::Corona(parent),
       m_defaultLayoutOnStartup(defaultLayoutOnStartup),
-      m_startupAddViewTemplateName(addViewTemplateName),
       m_userSetMemoryUsage(userSetMemoryUsage),
       m_layoutNameOnStartUp(layoutNameOnStartUp),
+      m_startupAddViewTemplateName(addViewTemplateName),
       m_activitiesConsumer(new KActivities::Consumer(this)),
       m_screenPool(new ScreenPool(KSharedConfig::openConfig(), this)),
-      m_indicatorFactory(new Indicator::Factory(this)),
       m_universalSettings(new UniversalSettings(KSharedConfig::openConfig(), this)),
+      m_viewSettingsFactory(new ViewSettingsFactory(this)),
       m_globalShortcuts(new GlobalShortcuts(this)),
+      m_indicatorFactory(new Indicator::Factory(this)),
+      m_layoutsManager(new Layouts::Manager(this)),
+      m_templatesManager(new Templates::Manager(this)),
+      m_plasmaGeometries(new PlasmaExtended::ScreenGeometries(this)),
       m_plasmaScreenPool(new PlasmaExtended::ScreenPool(this)),
       m_themeExtended(new PlasmaExtended::Theme(KSharedConfig::openConfig(), this)),
-      m_viewSettingsFactory(new ViewSettingsFactory(this)),
-      m_templatesManager(new Templates::Manager(this)),
-      m_layoutsManager(new Layouts::Manager(this)),
-      m_plasmaGeometries(new PlasmaExtended::ScreenGeometries(this)),
       m_dialogShadows(new PanelShadows(this, QStringLiteral("dialogs/background")))
 {
     connect(qApp, &QApplication::aboutToQuit, this, &Corona::onAboutToQuit);
@@ -1193,7 +1193,7 @@ void Corona::quitApplication()
     });
 
     //! give the time for the views to hide themselves
-    QTimer::singleShot(800, [this]() {
+    QTimer::singleShot(800, []() {
         qGuiApp->quit();
     });
 }

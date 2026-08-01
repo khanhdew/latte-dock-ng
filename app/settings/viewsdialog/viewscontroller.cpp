@@ -45,10 +45,10 @@ namespace Controller {
 Views::Views(Settings::Handler::ViewsHandler *parent)
     : QObject(parent),
       m_handler(parent),
-      m_model(new Model::Views(this, m_handler->corona())),
-      m_proxyModel(new QSortFilterProxyModel(this)),
       m_view(m_handler->ui()->viewsTable),
-      m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("ViewsDialog")))
+      m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("ViewsDialog"))),
+      m_model(new Model::Views(this, m_handler->corona())),
+      m_proxyModel(new QSortFilterProxyModel(this))
 {
     loadConfig();
     m_proxyModel->setSourceModel(m_model);
@@ -937,7 +937,7 @@ void Views::save()
     }
 
     //! remove deprecated views from external layouts that must be removed because of Cut->Paste Action
-    for (const auto vid : cuttedpastedviews.keys()) {
+    for (const QString &vid : cuttedpastedviews.keys()) {
         bool viewidisinteger{true};
         int vid_int = cuttedpastedviews[vid].originView().toInt(&viewidisinteger);
         QString vid_str = cuttedpastedviews[vid].originView();
@@ -962,7 +962,7 @@ void Views::save()
     }
 
     //! move active views between different active layouts
-    for (const auto vid : cuttedpastedactiveviews.keys()) {
+    for (const QString &vid : cuttedpastedactiveviews.keys()) {
         Data::View pastedactiveview = cuttedpastedactiveviews[vid];
         uint originviewid = pastedactiveview.originView().toUInt();
         CentralLayout *origin = originLayout(pastedactiveview);
@@ -999,7 +999,7 @@ void Views::save()
     }
 
     //! update model for newly added views
-    for (const auto vid : newviewsresponses.keys()) {
+    for (const QString &vid : newviewsresponses.keys()) {
         m_model->setOriginalView(vid, newviewsresponses[vid]);
     }
 

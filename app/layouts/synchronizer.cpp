@@ -503,7 +503,7 @@ void Synchronizer::pauseLayout(QString layoutName)
             for (const auto &activityid : appliedactivities) {
                 //! Stopping the activities must be done asynchronous because otherwise
                 //! the activity manager cant close multiple activities
-                QTimer::singleShot(i * 1000, [this, activityid]() {
+                QTimer::singleShot(i * 1000, [activityid]() {
                     // stopActivity removed in KF6 PlasmaActivities; activities are always running
                 });
 
@@ -946,7 +946,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
         }
     }
 
-    for (const auto lname : preloadedLayouts) {
+    for (const auto &lname : preloadedLayouts) {
         if (!layoutNamesToLoad.contains(lname)) {
             layoutNamesToUnload << lname;
         }
@@ -1010,7 +1010,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
 
     //! hide layouts that will be removed in the end
     if (!layoutNamesToUnload.isEmpty()) {
-        for (const auto layoutname : layoutNamesToUnload) {
+        for (const auto &layoutname : layoutNamesToUnload) {
             Q_EMIT currentLayoutIsSwitching(layoutname);
         }
 

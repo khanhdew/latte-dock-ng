@@ -50,11 +50,11 @@ namespace Controller {
 Layouts::Layouts(Settings::Handler::TabLayouts *parent)
     : QObject(parent),
       m_handler(parent),
-      m_model(new Model::Layouts(this, m_handler->corona())),
-      m_proxyModel(new QSortFilterProxyModel(this)),
       m_view(m_handler->ui()->layoutsView),
       m_headerView(new Settings::Layouts::HeaderView(Qt::Horizontal, m_handler->dialog())),
-      m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("TabLayouts")))
+      m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("TabLayouts"))),
+      m_model(new Model::Layouts(this, m_handler->corona())),
+      m_proxyModel(new QSortFilterProxyModel(this))
 {
     m_templatesKeeper = new Settings::Part::TemplatesKeeper(this, m_handler->corona());
 
@@ -169,7 +169,7 @@ bool Layouts::layoutsAreChanged() const
 
 bool Layouts::modeIsChanged() const
 {
-    return m_model - modeIsChanged();
+    return m_model->modeIsChanged();
 }
 
 void Layouts::setOriginalInMultipleMode(const bool &inmultiple)
@@ -1085,7 +1085,6 @@ void Layouts::storeColumnWidths(bool inMultipleMode)
 void Layouts::onNameDuplicatedFrom(const QString &provenId, const QString &trialId)
 {
     //! duplicated layout name
-    int pRow = rowForId(provenId);
     int tRow = rowForId(trialId);
 
     int originalRow = m_model->rowForId(provenId);

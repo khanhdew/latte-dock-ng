@@ -48,8 +48,8 @@ namespace Handler {
 TabLayouts::TabLayouts(Settings::Dialog::SettingsDialog *parent)
     : Generic(parent),
       m_parentDialog(parent),
-      m_corona(m_parentDialog->corona()),
       m_ui(m_parentDialog->ui()),
+      m_corona(m_parentDialog->corona()),
       m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")).group(QStringLiteral("TabLayouts")))
 {
     //! load first the layouts view column widths
@@ -293,7 +293,7 @@ void TabLayouts::initLayoutTemplatesSubMenu()
         openTemplatesDirectory->setToolTip(i18n("Open templates directory"));
         openTemplatesDirectory->setIcon(QIcon::fromTheme(QStringLiteral("edit")));
 
-        connect(openTemplatesDirectory, &QAction::triggered, this, [this]() {
+        connect(openTemplatesDirectory, &QAction::triggered, this, []() {
             KIO::highlightInFileManager(QList<QUrl>({QUrl::fromLocalFile(Latte::configPath() + QLatin1String("/latte/templates/Dock.layout.latte"))}));
         });
     }

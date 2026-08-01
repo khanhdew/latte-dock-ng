@@ -40,15 +40,6 @@
 
 namespace Latte {
 
-namespace {
-bool isSeparatorPluginId(const QString &pluginId)
-{
-    return pluginId == QLatin1String(Latte::PluginId::kSeparator)
-           || pluginId == QLatin1String(Latte::PluginId::kSpacer)
-           || pluginId == QLatin1String(Latte::PluginId::kLegacySeparator);
-}
-}
-
 ContextMenuLayerQuickItem::ContextMenuLayerQuickItem(QQuickItem *parent) :
     QQuickItem(parent)
 {

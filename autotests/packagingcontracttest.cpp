@@ -162,7 +162,7 @@ void PackagingContractTest::distroInstallPackagingContractsStayInSync()
     QFile packagingCMake(QStringLiteral(LATTE_SOURCE_DIR "/cmake/LattePackaging.cmake"));
     QVERIFY(packagingCMake.open(QFile::ReadOnly));
     const QString packagingCMakeSource = QString::fromUtf8(packagingCMake.readAll());
-    QVERIFY(packagingCMakeSource.contains(QStringLiteral("kf6-kcmutils")));
+    QVERIFY(packagingCMakeSource.contains(QStringLiteral("libKF6KCMUtils.so.6")));
     QVERIFY(packagingCMakeSource.contains(QStringLiteral("qml6-module-org-kde-kcmutils")));
 }
 

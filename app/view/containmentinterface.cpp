@@ -2043,7 +2043,6 @@ QQmlPropertyMap *ContainmentInterface::appletConfiguration(const Plasma::Applet 
 
     PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(const_cast<Plasma::Applet *>(applet));
     bool isSubContainment = Layouts::Storage::self()->isSubContainment(m_view->corona(), applet); //we use corona() to make sure that returns true even when it is first created from user
-    int currentAppletId = applet->id();
     QQmlPropertyMap *configuration{nullptr};
 
     if (ai) {
@@ -2101,7 +2100,6 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
         return;
     }
 
-    const int addedAppletId = applet->id();
     const QString pluginId = pluginIdFromMetaData(applet->pluginMetaData());
 
     // Check for a pending insertion index set by View::handlePlasmoidDrop.

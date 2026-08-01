@@ -651,8 +651,6 @@ void View::showConfigurationInterface(Plasma::Applet *applet)
         }
     }
 
-    bool delayConfigView = false;
-
     if (c && containment() && c->isContainment() && c->id() == containment()->id()) {
         m_primaryConfigView = m_corona->viewSettingsFactory()->primaryConfigView(this);
         applyActivitiesToWindows();

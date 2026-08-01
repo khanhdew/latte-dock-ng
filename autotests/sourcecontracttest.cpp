@@ -1301,7 +1301,7 @@ void SourceContractTest::cmakePackagingConfigLivesInModule()
     QVERIFY(module.open(QFile::ReadOnly));
     const QString moduleSource = QString::fromUtf8(module.readAll());
     QVERIFY(moduleSource.contains(QStringLiteral("set(CPACK_PACKAGE_NAME \"latte-dock-ng\")")));
-    QVERIFY(moduleSource.contains(QStringLiteral("set(CPACK_RPM_PACKAGE_REQUIRES \"kf6-kirigami, kf6-kcmutils, kf6-knewstuff\")")));
+    QVERIFY(moduleSource.contains(QStringLiteral("set(CPACK_RPM_PACKAGE_REQUIRES \"libKirigami.so.6, libKF6KCMUtils.so.6, libKF6NewStuffCore.so.6\")")));
     QVERIFY(moduleSource.contains(QStringLiteral("set(CPACK_DEBIAN_PACKAGE_DEPENDS \"qml6-module-org-kde-kirigami, qml6-module-org-kde-kcmutils, qml6-module-org-kde-newstuff\")")));
     QVERIFY(moduleSource.contains(QStringLiteral("include(CPack)")));
 

@@ -171,7 +171,7 @@ void ViewsHandler::initViewTemplatesSubMenu()
         openTemplatesDirectory->setToolTip(i18n("Open templates directory"));
         openTemplatesDirectory->setIcon(QIcon::fromTheme(QStringLiteral("edit")));
 
-        connect(openTemplatesDirectory, &QAction::triggered, this, [this]() {
+        connect(openTemplatesDirectory, &QAction::triggered, this, []() {
             KIO::highlightInFileManager(QList<QUrl>({QUrl::fromLocalFile(Latte::configPath() + QLatin1String("/latte/templates/Dock.view.latte"))}));
         });
     }

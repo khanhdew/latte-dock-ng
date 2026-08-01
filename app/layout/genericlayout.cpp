@@ -78,7 +78,7 @@ void GenericLayout::unloadContainments()
 
     //!identify subcontainments and unload them first
     for (const auto containment : m_containments) {
-        if (Plasma::Applet *parentApplet = qobject_cast<Plasma::Applet *>(containment->parent())) {
+        if (qobject_cast<Plasma::Applet *>(containment->parent())) {
             subcontainments.append(containment);
         }
     }
@@ -1016,8 +1016,8 @@ bool GenericLayout::initContainments()
             //! in second pass we load main dock and panel containments
             //! this way subcontainments will be always available to find when the layout is activating
             //! for example during startup that clones must be created and subcontainments should be taken into account
-            if ((pass == 1 && Layouts::Storage::self()->isLatteContainment(containment)
-                 || (pass == 2 && !Layouts::Storage::self()->isLatteContainment(containment)))) {
+            if ((pass == 1 && Layouts::Storage::self()->isLatteContainment(containment))
+                || (pass == 2 && !Layouts::Storage::self()->isLatteContainment(containment))) {
                 continue;
             }
 
@@ -1147,7 +1147,7 @@ void GenericLayout::recreateView(Plasma::Containment *containment, bool delayed)
 
         //! step:2 add the new latteview
         connect(view, &QObject::destroyed, this, [this, containment]() {
-            auto view = m_latteViews.take(containment);
+            m_latteViews.take(containment);
             QTimer::singleShot(250, this, [this, containment]() {
                 if (!m_latteViews.contains(containment)) {
                     qCDebug(latteLayout) << "recreate - step 2: adding dock for containment:" << containment->id();

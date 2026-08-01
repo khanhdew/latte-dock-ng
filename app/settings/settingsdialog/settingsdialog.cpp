@@ -46,8 +46,8 @@ namespace Dialog {
 
 SettingsDialog::SettingsDialog(QWidget *parent, Latte::Corona *corona)
     : GenericDialog(parent),
-      m_ui(new Ui::SettingsDialog),
       m_corona(corona),
+      m_ui(new Ui::SettingsDialog),
       m_storage(KConfigGroup(KSharedConfig::openConfig(), QStringLiteral("LatteSettingsDialog")))
 {
     setAttribute(Qt::WA_DeleteOnClose, true);

@@ -448,7 +448,6 @@ Importer::LatteFileVersion Importer::fileVersion(QString file)
 
     bool version2rc = false;
     bool version2LatteDir = false;
-    bool version2layout = false;
 
     archive.directory()->copyTo(archiveTempDir.path());
 
@@ -479,7 +478,7 @@ Importer::LatteFileVersion Importer::fileVersion(QString file)
         if (version == 1) {
             version1applets = true;
         } else if (version == 2) {
-            version2layout = true;
+            //! version 2 applets layout marker; version2layout is not used
         }
     }
 

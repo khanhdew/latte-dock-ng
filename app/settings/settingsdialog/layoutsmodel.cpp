@@ -243,16 +243,6 @@ bool Layouts::removeRows(int row, int count, const QModelIndex &parent)
     int lastRow = row + count - 1;
 
     if (count > 0 && m_layoutsTable.rowExists(firstRow) && (m_layoutsTable.rowExists(lastRow))) {
-        bool freeActivitiesLayoutIsRemoved{false};
-
-        for (int i = firstRow; i <= lastRow; ++i) {
-            if (m_layoutsTable[i].activities.contains(Latte::Data::Layout::FREEACTIVITIESID)) {
-                //! we need to reassign it properly
-                freeActivitiesLayoutIsRemoved = true;
-                break;
-            }
-        }
-
         beginRemoveRows(QModelIndex(), firstRow, lastRow);
 
         for (int i = 0; i < count; ++i) {
@@ -380,7 +370,6 @@ QVariant Layouts::headerData(int section, Qt::Orientation orientation, int role)
 Qt::ItemFlags Layouts::flags(const QModelIndex &index) const
 {
     const int column = index.column();
-    const int row = index.row();
 
     auto flags = QAbstractTableModel::flags(index);
 
