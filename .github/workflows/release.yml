@@ -82,8 +82,14 @@ jobs:
                 echo SOURCE_INSTALL_OK
                 cpack -G \"\$GEN\"
                 if [ '${{ matrix.format }}' = 'deb' ]; then
-                  #! distinguish the two deb variants (trixie vs sid camp)
-                  cp /build/latte-dock-ng_*.deb /out/latte-dock-ng_\"\$VERSION\"-1_${{ matrix.distro }}_amd64.deb
+                  #! The testing/sid variant keeps the plain name (rolling
+                  #! is the default target); only the trixie variant
+                  #! carries the distro suffix.
+                  if [ '${{ matrix.distro }}' = 'debian' ]; then
+                    cp /build/latte-dock-ng_*.deb /out/latte-dock-ng_\"\$VERSION\"-1_debian_amd64.deb
+                  else
+                    cp /build/latte-dock-ng_*.deb /out/
+                  fi
                 else
                   cp /build/latte-dock-ng*.* /out/
                 fi
@@ -132,7 +138,11 @@ jobs:
             latte-build-${{ matrix.distro }} \
             bash -c "
               set -e
-              deb_path=\$(ls /out/latte-dock-ng_*_${{ matrix.distro }}_amd64.deb | head -1)
+              if [ '${{ matrix.distro }}' = 'debian' ]; then
+                deb_path=\$(ls /out/latte-dock-ng_*_debian_amd64.deb | head -1)
+              else
+                deb_path=\$(ls /out/latte-dock-ng_*_amd64.deb | grep -v _debian_ | head -1)
+              fi
               echo '== Versioned deps (must match the libplasma camp of this distro) =='
               dpkg-deb -f \"\$deb_path\" Depends | grep -E 'libplasma6|libplasma7|libqt6core|libc6'
               echo '== Install (apt resolves Depends from the distro repos) =='

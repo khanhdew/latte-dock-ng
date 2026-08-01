@@ -8,8 +8,8 @@ Installation
 > soname changed from 6 to 7 between Plasma 6.5 and 6.6 (Debian package
 > `libplasma6` → `libplasma7`), which splits the supported range into two
 > binary-incompatible camps:
+> - **`..._amd64.deb`** (plain name) — built on **Debian sid/forky**, links `libplasma7`; for **Debian testing / sid and Ubuntu 26.04+**.
 > - **`..._debian_amd64.deb`** — built on **Debian 13 (trixie)**, links `libplasma6`; for **Debian 13 (stable)**.
-> - **`..._debian-sid_amd64.deb`** — built on **Debian sid/forky**, links `libplasma7`; for **Debian testing / sid and Ubuntu 26.04+**.
 > Do not build either variant on a newer distro than its target — versioned
 > dependencies (`dpkg-shlibdeps`) would raise the lower bound and break
 > installation.
