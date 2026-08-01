@@ -35,6 +35,11 @@ endif()
 
 # RPM
 set(CPACK_RPM_PACKAGE_NAME "latte-dock-ng")
+# The built RPM requires glibc >= 2.34 (__libc_start_main@GLIBC_2.34 is a crt1
+# artifact of every modern toolchain, so the floor cannot be lowered by
+# switching build hosts). This never blocks a Plasma 6.3+ distro — the oldest
+# of them (Mageia 10) ships glibc 2.38. openSUSE Leap 15.x is unsupported for
+# shipping Plasma 5.27, not because of glibc.
 # %{?dist} appends the build distro to the release (e.g. 1.fc44), keeping the
 # NEVRA distinct when the same version is packaged for different distros
 # (Fedora/openSUSE). If a release must ever be re-issued for the same version

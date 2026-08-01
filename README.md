@@ -85,6 +85,24 @@ Minimum requirements:
  Wayland::Client
  LayerShellQt >= 6.0.0
 ```
+
+### Binary packages (GitHub Releases)
+
+Prebuilt packages are attached to every
+[GitHub release](https://github.com/ruizhi-lab/latte-dock-ng/releases):
+
+- **`.deb`** — built on Debian 13 (trixie); installable on Debian 13+ and Ubuntu 26.04+
+- **`.rpm`** — built on Fedora 44; installable on any RPM distro shipping
+  Plasma 6.3+ and glibc >= 2.34: Fedora 42+, openSUSE Tumbleweed/Leap 16,
+  Mageia 10+
+- **`pkg.tar.zst`** — Arch Linux
+
+The RPM requires glibc >= 2.34, a toolchain artifact
+(`__libc_start_main@GLIBC_2.34` from the build host's crt1) present in every
+modern build. It never blocks a Plasma 6.3+ distro — the oldest of them
+(Mageia 10) ships glibc 2.38. openSUSE Leap 15.x is **not** supported: it
+ships Plasma 5.27, which predates the Plasma 6.3 requirement.
+
 ### From my personal gentoo overlay for Gentoo Linux
 
 ```bash
