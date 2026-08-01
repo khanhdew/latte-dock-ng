@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # save/restore the type=gha docker build cache
 
 jobs:
   package:
@@ -31,8 +32,22 @@ jobs:
       - name: Set version
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build Docker image (${{ matrix.distro }})
-        run: docker build -t latte-build-${{ matrix.distro }} --build-arg USE_MIRRORS=false -f docker/${{ matrix.dockerfile }} docker/
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/
+          file: docker/${{ matrix.dockerfile }}
+          build-args: USE_MIRRORS=false
+          tags: latte-build-${{ matrix.distro }}
+          load: true
+          provenance: false
+          # Cache the dependency-install layers between runs, scoped per
+          # distro so the matrix entries do not evict each other's cache.
+          cache-from: type=gha,scope=${{ matrix.distro }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.distro }}
 
       - name: Build and package (${{ matrix.distro }})
         run: |
@@ -57,11 +72,44 @@ jobs:
               fi
             "
 
+      - name: Smoke test RPM
+        if: matrix.format == 'rpm'
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/dist:/out:ro \
+            latte-build-${{ matrix.distro }} \
+            bash -c "
+              set -e
+              rpm_path=\$(ls /out/latte-dock-ng-*.rpm | head -1)
+              echo '== Cross-distro QML deps (SONAMEs, not package names) =='
+              rpm -qpR \"\$rpm_path\" | grep -E 'libKirigami\\.so\\.6|libKF6KCMUtils\\.so\\.6|libKF6NewStuffCore\\.so\\.6'
+              echo '== File list sanity =='
+              rpm -qpl \"\$rpm_path\" | grep -E '/bin/latte-dock-ng\$|/share/applications/org.kde.latte-dock.desktop\$|/qt6/qml/org/kde/latte/core/qmldir\$|/share/icons/hicolor/'
+              echo '== Install (unresolvable Requires fails here) =='
+              dnf install -y --setopt=install_weak_deps=False \"\$rpm_path\"
+              echo '== rpmlint (errors are fatal, warnings informational) =='
+              LC_ALL=C rpmlint \"\$rpm_path\" | tee /tmp/rpmlint.log
+              ! grep -q 'E: ' /tmp/rpmlint.log
+              echo '== Launch (headless) =='
+              set +e
+              start=\$(date +%s)
+              out=\$(QT_QPA_PLATFORM=offscreen timeout 30 latte-dock-ng 2>&1)
+              rc=\$?
+              elapsed=\$(( \$(date +%s) - start ))
+              set -e
+              echo \"\$out\" | tail -3
+              echo \"exit code: \$rc, elapsed: \${elapsed}s\"
+              # The Wayland-only build must reach the platform gate: exit 1
+              # after its 10x500ms retry loop. Anything else (127 missing lib,
+              # 124 hang, 139 crash, or a fast exit) means the package is broken.
+              [ \$rc -eq 1 ] || { echo 'unexpected exit code'; exit 1; }
+              [ \$elapsed -ge 4 ] || { echo 'exited before the platform retry loop completed'; exit 1; }
+            "
+
       - uses: actions/upload-artifact@v4
         with:
           name: package-${{ matrix.distro }}
           path: dist/
-
 
   release:
     name: Create Release

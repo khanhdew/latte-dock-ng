@@ -9,6 +9,9 @@
 build*/
 /cmake-build*
 
+# package artifacts
+/dist/
+
 .DS_Store
 
 # backup files
