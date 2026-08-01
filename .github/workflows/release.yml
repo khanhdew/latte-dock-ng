@@ -74,6 +74,12 @@ jobs:
                 GEN=\$([ '${{ matrix.format }}' = 'rpm' ] && echo RPM || echo DEB)
                 cmake /src -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DVERSION=\"\$VERSION\"
                 cmake --build . --parallel \$(nproc)
+                #! source-install verification on this distro: the install
+                #! must land the binary and the desktop file
+                cmake --install .
+                test -x /usr/bin/latte-dock-ng
+                test -f /usr/share/applications/org.kde.latte-dock.desktop
+                echo SOURCE_INSTALL_OK
                 cpack -G \"\$GEN\"
                 if [ '${{ matrix.format }}' = 'deb' ]; then
                   #! distinguish the two deb variants (trixie vs sid camp)
@@ -114,6 +120,60 @@ jobs:
               # The Wayland-only build must reach the platform gate: exit 1
               # after its 10x500ms retry loop. Anything else (127 missing lib,
               # 124 hang, 139 crash, or a fast exit) means the package is broken.
+              [ \$rc -eq 1 ] || { echo 'unexpected exit code'; exit 1; }
+              [ \$elapsed -ge 4 ] || { echo 'exited before the platform retry loop completed'; exit 1; }
+            "
+
+      - name: Smoke test DEB
+        if: matrix.format == 'deb'
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/dist:/out:ro \
+            latte-build-${{ matrix.distro }} \
+            bash -c "
+              set -e
+              deb_path=\$(ls /out/latte-dock-ng_*_${{ matrix.distro }}_amd64.deb | head -1)
+              echo '== Versioned deps (must match the libplasma camp of this distro) =='
+              dpkg-deb -f \"\$deb_path\" Depends | grep -E 'libplasma6|libplasma7|libqt6core|libc6'
+              echo '== Install (apt resolves Depends from the distro repos) =='
+              apt-get update -qq
+              DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \"\$deb_path\"
+              echo '== Launch (headless) =='
+              set +e
+              start=\$(date +%s)
+              out=\$(QT_QPA_PLATFORM=offscreen timeout 30 latte-dock-ng 2>&1)
+              rc=\$?
+              elapsed=\$(( \$(date +%s) - start ))
+              set -e
+              echo \"\$out\" | tail -3
+              echo \"exit code: \$rc, elapsed: \${elapsed}s\"
+              # The Wayland-only build must reach the platform gate: exit 1
+              # after its 10x500ms retry loop. Anything else means a broken
+              # package (missing lib, hang, crash, or fast exit).
+              [ \$rc -eq 1 ] || { echo 'unexpected exit code'; exit 1; }
+              [ \$elapsed -ge 4 ] || { echo 'exited before the platform retry loop completed'; exit 1; }
+            "
+
+      - name: Smoke test Arch
+        if: matrix.format == 'pkg.tar.zst'
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/dist:/out:ro \
+            latte-build-${{ matrix.distro }} \
+            bash -c "
+              set -e
+              pkg_path=\$(ls /out/latte-dock-ng-*.pkg.tar.zst | head -1)
+              echo '== Install (pacman resolves deps from the repo) =='
+              pacman -U --noconfirm \"\$pkg_path\"
+              echo '== Launch (headless) =='
+              set +e
+              start=\$(date +%s)
+              out=\$(QT_QPA_PLATFORM=offscreen timeout 30 latte-dock-ng 2>&1)
+              rc=\$?
+              elapsed=\$(( \$(date +%s) - start ))
+              set -e
+              echo \"\$out\" | tail -3
+              echo \"exit code: \$rc, elapsed: \${elapsed}s\"
               [ \$rc -eq 1 ] || { echo 'unexpected exit code'; exit 1; }
               [ \$elapsed -ge 4 ] || { echo 'exited before the platform retry loop completed'; exit 1; }
             "
