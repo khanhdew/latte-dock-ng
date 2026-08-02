@@ -53,6 +53,8 @@ private Q_SLOTS:
     void autostartDefaultEnabledContracts();
     void desktopFileHasAutostartPhaseKey();
     void enableAutostartExitsImmediately();
+    void universalSettingsSelfHealsMissingAutostart();
+    void enableAutostartStagesUpdateAndWarns();
     void waylandCheckHasRetryMechanism();
     void enableAutostartUpdatesOutdatedFile();
     void autoSizeLoopsUseInequalityNotStrictEquality();
@@ -1410,6 +1412,39 @@ void SourceContractTest::enableAutostartExitsImmediately()
 
     const int returnZero = content.indexOf(QStringLiteral("return 0;"), exitCall);
     QVERIFY(returnZero > exitCall);
+}
+
+void SourceContractTest::universalSettingsSelfHealsMissingAutostart()
+{
+    //! Once the user has configured autostart (userConfiguredAutostart=true),
+    //! the first-run creation path never runs again.  If the desktop file
+    //! disappears later (uninstall, failed update), startup must restore it
+    //! instead of silently breaking autostart on every login.
+    QFile universalSettings(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.cpp"));
+    QVERIFY(universalSettings.open(QFile::ReadOnly));
+    const QString universalSource = QString::fromUtf8(universalSettings.readAll());
+
+    const int rememberDecision = universalSource.indexOf(
+                                     QStringLiteral("m_universalGroup.writeEntry(QStringLiteral(\"userConfiguredAutostart\"), true);"));
+    QVERIFY(rememberDecision >= 0);
+
+    //! Self-heal call must come after the first-run decision is remembered,
+    //! so the recreate path is the one for a configured-but-missing entry.
+    const int selfHealCall = universalSource.indexOf(QStringLiteral("setAutostart(true);"), rememberDecision);
+    QVERIFY(selfHealCall > rememberDecision);
+}
+
+void SourceContractTest::enableAutostartStagesUpdateAndWarns()
+{
+    //! Updating an outdated autostart entry must stage the replacement
+    //! before removing the working file, so a failed copy cannot delete
+    //! the entry.  Failures must be logged, not silent.
+    QFile importer(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
+    QVERIFY(importer.open(QFile::ReadOnly));
+    const QString content = QString::fromUtf8(importer.readAll());
+
+    QVERIFY(content.contains(QStringLiteral("QFile::rename")));
+    QVERIFY(content.contains(QStringLiteral("qCWarning")));
 }
 
 void SourceContractTest::waylandCheckHasRetryMechanism()

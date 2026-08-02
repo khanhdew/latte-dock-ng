@@ -76,6 +76,12 @@ void UniversalSettings::load()
 
         setAutostart(true);
         m_universalGroup.writeEntry(QStringLiteral("userConfiguredAutostart"), true);
+    } else if (autostartUserSet && !autostart()) {
+        //! autostart was configured before but the desktop file is missing
+        //! (removed by an uninstall, depclean or a failed update); restore it
+        //! so autostart cannot silently break on every login again.
+        qCWarning(latteApp) << "Autostart desktop file is missing while autostart is configured; recreating it.";
+        setAutostart(true);
     }
 
     //! init screen scales

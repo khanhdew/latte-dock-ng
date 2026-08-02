@@ -101,7 +101,18 @@ void enableAutostart(const QString &configDir, const QString &sourceDesktopFile)
                 return; // up to date
             }
 
-            QFile::remove(autostartFile);
+            //! Stage the replacement next to the working file so a failed
+            //! copy can never delete the autostart entry.
+            const QString stagedFile = autostartFile + QStringLiteral(".new");
+            QFile::remove(stagedFile);
+
+            if (QFile::copy(sourceDesktopFile, stagedFile)) {
+                QFile::remove(autostartFile);
+                QFile::rename(stagedFile, autostartFile);
+            } else {
+                QFile::remove(stagedFile);
+            }
+            return;
         }
 
         QFile::copy(sourceDesktopFile, autostartFile);
@@ -150,6 +161,8 @@ private Q_SLOTS:
     void enableRemovesDeprecatedFile();
     void enableUpdatesOutdatedAutostartFile();
     void enableSkipsWhenUpToDate();
+    void updatePreservesExistingFileWhenCopyFails();
+    void enableWithMissingSourceKeepsExistingFile();
 };
 
 void ImporterLogicTest::nameStripsPathAndExtension()
@@ -392,6 +405,71 @@ void ImporterLogicTest::enableSkipsWhenUpToDate()
     QFileInfo secondInfo(ImporterLogic::autostartFilePath(configDir.path()));
     // File should NOT have been modified (skipped because up-to-date)
     QCOMPARE(secondInfo.lastModified(), firstMtime);
+}
+
+void ImporterLogicTest::updatePreservesExistingFileWhenCopyFails()
+{
+    QTemporaryDir configDir;
+    QTemporaryDir sourceDir;
+
+    const QString autostartDir = configDir.path() + QStringLiteral("/autostart");
+    QDir().mkpath(autostartDir);
+
+    // Create the existing autostart entry first, then a newer source file
+    const QString autostartPath = ImporterLogic::autostartFilePath(configDir.path());
+    {
+        QFile old(autostartPath);
+        QVERIFY(old.open(QFile::WriteOnly));
+        old.write("[Desktop Entry]\nExec=/usr/bin/latte-dock-ng\nOLD CONTENT\n");
+        old.close();
+    }
+    QTest::qSleep(1100);
+
+    // Create a source file that is newer than the existing autostart entry
+    const QString sourcePath = sourceDir.path() + QStringLiteral("/org.kde.latte-dock.desktop");
+    {
+        QFile source(sourcePath);
+        QVERIFY(source.open(QFile::WriteOnly));
+        source.write("[Desktop Entry]\nExec=/usr/bin/latte-dock-ng\nX-KDE-autostart-phase=2\n");
+        source.close();
+    }
+
+    // Make the source unreadable so the replacement copy fails
+    QFile source(sourcePath);
+    QVERIFY(source.setPermissions(QFileDevice::Permissions()));
+
+    ImporterLogic::enableAutostart(configDir.path(), sourcePath);
+
+    // A failed update must never delete the working autostart entry
+    QFile kept(autostartPath);
+    QVERIFY(kept.exists());
+    QVERIFY(kept.open(QFile::ReadOnly));
+    const QString content = QString::fromUtf8(kept.readAll());
+    QVERIFY(content.contains(QStringLiteral("OLD CONTENT")));
+}
+
+void ImporterLogicTest::enableWithMissingSourceKeepsExistingFile()
+{
+    QTemporaryDir configDir;
+
+    const QString autostartDir = configDir.path() + QStringLiteral("/autostart");
+    QDir().mkpath(autostartDir);
+
+    const QString autostartPath = ImporterLogic::autostartFilePath(configDir.path());
+    {
+        QFile old(autostartPath);
+        QVERIFY(old.open(QFile::WriteOnly));
+        old.write("[Desktop Entry]\nExec=/usr/bin/latte-dock-ng\nOLD CONTENT\n");
+        old.close();
+    }
+
+    // A missing source (e.g. package temporarily uninstalled) must not
+    // remove the existing autostart entry.
+    ImporterLogic::enableAutostart(configDir.path(),
+                                   QStringLiteral("/nonexistent/org.kde.latte-dock.desktop"));
+
+    QFile kept(autostartPath);
+    QVERIFY(kept.exists());
 }
 
 QTEST_MAIN(ImporterLogicTest)

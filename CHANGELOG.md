@@ -2,6 +2,23 @@
 
 All notable changes to Latte Dock NG are documented in this file.
 
+## [v1.2.36] - 2026-08-02
+
+### Fixed
+- Autostart no longer breaks silently when the XDG autostart desktop
+  file disappears (e.g. removed by a package uninstall, depclean or a
+  failed update): startup now restores it and logs a warning instead of
+  leaving the dock unlaunched on every login.
+- Autostart updates are staged: the replacement file is copied next to
+  the working entry and swapped in only after a successful copy, so a
+  failed copy can never delete the existing entry.
+- Autostart failures (missing system desktop file, failed copy) now log
+  warnings instead of failing silently.
+
+### Tests
+- New importer-logic and source-contract tests cover the autostart
+  self-heal and staged-update behavior.
+
 ## [v1.2.35] - 2026-08-02
 
 ### Fixed

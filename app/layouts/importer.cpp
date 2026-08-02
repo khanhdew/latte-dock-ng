@@ -547,6 +547,7 @@ void Importer::enableAutostart()
     QFile metaFile(metaFilePath);
 
     if (!metaFile.exists()) {
+        qCWarning(latteApp) << "Cannot enable autostart: system desktop file not found:" << metaFilePath;
         return;
     }
 
@@ -568,11 +569,24 @@ void Importer::enableAutostart()
             return;
         }
 
-        //! remove the outdated file so it can be replaced below
-        autostartFile.remove();
+        //! Stage the replacement next to the working file so a failed copy
+        //! can never delete the autostart entry.
+        const QString stagedFilePath = autostartFile.fileName() + QLatin1String(".new");
+        QFile::remove(stagedFilePath);
+
+        if (metaFile.copy(stagedFilePath)) {
+            autostartFile.remove();
+            QFile::rename(stagedFilePath, autostartFile.fileName());
+        } else {
+            QFile::remove(stagedFilePath);
+            qCWarning(latteApp) << "Failed to stage autostart update; keeping the existing entry.";
+        }
+        return;
     }
 
-    metaFile.copy(autostartFile.fileName());
+    if (!metaFile.copy(autostartFile.fileName())) {
+        qCWarning(latteApp) << "Failed to create autostart file:" << autostartFile.fileName();
+    }
 }
 
 void Importer::disableAutostart()
