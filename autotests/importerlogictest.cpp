@@ -425,18 +425,11 @@ void ImporterLogicTest::updatePreservesExistingFileWhenCopyFails()
     }
     QTest::qSleep(1100);
 
-    // Create a source file that is newer than the existing autostart entry
+    // Use a directory as the source: QFile::copy fails for directories
+    // regardless of the running user, so the failure mode is identical
+    // for local user runs and root CI containers.
     const QString sourcePath = sourceDir.path() + QStringLiteral("/org.kde.latte-dock.desktop");
-    {
-        QFile source(sourcePath);
-        QVERIFY(source.open(QFile::WriteOnly));
-        source.write("[Desktop Entry]\nExec=/usr/bin/latte-dock-ng\nX-KDE-autostart-phase=2\n");
-        source.close();
-    }
-
-    // Make the source unreadable so the replacement copy fails
-    QFile source(sourcePath);
-    QVERIFY(source.setPermissions(QFileDevice::Permissions()));
+    QVERIFY(QDir().mkdir(sourcePath));
 
     ImporterLogic::enableAutostart(configDir.path(), sourcePath);
 
