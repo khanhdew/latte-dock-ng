@@ -116,6 +116,21 @@ Item {
     readonly property bool lockZoom: !parabolicEffectIsSupported
                                      || appletBlocksParabolicEffect
                                      || (fastLayoutManager && applet && (fastLayoutManager.lockedZoomApplets.indexOf(applet.id)>=0))
+
+    //! User setting: when disabled, external applets (widgets) never enlarge
+    //! on hover — they keep their base size so their icons stay sharp (their
+    //! fixed layouts can only be scaled as a raster, which blurs the icon).
+    readonly property bool appletsZoomEnabled: plasmoid.configuration.appletsZoomEnabled
+    readonly property bool appletZoomIsLocked: lockZoom || !appletsZoomEnabled
+
+    //! Widgets with zoom disabled still relay the parabolic wave to their
+    //! neighbours but never apply a scale to themselves.
+    readonly property bool appletZoomMessagesEnabled: appletItem.parabolic.isEnabled
+                                                     && (!appletZoomIsLocked
+                                                         || isSeparator
+                                                         || isMarginsAreaSeparator
+                                                         || isHidden
+                                                         || externalAppletUsesFixedSlotSizing)
     readonly property bool userBlocksColorizing: appletBlocksColorizing
                                                  || (fastLayoutManager && applet && (fastLayoutManager.userBlocksColorizingApplets.indexOf(applet.id)>=0))
 
@@ -1775,9 +1790,9 @@ Item {
         active: isParabolicEnabled || isThinTooltipEnabled || hasParabolicMessagesEnabled
 
         //! in hidden state applets must pass on parabolic messages to neighbours
-        readonly property bool isParabolicEnabled: appletItem.parabolic.isEnabled && !lockZoom
+        readonly property bool isParabolicEnabled: appletItem.parabolic.isEnabled && !appletZoomIsLocked
         readonly property bool isThinTooltipEnabled: appletItem.thinTooltip.isEnabled && !isHidden
-        readonly property bool hasParabolicMessagesEnabled: appletItem.parabolic.isEnabled && (!lockZoom || isSeparator || isMarginsAreaSeparator || isHidden || externalAppletUsesFixedSlotSizing)
+        readonly property bool hasParabolicMessagesEnabled: appletZoomMessagesEnabled
 
         sourceComponent: ParabolicArea{}
 

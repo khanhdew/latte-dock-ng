@@ -2611,6 +2611,15 @@ msgstr "--- %"
 #, kde-format
 msgid "Zoom on hover"
 msgstr "滑鼠游標置於其上時縮放"
+#: shell/package/contents/configuration/pages/BehaviorConfig.qml:784
+#, kde-format
+msgid "Zoom widgets on hovering"
+msgstr "滑鼠懸停時放大Widget小部件"
+
+#: shell/package/contents/configuration/pages/BehaviorConfig.qml:785
+#, kde-format
+msgid "Enlarge external widgets (applets) when hovering them. When disabled, widgets keep their original size so their icons stay sharp, while task icons and launchers still zoom"
+msgstr "滑鼠懸停時放大外部小部件（Widget）。停用後小部件維持原始大小，圖示保持清晰，而任務圖示與啟動器仍會放大"
 
 #: shell/package/contents/configuration/pages/AppearanceConfig.qml:231
 #: shell/package/contents/configuration/pages/AppearanceConfig.qml:617

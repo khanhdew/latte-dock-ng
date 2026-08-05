@@ -33,6 +33,10 @@
     <entry name="zoomLevel" type="Int">
       <default>10</default>
     </entry>
+    <entry name="appletsZoomEnabled" type="Bool">
+      <default>true</default>
+      <label>whether external applets (widgets) are enlarged when hovering; when disabled they keep their original size so their icons stay sharp</label>
+    </entry>
     <entry name="iconSize" type="Int">
       <default>64</default>
     </entry>

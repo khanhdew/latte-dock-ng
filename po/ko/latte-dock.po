@@ -2636,6 +2636,15 @@ msgstr "---%"
 #, kde-format
 msgid "Zoom on hover"
 msgstr "마우스를 지나다닐 때 크기 조정"
+#: shell/package/contents/configuration/pages/BehaviorConfig.qml:784
+#, kde-format
+msgid "Zoom widgets on hovering"
+msgstr ""
+
+#: shell/package/contents/configuration/pages/BehaviorConfig.qml:785
+#, kde-format
+msgid "Enlarge external widgets (applets) when hovering them. When disabled, widgets keep their original size so their icons stay sharp, while task icons and launchers still zoom"
+msgstr ""
 
 #: shell/package/contents/configuration/pages/AppearanceConfig.qml:231
 #: shell/package/contents/configuration/pages/AppearanceConfig.qml:617

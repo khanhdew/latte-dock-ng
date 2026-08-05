@@ -178,7 +178,7 @@ Item {
     }
 
     function calculateParabolicScales(currentMousePosition){
-        if (parabolic.factor.zoom===1 || parabolic.restoreZoomIsBlocked) {
+        if (parabolic.factor.zoom===1 || parabolic.restoreZoomIsBlocked || appletItem.appletZoomIsLocked) {
             return;
         }
 
@@ -200,7 +200,8 @@ Item {
         if(appletItem && (appletItem.index === nIndex) /*&& !appletItem.containsMouse*/){ /*disable it in order to increase parabolic effect responsiveness*/
             if ((parabolicEffectIsSupported && !appletItem.originalAppletBehavior && !appletItem.communicator.indexerIsSupported)
                     && applet
-                    && (applet.status !== PlasmaCore.Types.HiddenStatus || appletItem.keepVisibleOnHiddenStatus)) {
+                    && (applet.status !== PlasmaCore.Types.HiddenStatus || appletItem.keepVisibleOnHiddenStatus)
+                    && !appletItem.appletZoomIsLocked) {
                 wrapper.zoomScale = Math.max(1, nScale);
             }
         }
