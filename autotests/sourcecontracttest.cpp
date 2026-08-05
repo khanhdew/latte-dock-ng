@@ -18,6 +18,10 @@ private Q_SLOTS:
     void compactAppletPopupSizingContractMovedToQmlSmokeTest();
     void applicationLauncherUsesFixedExternalSlot();
     void widgetsZoomCanBeDisabledIndependently();
+    void animationsSpeedFactorMapsToDurationMultipliers();
+    void effectsConfigAnimationButtonsMatchDurationValues();
+    void appletShadowFadesInsteadOfPoppingWhileWidgetsZoom();
+    void defaultTemplatesExcludeMailLauncher();
     void latteTasksExposesPlasmaLauncherApi();
     void latteDockDbusExportsLauncherApi();
     void plasmaKickerActionAddsLaunchersToLatteDock();
@@ -250,6 +254,79 @@ void SourceContractTest::widgetsZoomCanBeDisabledIndependently()
     QVERIFY(behaviorConfig.open(QFile::ReadOnly));
     const QString behaviorSource = QString::fromUtf8(behaviorConfig.readAll());
     QVERIFY(behaviorSource.contains(QStringLiteral("plasmoid.configuration.appletsZoomEnabled")));
+}
+
+void SourceContractTest::animationsSpeedFactorMapsToDurationMultipliers()
+{
+    // Issue #39: the containment speedFactor must map durationTime x1/x2/x3
+    // to 1x/2x/3x durations so the animation speed setting is actually
+    // perceptible, and the config default must be x1 (normal).
+    QFile animations(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/abilities/Animations.qml"));
+    QVERIFY(animations.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(animations.readAll());
+    QVERIFY(source.contains(QStringLiteral("case 1:")));
+    QVERIFY(source.contains(QStringLiteral("return 1.0;")));
+    QVERIFY(source.contains(QStringLiteral("case 2:")));
+    QVERIFY(source.contains(QStringLiteral("return 2.0;")));
+    QVERIFY(source.contains(QStringLiteral("case 3:")));
+    QVERIFY(source.contains(QStringLiteral("return 3.0;")));
+    QVERIFY(!source.contains(QStringLiteral("return 0.75;")));
+    QVERIFY(!source.contains(QStringLiteral("return 1.15;")));
+
+    QFile config(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/config/main.xml"));
+    QVERIFY(config.open(QFile::ReadOnly));
+    const QString configSource = QString::fromUtf8(config.readAll());
+    QVERIFY(configSource.contains(QStringLiteral("<default>1</default>")));
+}
+
+void SourceContractTest::effectsConfigAnimationButtonsMatchDurationValues()
+{
+    // Issue #39: the shell Effects settings x1/x2/x3 buttons must set the
+    // matching durationTime enum value (1/2/3) — they were previously
+    // inverted, so "x1" actually selected the slowest duration.
+    QFile effects(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/configuration/pages/EffectsConfig.qml"));
+    QVERIFY(effects.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(effects.readAll());
+
+    const int x1 = source.indexOf(QStringLiteral("text: i18n(\"x1\")"));
+    QVERIFY(x1 >= 0);
+    QVERIFY(source.mid(x1).contains(QStringLiteral("readonly property int duration: 1")));
+
+    const int x2 = source.indexOf(QStringLiteral("text: i18n(\"x2\")"));
+    QVERIFY(x2 >= 0);
+    QVERIFY(source.mid(x2).contains(QStringLiteral("readonly property int duration: 2")));
+
+    const int x3 = source.indexOf(QStringLiteral("text: i18n(\"x3\")"));
+    QVERIFY(x3 >= 0);
+    QVERIFY(source.mid(x3).contains(QStringLiteral("readonly property int duration: 3")));
+}
+
+void SourceContractTest::appletShadowFadesInsteadOfPoppingWhileWidgetsZoom()
+{
+    // Issue #38: Qt6 MultiEffect composites a full-color copy of its source,
+    // so while fixed-slot widgets zoom the effect would show the original-size
+    // copy through transparent icons. The shadow must fade out (not pop) so
+    // the zoom transition stays fluid.
+    QFile itemWrapper(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/ItemWrapper.qml"));
+    QVERIFY(itemWrapper.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(itemWrapper.readAll());
+    QVERIFY(source.contains(QStringLiteral("id: appletShadow")));
+    QVERIFY(source.contains(QStringLiteral("opacity: (wrapper.zoomScale === 1 || !appletItem.externalAppletUsesFixedSlotSizing) ? 1 : 0")));
+    QVERIFY(source.contains(QStringLiteral("Behavior on opacity")));
+}
+
+void SourceContractTest::defaultTemplatesExcludeMailLauncher()
+{
+    // The default layout templates must not include the mail launcher.
+    QFile layout(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/templates/Default.layout.latte"));
+    QVERIFY(layout.open(QFile::ReadOnly));
+    const QString layoutSource = QString::fromUtf8(layout.readAll());
+    QVERIFY(!layoutSource.contains(QStringLiteral("thunderbird")));
+
+    QFile dockView(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/templates/Default Dock.view.latte"));
+    QVERIFY(dockView.open(QFile::ReadOnly));
+    const QString dockSource = QString::fromUtf8(dockView.readAll());
+    QVERIFY(!dockSource.contains(QStringLiteral("thunderbird")));
 }
 
 void SourceContractTest::latteTasksExposesPlasmaLauncherApi()
