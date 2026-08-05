@@ -962,6 +962,9 @@ inline bool isPlasmaShutdownServiceActive()
 //! the session-ending marker on the signal handler side guarantees that
 inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    // `context` (function/line) is only printed in debug builds.
+    Q_UNUSED(context)
+
     if (msg.endsWith(
             QStringLiteral("QML Binding: Not restoring previous value because restoreMode has not been set.This behavior is deprecated.In Qt < 6.0 the default is Binding.RestoreBinding.In Qt >= 6.0 the default is Binding.RestoreBindingOrValue."))
         || msg.endsWith(
@@ -1012,7 +1015,9 @@ inline void filterDebugMessageOutput(QtMsgType type, const QMessageLogContext &c
         return;
     }
 
+#ifndef QT_NO_DEBUG
     const char *function = context.function ? context.function : "";
+#endif
 
     QString typeStr;
 
