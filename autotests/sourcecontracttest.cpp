@@ -236,6 +236,10 @@ void SourceContractTest::widgetsZoomCanBeDisabledIndependently()
     const QString source = QString::fromUtf8(appletItem.readAll());
     QVERIFY(source.contains(QStringLiteral("plasmoid.configuration.appletsZoomEnabled")));
     QVERIFY(source.contains(QStringLiteral("appletZoomIsLocked")));
+    // The lock must only apply to external widgets: Latte's own tasks
+    // plasmoid must keep relaying the parabolic wave so neighbouring task
+    // icons restore correctly at the widget boundary.
+    QVERIFY(source.contains(QStringLiteral("!appletsZoomEnabled && isExternalPlasmaApplet")));
 
     QFile parabolicArea(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/ParabolicArea.qml"));
     QVERIFY(parabolicArea.open(QFile::ReadOnly));

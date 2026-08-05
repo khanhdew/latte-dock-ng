@@ -117,20 +117,23 @@ Item {
                                      || appletBlocksParabolicEffect
                                      || (fastLayoutManager && applet && (fastLayoutManager.lockedZoomApplets.indexOf(applet.id)>=0))
 
-    //! User setting: when disabled, external applets (widgets) never enlarge
+    //! User setting: when disabled, external widgets (applets) never enlarge
     //! on hover — they keep their base size so their icons stay sharp (their
     //! fixed layouts can only be scaled as a raster, which blurs the icon).
+    //! Latte's own applets (tasks plasmoid, separators) are not widgets and
+    //! must keep relaying the parabolic wave so neighbouring task icons
+    //! restore correctly at the widget boundary.
     readonly property bool appletsZoomEnabled: plasmoid.configuration.appletsZoomEnabled
-    readonly property bool appletZoomIsLocked: lockZoom || !appletsZoomEnabled
+    readonly property bool appletZoomIsLocked: lockZoom
+                                               || (!appletsZoomEnabled && isExternalPlasmaApplet)
 
-    //! Widgets with zoom disabled still relay the parabolic wave to their
-    //! neighbours but never apply a scale to themselves.
+    //! Locked widgets are excluded from the parabolic wave entirely: they
+    //! neither zoom nor relay scales, so they act as a hard barrier and the
+    //! wave never "computes them in". Per-applet lockZoom keeps its original
+    //! relay semantics (fixed-slot applets relay).
     readonly property bool appletZoomMessagesEnabled: appletItem.parabolic.isEnabled
-                                                     && (!appletZoomIsLocked
-                                                         || isSeparator
-                                                         || isMarginsAreaSeparator
-                                                         || isHidden
-                                                         || externalAppletUsesFixedSlotSizing)
+                                                     && (!lockZoom || isSeparator || isMarginsAreaSeparator || isHidden || externalAppletUsesFixedSlotSizing)
+                                                     && (appletsZoomEnabled || !isExternalPlasmaApplet)
     readonly property bool userBlocksColorizing: appletBlocksColorizing
                                                  || (fastLayoutManager && applet && (fastLayoutManager.userBlocksColorizingApplets.indexOf(applet.id)>=0))
 
