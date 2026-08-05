@@ -457,7 +457,19 @@ Item{
                 && appletItem.environment.isGraphicsSystemAccelerated
                 && !appletColorizer.mustBeShown
                 && (appletItem.myView.itemShadow.isEnabled && !appletItem.communicator.indexerIsSupported)
+                && (wrapper.zoomScale === 1 || !appletItem.externalAppletUsesFixedSlotSizing)
 
+        //! Qt6 MultiEffect always composites a full-color copy of its source
+        //! together with the shadow. Its internal ShaderEffectSource captures
+        //! the applet at its logical (unscaled) size, so while fixed-slot
+        //! applets (Kickoff, Application Menu, Trash, …) zoom via a scale
+        //! transform the effect keeps rendering the original-size colored
+        //! copy + shadow behind the scaled applet. That duplicate is only
+        //! hidden by opaque icons; transparent icons (e.g. the Colloid theme)
+        //! show it through as ghosting (issue #38), so the shadow is disabled
+        //! while those zoom. Layout-grown applets (with a discoverable icon)
+        //! re-render their content at the zoomed size, so their texture always
+        //! matches and the shadow stays active even during the zoom.
         sourceComponent: MultiEffect{
             anchors.fill: parent
             shadowEnabled: true

@@ -101,6 +101,12 @@ Item {
     // digital clock enough slot width for their text content.
     property real externalAppletNaturalWidth: -1
     property real externalAppletNaturalHeight: -1
+    //! Applets whose own layout must not be reflowed during the parabolic
+    //! zoom keep a fixed slot and are scaled via a transform instead. This
+    //! covers Kickoff (popup stays resizable) and applets without a
+    //! discoverable icon / stable native sizing (e.g. the Application Menu,
+    //! the Trash widget): reflowing those during hover collapses their slot
+    //! and makes the icon vanish, so they must not use the layout-growth path.
     readonly property bool externalAppletUsesFixedSlotSizing: externalAppletDrawsAboveTasks
                                                              && !isSystray
                                                              && (isApplicationLauncherApplet
