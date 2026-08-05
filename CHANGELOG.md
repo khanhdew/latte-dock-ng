@@ -1,3 +1,35 @@
+## [v1.2.37] - 2026-08-05
+
+### Fixed
+- The animation speed setting (Effects > Animations, x1/x2/x3) is now
+  actually perceptible: the containment maps x1/x2/x3 to 1x/2x/3x
+  animation durations matching the plasmoid's standalone semantics, and
+  the inverted EffectsConfig buttons were corrected (issue #39).
+- Transparent icons (e.g. the Colloid theme) no longer show a ghost of
+  the original-size icon while a widget zooms: the applet drop shadow
+  now fades out smoothly during the zoom instead of rendering a
+  duplicated copy behind the scaled applet (issue #38).
+- Widgets whose zoom is disabled no longer participate in the parabolic
+  wave, so the task icon at the widget boundary restores its size
+  immediately when the mouse leaves.
+- Release builds no longer emit an unused-variable warning in the debug
+  message filter.
+
+### Added
+- New "Zoom widgets on hovering" option (Behavior > Items): when
+  disabled, external widgets keep their original size on hover so their
+  icons stay sharp, while task icons and launchers still zoom.
+- The default layout templates no longer include the mail (Thunderbird)
+  launcher.
+
+### Changed
+- The durationTime config default is now x1 (normal) instead of x2.
+
+### Tests
+- New source-contract tests cover the animation speed mapping, the
+  EffectsConfig button values, the applet shadow fade, the widget-zoom
+  option scope, and the default template launchers.
+
 # Changelog
 
 All notable changes to Latte Dock NG are documented in this file.
