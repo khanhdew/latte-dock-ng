@@ -101,6 +101,12 @@ Item {
     // digital clock enough slot width for their text content.
     property real externalAppletNaturalWidth: -1
     property real externalAppletNaturalHeight: -1
+    //! Applets whose own layout must not be reflowed during the parabolic
+    //! zoom keep a fixed slot and are scaled via a transform instead. This
+    //! covers Kickoff (popup stays resizable) and applets without a
+    //! discoverable icon / stable native sizing (e.g. the Application Menu,
+    //! the Trash widget): reflowing those during hover collapses their slot
+    //! and makes the icon vanish, so they must not use the layout-growth path.
     readonly property bool externalAppletUsesFixedSlotSizing: externalAppletDrawsAboveTasks
                                                              && !isSystray
                                                              && (isApplicationLauncherApplet
@@ -110,6 +116,24 @@ Item {
     readonly property bool lockZoom: !parabolicEffectIsSupported
                                      || appletBlocksParabolicEffect
                                      || (fastLayoutManager && applet && (fastLayoutManager.lockedZoomApplets.indexOf(applet.id)>=0))
+
+    //! User setting: when disabled, external widgets (applets) never enlarge
+    //! on hover — they keep their base size so their icons stay sharp (their
+    //! fixed layouts can only be scaled as a raster, which blurs the icon).
+    //! Latte's own applets (tasks plasmoid, separators) are not widgets and
+    //! must keep relaying the parabolic wave so neighbouring task icons
+    //! restore correctly at the widget boundary.
+    readonly property bool appletsZoomEnabled: plasmoid.configuration.appletsZoomEnabled
+    readonly property bool appletZoomIsLocked: lockZoom
+                                               || (!appletsZoomEnabled && isExternalPlasmaApplet)
+
+    //! Locked widgets are excluded from the parabolic wave entirely: they
+    //! neither zoom nor relay scales, so they act as a hard barrier and the
+    //! wave never "computes them in". Per-applet lockZoom keeps its original
+    //! relay semantics (fixed-slot applets relay).
+    readonly property bool appletZoomMessagesEnabled: appletItem.parabolic.isEnabled
+                                                     && (!lockZoom || isSeparator || isMarginsAreaSeparator || isHidden || externalAppletUsesFixedSlotSizing)
+                                                     && (appletsZoomEnabled || !isExternalPlasmaApplet)
     readonly property bool userBlocksColorizing: appletBlocksColorizing
                                                  || (fastLayoutManager && applet && (fastLayoutManager.userBlocksColorizingApplets.indexOf(applet.id)>=0))
 
@@ -1769,9 +1793,9 @@ Item {
         active: isParabolicEnabled || isThinTooltipEnabled || hasParabolicMessagesEnabled
 
         //! in hidden state applets must pass on parabolic messages to neighbours
-        readonly property bool isParabolicEnabled: appletItem.parabolic.isEnabled && !lockZoom
+        readonly property bool isParabolicEnabled: appletItem.parabolic.isEnabled && !appletZoomIsLocked
         readonly property bool isThinTooltipEnabled: appletItem.thinTooltip.isEnabled && !isHidden
-        readonly property bool hasParabolicMessagesEnabled: appletItem.parabolic.isEnabled && (!lockZoom || isSeparator || isMarginsAreaSeparator || isHidden || externalAppletUsesFixedSlotSizing)
+        readonly property bool hasParabolicMessagesEnabled: appletZoomMessagesEnabled
 
         sourceComponent: ParabolicArea{}
 

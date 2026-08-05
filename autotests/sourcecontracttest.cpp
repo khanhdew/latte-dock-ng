@@ -17,6 +17,7 @@ private Q_SLOTS:
     void plasmaVolumeBootstrapContractMovedToQmlSmokeTest();
     void compactAppletPopupSizingContractMovedToQmlSmokeTest();
     void applicationLauncherUsesFixedExternalSlot();
+    void widgetsZoomCanBeDisabledIndependently();
     void latteTasksExposesPlasmaLauncherApi();
     void latteDockDbusExportsLauncherApi();
     void plasmaKickerActionAddsLaunchersToLatteDock();
@@ -217,6 +218,38 @@ void SourceContractTest::applicationLauncherUsesFixedExternalSlot()
     QVERIFY(source.contains(QStringLiteral("isApplicationLauncherApplet")));
     QVERIFY(source.contains(QStringLiteral("org.kde.plasma.kickoff")));
     QVERIFY(source.contains(QStringLiteral("|| (!communicator.appletMainIconIsFound")));
+}
+
+void SourceContractTest::widgetsZoomCanBeDisabledIndependently()
+{
+    // The user-facing toggle that lets widgets stay sharp (no raster-scale
+    // zoom) while task icons/launchers keep zooming. It must exist in the
+    // containment config, be wired into the applet zoom lock, and be shown
+    // in the shell Behavior settings.
+    QFile configFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/config/main.xml"));
+    QVERIFY(configFile.open(QFile::ReadOnly));
+    const QString config = QString::fromUtf8(configFile.readAll());
+    QVERIFY(config.contains(QStringLiteral("appletsZoomEnabled")));
+
+    QFile appletItem(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItem.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(appletItem.readAll());
+    QVERIFY(source.contains(QStringLiteral("plasmoid.configuration.appletsZoomEnabled")));
+    QVERIFY(source.contains(QStringLiteral("appletZoomIsLocked")));
+    // The lock must only apply to external widgets: Latte's own tasks
+    // plasmoid must keep relaying the parabolic wave so neighbouring task
+    // icons restore correctly at the widget boundary.
+    QVERIFY(source.contains(QStringLiteral("!appletsZoomEnabled && isExternalPlasmaApplet")));
+
+    QFile parabolicArea(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/ParabolicArea.qml"));
+    QVERIFY(parabolicArea.open(QFile::ReadOnly));
+    const QString parabolicSource = QString::fromUtf8(parabolicArea.readAll());
+    QVERIFY(parabolicSource.contains(QStringLiteral("appletItem.appletZoomIsLocked")));
+
+    QFile behaviorConfig(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/configuration/pages/BehaviorConfig.qml"));
+    QVERIFY(behaviorConfig.open(QFile::ReadOnly));
+    const QString behaviorSource = QString::fromUtf8(behaviorConfig.readAll());
+    QVERIFY(behaviorSource.contains(QStringLiteral("plasmoid.configuration.appletsZoomEnabled")));
 }
 
 void SourceContractTest::latteTasksExposesPlasmaLauncherApi()

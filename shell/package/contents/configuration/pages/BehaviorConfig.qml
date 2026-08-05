@@ -779,6 +779,18 @@ PlasmaComponents.Page {
                     }
 
                     LatteComponents.CheckBox {
+                        id: appletsZoomChk
+                        Layout.maximumWidth: dialog.optionsWidth
+                        text: i18n("Zoom widgets on hovering")
+                        tooltip: i18n("Enlarge external widgets (applets) when hovering them. When disabled, widgets keep their original size so their icons stay sharp, while task icons and launchers still zoom")
+                        value: plasmoid.configuration.appletsZoomEnabled
+
+                        onClicked: {
+                            plasmoid.configuration.appletsZoomEnabled = !plasmoid.configuration.appletsZoomEnabled;
+                        }
+                    }
+
+                    LatteComponents.CheckBox {
                         id: mouseWheelChk
                         Layout.maximumWidth: dialog.optionsWidth
                         text: i18n("Expand popup through mouse wheel")

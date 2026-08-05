@@ -53,7 +53,12 @@ Item {
         // after Paraboli.sglClearZoom() signal has been triggered.
 
         onEntered: {
-            appletItem.parabolic.setCurrentParabolicItem(_parabolicArea);
+            // Locked widgets (widget zoom disabled) must not claim the
+            // current parabolic item: they are excluded from the wave, so
+            // the neighbouring task keeps a clean enter/exit cycle.
+            if (!appletItem.appletZoomIsLocked) {
+                appletItem.parabolic.setCurrentParabolicItem(_parabolicArea);
+            }
 
             if (isParabolicEnabled) {
                 var vIndex = appletItem.indexer.visibleIndex(index);
@@ -70,7 +75,7 @@ Item {
         }
 
         onPositionChanged: {
-            if (appletItem.parabolic.currentParabolicItem !== _parabolicArea) {
+            if (!appletItem.appletZoomIsLocked && appletItem.parabolic.currentParabolicItem !== _parabolicArea) {
                 appletItem.parabolic.setCurrentParabolicItem(_parabolicArea);
 
                 if (isParabolicEnabled) {
@@ -178,7 +183,7 @@ Item {
     }
 
     function calculateParabolicScales(currentMousePosition){
-        if (parabolic.factor.zoom===1 || parabolic.restoreZoomIsBlocked) {
+        if (parabolic.factor.zoom===1 || parabolic.restoreZoomIsBlocked || appletItem.appletZoomIsLocked) {
             return;
         }
 
@@ -200,7 +205,8 @@ Item {
         if(appletItem && (appletItem.index === nIndex) /*&& !appletItem.containsMouse*/){ /*disable it in order to increase parabolic effect responsiveness*/
             if ((parabolicEffectIsSupported && !appletItem.originalAppletBehavior && !appletItem.communicator.indexerIsSupported)
                     && applet
-                    && (applet.status !== PlasmaCore.Types.HiddenStatus || appletItem.keepVisibleOnHiddenStatus)) {
+                    && (applet.status !== PlasmaCore.Types.HiddenStatus || appletItem.keepVisibleOnHiddenStatus)
+                    && !appletItem.appletZoomIsLocked) {
                 wrapper.zoomScale = Math.max(1, nScale);
             }
         }
@@ -228,6 +234,14 @@ Item {
 
             if (newScales.length <= 0) {
                 return
+            }
+
+            // Locked widgets (widget zoom disabled) are excluded from the
+            // wave: do not consume or forward scales so the wave never
+            // includes them and the neighbouring task keeps a clean
+            // restore cycle.
+            if (appletItem.appletZoomIsLocked) {
+                return;
             }
 
             var nextscales = newScales.slice();                                                          //first copy scales in order to not touch referenced/same array to other slots

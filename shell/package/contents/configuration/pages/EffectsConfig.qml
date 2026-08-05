@@ -315,13 +315,16 @@ PlasmaComponents.Page {
 
                         property int duration: plasmoid.configuration.durationTime
 
+                        //! The x1/x2/x3 labels match the containment durationTime
+                        //! enum values (1/2/3). The containment maps them to 1x/2x/3x
+                        //! animation durations, so x1 = normal, x2 = slower, x3 = slowest.
                         LatteComponents.Button {
                             Layout.fillWidth: true
                             text: i18n("x1")
                             checked: parent.duration === duration
                             checkable: true
 
-                            readonly property int duration: 3
+                            readonly property int duration: 1
 
                             onClicked: {
                                 plasmoid.configuration.durationTime = duration
@@ -347,7 +350,7 @@ PlasmaComponents.Page {
                             checked: parent.duration === duration
                             checkable: true
 
-                            readonly property int duration: 1
+                            readonly property int duration: 3
 
                             onClicked: {
                                 plasmoid.configuration.durationTime = duration
