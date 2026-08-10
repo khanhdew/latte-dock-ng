@@ -41,6 +41,9 @@
 #include <QDropEvent>
 #include <QGuiApplication>
 #include <QMouseEvent>
+#include <QPointer>
+#include <QSet>
+#include <QTimer>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQmlProperty>
@@ -48,6 +51,8 @@
 #include <QQuickItem>
 #include <QSGRendererInterface>
 #include <QMenu>
+
+#include <algorithm>
 
 // KDe
 #include <KActionCollection>
@@ -58,6 +63,7 @@
 // Plasma
 #include <Plasma/Containment>
 #include <Plasma/ContainmentActions>
+#include <PlasmaQuick/AppletPopup>
 #include <PlasmaQuick/AppletQuickItem>
 
 #define BLOCKHIDINGDRAGTYPE QStringLiteral("View::ContainsDrag()")
@@ -146,6 +152,11 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
     setIcon(qGuiApp->windowIcon());
     setResizeMode(QuickViewSharedEngine::SizeRootObjectToView);
     setColor(QColor(Qt::transparent));
+
+    //! Track pointer-leave on the dock's applet popup / menu windows so
+    //! cascading submenus close when the pointer leaves the menu tree
+    //! (event-driven; see eventFilter()).
+    qApp->installEventFilter(this);
 
     const auto flags = Qt::FramelessWindowHint
                        | Qt::NoDropShadowWindowHint
@@ -259,6 +270,8 @@ View::View(Plasma::Corona *corona, QScreen *targetScreen)
 View::~View()
 {
     m_inDelete = true;
+
+    qApp->removeEventFilter(this);
 
     //! clear Layout connections
     m_visibleHackTimer1.stop();
@@ -760,13 +773,16 @@ void View::statusChanged(Plasma::Types::ItemStatus status)
     //! but initViewFlags() should be called afterwards because setFlags(...) breaks
     //! the dock window default behavior during status transitions.
     if (status == Plasma::Types::NeedsAttentionStatus) {
+        //! The Application Menu widget (org.kde.plasma.appmenu) reports
+        //! NeedsAttentionStatus while its menu bar menu is open.  As with
+        //! RequiresAttentionStatus below, we must not reconfigure the window
+        //! flags or the plasma shell surface at that point: on Wayland that
+        //! invalidates the QMenu's child xdg_popup surfaces and the open menu
+        //! (and its cascading submenus) closes as soon as the pointer reaches
+        //! them.  Only block hiding so the dock cannot retract underneath the
+        //! menu.  The no-focus flags are already applied in the normal-status
+        //! branch and get re-applied there once the menu closes.
         m_visibility->addBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
-        setFlags(flags() | Qt::WindowDoesNotAcceptFocus);
-        m_visibility->initViewFlags();
-
-        if (m_shellSurface) {
-            m_shellSurface->setPanelTakesFocus(false);
-        }
     } else if (status == Plasma::Types::RequiresAttentionStatus) {
         // When an applet popup opens, we must not reconfigure the window flags
         // (e.g. WindowDoesNotAcceptFocus) because on Wayland this can invalidate
@@ -834,6 +850,89 @@ void View::updateTransientWindowsTracking()
             addTransientWindow(window);
             break;
         }
+    }
+}
+
+bool View::eventFilter(QObject *watched, QEvent *event)
+{
+    //! Event-driven cascading-menu close.  QCursor::pos() is stale on Wayland
+    //! once the pointer leaves this process's surfaces, so the pointer window
+    //! is tracked purely through Enter/Leave events.
+    //
+    //! Rules:
+    //!  - the first-level menu (the applet popup) stays open on pointer-leave;
+    //!  - a cascading submenu closes only when the pointer leaves the whole
+    //!    menu tree (no popup window of the dock has the pointer anymore),
+    //!    so moving from level N into level N+1 never closes level N.
+    if (auto *window = qobject_cast<QWindow *>(watched)) {
+        if (windowBelongsToThisDock(window)) {
+            if (event->type() == QEvent::Enter) {
+                if (!m_pointerWindows.contains(window)) {
+                    m_pointerWindows.insert(window);
+                    //! Keep the set free of dangling pointers: a popup /
+                    //! submenu window can be destroyed while it is being
+                    //! tracked (e.g. kicker closes its submenu), and the
+                    //! deferred close check below must never dereference it.
+                    connect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed, Qt::UniqueConnection);
+                }
+            } else if (event->type() == QEvent::Leave) {
+                m_pointerWindows.remove(window);
+
+                //! Only submenu windows (transient children of an applet
+                //! popup) can trigger the close; the first-level popup and
+                //! the dock itself keep the menu open on pointer-leave.
+                QWindow *popupWindow = window->transientParent();
+
+                if (popupWindow && popupWindow != this) {
+                    if (auto *popup = qobject_cast<PlasmaQuick::AppletPopup *>(popupWindow)) {
+                        QQuickItem *appletInterface = popup->appletInterface();
+
+                        if (appletInterface) {
+                            //! Defer so a following Enter (moving into a deeper
+                            //! level) can cancel the close.
+                            QPointer<QObject> appletGuard(appletInterface);
+                            QTimer::singleShot(0, this, [this, appletGuard]() {
+                                const bool anyPopupUnderPointer = std::any_of(m_pointerWindows.cbegin(),
+                                                                              m_pointerWindows.cend(),
+                                                                              [this](QWindow *w) {
+                                                                                  return w != this && windowBelongsToThisDock(w);
+                                                                              });
+
+                                if (!anyPopupUnderPointer && appletGuard) {
+                                    QMetaObject::invokeMethod(appletGuard.data(), "reset", Qt::QueuedConnection);
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
+}
+
+bool View::windowBelongsToThisDock(QWindow *window) const
+{
+    QWindow *w = window;
+
+    while (w) {
+        if (w == this) {
+            return true;
+        }
+
+        w = w->transientParent();
+    }
+
+    return false;
+}
+
+void View::onPointerWindowDestroyed(QObject *window)
+{
+    //! Remove a tracked window as soon as it is destroyed so the deferred
+    //! close check never dereferences a dangling pointer.
+    if (auto *w = qobject_cast<QWindow *>(window)) {
+        m_pointerWindows.remove(w);
     }
 }
 
