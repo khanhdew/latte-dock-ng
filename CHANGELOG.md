@@ -1,3 +1,27 @@
+## [v1.2.38] - 2026-08-10
+
+### Fixed
+- The Application Menu widget's menu bar (and its cascading submenus) no
+  longer closes the moment the pointer reaches a submenu: the dock no longer
+  reconfigures its window flags / plasma shell surface while the widget
+  reports NeedsAttentionStatus (issue #36).  The first-level menu now stays
+  open on pointer-leave — matching the official panel behaviour — and closes
+  on click-outside.
+- Cascading submenus (e.g. kicker) no longer stay stuck open after the
+  pointer leaves them: the dock closes the submenu tree event-driven when
+  the pointer leaves the menu windows (kicker's own close timer is broken by
+  its submenu window stealing the keyboard focus, so the close is driven
+  from the dock instead, using Enter/Leave events rather than the stale
+  Wayland cursor position).
+- A crash (segfault) while interacting with a cascading menu is fixed:
+  destroyed popup/menu windows are removed from the pointer tracker so the
+  deferred close check never dereferences a dangling pointer.
+
+### Tests
+- New source-contract tests lock the NeedsAttentionStatus window handling,
+  the hideOnWindowDeactivate default, the event-driven submenu close, and
+  the dangling-pointer guard.
+
 ## [v1.2.37] - 2026-08-05
 
 ### Fixed
