@@ -179,6 +179,9 @@ private Q_SLOTS:
 
     // Applet menu / popup contracts
     void needsAttentionStatusBlocksHidingWithoutWindowReconfiguration();
+    void appletPopupHidesOnWindowDeactivateByDefault();
+    void viewTracksPointerWindowsAndResetsCascadingSubmenus();
+    void pointerWindowTrackerRemovesDestroyedWindows();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -859,6 +862,57 @@ void SourceContractTest::needsAttentionStatusBlocksHidingWithoutWindowReconfigur
     QVERIFY(!branchBody.contains(QStringLiteral("setFlags")));
     QVERIFY(!branchBody.contains(QStringLiteral("initViewFlags")));
     QVERIFY(!branchBody.contains(QStringLiteral("setPanelTakesFocus")));
+}
+
+void SourceContractTest::appletPopupHidesOnWindowDeactivateByDefault()
+{
+    //! The applet popup must close on outside interaction (click outside),
+    //! matching the standard Plasma Desktop shell.  The first-level menu
+    //! staying open on pointer-leave is handled separately by the cascade
+    //! logic in View::eventFilter, so hideOnWindowDeactivate defaults to true.
+    QFile appletPopupFile(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/applet/CompactApplet.qml"));
+    QVERIFY(appletPopupFile.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(appletPopupFile.readAll());
+
+    const int hideOnDeactivate = source.indexOf(QStringLiteral("hideOnWindowDeactivate:"));
+    QVERIFY(hideOnDeactivate >= 0);
+    const QString line = source.mid(hideOnDeactivate, source.indexOf(QStringLiteral("\n"), hideOnDeactivate) - hideOnDeactivate);
+    QVERIFY(line.endsWith(QStringLiteral(": true")));
+}
+
+void SourceContractTest::viewTracksPointerWindowsAndResetsCascadingSubmenus()
+{
+    //! The dock must close cascading submenus when the pointer leaves the
+    //! whole menu tree, driven by Enter/Leave events (QCursor::pos is stale
+    //! on Wayland once the pointer leaves this process's surfaces).  It must
+    //! track the pointer windows and, on a submenu window's Leave, invoke the
+    //! applet's reset so the first-level menu stays open.
+    QFile viewSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
+    QVERIFY(viewSourceFile.open(QFile::ReadOnly));
+    const QString viewSource = QString::fromUtf8(viewSourceFile.readAll());
+
+    QVERIFY(viewSource.contains(QStringLiteral("qApp->installEventFilter(this)")));
+    QVERIFY(viewSource.contains(QStringLiteral("bool View::eventFilter(QObject *watched, QEvent *event)")));
+    QVERIFY(viewSource.contains(QStringLiteral("m_pointerWindows.insert(window)")));
+    QVERIFY(viewSource.contains(QStringLiteral("m_pointerWindows.remove(window)")));
+    QVERIFY(viewSource.contains(QStringLiteral("QMetaObject::invokeMethod(appletGuard.data(), \"reset\", Qt::QueuedConnection)")));
+    QVERIFY(viewSource.contains(QStringLiteral("qobject_cast<PlasmaQuick::AppletPopup *>(popupWindow)")));
+    QVERIFY(viewSource.contains(QStringLiteral("windowBelongsToThisDock")));
+}
+
+void SourceContractTest::pointerWindowTrackerRemovesDestroyedWindows()
+{
+    //! The pointer-window tracker stores raw QWindow pointers; a submenu or
+    //! popup can be destroyed while tracked, so the destroyed signal must
+    //! remove it from the set — otherwise the deferred close check would
+    //! dereference a dangling pointer (segfault in libQt6Gui).
+    QFile viewSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
+    QVERIFY(viewSourceFile.open(QFile::ReadOnly));
+    const QString viewSource = QString::fromUtf8(viewSourceFile.readAll());
+
+    QVERIFY(viewSource.contains(QStringLiteral("connect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed, Qt::UniqueConnection)")));
+    QVERIFY(viewSource.contains(QStringLiteral("void View::onPointerWindowDestroyed(QObject *window)")));
+    QVERIFY(viewSource.contains(QStringLiteral("m_pointerWindows.remove(w)")));
 }
 
 void SourceContractTest::qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable()
