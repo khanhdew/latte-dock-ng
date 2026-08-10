@@ -27,12 +27,15 @@
 
 // C++
 #include <array>
+#include <algorithm>
 
 // Qt
 #include <QQuickView>
 #include <QMenu>
 #include <QMetaObject>
 #include <QMimeData>
+#include <QSet>
+#include <QWindow>
 #include <QScreen>
 #include <QPointer>
 #include <QTimer>
@@ -377,12 +380,17 @@ private:
     void handlePlasmoidDrop(QDropEvent *de);
     void cleanupDndSpacer();
 
+    //! Pointer-leave close for applet popups / cascading menus.
+    bool eventFilter(QObject *watched, QEvent *event) override;
+    bool windowBelongsToThisDock(QWindow *window) const;
+
 private:
     Plasma::Containment *containmentById(uint id);
 
     bool m_alternativesIsShown{false};
     bool m_containsDrag{false};
     bool m_containsMouse{false};
+    QSet<QWindow *> m_pointerWindows; //!< dock windows currently under the pointer (event-driven)
     bool m_inDelete{false};
     bool m_isPreferredForShortcuts{false};
     bool m_onPrimary{true};
