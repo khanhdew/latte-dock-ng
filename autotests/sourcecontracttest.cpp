@@ -176,6 +176,9 @@ private Q_SLOTS:
     void uniqueNameExhaustionFallsBackToRandomSuffix();
     void layoutManagerResolveAppletQuickItemThreadsVisitedSet();
     void appdataComponentIdKeepsHyphenInLastSegment();
+
+    // Applet menu / popup contracts
+    void needsAttentionStatusBlocksHidingWithoutWindowReconfiguration();
 };
 
 void SourceContractTest::plasmaVolumeBootstrapContractMovedToQmlSmokeTest()
@@ -819,6 +822,43 @@ void SourceContractTest::sessionShutdownPollerHidesViewsAndRestoresOnCancel()
     QVERIFY(cancelLog >= 0);
     QVERIFY(currentViews > cancelLog);
     QVERIFY(restoreViews > currentViews);
+}
+
+void SourceContractTest::needsAttentionStatusBlocksHidingWithoutWindowReconfiguration()
+{
+    //! The Application Menu widget reports NeedsAttentionStatus while its menu
+    //! bar menu (and cascading submenus) are open.  Reconfiguring the dock
+    //! window flags / plasma shell surface at that point invalidates the
+    //! QMenu's child xdg_popup surfaces on Wayland and the menu closes as soon
+    //! as the pointer reaches it.  The NeedsAttention branch must therefore
+    //! only block dock hiding — mirroring the RequiresAttentionStatus fix — and
+    //! keep the window/surface configuration untouched.
+    QFile viewSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/view.cpp"));
+    QVERIFY(viewSourceFile.open(QFile::ReadOnly));
+    const QString viewSource = QString::fromUtf8(viewSourceFile.readAll());
+
+    const int statusChanged = viewSource.indexOf(QStringLiteral("void View::statusChanged(Plasma::Types::ItemStatus status)"));
+    QVERIFY(statusChanged >= 0);
+
+    const int needsAttention = viewSource.indexOf(QStringLiteral("status == Plasma::Types::NeedsAttentionStatus"), statusChanged);
+    const int requiresAttention = viewSource.indexOf(QStringLiteral("status == Plasma::Types::RequiresAttentionStatus"), needsAttention);
+    QVERIFY(needsAttention > statusChanged);
+    QVERIFY(requiresAttention > needsAttention);
+
+    //! The NeedsAttention branch keeps the hiding block (so the dock cannot
+    //! retract underneath the open menu) but must not touch the window flags,
+    //! the view flags or the shell surface.
+    const QString block = QStringLiteral("m_visibility->addBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);");
+    const int blockInNeedsAttention = viewSource.indexOf(block, needsAttention);
+    QVERIFY(blockInNeedsAttention > needsAttention);
+    QVERIFY(blockInNeedsAttention < requiresAttention);
+
+    const int nextBranch = viewSource.indexOf(QStringLiteral("} else if"), blockInNeedsAttention);
+    QVERIFY(nextBranch > blockInNeedsAttention);
+    const QString branchBody = viewSource.mid(blockInNeedsAttention + block.size(), nextBranch - blockInNeedsAttention - block.size());
+    QVERIFY(!branchBody.contains(QStringLiteral("setFlags")));
+    QVERIFY(!branchBody.contains(QStringLiteral("initViewFlags")));
+    QVERIFY(!branchBody.contains(QStringLiteral("setPanelTakesFocus")));
 }
 
 void SourceContractTest::qtQuickGpuPreferenceKeepsSoftwareFallbackAvailable()

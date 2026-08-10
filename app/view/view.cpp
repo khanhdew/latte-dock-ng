@@ -760,13 +760,16 @@ void View::statusChanged(Plasma::Types::ItemStatus status)
     //! but initViewFlags() should be called afterwards because setFlags(...) breaks
     //! the dock window default behavior during status transitions.
     if (status == Plasma::Types::NeedsAttentionStatus) {
+        //! The Application Menu widget (org.kde.plasma.appmenu) reports
+        //! NeedsAttentionStatus while its menu bar menu is open.  As with
+        //! RequiresAttentionStatus below, we must not reconfigure the window
+        //! flags or the plasma shell surface at that point: on Wayland that
+        //! invalidates the QMenu's child xdg_popup surfaces and the open menu
+        //! (and its cascading submenus) closes as soon as the pointer reaches
+        //! them.  Only block hiding so the dock cannot retract underneath the
+        //! menu.  The no-focus flags are already applied in the normal-status
+        //! branch and get re-applied there once the menu closes.
         m_visibility->addBlockHidingEvent(BLOCKHIDINGNEEDSATTENTIONTYPE);
-        setFlags(flags() | Qt::WindowDoesNotAcceptFocus);
-        m_visibility->initViewFlags();
-
-        if (m_shellSurface) {
-            m_shellSurface->setPanelTakesFocus(false);
-        }
     } else if (status == Plasma::Types::RequiresAttentionStatus) {
         // When an applet popup opens, we must not reconfigure the window flags
         // (e.g. WindowDoesNotAcceptFocus) because on Wayland this can invalidate
