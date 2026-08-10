@@ -382,6 +382,7 @@ private:
 
     //! Pointer-leave close for applet popups / cascading menus.
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void onPointerWindowDestroyed(QObject *window);
     bool windowBelongsToThisDock(QWindow *window) const;
 
 private:

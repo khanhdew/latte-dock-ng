@@ -867,7 +867,14 @@ bool View::eventFilter(QObject *watched, QEvent *event)
     if (auto *window = qobject_cast<QWindow *>(watched)) {
         if (windowBelongsToThisDock(window)) {
             if (event->type() == QEvent::Enter) {
-                m_pointerWindows.insert(window);
+                if (!m_pointerWindows.contains(window)) {
+                    m_pointerWindows.insert(window);
+                    //! Keep the set free of dangling pointers: a popup /
+                    //! submenu window can be destroyed while it is being
+                    //! tracked (e.g. kicker closes its submenu), and the
+                    //! deferred close check below must never dereference it.
+                    connect(window, &QObject::destroyed, this, &View::onPointerWindowDestroyed, Qt::UniqueConnection);
+                }
             } else if (event->type() == QEvent::Leave) {
                 m_pointerWindows.remove(window);
 
@@ -918,6 +925,15 @@ bool View::windowBelongsToThisDock(QWindow *window) const
     }
 
     return false;
+}
+
+void View::onPointerWindowDestroyed(QObject *window)
+{
+    //! Remove a tracked window as soon as it is destroyed so the deferred
+    //! close check never dereferences a dangling pointer.
+    if (auto *w = qobject_cast<QWindow *>(window)) {
+        m_pointerWindows.remove(w);
+    }
 }
 
 Types::ViewType View::type() const
