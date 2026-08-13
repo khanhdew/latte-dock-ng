@@ -1,3 +1,24 @@
+## [Unreleased]
+
+### Fixed
+- A window without launcher identity (an app that ships no .desktop file,
+  e.g. a bare window with empty AppId) no longer renders as a phantom
+  separator line at the right end of the dock: the separator placeholder
+  is now applied only to launcher-type entries whose URL is still being
+  resolved asynchronously, never to plain windows or startup items.
+  Previously such a window stayed thin (separator-like) forever, and
+  "Remove Right/Left Separator" could not get rid of it — the phantom had
+  an empty launcher URL, so removing it through the launcher list was a
+  silent no-op that still reported success.
+- The launcher-local separator removal path now refuses entries with an
+  empty launcher URL, so a task that merely looks like a separator can
+  never be "removed" without actually changing the launcher list.
+
+### Tests
+- New source-contract tests lock the empty-URL guard in the separator
+  removal path, the isSeparator window/startup exclusion, and the context
+  menu routing through the guarded launcher-local removal.
+
 ## [v1.2.38] - 2026-08-10
 
 ### Fixed

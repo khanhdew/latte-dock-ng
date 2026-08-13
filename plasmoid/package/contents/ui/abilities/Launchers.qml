@@ -153,7 +153,12 @@ Item {
     function removeInternalSeparatorAtPos(pos) {
         var item = childAtLayoutIndex(pos);
 
-        if (item && item.isSeparator) {
+        // Only real launcher separators can be removed through the launcher
+        // list. A task that merely renders like a separator (e.g. a window
+        // without launcher identity) must not be "removed" — its launcherUrl
+        // is empty, so removeLauncher("") would silently do nothing while
+        // this function still reported success.
+        if (item && item.isSeparator && item.launcherUrl !== "") {
             removeLauncher(item.launcherUrl);
             return true;
         }

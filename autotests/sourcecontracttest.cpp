@@ -136,6 +136,9 @@ private Q_SLOTS:
     void launchersTransientEmptyRecoveryCeilingAt8();
     void launchersIsSeparatorGuardsDesktopExtensionPosition();
     void launchersAddDroppedLauncherIconDataTruncationBoundary();
+    void launchersRemoveInternalSeparatorRefusesEmptyUrl();
+    void taskItemIsSeparatorNeverTurnsUrlLessWindowsIntoDividers();
+    void contextMenuSeparatorRemovalRoutesThroughGuardedLauncherPath();
     // main.cpp CLI and startup boundary paths
     void mainCppAvailableLayoutsPrintsDifferentMessageWhenEmpty();
     void mainCppLayoutOptionExitsForMissingLayout();
@@ -2825,6 +2828,78 @@ void SourceContractTest::launchersAddDroppedLauncherIconDataTruncationBoundary()
     // the separator appears at position > 0 (not at the start).
     QVERIFY(src.contains(QStringLiteral("?iconData=")));
     QVERIFY(src.contains(QStringLiteral("pos>0")));
+}
+
+void SourceContractTest::launchersRemoveInternalSeparatorRefusesEmptyUrl()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR
+                           "/plasmoid/package/contents/ui/abilities/Launchers.qml"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // removeInternalSeparatorAtPos must only remove separators that carry a
+    // real launcher URL. A task that merely renders like a separator (e.g. a
+    // window without launcher identity) has an empty launcherUrl, and
+    // removeLauncher("") is a silent no-op — reporting success would make
+    // the phantom separator impossible to remove from the context menu.
+    const int fnStart = src.indexOf(QStringLiteral("function removeInternalSeparatorAtPos"));
+    QVERIFY(fnStart > 0);
+    const int fnEnd = src.indexOf(QStringLiteral("function removeLauncher"), fnStart);
+    QVERIFY(fnEnd > fnStart);
+    const QString fn = src.mid(fnStart, fnEnd - fnStart);
+
+    QVERIFY(fn.contains(QStringLiteral("item.isSeparator")));
+    QVERIFY(fn.contains(QStringLiteral("item.launcherUrl !== \"\"")));
+}
+
+void SourceContractTest::taskItemIsSeparatorNeverTurnsUrlLessWindowsIntoDividers()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR
+                           "/plasmoid/package/contents/ui/task/TaskItem.qml"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // A task whose modelLauncherUrl is empty must not default to the thin
+    // separator placeholder when it is a window or startup item: such tasks
+    // have no launcher URL for their whole lifetime (an app that ships no
+    // .desktop file), so the placeholder would turn them into phantom
+    // separators that cannot be removed through the launcher list.
+    const int bindingStart = src.indexOf(QStringLiteral("isSeparator: {"));
+    QVERIFY(bindingStart > 0);
+    const int bindingEnd = src.indexOf(QStringLiteral("isSeparatorHidden"), bindingStart);
+    QVERIFY(bindingEnd > bindingStart);
+    const QString binding = src.mid(bindingStart, bindingEnd - bindingStart);
+
+    QVERIFY(binding.contains(QStringLiteral("!isWindow")));
+    QVERIFY(binding.contains(QStringLiteral("!isStartup")));
+}
+
+void SourceContractTest::contextMenuSeparatorRemovalRoutesThroughGuardedLauncherPath()
+{
+    QFile f(QStringLiteral(LATTE_SOURCE_DIR
+                           "/plasmoid/package/contents/ui/ContextMenu.qml"));
+    QVERIFY(f.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(f.readAll());
+
+    // The "Remove Right/Left Separator" menu items must first try the
+    // launcher-local removal (which now refuses empty-URL phantoms) and only
+    // fall back to the containment boundary path when that reports failure.
+    const int headItem = src.indexOf(QStringLiteral("id: removeFollowingInternalSeparatorItem"));
+    QVERIFY(headItem > 0);
+    const int tailItem = src.indexOf(QStringLiteral("id: removeTailInternalSeparatorItem"));
+    QVERIFY(tailItem > headItem);
+
+    const QString headBlock = src.mid(headItem, tailItem - headItem);
+    QVERIFY(headBlock.contains(QStringLiteral("supportsLauncherSeparators()")));
+    QVERIFY(headBlock.contains(QStringLiteral("visualParent.headItemIsSeparator")));
+    QVERIFY(headBlock.contains(QStringLiteral("removeInternalSeparatorAtPos(rightIndex)")));
+    QVERIFY(headBlock.contains(QStringLiteral("tryRemoveBoundarySeparator(true)")));
+
+    const QString tailBlock = src.mid(tailItem,
+                                      src.indexOf(QStringLiteral("id: alternativesMenuItem"), tailItem) - tailItem);
+    QVERIFY(tailBlock.contains(QStringLiteral("visualParent.tailItemIsSeparator")));
+    QVERIFY(tailBlock.contains(QStringLiteral("removeInternalSeparatorAtPos(leftIndex)")));
+    QVERIFY(tailBlock.contains(QStringLiteral("tryRemoveBoundarySeparator(false)")));
 }
 
 // ------------------------------------------------------------------------

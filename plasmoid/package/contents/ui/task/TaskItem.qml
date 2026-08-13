@@ -37,17 +37,30 @@ AbilityItem.BasicItem {
     // modelLauncherUrl is set twice for new entries (insert then async
     // reposition via launchersToBeMovedTimer), resetting to empty midway.
     // launcherUrl retains the previous non-empty value across the reset.
-    // Brand-new delegates with no URL yet default to true (thin) — if this
-    // turns out to be a regular task, the next binding evaluation (same
-    // frame) sets it to the correct value with no visible glitch.
+    // Brand-new launcher-type delegates with no URL yet default to true
+    // (thin) — if this turns out to be a regular task, the next binding
+    // evaluation (same frame) sets it to the correct value with no visible
+    // glitch.
+    //
+    // A window with no launcher identity (an app that ships no .desktop
+    // file) must NEVER fall back to the thin separator placeholder: its
+    // modelLauncherUrl stays empty for the whole lifetime of the task, so
+    // the default would turn the window into a phantom separator that
+    // cannot be removed (removeLauncher("") is a no-op).
     property bool _sepUrlReceived: false
 
     isSeparator: {
         var url = modelLauncherUrl;
         if (url === "") {
-            return _sepUrlReceived
-                ? taskItem.abilities.launchers.isSeparator(launcherUrl)
-                : true;
+            if (_sepUrlReceived) {
+                return taskItem.abilities.launchers.isSeparator(launcherUrl);
+            }
+
+            // No URL yet and never had one: keep the thin placeholder only
+            // for launcher-type entries (async launcher resolution); a
+            // window or startup item without launcher identity is a real
+            // task and must render as such.
+            return !isWindow && !isStartup;
         }
         _sepUrlReceived = true;
         return taskItem.abilities.launchers.isSeparator(url);
