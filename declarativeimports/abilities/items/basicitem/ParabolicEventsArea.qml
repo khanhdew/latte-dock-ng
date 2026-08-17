@@ -16,6 +16,16 @@ Item {
     property int lastMouseY: 0
     property int lastParabolicPos: 0
 
+    //! A delegate can outlive its model row during launcher->window/startup
+    //! conversions: ListView.delayRemove keeps it alive for the bounce/removal
+    //! animation while its index turns to -1. Parabolic scale broadcasts are
+    //! addressed strictly by index, so a -1 delegate would never receive scale
+    //! updates (zoom frozen) yet always accept the clear signal (zoom pinned to
+    //! 1). Fall back to the last valid index captured before removal (same
+    //! pattern as TaskItem.isSeparatorHidden) so the dying delegate keeps
+    //! tracking the pointer and does not hijack out-of-range broadcasts.
+    readonly property int effectiveIndex: index >= 0 ? index : taskItem.lastValidIndex
+
     readonly property bool containsMouse: (abilityItem.abilities.parabolic.currentParabolicItem === _parabolicArea) || parabolicMouseArea.containsMouse
     readonly property bool pointerContainsMouse: parabolicMouseArea.containsMouse
 
@@ -160,7 +170,7 @@ Item {
         }
 
         //use the new parabolic ability in order to handle all parabolic effect messages
-        var scales = abilityItem.abilities.parabolic.applyParabolicEffect(index, currentMousePosition, length);
+        var scales = abilityItem.abilities.parabolic.applyParabolicEffect(effectiveIndex, currentMousePosition, length);
 
         if (!parabolicItem.isUpdatingOnlySpacers) {
             abilityItem.parabolicItem.zoom = abilityItem.abilities.parabolic.factor.zoom;
@@ -173,7 +183,7 @@ Item {
     } //zoom
 
     function updateScale(nIndex, nScale){
-        if (index === nIndex /*&& !_parabolicArea.containsMouse*/ /*&& !parabolicItem.isParabolicEventBlocked*/){ //!disabled them in order to provide smoother parabolic effect during dock showing and first hovering
+        if (effectiveIndex === nIndex /*&& !_parabolicArea.containsMouse*/ /*&& !parabolicItem.isParabolicEventBlocked*/){ //!disabled them in order to provide smoother parabolic effect during dock showing and first hovering
             if (parabolicItem.isUpdatingOnlySpacers) {
                 var subSpacerScale = (nScale-1)/2;
 
@@ -193,9 +203,9 @@ Item {
         try {
         var ishigher = !islower;
         var clearrequestedfromlastacceptedsignal = (newScales.length===1) && (newScales[0]===1);
-        var sideindex = islower ? index-1 : index+1;
+        var sideindex = islower ? effectiveIndex-1 : effectiveIndex+1;
 
-        if (delegateIndex === index) {
+        if (delegateIndex === effectiveIndex) {
             if (newScales.length <= 0) {
                 return
             }
@@ -223,9 +233,9 @@ Item {
                     abilityItem.abilities.parabolic.sglUpdateHigherItemScale(sideindex, nextscales);
                 }
             }
-        } else if ((islower && clearrequestedfromlastacceptedsignal && (index < delegateIndex))           //accept requestedfromlastacceptedsignal in lower direction if that is the case
-                   || (ishigher && clearrequestedfromlastacceptedsignal && (index > delegateIndex))) {    //accept requestedfromlastacceptedsignal in higher direction if that is the case
-            updateScale(index, 1);
+        } else if ((islower && clearrequestedfromlastacceptedsignal && (effectiveIndex < delegateIndex))        //accept requestedfromlastacceptedsignal in lower direction if that is the case
+                   || (ishigher && clearrequestedfromlastacceptedsignal && (effectiveIndex > delegateIndex))) { //accept requestedfromlastacceptedsignal in higher direction if that is the case
+            updateScale(effectiveIndex, 1);
         }
         } finally {
             abilityItem.abilities.parabolic.leaveRelay();

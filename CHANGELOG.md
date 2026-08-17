@@ -1,3 +1,47 @@
+## Fixed - 2026-08-18
+
+### bounce-induced zoom freeze (Issue #42)
+
+#### By
+
+- Introduced `effectiveIndex` — a single source of truth for all parabolic index 
+  lookups:
+
+```
+effectiveIndex = index >= 0 ? index : taskItem.lastValidIndex
+```
+
+This works as follows:
+
+- **Live delegates** (`index >= 0`): `effectiveIndex` is identical to `index`, 
+  so behavior is completely unchanged.
+- **Dead delegates** (`index == -1`): fall back to `lastValidIndex`, which was 
+  captured while the delegate was still alive. This restores the delegate's 
+  legitimate position in the zoom chain — it **continues to receive updates 
+  (staying unfrozen)** and **is only cleared when the indicator genuinely 
+  passes its position**, rather than being wrongly snapped to zoom level 1. 
+  Outgoing broadcasts also use the effective index, eliminating out-of-bounds 
+  addresses like `-1` or `-2`.
+
+- This fallback pattern is **structurally identical** to the existing idiom in
+  `TaskItem.qml:72-73` (`itemIndex >= 0 ? itemIndex : lastValidIndex`), which is 
+  already an accepted way to handle the "index = -1 during removal" window.
+
+
+## Fixed - 2026-08-16
+- Reworked RestoreAnimation and zoom logic for ParabolicItem zoom recovery, 
+  make the parabolic effect even smoother!
+
+- Adjust the logic inside RestoreAnimation. The zoom recovery logic within 
+  ParabolicItem is no longer handled solely by RestoreAnimation; instead, it 
+  is delegated to BehaviorAnimation.
+
+### By
+- We only need to set a target value, and BehaviorAnimation will smoothly animate toward
+  the final state automatically. This avoids jarring visual jumps even if prior animations
+  have not finished playing. With this change, zooming animations will no longer interrupt
+  each other, delivering smoother visuals.
+
 ## [Unreleased]
 
 ### Fixed
