@@ -22,6 +22,7 @@
 #include <QJsonArray>
 #include <QFileInfo>
 #include <QDebug>
+#include <QIcon>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QLatin1String>
@@ -1797,6 +1798,61 @@ void ContainmentInterface::updateAppletsInLockedZoom()
     Q_EMIT appletsInLockedZoomChanged(m_appletsInLockedZoom);
 }
 
+void ContainmentInterface::applyOriginalIconColors(Plasma::Applet *applet)
+{
+    if (!applet) {
+        return;
+    }
+
+    //! Only the Trash widget uses this path (issue #44): its Plasmoid.icon
+    //! appends "-symbolic" when it lives in a panel, and other applets
+    //! render monochrome through their own color masks that cannot be
+    //! overridden here.
+    if (pluginIdFromMetaData(applet->pluginMetaData()) != QLatin1String("org.kde.plasma.trash")) {
+        return;
+    }
+
+    const int appletId = static_cast<int>(applet->id());
+    const bool keepOriginal = m_appletsDisabledColoring.contains(appletId);
+    const QString icon = applet->icon();
+    const QString suffix = QStringLiteral("-symbolic");
+
+    if (keepOriginal) {
+        QString target;
+
+        if (icon.endsWith(suffix)) {
+            target = icon.chopped(suffix.size());
+        }
+
+        //! Only override when a full-color variant actually exists in the
+        //! icon theme, so applets whose only icon is symbolic are untouched.
+        if (!target.isEmpty() && target != icon && !QIcon::fromTheme(target).isNull()) {
+            m_iconOverrideOriginal.insert(appletId, icon);
+            applet->setIcon(target);
+            qCDebug(latteView) << "originalIconColors override"
+                               << "id" << appletId
+                               << "from" << icon
+                               << "to" << target;
+        }
+    } else {
+        if (m_iconOverrideOriginal.contains(appletId)) {
+            const QString original = m_iconOverrideOriginal.take(appletId);
+            applet->setIcon(original);
+        }
+    }
+}
+
+void ContainmentInterface::updateAppletsOriginalIconColors()
+{
+    if (!m_view || !m_view->containment()) {
+        return;
+    }
+
+    for (auto *applet : m_view->containment()->applets()) {
+        applyOriginalIconColors(applet);
+    }
+}
+
 void ContainmentInterface::updateAppletsDisabledColoring()
 {
     if (!m_layoutManager) {
@@ -1811,6 +1867,11 @@ void ContainmentInterface::updateAppletsDisabledColoring()
 
     m_appletsDisabledColoring = appletsdisabledcoloring;
     Q_EMIT appletsDisabledColoringChanged(appletsdisabledcoloring);
+
+    //! Re-apply the icon override: toggling "keep original colors" on an
+    //! applet changes the blocked list without firing that applet's
+    //! iconChanged, so re-run the strip on every applet.
+    updateAppletsOriginalIconColors();
 }
 
 void ContainmentInterface::onLatteTasksCountChanged()
@@ -2145,6 +2206,20 @@ void ContainmentInterface::onAppletAdded(Plasma::Applet *applet)
     int currentAppletId = applet->id();
     KPluginMetaData appletMeta = applet->pluginMetaData();
     const QString currentPluginId = pluginIdFromMetaData(appletMeta);
+
+    //! When the user opts out of colorizing for this applet, undo Plasma's
+    //! panel "-symbolic" icon substitution (e.g. the Trash widget) so the
+    //! full-color icon shows while still switching empty/full. The applet's
+    //! own QML binding re-runs on state changes and restores the symbolic
+    //! name, so the strip is re-applied on every iconChanged.
+    if (!m_iconOverrideConnected.contains(currentAppletId)) {
+        m_iconOverrideConnected.insert(currentAppletId);
+        connect(applet, &Plasma::Applet::iconChanged, this, [this, applet]() {
+            applyOriginalIconColors(applet);
+        });
+        applyOriginalIconColors(applet);
+    }
+
     const QStringList currentProvides = appletProvidesFromMetaData(appletMeta);
     bool initializing{!m_appletData.contains(currentAppletId)};
 

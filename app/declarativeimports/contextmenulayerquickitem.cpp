@@ -442,6 +442,31 @@ void ContextMenuLayerQuickItem::addAppletActions(QMenu *desktopMenu, Plasma::App
         }
     }
 
+    //! Per-applet toggle for the Trash widget: stop Latte from colorizing it
+    //! so its full-color icon shows instead of a monochrome/symbolic one.
+    //! Backed by LayoutManager::setOption("userBlocksColorizing"), which feeds
+    //! userBlocksColorizingApplets and the QML userBlocksColorizing gate.
+    if (applet->pluginMetaData().pluginId() == QLatin1String("org.kde.plasma.trash")
+        && m_latteView->extendedInterface()) {
+        if (QPointer<QObject> layoutMgr = m_latteView->extendedInterface()->layoutManager()) {
+            const int appletId = static_cast<int>(applet->id());
+            const QList<int> disabledColoring = layoutMgr->property("userBlocksColorizingApplets").value<QList<int>>();
+
+            QAction *keepOriginalColorsAction = desktopMenu->addAction(i18nc("@action:inmenu keep the applet's original colorful icon instead of a colorized one", "Keep Original Icon Colors"));
+            keepOriginalColorsAction->setCheckable(true);
+            keepOriginalColorsAction->setChecked(disabledColoring.contains(appletId));
+
+            connect(keepOriginalColorsAction, &QAction::triggered, this, [layoutMgr, appletId](bool checked) {
+                QMetaObject::invokeMethod(layoutMgr,
+                                          "setOption",
+                                          Qt::DirectConnection,
+                                          Q_ARG(int, appletId),
+                                          Q_ARG(QString, QStringLiteral("userBlocksColorizing")),
+                                          Q_ARG(QVariant, checked));
+            });
+        }
+    }
+
     if (!applet->failedToLaunch()) {
         QAction *configureApplet = applet->internalAction(QStringLiteral("configure"));
 

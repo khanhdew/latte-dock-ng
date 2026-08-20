@@ -76,6 +76,8 @@ private Q_SLOTS:
     void widgetExplorerUsesPlasmaTranslationContexts();
     void compactAppletDigitalClockWidthCapPreventsLongDateFormatOverflow();
     void contextMenuLayerMiddleClickCloseActiveWindowGuardedCorrectly();
+    void appletContextMenuExposesKeepOriginalColorsToggle();
+    void appletIconOverrideStripsSymbolicForOriginalColors();
     void mouseHandlerAutoPinOnDragPromotesNonLauncherTasks();
     void scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing();
     void scrollToggleMinimizedUsesAllScreensTrackerForMinimizeAndMaximize();
@@ -1853,6 +1855,59 @@ void SourceContractTest::contextMenuLayerMiddleClickCloseActiveWindowGuardedCorr
     // The C++ setter must exist.
     QVERIFY(hdr.contains(QStringLiteral("setCloseActiveWindowEnabled")));
     QVERIFY(src.contains(QStringLiteral("ContextMenuLayerQuickItem::setCloseActiveWindowEnabled")));
+}
+
+void SourceContractTest::appletIconOverrideStripsSymbolicForOriginalColors()
+{
+    QFile implFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.cpp"));
+    QVERIFY(implFile.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(implFile.readAll());
+
+    QFile headerFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.h"));
+    QVERIFY(headerFile.open(QFile::ReadOnly));
+    const QString hdr = QString::fromUtf8(headerFile.readAll());
+
+    // "Keep original icon colors" must undo Plasma's panel "-symbolic"
+    // icon substitution (issue #44): strip the suffix via setIcon, gated on
+    // the userBlocksColorizing list, and only when a full-color variant
+    // exists so symbolic-only applets are untouched. Scoped to the Trash
+    // widget, whose icon name is the only one that ends with "-symbolic".
+    QVERIFY(src.contains(QStringLiteral("applyOriginalIconColors")));
+    QVERIFY(src.contains(QStringLiteral("-symbolic")));
+    QVERIFY(src.contains(QStringLiteral("QIcon::fromTheme")));
+    QVERIFY(src.contains(QStringLiteral("setIcon")));
+    QVERIFY(src.contains(QStringLiteral("org.kde.plasma.trash")));
+    //! Both directions must be immediate: stripping on enable and restoring
+    //! the original on disable (tracked via m_iconOverrideOriginal).
+    QVERIFY(src.contains(QStringLiteral("m_iconOverrideOriginal")));
+    QVERIFY(hdr.contains(QStringLiteral("applyOriginalIconColors")));
+}
+
+void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()
+{
+    QFile implFile(QStringLiteral(LATTE_SOURCE_DIR "/app/declarativeimports/contextmenulayerquickitem.cpp"));
+    QVERIFY(implFile.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(implFile.readAll());
+
+    // The per-applet "keep original icon colors" toggle must live in the
+    // applet context menu and drive LayoutManager::setOption with the
+    // "userBlocksColorizing" option, so the QML userBlocksColorizing gate in
+    // AppletItem.qml stops colorizing that applet (issue #44). It is scoped
+    // to the Trash widget only.
+    QVERIFY(src.contains(QStringLiteral("Keep Original Icon Colors")));
+    QVERIFY(src.contains(QStringLiteral("userBlocksColorizing")));
+    QVERIFY(src.contains(QStringLiteral("setOption")));
+    QVERIFY(src.contains(QStringLiteral("org.kde.plasma.trash")));
+
+    // The toggle must be inside addAppletActions (per-applet menu), not the
+    // containment menu, and its checked state must reflect the layout
+    // manager's current list.
+    const int aaa = src.indexOf(QStringLiteral("ContextMenuLayerQuickItem::addAppletActions"));
+    const int toggle = src.indexOf(QStringLiteral("Keep Original Icon Colors"));
+    QVERIFY(aaa >= 0);
+    QVERIFY(toggle > aaa);
+    QVERIFY(src.contains(QStringLiteral("setCheckable(true)")));
+    QVERIFY(src.contains(QStringLiteral("disabledColoring.contains(appletId)")));
 }
 
 void SourceContractTest::mouseHandlerAutoPinOnDragPromotesNonLauncherTasks()

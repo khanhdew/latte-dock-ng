@@ -33,6 +33,12 @@ msgctxt "%1 is the name of the containment"
 msgid "%1 Options"
 msgstr "%1的选项"
 
+#: app/declarativeimports/contextmenulayerquickitem.cpp:455
+#, kde-format
+msgctxt "@action:inmenu keep the applet's original colorful icon instead of a colorized one"
+msgid "Keep Original Icon Colors"
+msgstr "保留原始图标颜色"
+
 #: app/indicator/factory.cpp:284
 #, kde-format
 msgid "Failed to import indicator"
