@@ -1,4 +1,4 @@
-## [Unreleased]
+## [v1.2.39] - 2026-08-21
 
 ### Fixed
 - The bounce-induced zoom freeze (issue #42) is fixed: parabolic scale
@@ -29,6 +29,20 @@
 - The launcher-local separator removal path now refuses entries with an
   empty launcher URL, so a task that merely looks like a separator can
   never be "removed" without actually changing the launcher list.
+- The Trash widget now has a "Keep Original Icon Colors" option in its
+  context menu (issue #44): when enabled, Latte strips the "-symbolic"
+  suffix from the applet's icon so the full-color icon from the icon theme
+  shows, while the empty/full trash icon keeps switching; disabling the
+  toggle restores the original icon immediately. Scoped to the Trash widget
+  because other applets (launchers) render monochrome through their own
+  color masks that this cannot override.
+- Translations are synced with the source after the Dock/Panel -> Dock
+  migration: ~25 strings in latte-dock and the containment-actions context
+  menu silently fell back to English in every language because the po files
+  were never regenerated. Msgids are realigned and several user-facing
+  strings wrongly marked `notr="true"` in the Qt Designer dialogs (Thickness
+  margin influence, Export Template, New, Remove, Import..., Export...) are
+  translatable again.
 
 ### Tests
 - New source-contract tests lock the `effectiveIndex` fallback in
@@ -37,6 +51,13 @@
 - New source-contract tests lock the empty-URL guard in the separator
   removal path, the isSeparator window/startup exclusion, and the context
   menu routing through the guarded launcher-local removal.
+- New source-contract tests lock the "Keep Original Icon Colors" menu wiring
+  and the Trash-only icon override path.
+- New source-contract tests lock the Qt Designer notr fixes, the absence of
+  stale Dock/Panel msgids across all po domains, and that the translation
+  Messages.sh scripts reference only existing directories.
+
+## [Unreleased]
 
 ## [v1.2.38] - 2026-08-10
 
