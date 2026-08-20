@@ -245,7 +245,7 @@ msgstr "Dateiname"
 #, fuzzy, kde-format
 #| msgid "Show Latte Settings"
 msgctxt "command line"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Latte-Einstellungen anzeigen"
 
 #: app/main.cpp:113
@@ -359,11 +359,6 @@ msgstr ""
 #, kde-format
 msgid "Latte Dock defaults"
 msgstr "Standardeinstellungen für Latte-Dock"
-
-#: app/package/lattepackage.cpp:35
-#, kde-format
-msgid "Latte Dock panel"
-msgstr "Latte-Dock Leiste"
 
 #: app/package/lattepackage.cpp:36
 #, fuzzy, kde-format
@@ -543,27 +538,27 @@ msgstr "Miniprogramme hinzufügen ..."
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, fuzzy, kde-format
 #| msgid "Show Latte Settings"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Latte-Einstellungen anzeigen"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, fuzzy, kde-format
 #| msgctxt "export layout/configuration"
 #| msgid "Export Layout/Configuration"
-msgid "Move Dock/Panel To Layout"
+msgid "Move Dock To Layout"
 msgstr "Profil/Konfiguration exportieren"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, fuzzy, kde-format
 #| msgctxt "export layout/configuration"
 #| msgid "Export Layout/Configuration"
-msgid "Export Dock/Panel as Template..."
+msgid "Export Dock as Template..."
 msgstr "Profil/Konfiguration exportieren"
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, fuzzy, kde-format
 #| msgid "Show Latte Settings"
-msgid "Remove Dock/Panel"
+msgid "Remove Dock"
 msgstr "Latte-Einstellungen anzeigen"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
@@ -742,7 +737,7 @@ msgstr "Ausgewähltes Profil als Vorlage exportieren"
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, fuzzy, kde-format
 #| msgid "Export your selected layout as template"
-msgid "Export your selected dock or panel as template"
+msgid "Export your selected dock as template"
 msgstr "Ausgewähltes Profil als Vorlage exportieren"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
@@ -805,7 +800,7 @@ msgstr "Profilvorlage exportieren"
 #, fuzzy, kde-format
 #| msgctxt "export layout/configuration"
 #| msgid "Export Layout/Configuration"
-msgid "Export Dock/Panel Template"
+msgid "Export Dock Template"
 msgstr "Profil/Konfiguration exportieren"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
@@ -1632,7 +1627,7 @@ msgstr "Wechsel zu ausgewähltem Profil"
 #, fuzzy, kde-format
 #| msgid "Show Latte Settings"
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
+msgid "&Docks..."
 msgstr "Latte-Einstellungen anzeigen"
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
@@ -2082,14 +2077,14 @@ msgstr "Jetzt anwenden"
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
+msgid "Apply all dock changes now"
 msgstr ""
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, fuzzy, kde-format
 #| msgid "Show Latte Settings"
-msgid "Docks/Panels"
+msgid "Docks"
 msgstr "Latte-Einstellungen anzeigen"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
@@ -2101,7 +2096,7 @@ msgstr "&Neu"
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, fuzzy, kde-format
 #| msgid "Latte Dock panel"
-msgid "New dock or panel"
+msgid "New dock"
 msgstr "Latte-Dock Leiste"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
@@ -2113,7 +2108,7 @@ msgstr "&Duplizieren"
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, fuzzy, kde-format
 #| msgid "Switch to selected layout"
-msgid "Duplicate selected dock or panel"
+msgid "Duplicate selected dock"
 msgstr "Wechsel zu ausgewähltem Profil"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
@@ -2130,13 +2125,13 @@ msgstr "&Importieren ..."
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
+msgid "Import dock from local file"
 msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, fuzzy, kde-format
 #| msgid "Export selected layout or full configuration into a file"
-msgid "Export selected dock or panel at your system"
+msgid "Export selected dock at your system"
 msgstr "Ausgewähltes Profil der Hauptkonfiguration in Datei exportieren"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
@@ -2157,7 +2152,7 @@ msgstr ""
 #, fuzzy, kde-format
 #| msgctxt "export layout/configuration"
 #| msgid "Export Layout/Configuration"
-msgid "Export Dock/Panel For Backup"
+msgid "Export Dock For Backup"
 msgstr "Profil/Konfiguration exportieren"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
@@ -2171,7 +2166,7 @@ msgstr "Exportieren"
 #| msgctxt "import latte layout"
 #| msgid "Latte Dock Layout file v0.2"
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte-Dock Profildatei V0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
@@ -2190,7 +2185,7 @@ msgstr "Export in Datei <b>%1</b> erfolgreich ..."
 #, fuzzy, kde-format
 #| msgid "Show Latte Settings"
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
+msgid "Import Dock"
 msgstr "Latte-Einstellungen anzeigen"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
@@ -2203,14 +2198,14 @@ msgstr "Importieren"
 #| msgctxt "import latte layout"
 #| msgid "Latte Dock Layout file v0.2"
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte-Dock Profildatei V0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, fuzzy, kde-format
 #| msgid "Show Latte Settings"
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
+msgid "%1 Docks"
 msgstr "Latte-Einstellungen anzeigen"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
@@ -2425,13 +2420,13 @@ msgstr "Unbekannt : [%1]"
 #: app/shortcuts/globalshortcuts.cpp:87
 #, fuzzy, kde-format
 #| msgid "Show Latte Settings"
-msgid "Show Latte Dock/Panel"
+msgid "Show Latte Dock"
 msgstr "Latte-Einstellungen anzeigen"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, fuzzy, kde-format
 #| msgid "Show Latte Settings"
-msgid "Cycle Through Dock/Panel Settings Windows"
+msgid "Cycle Through Dock Settings Windows"
 msgstr "Latte-Einstellungen anzeigen"
 
 #: app/shortcuts/globalshortcuts.cpp:105
@@ -2616,7 +2611,7 @@ msgstr "Hinzufügen ..."
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
+msgid "Add new docks from various templates"
 msgstr ""
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
@@ -4942,3 +4937,13 @@ msgstr "Oben"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "Unten"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr ""
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr ""

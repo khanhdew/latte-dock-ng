@@ -46,17 +46,17 @@ msgstr "다른 레이아웃으로 전환"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
+msgid "&Add Dock"
 msgstr "독/패널 추가(&A)"
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
+msgid "Add dock based on specific template"
 msgstr "템플릿에 따라서 독이나 패널 추가"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
+msgid "Move dock to different layout"
 msgstr "다른 레이아웃으로 독이나 패널 이동"
 
 #: menu.cpp:149

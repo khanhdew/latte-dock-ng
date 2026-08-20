@@ -806,7 +806,7 @@
                <item>
                 <widget class="QLabel" name="marginInfluenceLbl">
                  <property name="text">
-                  <string notr="true">thickness margin influence</string>
+                  <string>Thickness margin influence</string>
                  </property>
                 </widget>
                </item>

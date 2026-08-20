@@ -233,7 +233,7 @@ msgstr "파일_이름"
 #: app/main.cpp:113
 #, kde-format
 msgctxt "command line"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "독/패널 추가"
 
 #: app/main.cpp:113
@@ -343,11 +343,6 @@ msgstr ""
 #, kde-format
 msgid "Latte Dock defaults"
 msgstr "Latte 독 기본값"
-
-#: app/package/lattepackage.cpp:35
-#, kde-format
-msgid "Latte Dock panel"
-msgstr "Latte 독 패널"
 
 #: app/package/lattepackage.cpp:36
 #, kde-format
@@ -523,22 +518,22 @@ msgstr "위젯 추가..."
 
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, kde-format
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "독/패널 추가"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, kde-format
-msgid "Move Dock/Panel To Layout"
+msgid "Move Dock To Layout"
 msgstr "레이아웃으로 독이나 패널 이동"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, kde-format
-msgid "Export Dock/Panel as Template..."
+msgid "Export Dock as Template..."
 msgstr "독/패널을 템플릿으로 내보내기..."
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, kde-format
-msgid "Remove Dock/Panel"
+msgid "Remove Dock"
 msgstr "독/패널 삭제"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
@@ -714,7 +709,7 @@ msgstr "선택한 레이아웃을 템플릿으로 내보내기"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, kde-format
-msgid "Export your selected dock or panel as template"
+msgid "Export your selected dock as template"
 msgstr "선택한 독이나 패널을 템플릿으로 내보내기"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
@@ -777,7 +772,7 @@ msgstr "레이아웃 템플릿 내보내기"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:63
 #, kde-format
-msgid "Export Dock/Panel Template"
+msgid "Export Dock Template"
 msgstr "독/패널 템플릿 내보내기"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
@@ -1582,7 +1577,7 @@ msgstr "선택한 레이아웃을 읽기 전용으로 설정"
 #: app/settings/settingsdialog/tablayoutshandler.cpp:178
 #, kde-format
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
+msgid "&Docks..."
 msgstr "독과 패널(&P)..."
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
@@ -2047,13 +2042,13 @@ msgstr "지금 적용하기"
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
+msgid "Apply all dock changes now"
 msgstr "모든 독과 패널 변경 사항 적용"
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, kde-format
-msgid "Docks/Panels"
+msgid "Docks"
 msgstr "독/패널"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
@@ -2064,7 +2059,7 @@ msgstr "새로 만들기(&N)"
 
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, kde-format
-msgid "New dock or panel"
+msgid "New dock"
 msgstr "새로운 독이나 패널"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
@@ -2075,7 +2070,7 @@ msgstr "복제(&D)"
 
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, kde-format
-msgid "Duplicate selected dock or panel"
+msgid "Duplicate selected dock"
 msgstr "선택한 독이나 패널 복제"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
@@ -2091,12 +2086,12 @@ msgstr "가져오기(&I)..."
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
+msgid "Import dock from local file"
 msgstr "로컬 파일에서 독이나 패널 가져오기"
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, kde-format
-msgid "Export selected dock or panel at your system"
+msgid "Export selected dock at your system"
 msgstr "시스템에서 선택한 독이나 패널 내보내기"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
@@ -2116,7 +2111,7 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:342
 #, kde-format
-msgid "Export Dock/Panel For Backup"
+msgid "Export Dock For Backup"
 msgstr "백업용으로 독/패널 내보내기"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
@@ -2128,7 +2123,7 @@ msgstr "내보내기"
 #: app/settings/viewsdialog/viewshandler.cpp:350
 #, kde-format
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte 독/패널 파일 v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
@@ -2146,7 +2141,7 @@ msgstr "<b>%1</b> 파일로 내보내기에 성공했습니다..."
 #: app/settings/viewsdialog/viewshandler.cpp:431
 #, kde-format
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
+msgid "Import Dock"
 msgstr "독/패널 가져오기"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
@@ -2157,13 +2152,13 @@ msgstr "가져오기"
 #: app/settings/viewsdialog/viewshandler.cpp:440
 #, kde-format
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte 독/패널 파일 v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, kde-format
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
+msgid "%1 Docks"
 msgstr "%1의 독/패널"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
@@ -2367,12 +2362,12 @@ msgstr "알 수 없음"
 
 #: app/shortcuts/globalshortcuts.cpp:87
 #, kde-format
-msgid "Show Latte Dock/Panel"
+msgid "Show Latte Dock"
 msgstr "Latte 독/패널 표시"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, kde-format
-msgid "Cycle Through Dock/Panel Settings Windows"
+msgid "Cycle Through Dock Settings Windows"
 msgstr "독/패널 설정 창 사이 전환"
 
 #: app/shortcuts/globalshortcuts.cpp:105
@@ -2550,7 +2545,7 @@ msgstr "추가..."
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
+msgid "Add new docks from various templates"
 msgstr "다양한 템플릿에서 새 독이나 패널 가져오기"
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
@@ -4405,3 +4400,13 @@ msgstr "위"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "아래"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr ""
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr ""

@@ -134,7 +134,7 @@
            <item>
             <widget class="QPushButton" name="newBtn">
              <property name="text">
-              <string notr="true">New</string>
+              <string>New</string>
              </property>
              <property name="icon">
               <iconset theme="add">
@@ -156,7 +156,7 @@
            <item>
             <widget class="QPushButton" name="removeBtn">
              <property name="text">
-              <string notr="true">Remove</string>
+              <string>Remove</string>
              </property>
              <property name="icon">
               <iconset theme="delete">
@@ -183,7 +183,7 @@
            <item>
             <widget class="QPushButton" name="importBtn">
              <property name="text">
-              <string notr="true">Import...</string>
+              <string>Import...</string>
              </property>
              <property name="icon">
               <iconset theme="document-import">
@@ -194,7 +194,7 @@
            <item>
             <widget class="QPushButton" name="exportBtn">
              <property name="text">
-              <string notr="true">Export...</string>
+              <string>Export...</string>
              </property>
              <property name="icon">
               <iconset theme="document-export">

@@ -46,18 +46,18 @@ msgstr "切换到另一个布局"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
-msgstr "添加停靠栏/面板(&A)"
+msgid "&Add Dock"
+msgstr "添加停靠栏(&A)"
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
-msgstr "基于特定模板添加停靠栏或面板"
+msgid "Add dock based on specific template"
+msgstr "基于特定模板添加停靠栏"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
-msgstr "移动停靠栏或面板到其他布局"
+msgid "Move dock to different layout"
+msgstr "移动停靠栏到其他布局"
 
 #: menu.cpp:149
 #, kde-format

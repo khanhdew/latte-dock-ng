@@ -256,7 +256,7 @@ msgstr "failo_pavadinimas"
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
 msgctxt "command line"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Dokai/Skydeliai"
 
 #: app/main.cpp:113
@@ -377,11 +377,6 @@ msgstr ""
 #, kde-format
 msgid "Latte Dock defaults"
 msgstr "Latte doko numatytieji"
-
-#: app/package/lattepackage.cpp:35
-#, kde-format
-msgid "Latte Dock panel"
-msgstr "Latte doko skydelis"
 
 #: app/package/lattepackage.cpp:36
 #, kde-format
@@ -565,25 +560,25 @@ msgstr "Gauti naujus indikatorius..."
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Dokai/Skydeliai"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, fuzzy, kde-format
 #| msgid "Export Layout"
-msgid "Move Dock/Panel To Layout"
+msgid "Move Dock To Layout"
 msgstr "Eksportuoti išdėstymą"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, fuzzy, kde-format
 #| msgid "Export Layout"
-msgid "Export Dock/Panel as Template..."
+msgid "Export Dock as Template..."
 msgstr "Eksportuoti išdėstymą"
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
-msgid "Remove Dock/Panel"
+msgid "Remove Dock"
 msgstr "Dokai/Skydeliai"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
@@ -775,7 +770,7 @@ msgstr "Eksportuoti pažymėtą išdėstymą savo sistemoje"
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, fuzzy, kde-format
 #| msgid "Export selected layout at your system"
-msgid "Export your selected dock or panel as template"
+msgid "Export your selected dock as template"
 msgstr "Eksportuoti pažymėtą išdėstymą savo sistemoje"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
@@ -843,7 +838,7 @@ msgstr "Eksportuoti išdėstymą"
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:63
 #, fuzzy, kde-format
 #| msgid "Export Layout"
-msgid "Export Dock/Panel Template"
+msgid "Export Dock Template"
 msgstr "Eksportuoti išdėstymą"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
@@ -1728,7 +1723,7 @@ msgstr "Rodyti išsamesnę pasirinkto išdėstymo informaciją"
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
+msgid "&Docks..."
 msgstr "Dokai/Skydeliai"
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
@@ -2198,13 +2193,13 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
+msgid "Apply all dock changes now"
 msgstr ""
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, kde-format
-msgid "Docks/Panels"
+msgid "Docks"
 msgstr "Dokai/Skydeliai"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
@@ -2218,7 +2213,7 @@ msgstr "&Naujas"
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, fuzzy, kde-format
 #| msgid "Latte Dock panel"
-msgid "New dock or panel"
+msgid "New dock"
 msgstr "Latte doko skydelis"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
@@ -2230,7 +2225,7 @@ msgstr ""
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, fuzzy, kde-format
 #| msgid "Switch to selected layout"
-msgid "Duplicate selected dock or panel"
+msgid "Duplicate selected dock"
 msgstr "Perjungti į pasirinktą išdėstymą"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
@@ -2249,13 +2244,13 @@ msgstr "&Importuoti..."
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
+msgid "Import dock from local file"
 msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, fuzzy, kde-format
 #| msgid "Export selected layout at your system"
-msgid "Export selected dock or panel at your system"
+msgid "Export selected dock at your system"
 msgstr "Eksportuoti pažymėtą išdėstymą savo sistemoje"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
@@ -2277,7 +2272,7 @@ msgstr ""
 #: app/settings/viewsdialog/viewshandler.cpp:342
 #, fuzzy, kde-format
 #| msgid "Export Layout"
-msgid "Export Dock/Panel For Backup"
+msgid "Export Dock For Backup"
 msgstr "Eksportuoti išdėstymą"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
@@ -2293,7 +2288,7 @@ msgstr "Eksportuoti"
 #| msgctxt "import latte layout"
 #| msgid "Latte Dock Layout file v0.2"
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte doko išdėstymo failas v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
@@ -2316,7 +2311,7 @@ msgstr "Išdėstymo <b>%0</b> eksportavimas pavyko..."
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
+msgid "Import Dock"
 msgstr "Dokai/Skydeliai"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
@@ -2331,14 +2326,14 @@ msgstr "Importuoti"
 #| msgctxt "import latte layout"
 #| msgid "Latte Dock Layout file v0.2"
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte doko išdėstymo failas v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
+msgid "%1 Docks"
 msgstr "Dokai/Skydeliai"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
@@ -2559,12 +2554,12 @@ msgstr "Nežinomi ekranai: "
 
 #: app/shortcuts/globalshortcuts.cpp:87
 #, kde-format
-msgid "Show Latte Dock/Panel"
+msgid "Show Latte Dock"
 msgstr "Rodyti Latte doką/skydelį"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, kde-format
-msgid "Cycle Through Dock/Panel Settings Windows"
+msgid "Cycle Through Dock Settings Windows"
 msgstr "Perjunginėti per doko/skydelio nuostatų langus"
 
 #: app/shortcuts/globalshortcuts.cpp:105
@@ -2747,7 +2742,7 @@ msgstr ""
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
+msgid "Add new docks from various templates"
 msgstr ""
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
@@ -4699,3 +4694,13 @@ msgstr "Viršuje"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "Apačioje"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr ""
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr ""

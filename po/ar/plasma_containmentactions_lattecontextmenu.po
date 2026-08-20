@@ -46,17 +46,17 @@ msgstr "بدّل إلى تخطيط آخر"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
+msgid "&Add Dock"
 msgstr "أ&ضف مرسى/لوحة"
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
+msgid "Add dock based on specific template"
 msgstr "أضف مرسى أو لوحة بناءً على قالب معيّن"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
+msgid "Move dock to different layout"
 msgstr "انقل المرسى أو اللوحة إلى تخطيط مختلف"
 
 #: menu.cpp:149

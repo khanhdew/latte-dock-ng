@@ -236,7 +236,7 @@ msgstr ""
 #: app/main.cpp:113
 #, fuzzy, kde-format
 msgctxt "command line"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Panou Now Dock"
 
 #: app/main.cpp:113
@@ -336,11 +336,6 @@ msgstr ""
 #: app/package/lattepackage.cpp:34
 #, fuzzy, kde-format
 msgid "Latte Dock defaults"
-msgstr "Panou Now Dock"
-
-#: app/package/lattepackage.cpp:35
-#, fuzzy, kde-format
-msgid "Latte Dock panel"
 msgstr "Panou Now Dock"
 
 #: app/package/lattepackage.cpp:36
@@ -517,22 +512,22 @@ msgstr "Dimensiunea miniaplicațiilor"
 
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, fuzzy, kde-format
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Panou Now Dock"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, fuzzy, kde-format
-msgid "Move Dock/Panel To Layout"
+msgid "Move Dock To Layout"
 msgstr "Panou Now Dock"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, fuzzy, kde-format
-msgid "Export Dock/Panel as Template..."
+msgid "Export Dock as Template..."
 msgstr "Panou Now Dock"
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, fuzzy, kde-format
-msgid "Remove Dock/Panel"
+msgid "Remove Dock"
 msgstr "Panou Now Dock"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
@@ -709,7 +704,7 @@ msgstr ""
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, fuzzy, kde-format
-msgid "Export your selected dock or panel as template"
+msgid "Export your selected dock as template"
 msgstr "Panou Now Dock"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
@@ -770,7 +765,7 @@ msgstr ""
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:63
 #, fuzzy, kde-format
-msgid "Export Dock/Panel Template"
+msgid "Export Dock Template"
 msgstr "Panou Now Dock"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
@@ -1573,7 +1568,7 @@ msgstr ""
 #: app/settings/settingsdialog/tablayoutshandler.cpp:178
 #, fuzzy, kde-format
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
+msgid "&Docks..."
 msgstr "Panou Now Dock"
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
@@ -2013,13 +2008,13 @@ msgstr "Aplică acum"
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
+msgid "Apply all dock changes now"
 msgstr ""
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, fuzzy, kde-format
-msgid "Docks/Panels"
+msgid "Docks"
 msgstr "Panou Now Dock"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
@@ -2030,7 +2025,7 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, fuzzy, kde-format
-msgid "New dock or panel"
+msgid "New dock"
 msgstr "Panou Now Dock"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
@@ -2041,7 +2036,7 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, fuzzy, kde-format
-msgid "Duplicate selected dock or panel"
+msgid "Duplicate selected dock"
 msgstr "Panou Now Dock"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
@@ -2057,12 +2052,12 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
+msgid "Import dock from local file"
 msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, fuzzy, kde-format
-msgid "Export selected dock or panel at your system"
+msgid "Export selected dock at your system"
 msgstr "Panou Now Dock"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
@@ -2081,7 +2076,7 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:342
 #, fuzzy, kde-format
-msgid "Export Dock/Panel For Backup"
+msgid "Export Dock For Backup"
 msgstr "Panou Now Dock"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
@@ -2093,7 +2088,7 @@ msgstr ""
 #: app/settings/viewsdialog/viewshandler.cpp:350
 #, fuzzy, kde-format
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Panou Now Dock"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
@@ -2111,7 +2106,7 @@ msgstr "Panou Now Dock"
 #: app/settings/viewsdialog/viewshandler.cpp:431
 #, fuzzy, kde-format
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
+msgid "Import Dock"
 msgstr "Panou Now Dock"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
@@ -2122,13 +2117,13 @@ msgstr ""
 #: app/settings/viewsdialog/viewshandler.cpp:440
 #, fuzzy, kde-format
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Panou Now Dock"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, fuzzy, kde-format
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
+msgid "%1 Docks"
 msgstr "Panou Now Dock"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
@@ -2337,12 +2332,12 @@ msgstr ""
 
 #: app/shortcuts/globalshortcuts.cpp:87
 #, fuzzy, kde-format
-msgid "Show Latte Dock/Panel"
+msgid "Show Latte Dock"
 msgstr "Panou Now Dock"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, fuzzy, kde-format
-msgid "Cycle Through Dock/Panel Settings Windows"
+msgid "Cycle Through Dock Settings Windows"
 msgstr "Panou Now Dock"
 
 #: app/shortcuts/globalshortcuts.cpp:105
@@ -2518,7 +2513,7 @@ msgstr "Adaugă..."
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
+msgid "Add new docks from various templates"
 msgstr ""
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
@@ -3969,3 +3964,13 @@ msgstr "Sus"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "Jos"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr ""
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr ""

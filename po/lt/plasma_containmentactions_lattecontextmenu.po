@@ -47,17 +47,17 @@ msgstr "Perjungti į kitą išdėstymą"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
+msgid "&Add Dock"
 msgstr "&Pridėti doką/skydelį"
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
+msgid "Add dock based on specific template"
 msgstr "Pridėti doką ar skydelį remiantis tam tikru šablonu"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
+msgid "Move dock to different layout"
 msgstr "Perkelti doką ar skydelį į kitokį išdėstymą"
 
 #: menu.cpp:149

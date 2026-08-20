@@ -252,7 +252,7 @@ msgstr "faili_nimi"
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
 msgctxt "command line"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Dokid ja paneelid"
 
 #: app/main.cpp:113
@@ -369,11 +369,6 @@ msgstr ""
 #, kde-format
 msgid "Latte Dock defaults"
 msgstr "Latte doki vaikeväärtused"
-
-#: app/package/lattepackage.cpp:35
-#, kde-format
-msgid "Latte Dock panel"
-msgstr "Latte doki paneel"
 
 #: app/package/lattepackage.cpp:36
 #, kde-format
@@ -557,25 +552,25 @@ msgstr "Hangi uusi indikaatoreid ..."
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Dokid ja paneelid"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, fuzzy, kde-format
 #| msgid "Export Layout"
-msgid "Move Dock/Panel To Layout"
+msgid "Move Dock To Layout"
 msgstr "Paigutuse eksport"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, fuzzy, kde-format
 #| msgid "Export Layout"
-msgid "Export Dock/Panel as Template..."
+msgid "Export Dock as Template..."
 msgstr "Paigutuse eksport"
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
-msgid "Remove Dock/Panel"
+msgid "Remove Dock"
 msgstr "Dokid ja paneelid"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
@@ -767,7 +762,7 @@ msgstr "Valitud paigutuse eksport süsteemi"
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, fuzzy, kde-format
 #| msgid "Export selected layout at your system"
-msgid "Export your selected dock or panel as template"
+msgid "Export your selected dock as template"
 msgstr "Valitud paigutuse eksport süsteemi"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
@@ -835,7 +830,7 @@ msgstr "Paigutuse eksport"
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:63
 #, fuzzy, kde-format
 #| msgid "Export Layout"
-msgid "Export Dock/Panel Template"
+msgid "Export Dock Template"
 msgstr "Paigutuse eksport"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
@@ -1700,7 +1695,7 @@ msgstr "Valitud paigutuse üksikasjade näitamine"
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
+msgid "&Docks..."
 msgstr "Dokid ja paneelid"
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
@@ -2168,13 +2163,13 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
+msgid "Apply all dock changes now"
 msgstr ""
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, kde-format
-msgid "Docks/Panels"
+msgid "Docks"
 msgstr "Dokid ja paneelid"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
@@ -2188,7 +2183,7 @@ msgstr "&Uus"
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, fuzzy, kde-format
 #| msgid "Latte Dock panel"
-msgid "New dock or panel"
+msgid "New dock"
 msgstr "Latte doki paneel"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
@@ -2200,7 +2195,7 @@ msgstr ""
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, fuzzy, kde-format
 #| msgid "Switch to selected layout"
-msgid "Duplicate selected dock or panel"
+msgid "Duplicate selected dock"
 msgstr "Valitud paigutusele lülitumine"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
@@ -2219,13 +2214,13 @@ msgstr "&Impordi ..."
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
+msgid "Import dock from local file"
 msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, fuzzy, kde-format
 #| msgid "Export selected layout at your system"
-msgid "Export selected dock or panel at your system"
+msgid "Export selected dock at your system"
 msgstr "Valitud paigutuse eksport süsteemi"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
@@ -2247,7 +2242,7 @@ msgstr ""
 #: app/settings/viewsdialog/viewshandler.cpp:342
 #, fuzzy, kde-format
 #| msgid "Export Layout"
-msgid "Export Dock/Panel For Backup"
+msgid "Export Dock For Backup"
 msgstr "Paigutuse eksport"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
@@ -2263,7 +2258,7 @@ msgstr "Ekspordi"
 #| msgctxt "import latte layout"
 #| msgid "Latte Dock Layout file v0.2"
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte doki paigutusfail v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
@@ -2286,7 +2281,7 @@ msgstr "Paigutus <b>%0</b> eksporditi edukalt ..."
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
+msgid "Import Dock"
 msgstr "Dokid ja paneelid"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
@@ -2301,14 +2296,14 @@ msgstr "Impordi"
 #| msgctxt "import latte layout"
 #| msgid "Latte Dock Layout file v0.2"
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte doki paigutusfail v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, fuzzy, kde-format
 #| msgid "Docks/Panels"
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
+msgid "%1 Docks"
 msgstr "Dokid ja paneelid"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
@@ -2527,12 +2522,12 @@ msgstr "Tundmatud ekraanid:"
 
 #: app/shortcuts/globalshortcuts.cpp:87
 #, kde-format
-msgid "Show Latte Dock/Panel"
+msgid "Show Latte Dock"
 msgstr "Latte doki/paneeli näitamine"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, kde-format
-msgid "Cycle Through Dock/Panel Settings Windows"
+msgid "Cycle Through Dock Settings Windows"
 msgstr "Doki-/paneeliseadistuste akende läbikerimine"
 
 #: app/shortcuts/globalshortcuts.cpp:105
@@ -2715,7 +2710,7 @@ msgstr ""
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
+msgid "Add new docks from various templates"
 msgstr ""
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
@@ -4585,3 +4580,13 @@ msgstr "Üles"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "Alla"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr ""
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr ""

@@ -238,7 +238,7 @@ msgstr "názov_súboru"
 #: app/main.cpp:113
 #, kde-format
 msgctxt "command line"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Pridať dok/panel"
 
 #: app/main.cpp:113
@@ -348,11 +348,6 @@ msgstr ""
 #, kde-format
 msgid "Latte Dock defaults"
 msgstr "Latte Dock predvolené"
-
-#: app/package/lattepackage.cpp:35
-#, kde-format
-msgid "Latte Dock panel"
-msgstr "Latte Dock panel"
 
 #: app/package/lattepackage.cpp:36
 #, kde-format
@@ -528,22 +523,22 @@ msgstr "Pridať widgety..."
 
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, kde-format
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Pridať dok/panel"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, kde-format
-msgid "Move Dock/Panel To Layout"
+msgid "Move Dock To Layout"
 msgstr "Exportovať rozloženie"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, kde-format
-msgid "Export Dock/Panel as Template..."
+msgid "Export Dock as Template..."
 msgstr "Exportovať rozloženie"
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, kde-format
-msgid "Remove Dock/Panel"
+msgid "Remove Dock"
 msgstr "Doky/Panely"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
@@ -719,7 +714,7 @@ msgstr "Exportovať vybraté rozloženie alebo kompletnú konfiguráciu do súbo
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, kde-format
-msgid "Export your selected dock or panel as template"
+msgid "Export your selected dock as template"
 msgstr "Exportovať vybraté rozloženie alebo kompletnú konfiguráciu do súboru"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
@@ -783,7 +778,7 @@ msgstr "Exportovať rozloženie"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:63
 #, kde-format
-msgid "Export Dock/Panel Template"
+msgid "Export Dock Template"
 msgstr "Exportovať rozloženie"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
@@ -1618,7 +1613,7 @@ msgstr "Prepnúť na vybraté rozloženie"
 #: app/settings/settingsdialog/tablayoutshandler.cpp:178
 #, kde-format
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
+msgid "&Docks..."
 msgstr "Doky/Panely"
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
@@ -2089,13 +2084,13 @@ msgstr "Použiť teraz"
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
+msgid "Apply all dock changes now"
 msgstr "Použiť teraz všetky zmeny dokov a panelov"
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, kde-format
-msgid "Docks/Panels"
+msgid "Docks"
 msgstr "Doky/Panely"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
@@ -2106,7 +2101,7 @@ msgstr "&Nové"
 
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, kde-format
-msgid "New dock or panel"
+msgid "New dock"
 msgstr "Latte Dock panel"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
@@ -2117,7 +2112,7 @@ msgstr "&Duplikovať"
 
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, kde-format
-msgid "Duplicate selected dock or panel"
+msgid "Duplicate selected dock"
 msgstr "Prepnúť na vybraté rozloženie"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
@@ -2133,12 +2128,12 @@ msgstr "&Importovať..."
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
+msgid "Import dock from local file"
 msgstr "Importovať dok alebo panel z lokálneho súboru"
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, kde-format
-msgid "Export selected dock or panel at your system"
+msgid "Export selected dock at your system"
 msgstr "Exportovať vybraté rozloženie alebo kompletnú konfiguráciu do súboru"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
@@ -2158,7 +2153,7 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:342
 #, kde-format
-msgid "Export Dock/Panel For Backup"
+msgid "Export Dock For Backup"
 msgstr "Exportovať rozloženie"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
@@ -2170,7 +2165,7 @@ msgstr "Exportovať"
 #: app/settings/viewsdialog/viewshandler.cpp:350
 #, kde-format
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte Dock Layout súbor v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
@@ -2188,7 +2183,7 @@ msgstr "Exportovať in file <b>%1</b> succeeded..."
 #: app/settings/viewsdialog/viewshandler.cpp:431
 #, kde-format
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
+msgid "Import Dock"
 msgstr "Doky/Panely"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
@@ -2199,13 +2194,13 @@ msgstr "Importovať"
 #: app/settings/viewsdialog/viewshandler.cpp:440
 #, kde-format
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte Dock Layout súbor v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, kde-format
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
+msgid "%1 Docks"
 msgstr "%1 Docks/Panels"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
@@ -2415,12 +2410,12 @@ msgstr "Neznáme"
 
 #: app/shortcuts/globalshortcuts.cpp:87
 #, kde-format
-msgid "Show Latte Dock/Panel"
+msgid "Show Latte Dock"
 msgstr "Zobraziť Latte Dok/panel"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, kde-format
-msgid "Cycle Through Dock/Panel Settings Windows"
+msgid "Cycle Through Dock Settings Windows"
 msgstr "Zobraziť Latte Nastavenia"
 
 #: app/shortcuts/globalshortcuts.cpp:105
@@ -2598,7 +2593,7 @@ msgstr "Pridať..."
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
+msgid "Add new docks from various templates"
 msgstr "Pridať nové doky a panely z rôznych šablón"
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
@@ -4694,3 +4689,13 @@ msgstr "Hore"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "Dole"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr ""
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr ""

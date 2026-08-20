@@ -3,6 +3,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include <QDir>
 #include <QFile>
 #include <QStringList>
 #include <QTest>
@@ -74,6 +75,9 @@ private Q_SLOTS:
     void parabolicScaleAddressingFallsBackToLastValidIndexDuringRemoval();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
     void widgetExplorerUsesPlasmaTranslationContexts();
+    void settingsDialogUiLabelsAreTranslatable();
+    void poFilesHaveNoStaleDockPanelMsgids();
+    void translationExtractionReferencesValidDirectories();
     void compactAppletDigitalClockWidthCapPreventsLongDateFormatOverflow();
     void contextMenuLayerMiddleClickCloseActiveWindowGuardedCorrectly();
     void appletContextMenuExposesKeepOriginalColorsToggle();
@@ -1908,6 +1912,115 @@ void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()
     QVERIFY(toggle > aaa);
     QVERIFY(src.contains(QStringLiteral("setCheckable(true)")));
     QVERIFY(src.contains(QStringLiteral("disabledColoring.contains(appletId)")));
+}
+
+void SourceContractTest::settingsDialogUiLabelsAreTranslatable()
+{
+    // User-facing labels in the Qt Designer .ui dialogs must not be excluded
+    // from translation via notr="true". The parabolic "Thickness margin
+    // influence" label and the Views dialog buttons were fixed after the
+    // Dock/Panel removal, while pure percentages and placeholder paths stay
+    // non-translatable on purpose.
+    QFile settingsUi(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/settingsdialog.ui"));
+    QVERIFY(settingsUi.open(QFile::ReadOnly));
+    const QString settingsSource = QString::fromUtf8(settingsUi.readAll());
+    QVERIFY(settingsSource.contains(QStringLiteral("<string>Thickness margin influence</string>")));
+    QVERIFY(!settingsSource.contains(QStringLiteral("notr=\"true\">Thickness margin influence")));
+    // percentages stay notr
+    QVERIFY(settingsSource.contains(QStringLiteral("<string notr=\"true\">0%</string>")));
+    QVERIFY(settingsSource.contains(QStringLiteral("<string notr=\"true\">100%</string>")));
+
+    QFile viewsUi(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/viewsdialog/viewsdialog.ui"));
+    QVERIFY(viewsUi.open(QFile::ReadOnly));
+    const QString viewsSource = QString::fromUtf8(viewsUi.readAll());
+    QVERIFY(viewsSource.contains(QStringLiteral("<string>New</string>")));
+    QVERIFY(viewsSource.contains(QStringLiteral("<string>Remove</string>")));
+    QVERIFY(viewsSource.contains(QStringLiteral("<string>Import...</string>")));
+    QVERIFY(viewsSource.contains(QStringLiteral("<string>Export...</string>")));
+    QVERIFY(!viewsSource.contains(QStringLiteral("notr=\"true\">New")));
+    QVERIFY(!viewsSource.contains(QStringLiteral("notr=\"true\">Remove")));
+
+    QFile exportUi(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/exporttemplatedialog/exporttemplatedialog.ui"));
+    QVERIFY(exportUi.open(QFile::ReadOnly));
+    const QString exportSource = QString::fromUtf8(exportUi.readAll());
+    QVERIFY(exportSource.contains(QStringLiteral("<string>Export Template</string>")));
+    QVERIFY(!exportSource.contains(QStringLiteral("notr=\"true\">Export Template")));
+    QVERIFY(exportSource.contains(QStringLiteral("<string notr=\"true\">~/.config/latte/layouts/.....</string>")));
+}
+
+void SourceContractTest::poFilesHaveNoStaleDockPanelMsgids()
+{
+    // The Dock/Panel -> Dock migration changed the source strings but the po
+    // files were not regenerated, so the stale msgids silently fell back to
+    // English. No active msgid in any domain may still reference a panel.
+    QDir poDir(QStringLiteral(LATTE_SOURCE_DIR "/po"));
+    const QStringList languages = poDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    QVERIFY(languages.size() > 10);
+
+    for (const QString &lang : languages) {
+        const QDir langDir(poDir.filePath(lang));
+        const QStringList poFiles = langDir.entryList(QStringList() << QStringLiteral("*.po"), QDir::Files);
+        for (const QString &poName : poFiles) {
+            QFile poFile(langDir.filePath(poName));
+            QVERIFY(poFile.open(QFile::ReadOnly));
+            const QStringList lines = QString::fromUtf8(poFile.readAll()).split(QLatin1Char('\n'));
+            for (const QString &line : lines) {
+                if (line.startsWith(QLatin1String("msgid "))
+                    && !line.startsWith(QLatin1String("#~ msgid"))
+                    && (line.contains(QLatin1String("Dock/Panel"))
+                        || line.contains(QLatin1String(" or panel"))
+                        || line.contains(QLatin1String("Docks/Panels"))
+                        || line.contains(QLatin1String("dock, panels"))
+                        || line.contains(QLatin1String("Dock panel")))) {
+                    qCritical() << "stale msgid" << line << "in" << poFile.fileName();
+                    QVERIFY2(false, "stale Dock/Panel msgid remains in po file");
+                }
+            }
+        }
+    }
+
+    // The newly exposed strings must be present in at least the zh_CN file.
+    QFile zhPo(poDir.filePath(QStringLiteral("zh_CN/latte-dock.po")));
+    QVERIFY(zhPo.open(QFile::ReadOnly));
+    const QString zhSource = QString::fromUtf8(zhPo.readAll());
+    QVERIFY(zhSource.contains(QStringLiteral("msgid \"Thickness margin influence\"")));
+    QVERIFY(zhSource.contains(QStringLiteral("msgstr \"厚度边距影响\"")));
+    QVERIFY(zhSource.contains(QStringLiteral("msgid \"Export Template\"")));
+    QVERIFY(zhSource.contains(QStringLiteral("msgstr \"导出模板\"")));
+    QVERIFY(zhSource.contains(QStringLiteral("msgid \"Keep Original Icon Colors\"")));
+    QVERIFY(zhSource.contains(QStringLiteral("msgstr \"保留原始图标颜色\"")));
+}
+
+void SourceContractTest::translationExtractionReferencesValidDirectories()
+{
+    // The indicators Messages.sh used to reference the removed
+    // org.kde.latte.plasma indicator directory, which silently skipped its
+    // extraction. Every `find` path in a Messages.sh must exist.
+    const QStringList messagesScripts = {
+        QStringLiteral("Messages.sh"),
+        QStringLiteral("containment/Messages.sh"),
+        QStringLiteral("containmentactions/contextmenu/Messages.sh"),
+        QStringLiteral("indicators/Messages.sh"),
+        QStringLiteral("plasmoid/Messages.sh")
+    };
+
+    for (const QString &rel : messagesScripts) {
+        QFile script(QStringLiteral(LATTE_SOURCE_DIR "/") + rel);
+        const QString openMsg = QStringLiteral("must exist: ") + rel;
+        QVERIFY2(script.open(QFile::ReadOnly), qPrintable(openMsg));
+        const QString content = QString::fromUtf8(script.readAll());
+
+        // No stale reference to the removed plasma indicator. The existing
+        // plasmatabstyle directory legitimately shares the prefix, so match
+        // the exact `find` path, not the substring.
+        const QString staleMsg = QStringLiteral("must not reference the removed org.kde.latte.plasma indicator: ") + rel;
+        QVERIFY2(!content.contains(QStringLiteral("find org.kde.latte.plasma ")),
+                 qPrintable(staleMsg));
+    }
+
+    // The `find` directories referenced by indicators/Messages.sh must exist.
+    QVERIFY(QDir(QStringLiteral(LATTE_SOURCE_DIR "/indicators/default")).exists());
+    QVERIFY(QDir(QStringLiteral(LATTE_SOURCE_DIR "/indicators/org.kde.latte.plasmatabstyle")).exists());
 }
 
 void SourceContractTest::mouseHandlerAutoPinOnDragPromotesNonLauncherTasks()

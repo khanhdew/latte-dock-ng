@@ -46,17 +46,17 @@ msgstr "Başka yerleşime geç"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
+msgid "&Add Dock"
 msgstr "Rıhtım/P&anel Ekle"
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
+msgid "Add dock based on specific template"
 msgstr "Belirli şablonu temel alan rıhtım veya panel ekle"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
+msgid "Move dock to different layout"
 msgstr "Rihtım veya paneli başka yerleşime taşı"
 
 #: menu.cpp:149

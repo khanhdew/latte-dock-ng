@@ -238,8 +238,8 @@ msgstr "file_name"
 #: app/main.cpp:113
 #, kde-format
 msgctxt "command line"
-msgid "Add Dock/Panel"
-msgstr "添加停靠栏/面板"
+msgid "Add Dock"
+msgstr "添加停靠栏"
 
 #: app/main.cpp:113
 #, kde-format
@@ -344,11 +344,6 @@ msgstr ""
 #, kde-format
 msgid "Latte Dock defaults"
 msgstr "Latte 停靠栏默认值"
-
-#: app/package/lattepackage.cpp:35
-#, kde-format
-msgid "Latte Dock panel"
-msgstr "Latte 停靠栏面板"
 
 #: app/package/lattepackage.cpp:36
 #, kde-format
@@ -524,23 +519,23 @@ msgstr "添加小部件..."
 
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, kde-format
-msgid "Add Dock/Panel"
-msgstr "添加停靠栏/面板"
+msgid "Add Dock"
+msgstr "添加停靠栏"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, kde-format
-msgid "Move Dock/Panel To Layout"
-msgstr "移动停靠栏/面板到布局"
+msgid "Move Dock To Layout"
+msgstr "移动停靠栏到布局"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, kde-format
-msgid "Export Dock/Panel as Template..."
-msgstr "导出停靠栏/面板模板..."
+msgid "Export Dock as Template..."
+msgstr "导出停靠栏模板..."
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, kde-format
-msgid "Remove Dock/Panel"
-msgstr "删除停靠栏/面板"
+msgid "Remove Dock"
+msgstr "删除停靠栏"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
 #, kde-format
@@ -713,8 +708,8 @@ msgstr "将选中的布局导出为模板"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, kde-format
-msgid "Export your selected dock or panel as template"
-msgstr "导出您选定的停靠栏或面板作为模板"
+msgid "Export your selected dock as template"
+msgstr "导出您选定的停靠栏作为模板"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
 #, kde-format
@@ -776,8 +771,8 @@ msgstr "导出布局模板"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:63
 #, kde-format
-msgid "Export Dock/Panel Template"
-msgstr "导出停靠栏/面板模板"
+msgid "Export Dock Template"
+msgstr "导出停靠栏模板"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:73
@@ -1566,13 +1561,13 @@ msgstr "将选中的布局设置为只读"
 #: app/settings/settingsdialog/tablayoutshandler.cpp:178
 #, kde-format
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
-msgstr "停靠栏, 面板(&P)..."
+msgid "&Docks..."
+msgstr "停靠栏(&P)..."
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
 #, kde-format
 msgid "Show selected layouts docks and panels"
-msgstr "显示所选布局停靠栏和面板"
+msgstr "显示所选布局停靠栏"
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:185
 #, kde-format
@@ -1788,7 +1783,7 @@ msgstr "复制到此处"
 msgid ""
 "Docks and panels from <b>Paste</b> action are already present in current "
 "layout"
-msgstr "<b>粘贴</b> 的停靠栏和面板在当前布局中已存在"
+msgstr "<b>粘贴</b> 的停靠栏在当前布局中已存在"
 
 #: app/settings/viewsdialog/viewscontroller.cpp:574
 #, kde-format
@@ -2015,14 +2010,14 @@ msgstr "立即应用"
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
-msgstr "立即应用所有停靠栏/面板更改"
+msgid "Apply all dock changes now"
+msgstr "立即应用所有停靠栏更改"
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, kde-format
-msgid "Docks/Panels"
-msgstr "停靠栏/面板"
+msgid "Docks"
+msgstr "停靠栏"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
 #, kde-format
@@ -2032,8 +2027,8 @@ msgstr "新建(&N)"
 
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, kde-format
-msgid "New dock or panel"
-msgstr "新建停靠栏或面板"
+msgid "New dock"
+msgstr "新建停靠栏"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
 #, kde-format
@@ -2043,8 +2038,8 @@ msgstr "复制(&D)"
 
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, kde-format
-msgid "Duplicate selected dock or panel"
-msgstr "复制选中的停靠栏或面板"
+msgid "Duplicate selected dock"
+msgstr "复制选中的停靠栏"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
 #, kde-format
@@ -2059,13 +2054,13 @@ msgstr "导入(&I)..."
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
-msgstr "从本地文件导入停靠栏或面板"
+msgid "Import dock from local file"
+msgstr "从本地文件导入停靠栏"
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, kde-format
-msgid "Export selected dock or panel at your system"
-msgstr "将选中的停靠栏或面板导出到您的系统"
+msgid "Export selected dock at your system"
+msgstr "将选中的停靠栏导出到您的系统"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
 #, kde-format
@@ -2079,12 +2074,12 @@ msgstr "<b>%1</b> 添加成功..."
 msgid ""
 "<b>Export</b> functionality is supported only for one dock or panel each "
 "time."
-msgstr "<b>导出</b>功能仅支持每次导出一个停靠栏或面板。"
+msgstr "<b>导出</b>功能仅支持每次导出一个停靠栏。"
 
 #: app/settings/viewsdialog/viewshandler.cpp:342
 #, kde-format
-msgid "Export Dock/Panel For Backup"
-msgstr "导出停靠栏/面板进行备份"
+msgid "Export Dock For Backup"
+msgstr "导出停靠栏进行备份"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
 #, kde-format
@@ -2095,8 +2090,8 @@ msgstr "导出"
 #: app/settings/viewsdialog/viewshandler.cpp:350
 #, kde-format
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
-msgstr "Latte 停靠栏/面板文件 v0.2"
+msgid "Latte Dock NG file v0.2"
+msgstr "Latte 停靠栏文件 v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
 #, kde-format
@@ -2113,8 +2108,8 @@ msgstr "导出到文件 <b>%1</b> 成功..."
 #: app/settings/viewsdialog/viewshandler.cpp:431
 #, kde-format
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
-msgstr "导入停靠栏/面板"
+msgid "Import Dock"
+msgstr "导入停靠栏"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
 #, kde-format
@@ -2124,14 +2119,14 @@ msgstr "导入"
 #: app/settings/viewsdialog/viewshandler.cpp:440
 #, kde-format
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
-msgstr "Latte 停靠栏或面板文件 v0.2"
+msgid "Latte Dock NG file v0.2"
+msgstr "Latte 停靠栏文件 v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, kde-format
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
-msgstr "%1 停靠栏/面板"
+msgid "%1 Docks"
+msgstr "%1 停靠栏"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
 #, kde-format
@@ -2331,13 +2326,13 @@ msgstr "未知"
 
 #: app/shortcuts/globalshortcuts.cpp:87
 #, kde-format
-msgid "Show Latte Dock/Panel"
-msgstr "显示 Latte 停靠栏/面板"
+msgid "Show Latte Dock"
+msgstr "显示 Latte 停靠栏"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, kde-format
-msgid "Cycle Through Dock/Panel Settings Windows"
-msgstr "循环切换停靠栏/面板的设置窗口"
+msgid "Cycle Through Dock Settings Windows"
+msgstr "循环切换停靠栏的设置窗口"
 
 #: app/shortcuts/globalshortcuts.cpp:105
 #, kde-format
@@ -2412,7 +2407,7 @@ msgstr "吸附于顶部"
 msgid ""
 "Stick maximum available space at top screen edge and ignore any top docks or "
 "panels"
-msgstr "在屏幕上边缘勾画最大可用空间，忽略任何顶部停靠栏或面板"
+msgstr "在屏幕上边缘勾画最大可用空间，忽略任何顶部停靠栏"
 
 #: shell/package/contents/configuration/canvas/HeaderSettings.qml:108
 #, kde-format
@@ -2435,7 +2430,7 @@ msgstr "吸附于底部"
 msgid ""
 "Stick maximum available space at bottom screen edge and ignore any bottom "
 "docks or panels"
-msgstr "在屏幕下边缘勾画最大可用空间，忽略任何底部停靠栏或面板"
+msgstr "在屏幕下边缘勾画最大可用空间，忽略任何底部停靠栏"
 
 #: shell/package/contents/configuration/canvas/maxlength/Ruler.qml:27
 #, kde-format
@@ -2510,8 +2505,8 @@ msgstr "添加..."
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
-msgstr "从各种模板添加新的停靠栏和面板"
+msgid "Add new docks from various templates"
+msgstr "从各种模板添加新的停靠栏"
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
 #, kde-format
@@ -3832,3 +3827,13 @@ msgstr "顶部对齐"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "底部对齐"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr "厚度边距影响"
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr "导出模板"

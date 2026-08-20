@@ -44,17 +44,17 @@ msgstr "Prepnúť na ďalšie rozloženie"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
+msgid "&Add Dock"
 msgstr "Pridať Dok/Panel"
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
+msgid "Add dock based on specific template"
 msgstr "Pridať dok alebo panel na základe konkrétnej šablóny"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
+msgid "Move dock to different layout"
 msgstr "Presunúť dok alebo panel do iného rozloženia"
 
 #: menu.cpp:149

@@ -46,17 +46,17 @@ msgstr "Naar een andere indeling omschakelen"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
+msgid "&Add Dock"
 msgstr "D&ock/paneel toevoegen"
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
+msgid "Add dock based on specific template"
 msgstr "Dock of paneel gebaseerd op specifiek sjabloon toevoegen"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
+msgid "Move dock to different layout"
 msgstr "Dock of paneel naar andere indeling verplaatsen"
 
 #: menu.cpp:149

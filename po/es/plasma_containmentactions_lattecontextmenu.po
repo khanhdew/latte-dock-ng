@@ -46,17 +46,17 @@ msgstr "Cambiar a otra distribución"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
+msgid "&Add Dock"
 msgstr "&Añadir Dock/Panel"
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
+msgid "Add dock based on specific template"
 msgstr "Añadir un dock o un panel basándose en una plantilla específica"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
+msgid "Move dock to different layout"
 msgstr "Mover dock o panel a una distribución diferente"
 
 #: menu.cpp:149

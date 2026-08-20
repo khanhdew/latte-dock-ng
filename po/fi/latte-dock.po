@@ -234,7 +234,7 @@ msgstr "tiedoston_nimi"
 #: app/main.cpp:113
 #, kde-format
 msgctxt "command line"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Lisää telakka tai paneeli"
 
 #: app/main.cpp:113
@@ -351,11 +351,6 @@ msgstr ""
 #, kde-format
 msgid "Latte Dock defaults"
 msgstr "Latten telakkaoletukset"
-
-#: app/package/lattepackage.cpp:35
-#, kde-format
-msgid "Latte Dock panel"
-msgstr "Latten telakkapaneeli"
 
 #: app/package/lattepackage.cpp:36
 #, kde-format
@@ -532,22 +527,22 @@ msgstr "Lisää sovelmia…"
 
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, kde-format
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Lisää telakka tai paneeli"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, kde-format
-msgid "Move Dock/Panel To Layout"
+msgid "Move Dock To Layout"
 msgstr "Siirrä telakka tai paneeli asetteluun"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, kde-format
-msgid "Export Dock/Panel as Template..."
+msgid "Export Dock as Template..."
 msgstr "Vie telakka tai paneeli malliksi…"
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, kde-format
-msgid "Remove Dock/Panel"
+msgid "Remove Dock"
 msgstr "Poista telakka tai paneeli"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
@@ -723,7 +718,7 @@ msgstr "Vie valittu asettelu mallipohjaksi"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, kde-format
-msgid "Export your selected dock or panel as template"
+msgid "Export your selected dock as template"
 msgstr "Vie valitun telakan tai paneelin malliksi"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
@@ -787,7 +782,7 @@ msgstr "Vie asettelumallipohja"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:63
 #, kde-format
-msgid "Export Dock/Panel Template"
+msgid "Export Dock Template"
 msgstr "Vie telakka- tai paneelimalli"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
@@ -1610,7 +1605,7 @@ msgstr "Tee valitusta asettelusta vain luettava"
 #: app/settings/settingsdialog/tablayoutshandler.cpp:178
 #, kde-format
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
+msgid "&Docks..."
 msgstr "T&elakat, paneelit…"
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
@@ -2077,13 +2072,13 @@ msgstr "Käytä nyt"
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
+msgid "Apply all dock changes now"
 msgstr "Toteuta kaikki telakan ja paneelien muutokset"
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, kde-format
-msgid "Docks/Panels"
+msgid "Docks"
 msgstr "Telakat ja paneelit"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
@@ -2094,7 +2089,7 @@ msgstr "&Uusi"
 
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, kde-format
-msgid "New dock or panel"
+msgid "New dock"
 msgstr "Uusi telakka tai paneeli"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
@@ -2105,7 +2100,7 @@ msgstr "M&onista"
 
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, kde-format
-msgid "Duplicate selected dock or panel"
+msgid "Duplicate selected dock"
 msgstr "Monista valittu telakka tai paneeli"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
@@ -2121,12 +2116,12 @@ msgstr "&Tuo…"
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
+msgid "Import dock from local file"
 msgstr "Tuo telakka tai paneeli paikallisesta tiedostosta"
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, kde-format
-msgid "Export selected dock or panel at your system"
+msgid "Export selected dock at your system"
 msgstr "Vie valittu telakka tai paneeli"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
@@ -2147,7 +2142,7 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:342
 #, kde-format
-msgid "Export Dock/Panel For Backup"
+msgid "Export Dock For Backup"
 msgstr "Vie telakka tai paneeli varmuuskopioksi"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
@@ -2159,7 +2154,7 @@ msgstr "Vie"
 #: app/settings/viewsdialog/viewshandler.cpp:350
 #, kde-format
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte-telakka- tai -paneelitiedosto v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
@@ -2177,7 +2172,7 @@ msgstr "Vienti tiedostoon <b>%1</b> onnistui…"
 #: app/settings/viewsdialog/viewshandler.cpp:431
 #, kde-format
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
+msgid "Import Dock"
 msgstr "Tuo telakka tai paneeli"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
@@ -2188,13 +2183,13 @@ msgstr "Tuo"
 #: app/settings/viewsdialog/viewshandler.cpp:440
 #, kde-format
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte-telakka- tai -paneelitiedosto v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, kde-format
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
+msgid "%1 Docks"
 msgstr "%1 telakkaa tai paneelia"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
@@ -2401,12 +2396,12 @@ msgstr "Tuntematon"
 
 #: app/shortcuts/globalshortcuts.cpp:87
 #, kde-format
-msgid "Show Latte Dock/Panel"
+msgid "Show Latte Dock"
 msgstr "Näytä Latte-telakka/paneeli"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, kde-format
-msgid "Cycle Through Dock/Panel Settings Windows"
+msgid "Cycle Through Dock Settings Windows"
 msgstr "Kierrä telakan tai paneelin asetusikkunoiden läpi"
 
 #: app/shortcuts/globalshortcuts.cpp:105
@@ -2584,7 +2579,7 @@ msgstr "Lisää…"
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
+msgid "Add new docks from various templates"
 msgstr "Lisää uusia telakoita ja paneeleja eri malleista"
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
@@ -4770,3 +4765,13 @@ msgstr "Ylös"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "Alas"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr ""
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr ""

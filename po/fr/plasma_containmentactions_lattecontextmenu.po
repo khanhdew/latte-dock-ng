@@ -47,18 +47,18 @@ msgstr "Basculer vers une autre disposition"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
+msgid "&Add Dock"
 msgstr "&Ajouter un tableau de bord / panneau "
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
+msgid "Add dock based on specific template"
 msgstr ""
 "Ajouter un tableau de bord ou un panneau à partir d'un modèle spécifique"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
+msgid "Move dock to different layout"
 msgstr "Déplacer un tableau de bord ou un panneau vers un format différent"
 
 #: menu.cpp:149

@@ -233,7 +233,7 @@ msgstr "filnamn"
 #: app/main.cpp:113
 #, kde-format
 msgctxt "command line"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Lägg till dockningsfönster eller panel"
 
 #: app/main.cpp:113
@@ -343,11 +343,6 @@ msgstr ""
 #, kde-format
 msgid "Latte Dock defaults"
 msgstr "Standardvärden för Latte dockningspanel"
-
-#: app/package/lattepackage.cpp:35
-#, kde-format
-msgid "Latte Dock panel"
-msgstr "Latte dockningspanel"
 
 #: app/package/lattepackage.cpp:36
 #, kde-format
@@ -523,22 +518,22 @@ msgstr "Lägg till grafiska komponenter..."
 
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, kde-format
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Lägg till dockningsfönster eller panel"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, kde-format
-msgid "Move Dock/Panel To Layout"
+msgid "Move Dock To Layout"
 msgstr "Flytta dockningsfönster eller panel till layout"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, kde-format
-msgid "Export Dock/Panel as Template..."
+msgid "Export Dock as Template..."
 msgstr "Exportera dockningsfönster eller panel som mall..."
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, kde-format
-msgid "Remove Dock/Panel"
+msgid "Remove Dock"
 msgstr "Ta bort dockningsfönster eller panel"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
@@ -714,7 +709,7 @@ msgstr "Exportera vald layout som mall"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, kde-format
-msgid "Export your selected dock or panel as template"
+msgid "Export your selected dock as template"
 msgstr "Exportera valt dockningsfönster eller vald panel som mall"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
@@ -778,7 +773,7 @@ msgstr "Exportera layoutmall"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:63
 #, kde-format
-msgid "Export Dock/Panel Template"
+msgid "Export Dock Template"
 msgstr "Exportera dockningsfönster- eller panelmall"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
@@ -1605,7 +1600,7 @@ msgstr "Skrivskydda vald layout"
 #: app/settings/settingsdialog/tablayoutshandler.cpp:178
 #, kde-format
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
+msgid "&Docks..."
 msgstr "Dockningsfönster, &Paneler..."
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
@@ -2078,13 +2073,13 @@ msgstr "Verkställ nu"
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
+msgid "Apply all dock changes now"
 msgstr "Verkställ alla ändringar av dockningsfönster och paneler nu"
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, kde-format
-msgid "Docks/Panels"
+msgid "Docks"
 msgstr "Dockning/Paneler"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
@@ -2095,7 +2090,7 @@ msgstr "&Ny"
 
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, kde-format
-msgid "New dock or panel"
+msgid "New dock"
 msgstr "Nytt dockningsfönster eller ny panel"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
@@ -2106,7 +2101,7 @@ msgstr "&Duplicera"
 
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, kde-format
-msgid "Duplicate selected dock or panel"
+msgid "Duplicate selected dock"
 msgstr "Duplicera valt dockningsfönster eller panel"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
@@ -2122,12 +2117,12 @@ msgstr "&Importera..."
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
+msgid "Import dock from local file"
 msgstr "Importera dockningsfönster eller panel från lokal fil"
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, kde-format
-msgid "Export selected dock or panel at your system"
+msgid "Export selected dock at your system"
 msgstr "Exportera vald dockningsfönster eller panel till systemet"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
@@ -2148,7 +2143,7 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:342
 #, kde-format
-msgid "Export Dock/Panel For Backup"
+msgid "Export Dock For Backup"
 msgstr "Exportera dockningsfönster eller panel för säkerhetskopia"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
@@ -2160,7 +2155,7 @@ msgstr "Exportera"
 #: app/settings/viewsdialog/viewshandler.cpp:350
 #, kde-format
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte dockningsfönsterfil eller panelfil v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
@@ -2178,7 +2173,7 @@ msgstr "Export till filen <b>%1</b> lyckades ..."
 #: app/settings/viewsdialog/viewshandler.cpp:431
 #, kde-format
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
+msgid "Import Dock"
 msgstr "Importera dockningsfönster/panel"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
@@ -2189,13 +2184,13 @@ msgstr "Importera"
 #: app/settings/viewsdialog/viewshandler.cpp:440
 #, kde-format
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Latte dockningsfönsterfil eller panelfil v0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, kde-format
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
+msgid "%1 Docks"
 msgstr "%1 dockningsfönster/paneler"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
@@ -2402,12 +2397,12 @@ msgstr "Okänd"
 
 #: app/shortcuts/globalshortcuts.cpp:87
 #, kde-format
-msgid "Show Latte Dock/Panel"
+msgid "Show Latte Dock"
 msgstr "Visa Latte dockningspanel"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, kde-format
-msgid "Cycle Through Dock/Panel Settings Windows"
+msgid "Cycle Through Dock Settings Windows"
 msgstr "Gå igenom docknings- och panelinställningsfönster"
 
 #: app/shortcuts/globalshortcuts.cpp:105
@@ -2588,7 +2583,7 @@ msgstr "Lägg till..."
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
+msgid "Add new docks from various templates"
 msgstr "Lägg till nya dockningsfönster och paneler från diverse mallar"
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
@@ -4934,3 +4929,13 @@ msgstr "Överst"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "Nederst"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr ""
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr ""

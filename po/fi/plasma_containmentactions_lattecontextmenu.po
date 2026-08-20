@@ -44,17 +44,17 @@ msgstr "Vaihda toiseen asetteluun"
 
 #: menu.cpp:129
 #, kde-format
-msgid "&Add Dock/Panel"
+msgid "&Add Dock"
 msgstr "L&isää telakka/paneeli"
 
 #: menu.cpp:131
 #, kde-format
-msgid "Add dock or panel based on specific template"
+msgid "Add dock based on specific template"
 msgstr "Lisää tiettyyn malliin pohjautuvan telakan tai paneelin"
 
 #: menu.cpp:142
 #, kde-format
-msgid "Move dock or panel to different layout"
+msgid "Move dock to different layout"
 msgstr "Siirrä telakka tai paneeli toiseen asetteluun"
 
 #: menu.cpp:149

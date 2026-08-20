@@ -239,7 +239,7 @@ msgstr "имя_файла"
 #: app/main.cpp:113
 #, kde-format
 msgctxt "command line"
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Добавить док или панель"
 
 #: app/main.cpp:113
@@ -352,11 +352,6 @@ msgstr ""
 #, kde-format
 msgid "Latte Dock defaults"
 msgstr "Параметры Latte Dock по умолчанию"
-
-#: app/package/lattepackage.cpp:35
-#, kde-format
-msgid "Latte Dock panel"
-msgstr "Панель Latte Dock"
 
 #: app/package/lattepackage.cpp:36
 #, kde-format
@@ -532,22 +527,22 @@ msgstr "Добавить виджеты..."
 
 #: app/settings/actionsdialog/actionshandler.cpp:96
 #, kde-format
-msgid "Add Dock/Panel"
+msgid "Add Dock"
 msgstr "Добавить док или панель"
 
 #: app/settings/actionsdialog/actionshandler.cpp:103
 #, kde-format
-msgid "Move Dock/Panel To Layout"
+msgid "Move Dock To Layout"
 msgstr "Переместить док или панель на макет"
 
 #: app/settings/actionsdialog/actionshandler.cpp:110
 #, kde-format
-msgid "Export Dock/Panel as Template..."
+msgid "Export Dock as Template..."
 msgstr "Экспорт дока или панели как шаблона…"
 
 #: app/settings/actionsdialog/actionshandler.cpp:117
 #, kde-format
-msgid "Remove Dock/Panel"
+msgid "Remove Dock"
 msgstr "Удалить док или панель"
 
 #: app/settings/detailsdialog/colorsmodel.cpp:35
@@ -721,7 +716,7 @@ msgstr "Экспорт выбранного макета в качестве ш�
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:48
 #, kde-format
-msgid "Export your selected dock or panel as template"
+msgid "Export your selected dock as template"
 msgstr "Экспорт выбранного дока или панели в качестве шаблона"
 
 #: app/settings/exporttemplatedialog/exporttemplatedialog.cpp:62
@@ -786,7 +781,7 @@ msgstr "Экспорт шаблона макета"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:63
 #, kde-format
-msgid "Export Dock/Panel Template"
+msgid "Export Dock Template"
 msgstr "Экспорт шаблона дока или панели"
 
 #: app/settings/exporttemplatedialog/exporttemplatehandler.cpp:65
@@ -1633,7 +1628,7 @@ msgstr "Сделать выбранный макет доступным толь
 #: app/settings/settingsdialog/tablayoutshandler.cpp:178
 #, kde-format
 msgctxt "layout docks / panels"
-msgid "Docks, &Panels..."
+msgid "&Docks..."
 msgstr "Доки и &панели…"
 
 #: app/settings/settingsdialog/tablayoutshandler.cpp:179
@@ -2104,13 +2099,13 @@ msgstr "Применить"
 
 #: app/settings/viewsdialog/viewsdialog.cpp:34
 #, kde-format
-msgid "Apply all dock, panels changes now"
+msgid "Apply all dock changes now"
 msgstr "Немедленно применить все изменения к докам и панелям"
 
 #. i18n: ectx: property (windowTitle), widget (QDialog, ViewsDialog)
 #: app/settings/viewsdialog/viewsdialog.ui:14
 #, kde-format
-msgid "Docks/Panels"
+msgid "Docks"
 msgstr "Доки и панели"
 
 #: app/settings/viewsdialog/viewshandler.cpp:69
@@ -2121,7 +2116,7 @@ msgstr "&Создать"
 
 #: app/settings/viewsdialog/viewshandler.cpp:70
 #, kde-format
-msgid "New dock or panel"
+msgid "New dock"
 msgstr "Создать док или панель"
 
 #: app/settings/viewsdialog/viewshandler.cpp:83
@@ -2132,7 +2127,7 @@ msgstr "Создать &копию"
 
 #: app/settings/viewsdialog/viewshandler.cpp:84
 #, kde-format
-msgid "Duplicate selected dock or panel"
+msgid "Duplicate selected dock"
 msgstr "Создать копию выбранного дока или панели"
 
 #: app/settings/viewsdialog/viewshandler.cpp:92
@@ -2148,12 +2143,12 @@ msgstr "&Импорт…"
 
 #: app/settings/viewsdialog/viewshandler.cpp:101
 #, kde-format
-msgid "Import dock or panel from local file"
+msgid "Import dock from local file"
 msgstr "Импорт дока или панели из локального файла"
 
 #: app/settings/viewsdialog/viewshandler.cpp:109
 #, kde-format
-msgid "Export selected dock or panel at your system"
+msgid "Export selected dock at your system"
 msgstr "Экспорт выбранного дока или панели в системе"
 
 #: app/settings/viewsdialog/viewshandler.cpp:305
@@ -2174,7 +2169,7 @@ msgstr ""
 
 #: app/settings/viewsdialog/viewshandler.cpp:342
 #, kde-format
-msgid "Export Dock/Panel For Backup"
+msgid "Export Dock For Backup"
 msgstr "Экспорт резервной копии дока или панели"
 
 #: app/settings/viewsdialog/viewshandler.cpp:344
@@ -2186,7 +2181,7 @@ msgstr "Экспорт"
 #: app/settings/viewsdialog/viewshandler.cpp:350
 #, kde-format
 msgctxt "export view"
-msgid "Latte Dock/Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Файл панели Latte Dock версии 0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:360
@@ -2204,7 +2199,7 @@ msgstr "Экспорт в файл <b>%1</b> успешно выполнен..."
 #: app/settings/viewsdialog/viewshandler.cpp:431
 #, kde-format
 msgctxt "import dock/panel"
-msgid "Import Dock/Panel"
+msgid "Import Dock"
 msgstr "Импорт дока или панели"
 
 #: app/settings/viewsdialog/viewshandler.cpp:434
@@ -2215,13 +2210,13 @@ msgstr "Импорт"
 #: app/settings/viewsdialog/viewshandler.cpp:440
 #, kde-format
 msgctxt "import dock panel"
-msgid "Latte Dock or Panel file v0.2"
+msgid "Latte Dock NG file v0.2"
 msgstr "Файл дока или панели Latte версии 0.2"
 
 #: app/settings/viewsdialog/viewshandler.cpp:512
 #, kde-format
 msgctxt "<layout name> Docks/Panels"
-msgid "%1 Docks/Panels"
+msgid "%1 Docks"
 msgstr "Доки и панели %1"
 
 #: app/settings/viewsdialog/viewshandler.cpp:524
@@ -2434,12 +2429,12 @@ msgstr "Неизвестно"
 
 #: app/shortcuts/globalshortcuts.cpp:87
 #, kde-format
-msgid "Show Latte Dock/Panel"
+msgid "Show Latte Dock"
 msgstr "Открыть панель Latte"
 
 #: app/shortcuts/globalshortcuts.cpp:96
 #, kde-format
-msgid "Cycle Through Dock/Panel Settings Windows"
+msgid "Cycle Through Dock Settings Windows"
 msgstr "Переключение между окнами параметров доков и панелей"
 
 #: app/shortcuts/globalshortcuts.cpp:105
@@ -2617,7 +2612,7 @@ msgstr "Добавить…"
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:500
 #, kde-format
-msgid "Add new docks and panels from various templates"
+msgid "Add new docks from various templates"
 msgstr "Установить новые доки и панели из шаблонов"
 
 #: shell/package/contents/configuration/LatteDockConfiguration.qml:603
@@ -4629,3 +4624,13 @@ msgstr "Сверху"
 msgctxt "bottom items alignment"
 msgid "Bottom"
 msgstr "Снизу"
+
+#: app/settings/settingsdialog/settingsdialog.ui:809
+#, kde-format
+msgid "Thickness margin influence"
+msgstr ""
+
+#: app/settings/exporttemplatedialog/exporttemplatedialog.ui:14
+#, kde-format
+msgid "Export Template"
+msgstr ""
