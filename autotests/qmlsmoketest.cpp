@@ -78,7 +78,7 @@ private Q_SLOTS:
     void configInteractionHoverActionNotHardcoded();
     void typesTaskActionEnumCompleteness();
     void parabolicAreaMouseAreaStructuralGuardsPresent();
-    void bounceZoomRestoreGuardsPresent();
+    void zoomRestoreDelegatedToBehaviorAnimation();
 };
 
 class ParabolicTargetStub : public QObject
@@ -1431,31 +1431,56 @@ void QmlSmokeTest::parabolicAreaMouseAreaStructuralGuardsPresent()
     QVERIFY(source.contains(QStringLiteral("!communicator.indexerIsSupported")));
 }
 
-void QmlSmokeTest::bounceZoomRestoreGuardsPresent()
+void QmlSmokeTest::zoomRestoreDelegatedToBehaviorAnimation()
 {
-    // Issue #35: clicking a launcher keeps the click-time zoom while the
-    // bounce runs with direct rendering disabled, so a pointer that leaves
-    // the item must restore the zoom immediately instead of staying
-    // magnified until the animation ends. Verify both restore points:
-    //   1. ParabolicEventsArea.onParabolicExited — immediate restore when
-    //      direct rendering is disabled and the zoom is magnified
-    //   2. LauncherAnimation.onStopped — safety net for exit paths that do
-    //      not go through parabolicExited
+    // Commit baff151b7 reworked zoom recovery: instead of the old
+    // onParabolicExited / onStopped guards that force zoom = 1 directly
+    // (which caused jarring visual jumps and interrupted in-flight
+    // animations), the restore is now delegated to the Behavior on zoom
+    // inside ParabolicItem. Any code that needs to clear the zoom simply
+    // sets the target value (parabolicItem.zoom = 1) and BehaviorAnimation
+    // animates toward it smoothly when direct rendering is disabled.
+    //
+    // Verify the new restore path end to end:
+    //   1. BasicItem.slotClearZoom — sets the zoom target, delegating the
+    //      actual restore animation to the Behavior below
+    //   2. ParabolicItem — "Behavior on zoom" + NumberAnimation is the real
+    //      animator that restores the zoom smoothly (3 * animationTime when
+    //      direct rendering is disabled, instant otherwise)
+    //   3. ParabolicEventsArea — onParabolicExited keeps the tooltip cleanup;
+    //      the only zoom gating left is restoreZoomIsBlocked inside
+    //      calculateParabolicScales (contextual blocking, not a restore guard)
+    //   4. LauncherAnimation.onStopped — must always re-enable direct
+    //      rendering; the Behavior reads directRenderingEnabled to decide
+    //      between animated and instant restore
+    QFile basicItem(QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/abilities/items/BasicItem.qml"));
+    QVERIFY(basicItem.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString basicItemSource = QString::fromUtf8(basicItem.readAll());
+
+    const int slotClearZoomPos = basicItemSource.indexOf(QStringLiteral("function slotClearZoom()"));
+    QVERIFY(slotClearZoomPos >= 0);
+    QVERIFY(basicItemSource.mid(slotClearZoomPos).contains(QStringLiteral("parabolicItem.zoom = 1")));
+
+    QFile parabolicItem(QStringLiteral(LATTE_PARABOLIC_ITEM_QML));
+    QVERIFY(parabolicItem.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString parabolicItemSource = QString::fromUtf8(parabolicItem.readAll());
+
+    QVERIFY(parabolicItemSource.contains(QStringLiteral("Behavior on zoom")));
+    QVERIFY(parabolicItemSource.contains(QStringLiteral("NumberAnimation")));
+
     QFile eventsArea(QStringLiteral(LATTE_PARABOLIC_EVENTS_AREA_QML));
     QVERIFY(eventsArea.open(QIODevice::ReadOnly | QIODevice::Text));
     const QString eventsAreaSource = QString::fromUtf8(eventsArea.readAll());
 
     QVERIFY(eventsAreaSource.contains(QStringLiteral("onParabolicExited:")));
-    QVERIFY(eventsAreaSource.contains(QStringLiteral("directRenderingEnabled")));
-    QVERIFY(eventsAreaSource.contains(QStringLiteral("parabolicItem.zoom = 1")));
+    QVERIFY(eventsAreaSource.contains(QStringLiteral("restoreZoomIsBlocked")));
 
     QFile launcherAnimation(QStringLiteral(LATTE_LAUNCHER_ANIMATION_QML));
     QVERIFY(launcherAnimation.open(QIODevice::ReadOnly | QIODevice::Text));
     const QString launcherAnimationSource = QString::fromUtf8(launcherAnimation.readAll());
 
     QVERIFY(launcherAnimationSource.contains(QStringLiteral("function onStopped()")));
-    QVERIFY(launcherAnimationSource.contains(QStringLiteral("parabolicAreaContainsMouse")));
-    QVERIFY(launcherAnimationSource.contains(QStringLiteral("parabolicItem.zoom = 1")));
+    QVERIFY(launcherAnimationSource.contains(QStringLiteral("setDirectRenderingEnabled")));
 }
 
 QTEST_MAIN(QmlSmokeTest)

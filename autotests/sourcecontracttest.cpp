@@ -72,6 +72,7 @@ private Q_SLOTS:
     void synchronizerUnloadUsesSynchronousDelete();
     void taskIconsRefreshAfterIconThemeChanges();
     void taskAudioBadgesScaleWithParabolicZoom();
+    void parabolicScaleAddressingFallsBackToLastValidIndexDuringRemoval();
     void widgetExplorerLaunchesKnsDialogOutOfProcess();
     void widgetExplorerUsesPlasmaTranslationContexts();
     void compactAppletDigitalClockWidthCapPreventsLongDateFormatOverflow();
@@ -1103,6 +1104,30 @@ void SourceContractTest::taskAudioBadgesScaleWithParabolicZoom()
     QVERIFY(iconBoxSize >= 0);
     QVERIFY(maximumSize > iconBoxSize);
     QVERIFY(compactSize > maximumSize);
+}
+
+void SourceContractTest::parabolicScaleAddressingFallsBackToLastValidIndexDuringRemoval()
+{
+    // Issue: during launcher->window/startup conversions ListView.delayRemove
+    // keeps the bouncing delegate alive while its model row is gone, turning
+    // its index into -1. Parabolic scale broadcasts are addressed by index, so
+    // a -1 delegate could never receive updates (zoom frozen) yet always
+    // accepted the clear signal (zoom pinned to 1). The fix addresses every
+    // parabolic operation through effectiveIndex, which falls back to the last
+    // valid index captured before removal.
+    QFile eventsArea(QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/abilities/items/basicitem/ParabolicEventsArea.qml"));
+    QVERIFY(eventsArea.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(eventsArea.readAll());
+
+    // 1. The fallback property itself (same pattern as TaskItem.isSeparatorHidden)
+    QVERIFY(source.contains(QStringLiteral("readonly property int effectiveIndex: index >= 0 ? index : taskItem.lastValidIndex")));
+    // 2. Outgoing broadcasts use effectiveIndex (no more -1 hijack addresses)
+    QVERIFY(source.contains(QStringLiteral("applyParabolicEffect(effectiveIndex")));
+    // 3. Incoming update branch matches on effectiveIndex (dying delegate keeps tracking)
+    QVERIFY(source.contains(QStringLiteral("if (delegateIndex === effectiveIndex)")));
+    // 4. Incoming clear branch compares and resets through effectiveIndex
+    QVERIFY(source.contains(QStringLiteral("(effectiveIndex < delegateIndex)")));
+    QVERIFY(source.contains(QStringLiteral("updateScale(effectiveIndex, 1)")));
 }
 
 void SourceContractTest::widgetExplorerLaunchesKnsDialogOutOfProcess()
