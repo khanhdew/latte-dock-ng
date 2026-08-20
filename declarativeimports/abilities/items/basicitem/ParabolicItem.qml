@@ -68,7 +68,7 @@ Item{
 
     Behavior on zoom {
         NumberAnimation{
-            duration: (!abilityItem.abilities.parabolic.directRenderingEnabled || restoreAnimation.running)
+            duration: !abilityItem.abilities.parabolic.directRenderingEnabled
                       ? 3 * abilityItem.animationTime : 0
             easing.type: Easing.OutCubic
         }

@@ -44,7 +44,6 @@ private Q_SLOTS:
     void appearancePaletteExposesLayoutCustomColors();
     void modernDockBackgroundShadowDefaultIsCompact();
     void layoutDetailsExposeCustomColorSchemeSelector();
-    void restoreAnimationContractMovedToQmlSmokeTest();
     void showWindowAnimationContractMovedToQmlSmokeTest();
     void parabolicItemContractMovedToQmlSmokeTest();
     void autotestAggregateTargetDocumentsFullSuiteBuild();
@@ -1120,7 +1119,7 @@ void SourceContractTest::parabolicScaleAddressingFallsBackToLastValidIndexDuring
     const QString source = QString::fromUtf8(eventsArea.readAll());
 
     // 1. The fallback property itself (same pattern as TaskItem.isSeparatorHidden)
-    QVERIFY(source.contains(QStringLiteral("readonly property int effectiveIndex: index >= 0 ? index : taskItem.lastValidIndex")));
+    QVERIFY(source.contains(QStringLiteral("readonly property int effectiveIndex: index >= 0 ? index : (taskItem.lastValidIndex >= 0 ? taskItem.lastValidIndex : index)")));
     // 2. Outgoing broadcasts use effectiveIndex (no more -1 hijack addresses)
     QVERIFY(source.contains(QStringLiteral("applyParabolicEffect(effectiveIndex")));
     // 3. Incoming update branch matches on effectiveIndex (dying delegate keeps tracking)
@@ -1378,22 +1377,6 @@ void SourceContractTest::layoutDetailsExposeCustomColorSchemeSelector()
     QVERIFY(handlerSource.contains(QStringLiteral("connect(m_ui->customSchemeCmb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DetailsHandler::onCurrentSchemeIndexChanged);")));
     QVERIFY(handlerSource.contains(QStringLiteral("QString selectedScheme = m_ui->customSchemeCmb->itemData(row, Model::Schemes::IDROLE).toString();")));
     QVERIFY(handlerSource.contains(QStringLiteral("c_data.schemeFile = file;")));
-}
-
-void SourceContractTest::restoreAnimationContractMovedToQmlSmokeTest()
-{
-    QFile qmlSmoke(QStringLiteral(LATTE_SOURCE_DIR "/autotests/qmlsmoketest.cpp"));
-    QVERIFY(qmlSmoke.open(QFile::ReadOnly));
-    const QString qmlSmokeSource = QString::fromUtf8(qmlSmoke.readAll());
-    QVERIFY(qmlSmokeSource.contains(QStringLiteral("restoreAnimationLoadsFromSource")));
-    QVERIFY(qmlSmokeSource.contains(QStringLiteral("QQmlComponent component")));
-    QVERIFY(qmlSmokeSource.contains(QStringLiteral("LATTE_RESTORE_ANIMATION_QML")));
-
-    QFile sourceContracts(QStringLiteral(LATTE_SOURCE_DIR "/autotests/sourcecontracttest.cpp"));
-    QVERIFY(sourceContracts.open(QFile::ReadOnly));
-    const QString sourceContractSource = QString::fromUtf8(sourceContracts.readAll());
-    const QString oldSourceLock = QStringLiteral("QFile ") + QStringLiteral("restoreAnimation");
-    QVERIFY(!sourceContractSource.contains(oldSourceLock));
 }
 
 void SourceContractTest::showWindowAnimationContractMovedToQmlSmokeTest()

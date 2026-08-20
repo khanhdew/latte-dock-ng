@@ -56,8 +56,7 @@ Item{
 
     Behavior on nHiddenSize {
         NumberAnimation{
-            duration: (abilityItem.isHiddenSpacerAnimated || restoreAnimation.running)
-                      ? abilityItem.animationTime : 0
+            duration: abilityItem.isHiddenSpacerAnimated ? abilityItem.animationTime : 0
         }
     }
 

@@ -24,7 +24,7 @@ Item {
     //! 1). Fall back to the last valid index captured before removal (same
     //! pattern as TaskItem.isSeparatorHidden) so the dying delegate keeps
     //! tracking the pointer and does not hijack out-of-range broadcasts.
-    readonly property int effectiveIndex: index >= 0 ? index : taskItem.lastValidIndex
+    readonly property int effectiveIndex: index >= 0 ? index : (taskItem.lastValidIndex >= 0 ? taskItem.lastValidIndex : index)
 
     readonly property bool containsMouse: (abilityItem.abilities.parabolic.currentParabolicItem === _parabolicArea) || parabolicMouseArea.containsMouse
     readonly property bool pointerContainsMouse: parabolicMouseArea.containsMouse

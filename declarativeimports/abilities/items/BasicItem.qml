@@ -143,7 +143,6 @@ Item{
 
     readonly property alias indicator: abilityIndicatorObj
     readonly property alias parabolicItem: _parabolicItem
-    readonly property alias restoreAnimation: _restoreAnimation
     readonly property alias tooltipVisualParent: _parabolicItem.titleTooltipVisualParent
 
     Component.onCompleted: {
@@ -392,8 +391,6 @@ Item{
             }
         ]
     }
-
-    BasicItemParts.RestoreAnimation{id: _restoreAnimation}
 
     function slotClearZoom(){
         abilityItem.parabolicItem.zoom = 1;

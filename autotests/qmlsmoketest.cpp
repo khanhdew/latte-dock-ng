@@ -63,7 +63,6 @@ class QmlSmokeTest : public QObject
 private Q_SLOTS:
     void initTestCase();
     void latteCoreQmlPluginLoadsFromBuildTree();
-    void restoreAnimationLoadsFromSource();
     void showWindowAnimationFrozenZoomDecisionLoadsFromSource();
     void parabolicItemZoomRecoveryLoadsFromSource();
     void compactAppletPopupSizingLoadsFromSource();
@@ -830,35 +829,6 @@ QtObject {
     QCOMPARE(object->property("hasCompositingProperty").toBool(), true);
 }
 
-void QmlSmokeTest::restoreAnimationLoadsFromSource()
-{
-    QQmlEngine engine;
-    QQmlContext context(engine.rootContext());
-    ParabolicTargetStub parabolicTarget;
-    AbilityItemStub abilityItem(&parabolicTarget);
-    context.setContextProperty(QStringLiteral("abilityItem"), &abilityItem);
-
-    QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_RESTORE_ANIMATION_QML)));
-    std::unique_ptr<QObject> object(component.create(&context));
-    if (!object) {
-        qWarning() << component.errors();
-    }
-
-    QVERIFY(object);
-    const auto animations = object->findChildren<QObject *>();
-    QObject *zoomAnimation = nullptr;
-    for (QObject *animation : animations) {
-        if (animation->property("property").toString() == QStringLiteral("zoom")) {
-            zoomAnimation = animation;
-            break;
-        }
-    }
-
-    QVERIFY(zoomAnimation);
-    QCOMPARE(zoomAnimation->property("target").value<QObject *>(), &parabolicTarget);
-    QCOMPARE(zoomAnimation->property("to").toReal(), 1.0);
-}
-
 void QmlSmokeTest::showWindowAnimationFrozenZoomDecisionLoadsFromSource()
 {
     QTemporaryDir importRoot;
@@ -921,7 +891,6 @@ void QmlSmokeTest::parabolicItemZoomRecoveryLoadsFromSource()
     ParabolicTargetStub parabolicTarget;
     AbilityItemStub abilityItem(&parabolicTarget);
     PlasmoidStub plasmoid;
-    QVariantMap restoreAnimation{{QStringLiteral("running"), false}};
     QVariantMap theme{
         {QStringLiteral("textColor"), QColor(Qt::white)},
         {QStringLiteral("backgroundColor"), QColor(Qt::black)},
@@ -929,7 +898,6 @@ void QmlSmokeTest::parabolicItemZoomRecoveryLoadsFromSource()
 
     context.setContextProperty(QStringLiteral("abilityItem"), &abilityItem);
     context.setContextProperty(QStringLiteral("plasmoid"), &plasmoid);
-    context.setContextProperty(QStringLiteral("restoreAnimation"), restoreAnimation);
     context.setContextProperty(QStringLiteral("theme"), theme);
     context.setContextProperty(QStringLiteral("latteBridge"), QVariant());
 
@@ -1481,6 +1449,11 @@ void QmlSmokeTest::zoomRestoreDelegatedToBehaviorAnimation()
 
     QVERIFY(launcherAnimationSource.contains(QStringLiteral("function onStopped()")));
     QVERIFY(launcherAnimationSource.contains(QStringLiteral("setDirectRenderingEnabled")));
+
+    //! The old force-reset guards must not silently return: the restore is
+    //! delegated to the Behavior on zoom, not to exit-path zoom assignments.
+    QVERIFY(!eventsAreaSource.contains(QStringLiteral("parabolicItem.zoom = 1")));
+    QVERIFY(!launcherAnimationSource.contains(QStringLiteral("parabolicAreaContainsMouse")));
 }
 
 QTEST_MAIN(QmlSmokeTest)

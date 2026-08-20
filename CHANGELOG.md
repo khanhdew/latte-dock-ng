@@ -1,50 +1,22 @@
-## Fixed - 2026-08-18
-
-### bounce-induced zoom freeze (Issue #42)
-
-#### By
-
-- Introduced `effectiveIndex` — a single source of truth for all parabolic index 
-  lookups:
-
-```
-effectiveIndex = index >= 0 ? index : taskItem.lastValidIndex
-```
-
-This works as follows:
-
-- **Live delegates** (`index >= 0`): `effectiveIndex` is identical to `index`, 
-  so behavior is completely unchanged.
-- **Dead delegates** (`index == -1`): fall back to `lastValidIndex`, which was 
-  captured while the delegate was still alive. This restores the delegate's 
-  legitimate position in the zoom chain — it **continues to receive updates 
-  (staying unfrozen)** and **is only cleared when the indicator genuinely 
-  passes its position**, rather than being wrongly snapped to zoom level 1. 
-  Outgoing broadcasts also use the effective index, eliminating out-of-bounds 
-  addresses like `-1` or `-2`.
-
-- This fallback pattern is **structurally identical** to the existing idiom in
-  `TaskItem.qml:72-73` (`itemIndex >= 0 ? itemIndex : lastValidIndex`), which is 
-  already an accepted way to handle the "index = -1 during removal" window.
-
-
-## Fixed - 2026-08-16
-- Reworked RestoreAnimation and zoom logic for ParabolicItem zoom recovery, 
-  make the parabolic effect even smoother!
-
-- Adjust the logic inside RestoreAnimation. The zoom recovery logic within 
-  ParabolicItem is no longer handled solely by RestoreAnimation; instead, it 
-  is delegated to BehaviorAnimation.
-
-### By
-- We only need to set a target value, and BehaviorAnimation will smoothly animate toward
-  the final state automatically. This avoids jarring visual jumps even if prior animations
-  have not finished playing. With this change, zooming animations will no longer interrupt
-  each other, delivering smoother visuals.
-
 ## [Unreleased]
 
 ### Fixed
+- The bounce-induced zoom freeze (issue #42) is fixed: parabolic scale
+  broadcasts are now addressed through `effectiveIndex` (`index >= 0 ? index :
+  taskItem.lastValidIndex`), so a delegate kept alive by `ListView.delayRemove`
+  during a launcher->window conversion (index -1) keeps tracking the pointer
+  instead of being frozen at its old zoom or pinned to zoom level 1 by the
+  clear broadcast; outgoing broadcasts use the same effective index, removing
+  out-of-bounds addresses like -1/-2.
+- Icon scaling no longer behaves abnormally when the pointer moves into the
+  dock and over other icons while the parabolic zoom animation is still
+  running (issue #40): the zoom gate in `ParabolicEventsArea.onParabolicMove`
+  was removed, so the parabolic effect keeps updating during the zoom-in
+  animation and the `Behavior on zoom` in ParabolicItem animates smoothly
+  toward the new target.
+- Zoom restore is delegated to the `Behavior on zoom`: `slotClearZoom` only
+  sets the target value (`parabolicItem.zoom = 1`) and the Behavior animates
+  toward it, avoiding jarring jumps when prior animations have not finished.
 - A window without launcher identity (an app that ships no .desktop file,
   e.g. a bare window with empty AppId) no longer renders as a phantom
   separator line at the right end of the dock: the separator placeholder
@@ -59,6 +31,9 @@ This works as follows:
   never be "removed" without actually changing the launcher list.
 
 ### Tests
+- New source-contract tests lock the `effectiveIndex` fallback in
+  `ParabolicEventsArea` and the Behavior-driven zoom restore path
+  (`zoomRestoreDelegatedToBehaviorAnimation`).
 - New source-contract tests lock the empty-URL guard in the separator
   removal path, the isSeparator window/startup exclusion, and the context
   menu routing through the guarded launcher-local removal.
