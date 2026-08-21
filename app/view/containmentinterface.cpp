@@ -12,6 +12,7 @@
 // local
 #include "pluginids.h"
 #include "view.h"
+#include "visualitemsearch.h"
 #include "../lattecorona.h"
 #include "../layout/genericlayout.h"
 #include "../layouts/importer.h"
@@ -261,6 +262,8 @@ ContainmentInterface::ContainmentInterface(Latte::View *parent)
 
     connect(m_view, &View::containmentChanged
     , this, [&]() {
+        clearShortcutsHost();
+
         if (m_view->containment()) {
             connect(m_view->containment(), &Plasma::Containment::appletAdded, this, &ContainmentInterface::onAppletAdded);
             m_appletsExpandedConnectionsTimer.start();
@@ -281,21 +284,42 @@ void ContainmentInterface::identifyShortcutsHost()
         return;
     }
 
-    if (QQuickItem *graphicItem = m_view->containment()->property("_plasma_graphicObject").value<QQuickItem *>()) {
-        const auto &childItems = graphicItem->childItems();
+    clearShortcutsHost();
 
-        for (QQuickItem *item : childItems) {
-            if (item->objectName() == QLatin1String("containmentViewLayout")) {
-                for (QQuickItem *subitem : item->childItems()) {
-                    if (subitem->objectName() == QLatin1String("PositionShortcutsAbilityHost")) {
-                        m_shortcutsHost = subitem;
-                        identifyMethods();
-                        return;
-                    }
-                }
-            }
-        }
+    if (!m_view || !m_view->containment()) {
+        return;
     }
+
+    QQuickItem *searchRoot{nullptr};
+
+    if (m_layoutManager) {
+        searchRoot = m_layoutManager->property("rootItem").value<QQuickItem *>();
+    }
+
+    if (!searchRoot) {
+        searchRoot = m_view->containment()->property("_plasma_graphicObject").value<QQuickItem *>();
+    }
+
+    m_shortcutsHost = findQuickItemByObjectName(searchRoot, QStringLiteral("PositionShortcutsAbilityHost"));
+
+    if (!m_shortcutsHost) {
+        return;
+    }
+
+    m_shortcutsHostDestroyedConnection = connect(
+        m_shortcutsHost, &QObject::destroyed, this, &ContainmentInterface::clearShortcutsHost);
+    identifyMethods();
+}
+
+void ContainmentInterface::clearShortcutsHost()
+{
+    disconnect(m_shortcutsHostDestroyedConnection);
+    m_shortcutsHostDestroyedConnection = {};
+    m_shortcutsHost.clear();
+    m_activateEntryMethod = QMetaMethod();
+    m_appletIdForIndexMethod = QMetaMethod();
+    m_newInstanceMethod = QMetaMethod();
+    m_showShortcutsMethod = QMetaMethod();
 }
 
 void ContainmentInterface::identifyMethods()

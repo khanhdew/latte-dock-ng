@@ -188,6 +188,9 @@ private Q_SLOTS:
     void uniqueNameExhaustionFallsBackToRandomSuffix();
     void layoutManagerResolveAppletQuickItemThreadsVisitedSet();
     void appdataComponentIdKeepsHyphenInLastSegment();
+    void positionShortcutHandlersDeclareSignalParameters();
+    void positionShortcutHostLookupIsRecursiveAndResettable();
+    void qmlCacheRevisionInvalidatesSameVersionBuilds();
 
     // Applet menu / popup contracts
     void needsAttentionStatusBlocksHidingWithoutWindowReconfiguration();
@@ -3723,6 +3726,54 @@ void SourceContractTest::appdataComponentIdKeepsHyphenInLastSegment()
     QVERIFY(!src.contains(QStringLiteral("<id>org.kde.latte-dock.desktop</id>")));
     QVERIFY(src.contains(QStringLiteral("<developer id=")));
     QVERIFY(!src.contains(QStringLiteral("<developer_name>")));
+}
+
+void SourceContractTest::positionShortcutHandlersDeclareSignalParameters()
+{
+    QFile basicItem(QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/abilities/items/BasicItem.qml"));
+    QVERIFY(basicItem.open(QFile::ReadOnly));
+    const QString basicSource = QString::fromUtf8(basicItem.readAll());
+    QVERIFY(basicSource.contains(QStringLiteral("function onSglActivateEntryAtIndex(entryIndex)")));
+    QVERIFY(basicSource.contains(QStringLiteral("function onSglNewInstanceForEntryAtIndex(entryIndex)")));
+    QVERIFY(!basicSource.contains(QStringLiteral("shortcutIndex(taskItem.itemIndex)")));
+
+    QFile appletItem(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/AppletItem.qml"));
+    QVERIFY(appletItem.open(QFile::ReadOnly));
+    const QString appletSource = QString::fromUtf8(appletItem.readAll());
+    QVERIFY(appletSource.contains(QStringLiteral("function onSglActivateEntryAtIndex(entryIndex)")));
+    QVERIFY(appletSource.contains(QStringLiteral("function onSglNewInstanceForEntryAtIndex(entryIndex)")));
+}
+
+void SourceContractTest::positionShortcutHostLookupIsRecursiveAndResettable()
+{
+    QFile sourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/view/containmentinterface.cpp"));
+    QVERIFY(sourceFile.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(sourceFile.readAll());
+    QVERIFY(source.contains(QStringLiteral("findQuickItemByObjectName(searchRoot")));
+    QVERIFY(source.contains(QStringLiteral("m_layoutManager->property(\"rootItem\")")));
+    QVERIFY(source.contains(QStringLiteral("clearShortcutsHost();")));
+    QVERIFY(source.contains(QStringLiteral("m_shortcutsHostDestroyedConnection")));
+
+    QFile bridgeFile(QStringLiteral(LATTE_SOURCE_DIR "/declarativeimports/abilities/bridge/PositionShortcuts.qml"));
+    QVERIFY(bridgeFile.open(QFile::ReadOnly));
+    const QString bridgeSource = QString::fromUtf8(bridgeFile.readAll());
+    QVERIFY(bridgeSource.contains(QStringLiteral("function onSglActivateEntryAtIndex(entryIndex)")));
+    QVERIFY(bridgeSource.contains(QStringLiteral("client.sglActivateEntryAtIndex(entryIndex)")));
+    QVERIFY(!bridgeSource.contains(QStringLiteral("host.sglActivateEntryAtIndex.connect")));
+}
+
+void SourceContractTest::qmlCacheRevisionInvalidatesSameVersionBuilds()
+{
+    QFile appTypes(QStringLiteral(LATTE_SOURCE_DIR "/app/apptypes.h"));
+    QVERIFY(appTypes.open(QFile::ReadOnly));
+    const QString appTypesSource = QString::fromUtf8(appTypes.readAll());
+    QVERIFY(appTypesSource.contains(QStringLiteral("QMLCACHEREVISION[] = \"1\"")));
+
+    QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(mainSourceFile.open(QFile::ReadOnly));
+    const QString mainSource = QString::fromUtf8(mainSourceFile.readAll());
+    QVERIFY(mainSource.contains(QStringLiteral("Latte::App::QMLCACHEREVISION")));
+    QVERIFY(mainSource.contains(QStringLiteral("cachedVersion != currentVersion")));
 }
 
 QTEST_MAIN(SourceContractTest)

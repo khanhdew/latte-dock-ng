@@ -70,6 +70,8 @@ inline constexpr const char DESKTOPFILENAME[] = "org.kde.latte-dock";
 inline constexpr const char QMLURI[] = "latte-dock";
 inline constexpr const char PRIVATEQMLURI[] = "org.kde.latte.private.app";
 inline constexpr const char BINARYNAME[] = "latte-dock-ng";
+// Bump when a same-version package ships QML changes that invalidate disk cache.
+inline constexpr const char QMLCACHEREVISION[] = "1";
 
 inline constexpr const char WAYLANDPRIMARYAPPID[] = "latte-dock-ng";
 inline constexpr const char WAYLANDLEGACYAPPID[] = "latte-dock";

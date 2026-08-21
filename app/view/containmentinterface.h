@@ -179,6 +179,7 @@ private Q_SLOTS:
     void onPlasmaTasksCountChanged();
 
 private:
+    void clearShortcutsHost();
     void addExpandedApplet(PlasmaQuick::AppletQuickItem * appletQuickItem);
     void removeExpandedApplet(PlasmaQuick::AppletQuickItem *appletQuickItem);
     void initAppletConfigurationSignals(const int &id, QQmlPropertyMap *configuration);
@@ -208,6 +209,7 @@ private:
     QMetaMethod m_appletIdForIndexMethod;
     QMetaMethod m_newInstanceMethod;
     QMetaMethod m_showShortcutsMethod;
+    QMetaObject::Connection m_shortcutsHostDestroyedConnection;
 
     QPointer<Latte::Corona> m_corona;
     QPointer<Latte::View> m_view;

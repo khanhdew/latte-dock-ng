@@ -9,18 +9,8 @@ BridgeItem {
     id: shortcutsBridge
     readonly property bool isConnected: host && client
 
-    onIsConnectedChanged: {
-        if (isConnected) {
-            host.sglActivateEntryAtIndex.connect(client.sglActivateEntryAtIndex);
-            host.sglNewInstanceForEntryAtIndex.connect(client.sglNewInstanceForEntryAtIndex);
-        } else {
-            host.sglActivateEntryAtIndex.disconnect(client.sglActivateEntryAtIndex);
-            host.sglNewInstanceForEntryAtIndex.disconnect(client.sglNewInstanceForEntryAtIndex);
-        }
-    }
-
     onClientChanged: {
-        if (client) {
+        if (host && client) {
             if (host.appletIdStealingPositionShortcuts !== shortcutsBridge.appletIndex) {
                 client.disabledIsStealingGlobalPositionShortcuts();
             }
@@ -37,17 +27,22 @@ BridgeItem {
 
     Connections {
         target: host
-        function onCurrentAppletStealingPositionShortcuts() {
+        function onSglActivateEntryAtIndex(entryIndex) {
+            if (client) {
+                client.sglActivateEntryAtIndex(entryIndex);
+            }
+        }
+
+        function onSglNewInstanceForEntryAtIndex(entryIndex) {
+            if (client) {
+                client.sglNewInstanceForEntryAtIndex(entryIndex);
+            }
+        }
+
+        function onCurrentAppletStealingPositionShortcuts(id) {
             if (appletIndex !== id && client) {
                 client.disabledIsStealingGlobalPositionShortcuts();
             }
-        }
-    }
-
-    Component.onDestruction: {
-        if (isConnected) {
-            host.sglActivateEntryAtIndex.disconnect(client.sglActivateEntryAtIndex);
-            host.sglNewInstanceForEntryAtIndex.disconnect(client.sglNewInstanceForEntryAtIndex);
         }
     }
 }
