@@ -1411,7 +1411,15 @@ void Corona::updateDockItemBadge(QString identifier, QString value)
 
 void Corona::setAutostart(const bool &enabled)
 {
-    m_universalSettings->setAutostart(enabled);
+    //! Persist the user's intent so the ensure-autostart logic never
+    //! recreates the entry on the next startup.
+    m_universalSettings->setEnsureAutostart(enabled);
+
+    if (!enabled) {
+        //! Explicit disable removes the XDG entry we own. Any systemd unit is
+        //! intentionally left untouched (it is not latte's to manage).
+        Layouts::Importer::disableAutostart();
+    }
 }
 
 void Corona::switchToLayout(QString layout)

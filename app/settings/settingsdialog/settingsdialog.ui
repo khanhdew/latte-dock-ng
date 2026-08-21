@@ -723,10 +723,23 @@
              <item row="3" column="1">
               <widget class="QCheckBox" name="autostartChkBox">
                <property name="toolTip">
-                <string>Start the application automatically after each relogin</string>
+                <string>Make sure at least one autostart mechanism is active after each relogin. When unchecked, Latte does not touch existing autostart entries.</string>
                </property>
                <property name="text">
-                <string>Enable autostart during startup</string>
+                <string>Ensure autostart during startup</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLabel" name="autostartWarningLbl">
+               <property name="visible">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Both a systemd service and the KDE autostart entry are enabled for Latte. This may start Latte twice at login; remove one of them to avoid it.</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
                </property>
               </widget>
              </item>

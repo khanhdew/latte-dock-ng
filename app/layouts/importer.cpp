@@ -29,6 +29,7 @@
 #include <KArchive/KArchiveEntry>
 #include <KArchive/KArchiveDirectory>
 #include <KConfigGroup>
+#include <KDesktopFile>
 #include <KLocalizedString>
 #include <KNotification>
 
@@ -526,7 +527,16 @@ bool Importer::importHelper(QString fileName)
 bool Importer::isAutostartEnabled()
 {
     QFile autostartFile(Latte::configPath() + QLatin1String("/autostart/org.kde.latte-dock.desktop"));
-    return autostartFile.exists();
+
+    if (!autostartFile.exists()) {
+        return false;
+    }
+
+    //! Honor the XDG autostart spec: an entry with Hidden=true exists on disk
+    //! but is disabled. Treat it as "not enabled" so it is neither reported as
+    //! a conflict nor mistaken for a working autostart mechanism.
+    KDesktopFile desktopFile(autostartFile.fileName());
+    return !desktopFile.desktopGroup().readEntry(QStringLiteral("Hidden"), false);
 }
 
 void Importer::enableAutostart()
@@ -565,7 +575,13 @@ void Importer::enableAutostart()
         QFileInfo autostartInfo(autostartFile.fileName());
         QFileInfo metaInfo(metaFilePath);
 
-        if (autostartInfo.lastModified() >= metaInfo.lastModified()) {
+        //! A present-but-hidden entry is disabled per the XDG spec. Even when
+        //! it is newer than the source, re-enabling must clear Hidden=true by
+        //! replacing it with the clean shipped desktop file.
+        KDesktopFile existingEntry(autostartFile.fileName());
+        const bool hidden = existingEntry.desktopGroup().readEntry(QStringLiteral("Hidden"), false);
+
+        if (!hidden && autostartInfo.lastModified() >= metaInfo.lastModified()) {
             return;
         }
 

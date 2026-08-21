@@ -22,6 +22,7 @@
 // Qt
 #include <QDebug>
 #include <QDir>
+#include <QProcess>
 
 // KDE
 #include <KActivities/Consumer>
@@ -67,21 +68,11 @@ UniversalSettings::~UniversalSettings()
 
 void UniversalSettings::load()
 {
-    //! check if user has set the autostart option
-    bool autostartUserSet = m_universalGroup.readEntry(QStringLiteral("userConfiguredAutostart"), false);
-
-    if (!autostartUserSet && !autostart()) {
-        //! the first time the application is running and autostart is not set, autostart is enabled
-        //! and from now own it will not be recreated in the beginning
-
-        setAutostart(true);
-        m_universalGroup.writeEntry(QStringLiteral("userConfiguredAutostart"), true);
-    } else if (autostartUserSet && !autostart()) {
-        //! autostart was configured before but the desktop file is missing
-        //! (removed by an uninstall, depclean or a failed update); restore it
-        //! so autostart cannot silently break on every login again.
-        qCWarning(latteApp) << "Autostart desktop file is missing while autostart is configured; recreating it.";
-        setAutostart(true);
+    //! Ensure-autostart: when enabled (default), guarantee that at least one
+    //! autostart mechanism exists; when disabled, stay silent and leave every
+    //! autostart mechanism untouched.
+    if (ensureAutostart()) {
+        ensureAutostartEntry();
     }
 
     //! init screen scales
@@ -278,6 +269,78 @@ void UniversalSettings::setAutostart(bool state)
     }
 
     Q_EMIT autostartChanged();
+}
+
+bool UniversalSettings::ensureAutostart() const
+{
+    return m_universalGroup.readEntry(QStringLiteral("ensureAutostart"), true);
+}
+
+void UniversalSettings::setEnsureAutostart(bool enabled)
+{
+    m_universalGroup.writeEntry(QStringLiteral("ensureAutostart"), enabled);
+    //! Flush immediately so an explicit CLI/DBus/UI disable survives even if
+    //! the process exits before the config is saved through the normal path.
+    m_universalGroup.sync();
+
+    if (enabled) {
+        ensureAutostartEntry();
+    }
+    //! Disabled means "don't manage": leave every existing autostart mechanism
+    //! (XDG entry or systemd unit) untouched, and stay silent.
+
+    Q_EMIT autostartChanged();
+}
+
+bool UniversalSettings::autostartMechanismsConflict() const
+{
+    return isSystemdAutostartEnabled() && Layouts::Importer::isAutostartEnabled();
+}
+
+void UniversalSettings::ensureAutostartEntry()
+{
+    const bool systemdSet = isSystemdAutostartEnabled();
+    const bool desktopSet = Layouts::Importer::isAutostartEnabled();
+
+    if (systemdSet && desktopSet) {
+        //! Both mechanisms are active; a duplicate startup attempt may occur.
+        //! Log-only: the single-instance lock already rejects the second process.
+        qCWarning(latteApp) << "Latte autostart: both a systemd user unit and the XDG autostart entry are enabled; duplicate startup may occur.";
+    } else if (!systemdSet && !desktopSet) {
+        //! No autostart mechanism exists yet; create the XDG entry.
+        Layouts::Importer::enableAutostart();
+    }
+    //! Exactly one mechanism is active; nothing to do.
+}
+
+bool UniversalSettings::isSystemdAutostartEnabled() const
+{
+    //! Only manually/distro-installed units are considered. The
+    //! xdg-autostart-generator produced app-...@autostart.service is derived
+    //! from the XDG entry and therefore must not be counted here, otherwise
+    //! a lone XDG entry would be misreported as a conflict.
+    const QStringList unitNames{QStringLiteral("latte-dock-ng.service"), QStringLiteral("latte-dock.service")};
+
+    for (const QString &unit : unitNames) {
+        QProcess process;
+        process.start(QStringLiteral("systemctl"),
+                      {QStringLiteral("--user"), QStringLiteral("is-enabled"), QStringLiteral("--quiet"), unit});
+
+        if (!process.waitForStarted(2000)) {
+            //! systemctl unavailable; assume there is no systemd-managed autostart.
+            return false;
+        }
+
+        if (!process.waitForFinished(2000)) {
+            continue;
+        }
+
+        if (process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool UniversalSettings::badges3DStyle() const

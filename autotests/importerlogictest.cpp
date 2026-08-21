@@ -4,6 +4,7 @@
 */
 
 #include <KConfigGroup>
+#include <KDesktopFile>
 #include <KSharedConfig>
 
 #include <QDir>
@@ -74,7 +75,16 @@ QString deprecatedAutostartFilePath(const QString &configDir)
 
 bool isAutostartEnabled(const QString &configDir)
 {
-    return QFile::exists(autostartFilePath(configDir));
+    const QString path = autostartFilePath(configDir);
+
+    if (!QFile::exists(path)) {
+        return false;
+    }
+
+    //! Mirror Importer::isAutostartEnabled(): an entry with Hidden=true exists
+    //! on disk but is disabled per the XDG autostart spec.
+    KDesktopFile desktopFile(path);
+    return !desktopFile.desktopGroup().readEntry(QStringLiteral("Hidden"), false);
 }
 
 void enableAutostart(const QString &configDir, const QString &sourceDesktopFile)
@@ -97,7 +107,13 @@ void enableAutostart(const QString &configDir, const QString &sourceDesktopFile)
             QFileInfo autostartInfo(autostartFile);
             QFileInfo sourceInfo(sourceDesktopFile);
 
-            if (autostartInfo.lastModified() >= sourceInfo.lastModified()) {
+            //! Mirror Importer::enableAutostart(): a present-but-hidden entry
+            //! must be re-enabled (Hidden cleared) even when it is newer than
+            //! the source.
+            KDesktopFile existing(autostartFile);
+            const bool hidden = existing.desktopGroup().readEntry(QStringLiteral("Hidden"), false);
+
+            if (!hidden && autostartInfo.lastModified() >= sourceInfo.lastModified()) {
                 return; // up to date
             }
 
@@ -154,6 +170,8 @@ private Q_SLOTS:
     // Autostart management tests
     void autostartNotEnabledWhenFileMissing();
     void autostartEnabledWhenFileExists();
+    void autostartDisabledWhenHiddenTrue();
+    void enableReenablesHiddenEntry();
     void enableCreatesAutostartFile();
     void enableWithEmptySourceDoesNothing();
     void disableRemovesAutostartFile();
@@ -240,6 +258,49 @@ void ImporterLogicTest::autostartEnabledWhenFileExists()
     f.write("[Desktop Entry]\n");
     f.close();
 
+    QVERIFY(ImporterLogic::isAutostartEnabled(configDir.path()));
+}
+
+void ImporterLogicTest::autostartDisabledWhenHiddenTrue()
+{
+    //! A present-but-hidden XDG entry must be reported as disabled.
+    QTemporaryDir configDir;
+    const QString autostartDir = configDir.path() + QStringLiteral("/autostart");
+    QDir().mkpath(autostartDir);
+
+    QFile f(ImporterLogic::autostartFilePath(configDir.path()));
+    QVERIFY(f.open(QFile::WriteOnly));
+    f.write("[Desktop Entry]\nHidden=true\n");
+    f.close();
+
+    QVERIFY(!ImporterLogic::isAutostartEnabled(configDir.path()));
+}
+
+void ImporterLogicTest::enableReenablesHiddenEntry()
+{
+    //! enableAutostart() must clear Hidden=true even when the disabled entry
+    //! is newer than the source, otherwise a hidden entry could never be
+    //! re-enabled through the ensure-autostart path.
+    QTemporaryDir configDir;
+    QTemporaryDir sourceDir;
+
+    const QString sourcePath = sourceDir.path() + QStringLiteral("/org.kde.latte-dock.desktop");
+    QFile source(sourcePath);
+    QVERIFY(source.open(QFile::WriteOnly));
+    source.write("[Desktop Entry]\nExec=/usr/bin/latte-dock-ng\n");
+    source.close();
+
+    const QString autostartDir = configDir.path() + QStringLiteral("/autostart");
+    QDir().mkpath(autostartDir);
+
+    QFile entry(ImporterLogic::autostartFilePath(configDir.path()));
+    QVERIFY(entry.open(QFile::WriteOnly));
+    entry.write("[Desktop Entry]\nHidden=true\n");
+    entry.close();
+
+    QVERIFY(!ImporterLogic::isAutostartEnabled(configDir.path()));
+
+    ImporterLogic::enableAutostart(configDir.path(), sourcePath);
     QVERIFY(ImporterLogic::isAutostartEnabled(configDir.path()));
 }
 

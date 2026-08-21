@@ -521,7 +521,7 @@ void DataUnitTest::preferencesDefaultsRoundTrip()
 
 void DataUnitTest::preferencesAutostartDefaultsToEnabled()
 {
-    // The Preferences page checkbox "Enable autostart during startup" must
+    // The Preferences page checkbox "Ensure autostart during startup" must
     // default to checked: both the class constant and a freshly constructed
     // Preferences object have autostart enabled.
     QVERIFY(Preferences::AUTOSTART);

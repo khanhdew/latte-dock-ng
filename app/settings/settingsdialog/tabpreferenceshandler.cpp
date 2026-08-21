@@ -77,6 +77,7 @@ void TabPreferences::initUi()
 
     connect(m_ui->autostartChkBox, &QCheckBox::toggled, this, [this]() {
         m_preferences.autostart = m_ui->autostartChkBox->isChecked();
+        updateAutostartWarning();
         Q_EMIT dataChanged();
     });
 
@@ -100,7 +101,7 @@ void TabPreferences::initUi()
 
 void TabPreferences::initSettings()
 {
-    o_preferences.autostart = m_corona->universalSettings()->autostart();
+    o_preferences.autostart = m_corona->universalSettings()->ensureAutostart();
     o_preferences.badgeStyle3D = m_corona->universalSettings()->badges3DStyle();
     o_preferences.contextMenuAlwaysActions = m_corona->universalSettings()->contextMenuActionsAlwaysShown();
     o_preferences.isAvailableGeometryBroadcastedToPlasma = m_corona->universalSettings()->isAvailableGeometryBroadcastedToPlasma();
@@ -135,6 +136,7 @@ void TabPreferences::updateUi()
 {
     //! ui load
     m_ui->autostartChkBox->setChecked(m_preferences.autostart);
+    updateAutostartWarning();
     m_ui->badges3DStyleChkBox->setChecked(m_preferences.badgeStyle3D);
     m_ui->infoWindowChkBox->setChecked(m_preferences.layoutsInformationWindow);
     m_ui->broadcastGeomChkBox->setChecked(m_preferences.isAvailableGeometryBroadcastedToPlasma);
@@ -175,6 +177,15 @@ void TabPreferences::onActionsBtnPressed()
     viewsDlg->exec();
 }
 
+void TabPreferences::updateAutostartWarning()
+{
+    //! Warn only when the user asked latte to ensure autostart and both a
+    //! systemd unit and the XDG entry are active at the same time.
+    const bool conflict = m_ui->autostartChkBox->isChecked()
+                          && m_corona->universalSettings()->autostartMechanismsConflict();
+    m_ui->autostartWarningLbl->setVisible(conflict);
+}
+
 void TabPreferences::reset()
 {
     m_preferences = o_preferences;
@@ -189,7 +200,7 @@ void TabPreferences::resetDefaults()
 
 void TabPreferences::save()
 {
-    m_corona->universalSettings()->setAutostart(m_preferences.autostart);
+    m_corona->universalSettings()->setEnsureAutostart(m_preferences.autostart);
     m_corona->universalSettings()->setBadges3DStyle(m_preferences.badgeStyle3D);
     m_corona->universalSettings()->setContextMenuActionsAlwaysShown(m_preferences.contextMenuAlwaysActions);
     m_corona->universalSettings()->setIsAvailableGeometryBroadcastedToPlasma(m_preferences.isAvailableGeometryBroadcastedToPlasma);

@@ -63,6 +63,7 @@ private Q_SLOTS:
     void updateUi();
 
     void onActionsBtnPressed();
+    void updateAutostartWarning();
 
 private:
     Latte::Settings::Dialog::SettingsDialog *m_parentDialog{nullptr};
