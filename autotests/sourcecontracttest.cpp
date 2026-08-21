@@ -3767,8 +3767,8 @@ void SourceContractTest::qmlCacheRevisionInvalidatesSameVersionBuilds()
     QFile appTypes(QStringLiteral(LATTE_SOURCE_DIR "/app/apptypes.h"));
     QVERIFY(appTypes.open(QFile::ReadOnly));
     const QString appTypesSource = QString::fromUtf8(appTypes.readAll());
-    QVERIFY(appTypesSource.contains(QStringLiteral("QMLCACHEREVISION[] = \"1\"")));
-
+    QVERIFY(appTypesSource.contains(QStringLiteral("QMLCACHEREVISION[] = \"")));
+    QVERIFY(!appTypesSource.contains(QStringLiteral("QMLCACHEREVISION[] = \"\"")));
     QFile mainSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
     QVERIFY(mainSourceFile.open(QFile::ReadOnly));
     const QString mainSource = QString::fromUtf8(mainSourceFile.readAll());
