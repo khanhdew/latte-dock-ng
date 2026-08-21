@@ -148,6 +148,9 @@ private Q_SLOTS:
     void restoreAppletOrderForApplet(const int &id);
     void forgetAppletRemovalIndex(const int &id);
     bool isModernDockStyle() const;
+    bool isTrashWidget(QObject *applet) const;
+    void applyTrashKeepOriginalColorsDefault(QObject *applet, const int &id);
+    void applyTrashKeepOriginalColorsMigration();
     bool usesLegacyJustifySplitters() const;
     QVariant readConfigValue(const QString &key, const QVariant &defaultValue = QVariant()) const;
     void writeConfigValue(const QString &key, const QVariant &value);

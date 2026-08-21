@@ -138,7 +138,15 @@ AbilityHost.ParabolicEffect {
     //! Timer to check if the mouse is still outside the latteView in order to restore applets scales to 1.0
     Timer{
         id: restoreZoomTimer
-        interval: 50
+        //! Keep a comfortable grace period before clearing the zoom.  At a
+        //! separator boundary the top-most neighbour (e.g. an external widget
+        //! drawing above the tasks) can briefly own the junction, zoom the
+        //! adjacent task and then be pushed away by the resulting layout
+        //! growth.  Its onExited nullifies the current item immediately, so a
+        //! too-short restore interval would fire sglClearZoom() before the
+        //! task that now covers the cursor has re-entered, producing a visible
+        //! zoom blip.  A longer interval lets the re-enter cancel the clear.
+        interval: 150
 
         onTriggered: {
             if (parabolic.restoreZoomIsBlocked || currentParabolicItem) {

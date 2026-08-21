@@ -301,6 +301,18 @@ Item{
               && !appletItem.isAutoFillApplet
               && (wrapper.zoomScale === 1 || appletItem.externalAppletUsesFixedSlotSizing)
         value: {
+            //! Separators are a thin divider, not an icon-sized applet: keep
+            //! the content container at the separator's preferred length so
+            //! the 1px line stays tight at the boundary slot instead of
+            //! overflowing a full icon-sized slot into the neighbours.
+            if (isSeparator) {
+                if (appletPreferredLength > 0) {
+                    return appletPreferredLength;
+                }
+
+                return LatteCore.Environment.separatorLength;
+            }
+
             if (appletItem.externalAppletUsesFixedSlotSizing) {
                 // Text-based external applets (e.g. digital clock) whose
                 // natural width was captured get that exact width instead

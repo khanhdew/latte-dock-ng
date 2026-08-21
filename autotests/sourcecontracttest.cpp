@@ -81,6 +81,7 @@ private Q_SLOTS:
     void compactAppletDigitalClockWidthCapPreventsLongDateFormatOverflow();
     void contextMenuLayerMiddleClickCloseActiveWindowGuardedCorrectly();
     void appletContextMenuExposesKeepOriginalColorsToggle();
+    void trashKeepOriginalColorsDefaultsToCheckedForAllConfigs();
     void appletIconOverrideStripsSymbolicForOriginalColors();
     void mouseHandlerAutoPinOnDragPromotesNonLauncherTasks();
     void scrollToggleMinimizedDownwardUnmaximizesBeforeMinimizing();
@@ -91,6 +92,8 @@ private Q_SLOTS:
     void systemTrayAndPlasmoidActAsAppletInsertionBoundary();
     void separatorAndSpacerDetectionAndBehaviorInAppletItem();
     void separatorGuardsAcrossLayoutAndDragDropFiles();
+    void separatorContentContainerStaysTightWithFallback();
+    void restoreZoomTimerGracePeriodPreventsBoundaryBlip();
     void myViewClientIntPropertiesUseSafeIntGuardAgainstUndefined();
     void clonedViewDefersInitialAppletOrderSyncUntilStructuralReady();
     void indicatorFactoryExcludesBuiltinPluginsFromCustomLists();
@@ -1914,6 +1917,61 @@ void SourceContractTest::appletContextMenuExposesKeepOriginalColorsToggle()
     QVERIFY(src.contains(QStringLiteral("disabledColoring.contains(appletId)")));
 }
 
+void SourceContractTest::trashKeepOriginalColorsDefaultsToCheckedForAllConfigs()
+{
+    // The Trash widget must keep its original full-color icon by default in
+    // every dock configuration (issue #44): a freshly added trash applet is
+    // automatically added to userBlocksColorizingApplets, and older layouts
+    // get a one-time migration that marks every present trash widget.
+    QFile layoutManagerSourceFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/layoutmanager.cpp"));
+    QVERIFY(layoutManagerSourceFile.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(layoutManagerSourceFile.readAll());
+
+    // The default must be scoped to the trash plugin only.
+    QVERIFY(src.contains(QStringLiteral("org.kde.plasma.trash")));
+
+    // A freshly added trash applet is defaulted to keep original colors.
+    const int addAppletItem = src.indexOf(QStringLiteral("void LayoutManager::addAppletItem(QObject *applet, int index)"));
+    QVERIFY(addAppletItem >= 0);
+    const int applyDefaultCall = src.indexOf(QStringLiteral("applyTrashKeepOriginalColorsDefault(applet, id)"), addAppletItem);
+    QVERIFY(applyDefaultCall > addAppletItem);
+
+    // The default must only apply to applets not already in the saved order
+    // (so an explicit user choice on a restored applet is never overwritten)
+    // and must not duplicate an existing entry.
+    const int applyDefaultImpl = src.indexOf(QStringLiteral("void LayoutManager::applyTrashKeepOriginalColorsDefault"));
+    QVERIFY(applyDefaultImpl >= 0);
+    QVERIFY(src.indexOf(QStringLiteral("m_appletOrder.contains(id)"), applyDefaultImpl) > applyDefaultImpl);
+    QVERIFY(src.indexOf(QStringLiteral("m_userBlocksColorizingApplets.contains(id)"), applyDefaultImpl) > applyDefaultImpl);
+    QVERIFY(src.indexOf(QStringLiteral("isTrashWidget(applet)"), applyDefaultImpl) > applyDefaultImpl);
+
+    // Older layouts get a one-time migration that marks every present trash
+    // widget and flags itself as applied.
+    const int cleanupOptions = src.indexOf(QStringLiteral("void LayoutManager::cleanupOptions()"));
+    QVERIFY(cleanupOptions >= 0);
+    QVERIFY(src.indexOf(QStringLiteral("applyTrashKeepOriginalColorsMigration()"), cleanupOptions) > cleanupOptions);
+
+    const int migrationImpl = src.indexOf(QStringLiteral("void LayoutManager::applyTrashKeepOriginalColorsMigration"));
+    QVERIFY(migrationImpl >= 0);
+    QVERIFY(src.indexOf(QStringLiteral("trashKeepOriginalColorsDefaulted"), migrationImpl) > migrationImpl);
+    QVERIFY(src.indexOf(QStringLiteral("setUserBlocksColorizingApplets(applets)"), migrationImpl) > migrationImpl);
+
+    // The trash detection helper must resolve both a Plasma::Applet and an
+    // AppletQuickItem to the trash plugin id.
+    const int isTrashImpl = src.indexOf(QStringLiteral("bool LayoutManager::isTrashWidget"));
+    QVERIFY(isTrashImpl >= 0);
+    QVERIFY(src.indexOf(QStringLiteral("Plasma::Applet"), isTrashImpl) > isTrashImpl);
+    QVERIFY(src.indexOf(QStringLiteral("PlasmaQuick::AppletQuickItem"), isTrashImpl) > isTrashImpl);
+
+    // The helpers must be declared in the header.
+    QFile headerFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/plugin/layoutmanager.h"));
+    QVERIFY(headerFile.open(QFile::ReadOnly));
+    const QString hdr = QString::fromUtf8(headerFile.readAll());
+    QVERIFY(hdr.contains(QStringLiteral("isTrashWidget(QObject *applet) const")));
+    QVERIFY(hdr.contains(QStringLiteral("applyTrashKeepOriginalColorsDefault")));
+    QVERIFY(hdr.contains(QStringLiteral("applyTrashKeepOriginalColorsMigration")));
+}
+
 void SourceContractTest::settingsDialogUiLabelsAreTranslatable()
 {
     // User-facing labels in the Qt Designer .ui dialogs must not be excluded
@@ -2314,6 +2372,66 @@ void SourceContractTest::separatorGuardsAcrossLayoutAndDragDropFiles()
         const QString src = QString::fromUtf8(hiddenSpacer.readAll());
         QVERIFY(src.contains(QStringLiteral("if (isSeparator || !communicator.requires.lengthMarginsEnabled) {\n            return 0;")));
     }
+}
+
+void SourceContractTest::separatorContentContainerStaysTightWithFallback()
+{
+    // The separator applet never resolves Layout.preferredWidth (it stays -1),
+    // so the content container must fall back to a valid separator length.
+    // Otherwise a freshly added separator renders its 1px line in a -1px
+    // container and becomes invisible, and an icon-sized (56px) container
+    // overflows into the neighbouring applets.
+    QFile itemWrapper(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/applet/ItemWrapper.qml"));
+    QVERIFY(itemWrapper.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(itemWrapper.readAll());
+
+    const int layoutLengthBinding = src.indexOf(QStringLiteral("property: \"layoutLength\""));
+    QVERIFY(layoutLengthBinding >= 0);
+
+    // The separator branch must sit inside the layoutLength binding value.
+    const int separatorBranch = src.indexOf(QStringLiteral("if (isSeparator) {"), layoutLengthBinding);
+    QVERIFY(separatorBranch > layoutLengthBinding);
+    QVERIFY(separatorBranch < src.indexOf(QStringLiteral("externalAppletUsesFixedSlotSizing)"), separatorBranch));
+
+    // Use the resolved preferred length when valid ...
+    QVERIFY(src.indexOf(QStringLiteral("appletPreferredLength > 0"), separatorBranch) > separatorBranch);
+    QVERIFY(src.indexOf(QStringLiteral("return appletPreferredLength;"), separatorBranch) > separatorBranch);
+
+    // ... otherwise fall back to the visual separator length so the line
+    // renders immediately after the separator is added.
+    const int fallback = src.indexOf(QStringLiteral("return LatteCore.Environment.separatorLength;"), separatorBranch);
+    QVERIFY(fallback > separatorBranch);
+
+    // The separator slot itself must stay zero/negative width so it occupies
+    // no dock space (the neighbours' hidden spacers reserve the gap).
+    QVERIFY(src.contains(QStringLiteral("(isSeparator && appletItem.parabolic.isEnabled)")));
+    QVERIFY(src.contains(QStringLiteral("return -1;")));
+}
+
+void SourceContractTest::restoreZoomTimerGracePeriodPreventsBoundaryBlip()
+{
+    // At a separator boundary the top-most neighbour (external widget drawing
+    // above the tasks) can briefly own the junction, zoom the adjacent task
+    // and then be pushed away by the resulting layout growth.  Its onExited
+    // nullifies the current item immediately, so the restore timer must keep
+    // a grace period long enough for the task that now covers the cursor to
+    // re-enter and cancel the clear — otherwise the icon blips (jitter).
+    QFile parabolicPrivate(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/abilities/privates/ParabolicEffectPrivate.qml"));
+    QVERIFY(parabolicPrivate.open(QFile::ReadOnly));
+    const QString src = QString::fromUtf8(parabolicPrivate.readAll());
+
+    const int timerId = src.indexOf(QStringLiteral("id: restoreZoomTimer"));
+    QVERIFY(timerId >= 0);
+
+    const int interval = src.indexOf(QStringLiteral("interval: 150"), timerId);
+    QVERIFY(interval > timerId);
+
+    // The clear must still be skipped while a current parabolic item exists,
+    // so the grace period only delays the actual sglClearZoom() broadcast.
+    const int trigger = src.indexOf(QStringLiteral("onTriggered:"), timerId);
+    QVERIFY(trigger > interval);
+    QVERIFY(src.indexOf(QStringLiteral("currentParabolicItem"), trigger) > trigger);
+    QVERIFY(src.indexOf(QStringLiteral("sglClearZoom()"), trigger) > trigger);
 }
 
 void SourceContractTest::myViewClientIntPropertiesUseSafeIntGuardAgainstUndefined()

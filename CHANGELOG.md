@@ -59,6 +59,38 @@
 
 ## [Unreleased]
 
+## [v1.2.40] - 2026-08-21
+
+### Fixed
+- The separator at the tasks/widgets boundary no longer jitters or
+  oscillates when the pointer rests or moves across it (macOS-style fixed
+  divider).  At the boundary the top-most neighbour (e.g. an external widget
+  drawing above the tasks) can briefly own the junction, zoom the adjacent
+  task and then be pushed away by the resulting layout growth; its onExited
+  nullifies the current item immediately, so the parabolic restore timer now
+  keeps a 150 ms grace period that lets the task now covering the cursor
+  re-enter and cancel the zoom clear instead of producing a visible blip.
+- The separator line renders tight at its boundary slot: the content
+  container now uses the separator's preferred length (falling back to
+  `separatorLength` when the applet has not resolved `Layout.preferredWidth`
+  yet, which is always the case for freshly added separators) instead of
+  overflowing a full icon-sized slot into the neighbouring applets.  This
+  also fixes a freshly added separator being invisible.
+- The Trash widget now keeps its original full-color icon by default in
+  every dock configuration (issue #44): newly added trash applets are
+  automatically added to `userBlocksColorizingApplets`, and older layouts
+  get a one-time migration (`trashKeepOriginalColorsDefaulted`) that marks
+  every present trash widget, after which explicit user toggles are never
+  overwritten again.
+
+### Tests
+- New source-contract tests lock the separator content-container fallback
+  (`separatorContentContainerStaysTightWithFallback`), the restore-timer
+  grace period that prevents the boundary zoom blip
+  (`restoreZoomTimerGracePeriodPreventsBoundaryBlip`), and the Trash
+  keep-original-colors default + migration
+  (`trashKeepOriginalColorsDefaultsToCheckedForAllConfigs`).
+
 ## [v1.2.38] - 2026-08-10
 
 ### Fixed

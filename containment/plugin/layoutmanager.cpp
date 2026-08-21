@@ -901,6 +901,87 @@ QList<QObject *> LayoutManager::plasmoidApplets() const
     return applets;
 }
 
+bool LayoutManager::isTrashWidget(QObject *applet) const
+{
+    if (!applet) {
+        return false;
+    }
+
+    // Resolve the applet to a Plasma::Applet so the plugin id is available.
+    if (auto backendApplet = qobject_cast<Plasma::Applet *>(applet)) {
+        return backendApplet->pluginMetaData().pluginId() == QLatin1String("org.kde.plasma.trash");
+    }
+
+    if (auto quickItem = qobject_cast<PlasmaQuick::AppletQuickItem *>(applet)) {
+        if (quickItem->applet()) {
+            return quickItem->applet()->pluginMetaData().pluginId() == QLatin1String("org.kde.plasma.trash");
+        }
+    }
+
+    if (auto backendApplet = qobject_cast<Plasma::Applet *>(applet->property("applet").value<QObject *>())) {
+        return backendApplet->pluginMetaData().pluginId() == QLatin1String("org.kde.plasma.trash");
+    }
+
+    return false;
+}
+
+void LayoutManager::applyTrashKeepOriginalColorsDefault(QObject *applet, const int &id)
+{
+    //! The Trash widget keeps its original full-color icon by default (issue
+    //! #44): newly added trash applets are automatically added to
+    //! userBlocksColorizingApplets.  Existing applets restored from a saved
+    //! layout keep whatever the user explicitly chose, so this only applies
+    //! to applets that are not part of the saved applet order yet.
+    if (id <= 0 || m_appletOrder.contains(id) || m_userBlocksColorizingApplets.contains(id)) {
+        return;
+    }
+
+    if (isTrashWidget(applet)) {
+        QList<int> applets = m_userBlocksColorizingApplets;
+        applets << id;
+        setUserBlocksColorizingApplets(applets);
+    }
+}
+
+void LayoutManager::applyTrashKeepOriginalColorsMigration()
+{
+    //! One-time migration for layouts that predate the "Keep Original Icon
+    //! Colors" default: mark every present Trash widget as keeping its
+    //! original colors, then flag the migration as applied so the user's
+    //! later explicit toggles are never overwritten again.
+    if (readConfigValue(QStringLiteral("trashKeepOriginalColorsDefaulted"), false).toBool()) {
+        return;
+    }
+
+    QList<int> trashIds;
+    const QList<QObject *> applets = plasmoidApplets();
+
+    for (QObject *applet : applets) {
+        if (isTrashWidget(applet)) {
+            const int id = appletId(applet);
+
+            if (id > 0 && !trashIds.contains(id)) {
+                trashIds << id;
+            }
+        }
+    }
+
+    if (!trashIds.isEmpty()) {
+        QList<int> applets = m_userBlocksColorizingApplets;
+
+        for (int trashId : trashIds) {
+            if (!applets.contains(trashId)) {
+                applets << trashId;
+            }
+        }
+
+        setUserBlocksColorizingApplets(applets);
+    }
+
+    writeConfigValue(QStringLiteral("trashKeepOriginalColorsDefaulted"), true);
+    save();
+}
+
 int LayoutManager::appletId(QObject *applet) const
 {
     if (!applet) {
@@ -2057,6 +2138,8 @@ int LayoutManager::defaultInsertionIndex() const
 
 void LayoutManager::cleanupOptions()
 {
+    applyTrashKeepOriginalColorsMigration();
+
     auto inlockedzoomcurrent = m_lockedZoomApplets;
     QList<int> inlockedzoomnext;
 
@@ -2083,6 +2166,10 @@ void LayoutManager::cleanupOptions()
 void LayoutManager::addAppletItem(QObject *applet, int index)
 {
     const int id = appletId(applet);
+
+    //! The Trash widget keeps its original full-color icon by default: apply
+    //! the default as soon as a fresh trash applet is dropped into the dock.
+    applyTrashKeepOriginalColorsDefault(applet, id);
 
     // Check for a pending insertion index set by View::handlePlasmoidDrop.
     // The QML Containment.onAppletAdded handler resolves to this overload
