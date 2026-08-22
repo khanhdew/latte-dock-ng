@@ -1,7 +1,10 @@
 set(latte_autotest_targets)
 
+set(LATTE_AUTOTEST_TIMEOUT 120 CACHE STRING "Maximum runtime in seconds for each Latte autotest")
+
 function(latte_add_test _test_name)
     add_test(NAME ${_test_name} COMMAND ${_test_name})
+    set_property(TEST ${_test_name} PROPERTY TIMEOUT ${LATTE_AUTOTEST_TIMEOUT})
     # Force English so i18n()-dependent assertions are stable regardless of
     # the session locale (e.g. zh_CN would translate model header strings).
     set_property(TEST ${_test_name} APPEND PROPERTY ENVIRONMENT "LC_ALL=C.UTF-8")
