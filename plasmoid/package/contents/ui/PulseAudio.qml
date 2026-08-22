@@ -16,6 +16,8 @@ QtObject {
     // It's a JS object so we can do key lookup and don't need to take care of filtering duplicates.
     property var pidMatches: ({})
     property var pidMatchTimestamps: ({})
+    property var streamIndexes: ({})
+    property bool streamIndexesDirty: true
     readonly property int pidMatchExpiryMs: 10 * 60 * 1000
 
     // A task can temporarily match an audio stream through its PID or app id
@@ -153,15 +155,54 @@ QtObject {
         return false;
     }
 
-    function findStreams(key, value) {
-        var streams = []
+    function addStreamToIndex(index, key, stream) {
+        if (!key) {
+            return;
+        }
+
+        if (!index[key]) {
+            index[key] = [];
+        }
+
+        index[key].push(stream);
+    }
+
+    function rebuildStreamIndexes() {
+        var indexes = {
+            pid: Object.create(null),
+            appId: Object.create(null),
+            portalAppId: Object.create(null),
+            appName: Object.create(null)
+        };
+
         for (var i = 0, length = instantiator.count; i < length; ++i) {
             var stream = instantiator.objectAt(i);
-            if (stream[key] === value || (key==="appName" && stream[key].toLowerCase() === value.toLowerCase())) {
-                streams.push(stream);
-            }
+            addStreamToIndex(indexes.pid, stream.pid > 0 ? String(stream.pid) : "", stream);
+            addStreamToIndex(indexes.appId, stream.appId, stream);
+            addStreamToIndex(indexes.portalAppId, stream.portalAppId, stream);
+            addStreamToIndex(indexes.appName, stream.appName ? stream.appName.toLowerCase() : "", stream);
         }
-        return streams
+
+        streamIndexes = indexes;
+        streamIndexesDirty = false;
+    }
+
+    function ensureStreamIndexes() {
+        if (streamIndexesDirty) {
+            rebuildStreamIndexes();
+        }
+    }
+
+    function findStreams(key, value) {
+        ensureStreamIndexes();
+
+        var index = streamIndexes[key];
+        if (!index) {
+            return [];
+        }
+
+        var lookupKey = key === "appName" ? String(value).toLowerCase() : String(value);
+        return index[lookupKey] ? index[lookupKey].slice() : [];
     }
 
     function streamsForAppName(appName) {
@@ -320,8 +361,14 @@ QtObject {
             }
         }
 
-        onObjectAdded: pulseAudio.streamsChanged()
-        onObjectRemoved: pulseAudio.streamsChanged()
+        onObjectAdded: {
+            pulseAudio.streamIndexesDirty = true;
+            pulseAudio.streamsChanged();
+        }
+        onObjectRemoved: {
+            pulseAudio.streamIndexesDirty = true;
+            pulseAudio.streamsChanged();
+        }
     }
 
     Component.onCompleted: {
