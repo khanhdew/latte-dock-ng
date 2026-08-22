@@ -661,7 +661,7 @@ bool Synchronizer::initSingleMode(QString layoutName)
 
     //! this code must be called asynchronously because it can create crashes otherwise.
     //! Tasks plasmoid case that triggers layouts switching through its context menu
-    QTimer::singleShot(LAYOUTSINITINTERVAL, [this, layoutName, layoutpath]() {
+    QTimer::singleShot(LAYOUTSINITINTERVAL, this, [this, layoutName, layoutpath]() {
         qCDebug(latteLayout) << " ... initializing layout in single mode : " << layoutName << " - " << layoutpath;
         unloadPreloadedLayouts();
         unloadLayouts();
@@ -714,7 +714,7 @@ bool Synchronizer::initMultipleMode(QString layoutName)
 
     //! this code must be called asynchronously because it can create crashes otherwise.
     //! Tasks plasmoid case that triggers layouts switching through its context menu
-    QTimer::singleShot(LAYOUTSINITINTERVAL, [this, layoutName]() {
+    QTimer::singleShot(LAYOUTSINITINTERVAL, this, [this, layoutName]() {
         qCDebug(latteLayout) << " ... initializing layout in multiple mode : " << layoutName ;
         unloadLayouts();
 
@@ -1014,7 +1014,7 @@ void Synchronizer::syncMultipleLayoutsToActivities(QStringList preloadedLayouts)
             Q_EMIT currentLayoutIsSwitching(layoutname);
         }
 
-        QTimer::singleShot(LAYOUTSINITINTERVAL, [this, layoutNamesToUnload, preloadedLayouts]() {
+        QTimer::singleShot(LAYOUTSINITINTERVAL, this, [this, layoutNamesToUnload, preloadedLayouts]() {
             unloadLayouts(layoutNamesToUnload, preloadedLayouts);
         });
     }

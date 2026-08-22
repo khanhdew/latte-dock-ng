@@ -263,7 +263,7 @@ void Factory::removeIndicatorRecords(const QString &path)
         KDirWatch::self()->removeDir(path);
 
         //! delay informing the removal in case it is just an update
-        QTimer::singleShot(1000, [this, pluginId]() {
+        QTimer::singleShot(1000, this, [this, pluginId]() {
             Q_EMIT indicatorRemoved(pluginId);
         });
     }

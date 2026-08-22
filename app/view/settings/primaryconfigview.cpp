@@ -189,7 +189,7 @@ void PrimaryConfigView::setParentView(Latte::View *view, const bool &immediate)
         hideConfigWindow();
 
         //!slide-out delay
-        QTimer::singleShot(SLIDEOUTINTERVAL, [this, view]() {
+        QTimer::singleShot(SLIDEOUTINTERVAL, this, [this, view]() {
             initParentView(view);
             showConfigWindow();
         });

@@ -1141,7 +1141,7 @@ void GenericLayout::recreateView(Plasma::Containment *containment, bool delayed)
 
     //! give the time to config window to close itself first and then recreate the dock
     //! step:1 remove the latteview
-    QTimer::singleShot(delay, [this, containment]() {
+    QTimer::singleShot(delay, this, [this, containment]() {
         auto view = m_latteViews[containment];
         view->disconnectSensitiveSignals();
 
