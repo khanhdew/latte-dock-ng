@@ -40,13 +40,16 @@ Environment::Environment(QObject *parent)
     // re-evaluations that could crash when Svg objects were being recreated.
     // KIconLoader initializes desktop integration synchronously; that is not
     // available in the offscreen/minimal platforms used by QML smoke tests.
-    if (QGuiApplication::platformName() != QLatin1String("offscreen")
-        && QGuiApplication::platformName() != QLatin1String("minimal")) {
+    const bool desktopIntegrationAvailable = QGuiApplication::platformName() != QLatin1String("offscreen")
+                                             && QGuiApplication::platformName() != QLatin1String("minimal");
+    if (desktopIntegrationAvailable) {
         connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
                 this, &Environment::markIconThemeChanged);
     }
 
-    const QString kdeGlobalsFile = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/kdeglobals");
+    const QString kdeGlobalsFile = desktopIntegrationAvailable
+        ? QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/kdeglobals")
+        : QString();
 
     if (!kdeGlobalsFile.isEmpty()) {
         KDirWatch::self()->addFile(kdeGlobalsFile);

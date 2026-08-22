@@ -26,6 +26,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QStandardPaths>
+#include <QTemporaryDir>
 #include <QTest>
 
 using Latte::Data::Activity;
@@ -215,7 +216,16 @@ void DataUnitTest::commonToolsCalculateColorBrightnessAndLumina()
 
 void DataUnitTest::commonToolsFindStandardAndConfigPaths()
 {
-    QStandardPaths::setTestModeEnabled(true);
+    QTemporaryDir dataRoot;
+    QTemporaryDir configRoot;
+    QVERIFY(dataRoot.isValid());
+    QVERIFY(configRoot.isValid());
+
+    const QByteArray previousDataHome = qgetenv("XDG_DATA_HOME");
+    const QByteArray previousConfigHome = qgetenv("XDG_CONFIG_HOME");
+    qputenv("XDG_DATA_HOME", dataRoot.path().toUtf8());
+    qputenv("XDG_CONFIG_HOME", configRoot.path().toUtf8());
+    QStandardPaths::setTestModeEnabled(false);
 
     const QString marker = QStringLiteral("latte-dock-ng/autotests/standard-path-marker");
     const QString basePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
@@ -232,6 +242,17 @@ void DataUnitTest::commonToolsFindStandardAndConfigPaths()
     const QString configPath = Latte::configPath();
     QVERIFY(!configPath.isEmpty());
     QVERIFY(QDir::isAbsolutePath(configPath));
+
+    if (previousDataHome.isEmpty()) {
+        qunsetenv("XDG_DATA_HOME");
+    } else {
+        qputenv("XDG_DATA_HOME", previousDataHome);
+    }
+    if (previousConfigHome.isEmpty()) {
+        qunsetenv("XDG_CONFIG_HOME");
+    } else {
+        qputenv("XDG_CONFIG_HOME", previousConfigHome);
+    }
 }
 
 void DataUnitTest::errorInformationValidityFollowsNestedApplets()
