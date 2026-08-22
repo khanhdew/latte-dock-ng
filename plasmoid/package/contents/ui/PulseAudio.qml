@@ -26,7 +26,7 @@ QtObject {
     property Timer pidMatchCacheTimer: Timer {
         interval: 60 * 1000
         repeat: true
-        running: true
+        running: false
         onTriggered: pulseAudio.prunePidMatches()
     }
 
@@ -40,9 +40,10 @@ QtObject {
         return Math.max(PulseAudio.MinimalVolume, Math.min(volume, maxVolumeValue));
     }
 
-    // TODO Evict cache at some point, preferably if all instances of an application closed.
+    // Refresh the bounded cache entry while a task still has an audio stream.
     function registerPidMatch(appName) {
         pidMatchTimestamps[appName] = Date.now();
+        pidMatchCacheTimer.start();
 
         if (!hasPidMatch(appName)) {
             pidMatches[appName] = true;
@@ -69,6 +70,10 @@ QtObject {
 
         if (changed) {
             streamsChanged();
+        }
+
+        if (Object.keys(pidMatchTimestamps).length === 0) {
+            pidMatchCacheTimer.stop();
         }
     }
 
