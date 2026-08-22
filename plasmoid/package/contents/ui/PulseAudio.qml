@@ -15,6 +15,20 @@ QtObject {
 
     // It's a JS object so we can do key lookup and don't need to take care of filtering duplicates.
     property var pidMatches: ({})
+    property var pidMatchTimestamps: ({})
+    readonly property int pidMatchExpiryMs: 10 * 60 * 1000
+
+    // A task can temporarily match an audio stream through its PID or app id
+    // while its application name is not unique.  Keep that decision for a
+    // bounded period, then allow the name fallback again after the stream has
+    // disappeared.  Without expiry this cache grew for the entire session and
+    // could permanently suppress a valid match for a later application.
+    property Timer pidMatchCacheTimer: Timer {
+        interval: 60 * 1000
+        repeat: true
+        running: true
+        onTriggered: pulseAudio.prunePidMatches()
+    }
 
     property int maxVolumePercent: 125
     property int maxVolumeValue: Math.round(maxVolumePercent * PulseAudio.NormalVolume / 100.0)
@@ -28,6 +42,8 @@ QtObject {
 
     // TODO Evict cache at some point, preferably if all instances of an application closed.
     function registerPidMatch(appName) {
+        pidMatchTimestamps[appName] = Date.now();
+
         if (!hasPidMatch(appName)) {
             pidMatches[appName] = true;
 
@@ -39,8 +55,36 @@ QtObject {
         }
     }
 
+    function prunePidMatches() {
+        var now = Date.now();
+        var changed = false;
+
+        for (var appName in pidMatchTimestamps) {
+            if (now - pidMatchTimestamps[appName] > pidMatchExpiryMs) {
+                delete pidMatchTimestamps[appName];
+                delete pidMatches[appName];
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            streamsChanged();
+        }
+    }
+
     function hasPidMatch(appName) {
-        return pidMatches[appName] === true;
+        if (pidMatches[appName] !== true) {
+            return false;
+        }
+
+        var timestamp = pidMatchTimestamps[appName];
+        if (timestamp === undefined || Date.now() - timestamp > pidMatchExpiryMs) {
+            delete pidMatches[appName];
+            delete pidMatchTimestamps[appName];
+            return false;
+        }
+
+        return true;
     }
 
     function normalizeId(value) {
