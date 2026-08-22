@@ -790,6 +790,88 @@ ListModel {
     engine.addImportPath(importRoot.path());
 }
 
+static void addFakePlasmaCoreImport(QQmlEngine &engine, QTemporaryDir &importRoot)
+{
+    QVERIFY(importRoot.isValid());
+
+    const QString modulePath = importRoot.path() + QStringLiteral("/org/kde/plasma/core");
+    QVERIFY(QDir().mkpath(modulePath));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/qmldir"), R"(
+module org.kde.plasma.core
+singleton Types 2.0 Types.qml
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/Types.qml"), R"(
+pragma Singleton
+import QtQml 2.15
+QtObject {
+    enum Types { TopEdge, LeftEdge, BottomEdge, RightEdge, Horizontal, Vertical }
+}
+)"));
+
+    engine.addImportPath(importRoot.path());
+}
+
+static void addFakePlasmaCoreComponents(QQmlEngine &engine, QTemporaryDir &importRoot)
+{
+    addFakePlasmaCoreImport(engine, importRoot);
+
+    const QString modulePath = importRoot.path() + QStringLiteral("/org/kde/plasma/core");
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/qmldir"), R"(
+module org.kde.plasma.core
+singleton Types 2.0 Types.qml
+singleton Units 2.0 Units.qml
+ToolTipArea 2.0 ToolTipArea.qml
+AppletPopup 2.0 AppletPopup.qml
+FrameSvgItem 2.0 FrameSvgItem.qml
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/Units.qml"), R"(
+pragma Singleton
+import QtQml 2.15
+QtObject {
+    readonly property int shortDuration: 40
+    readonly property int longDuration: 240
+}
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/ToolTipArea.qml"), R"(
+import QtQuick 2.15
+Item {
+    property string mainText: ""
+    property string subText: ""
+    property int location: 0
+    property bool active: false
+    property int textFormat: Text.PlainText
+    property Item mainItem: null
+}
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/AppletPopup.qml"), R"(
+import QtQuick 2.15
+Item {
+    enum Edge { AtScreenEdges, AtPanelEdges, SolidBackground, StandardBackground }
+    property bool hideOnWindowDeactivate: false
+    property bool hideOnDeactivate: false
+    property bool floating: false
+    property int location: 0
+    property int removeBorderStrategy: 0
+    property int backgroundHints: 0
+    property int margin: 0
+    property int popupDirection: 0
+    property Item visualParent: null
+    property Item contentItem: null
+    property Item mainItem: null
+    property var appletInterface: null
+    property int type: 0
+    function open() {}
+    function close() {}
+}
+)"));
+    QVERIFY(writeTextFile(modulePath + QStringLiteral("/FrameSvgItem.qml"), R"(
+import QtQuick 2.15
+Item {}
+)"));
+
+    engine.addImportPath(importRoot.path());
+}
+
 void QmlSmokeTest::initTestCase()
 {
     ensurePlasmaPlasmoidModuleAvailable();
@@ -886,6 +968,7 @@ void QmlSmokeTest::parabolicItemZoomRecoveryLoadsFromSource()
     QQmlEngine engine;
     addLatteCoreImport(engine, importRoot);
     addLatteComponentsImport(engine, importRoot);
+    addFakePlasmaCoreImport(engine, importRoot);
 
     QQmlContext context(engine.rootContext());
     ParabolicTargetStub parabolicTarget;
@@ -929,7 +1012,9 @@ void QmlSmokeTest::parabolicItemZoomRecoveryLoadsFromSource()
 
 void QmlSmokeTest::compactAppletPopupSizingLoadsFromSource()
 {
+    QTemporaryDir importRoot;
     QQmlEngine engine;
+    addFakePlasmaCoreComponents(engine, importRoot);
     QQmlComponent component(&engine, QUrl::fromLocalFile(QStringLiteral(LATTE_COMPACT_APPLET_QML)));
     std::unique_ptr<QObject> object(component.create());
     if (!object) {
