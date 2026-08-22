@@ -83,9 +83,14 @@ MouseArea {
         }
     }
 
-    // IMPORTANT: This must be improved ! even for small milliseconds  it reduces performance
     onPositionChanged: (mouse) => {
         if (taskItem.abilities.myView.isReady && !taskItem.abilities.myView.isShownFully) {
+            return;
+        }
+
+        // Hover moves do not affect task dragging.  Skip the remaining work
+        // until a press establishes a drag origin or a drag is already active.
+        if (pressX === -1 && !taskItem.isDragged) {
             return;
         }
 
