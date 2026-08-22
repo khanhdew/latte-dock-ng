@@ -16,8 +16,12 @@ function wheelActivateNextPrevTask(wheelDelta, eventDelta) {
         wheelDelta += 15;
         increment--;
     }
+    // Build the visual order once per wheel event.  Large high-resolution
+    // wheel deltas can produce several activations and previously rebuilt the
+    // same task index list for every step.
+    var taskIndexList = increment !== 0 ? buildTaskIndexList() : [];
     while (increment != 0) {
-        activateNextPrevTask(increment < 0)
+        activateNextPrevTask(increment < 0, taskIndexList)
         increment += (increment < 0) ? 1 : -1;
     }
 
@@ -51,18 +55,14 @@ function activateTask(index, model, modifiers, task) {
 }
 
 
-function activateNextPrevTask(next) {
-    // FIXME TODO: Unnecessarily convoluted and costly; optimize.
-
+function buildTaskIndexList() {
     var taskIndexList = [];
-    var activeTaskIndex = tasksModel.activeTask;
-
     for (var i = 0; i < taskList.children.length - 1; ++i) {
         var task = taskList.children[i];
-        var modelIndex = task.modelIndex(i);
 
-        if (task !== undefined && task.m !== undefined){
+        if (task && task.m !== undefined) {
             if (task.m.IsLauncher !== true && task.m.IsStartup !== true) {
+                var modelIndex = task.modelIndex(i);
                 if (task.m.IsGroupParent === true) {
                     for (var j = 0; j < tasksModel.rowCount(modelIndex); ++j) {
                         taskIndexList.push(tasksModel.makeModelIndex(i, j));
@@ -72,6 +72,16 @@ function activateNextPrevTask(next) {
                 }
             }
         }
+    }
+
+    return taskIndexList;
+}
+
+function activateNextPrevTask(next, taskIndexList) {
+    var activeTaskIndex = tasksModel.activeTask;
+
+    if (taskIndexList === undefined) {
+        taskIndexList = buildTaskIndexList();
     }
 
     if (!taskIndexList.length) {
