@@ -124,23 +124,9 @@ MouseArea {
         }
     }
 
-    // containmentEditing is set directly by the containment's
-    // onEditModeChanged via item.applet.containmentEditing = editMode.
-    // Poll it — direct property assignments don't need binding notifications.
-    property bool _containmentEditing: false
-    Timer {
-        id: editModePoller
-        interval: 200
-        repeat: true
-        running: true
-        onTriggered: {
-            try {
-                _containmentEditing = (typeof containmentEditing !== "undefined" && containmentEditing);
-            } catch (e) {
-                _containmentEditing = false;
-            }
-        }
-    }
+    // containmentEditing is polled once by the root task manager because the
+    // containment writes it directly through item.applet.
+    readonly property bool _containmentEditing: root.containmentEditingPolled
 
     function isContainmentEditing() {
         return _containmentEditing;
