@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QSet>
 #include <QLatin1String>
 
 // KDE
@@ -287,20 +288,19 @@ void Storage::importToCorona(const Layout::GenericLayout *layout)
 }
 
 
-QString Storage::availableId(QStringList all, QStringList assigned, int base)
+QString Storage::availableId(const QStringList &all, const QStringList &assigned, int base)
 {
-    bool found = false;
+    QSet<QString> usedIds(all.cbegin(), all.cend());
+    usedIds.reserve(usedIds.size() + assigned.size());
+    for (const QString &id : assigned) {
+        usedIds.insert(id);
+    }
 
-    int i = base;
-
-    while (!found && i < 32000) {
-        QString iStr = QString::number(i);
-
-        if (!all.contains(iStr) && !assigned.contains(iStr)) {
-            return iStr;
+    for (int i = base; i < 32000; ++i) {
+        const QString id = QString::number(i);
+        if (!usedIds.contains(id)) {
+            return id;
         }
-
-        i++;
     }
 
     return QString();
