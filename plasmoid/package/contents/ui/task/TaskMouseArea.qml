@@ -43,7 +43,11 @@ MouseArea {
         }
 
         //! show previews if enabled
-        if(isAbleToShowPreview && !showPreviewsIsBlockedFromReleaseEvent && !isLauncher
+        // Avoid preview-state checks entirely when both preview and window
+        // highlighting are disabled. Tooltip and task auto-scroll handling
+        // below remain active in that configuration.
+        if((root.showPreviews || root.highlightWindows)
+                && isAbleToShowPreview && !showPreviewsIsBlockedFromReleaseEvent && !isLauncher
                 && (((root.showPreviews || (windowsPreviewDlg.visible && !isLauncher))
                      && windowsPreviewDlg.activeItem !== taskItem)
                     || root.highlightWindows)){
