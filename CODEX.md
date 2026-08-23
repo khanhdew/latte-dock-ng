@@ -30,6 +30,7 @@ project knowledge changes.
   memory improvements.
 - The current system Latte is the latest release ebuild, not this branch. Do
   not restart it automatically for branch validation.
+- Use `-j8` for project builds unless a command has a specific resource limit.
 
 ## Completed optimization steps
 
@@ -52,6 +53,9 @@ project knowledge changes.
 - Idle task mouse moves return before drag coordinate mapping and reorder work.
 - Layout ID allocation builds a `QSet` once instead of repeatedly scanning two
   `QStringList` instances.
+- The task preview delegate is now loaded only when `showPreviews` is enabled;
+  null guards preserve the disabled-preview path. This needs real Wayland
+  validation for preview toggling and hover behavior.
 - Full GCC and Clang autotest suites currently contain 39 tests and pass 39/39.
 
 Recent optimization commits are on the active branch; inspect `git log` for
@@ -68,6 +72,8 @@ the exact commit list and push status.
    thumbnail support is unstable. Candidate files are
    `plasmoid/package/contents/ui/main.qml`, `TaskItem.qml`,
    `app/view/parabolic.cpp`, and `app/view/parabolic.h`.
+   The preview delegate itself is now lazy-loaded; validate that change first
+   before changing the dialog architecture.
 2. Revisit the bounce-end zoom micro-stutter. A safe fix needs a layout-change
    hook that re-triggers the existing parabolic calculation without re-entering
    the removal-animation relay.
