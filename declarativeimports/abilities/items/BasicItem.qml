@@ -155,7 +155,7 @@ Item{
 
     Connections {
         target: abilityItem.abilities.shortcuts
-        function onSglActivateEntryAtIndex() {
+        function onSglActivateEntryAtIndex(entryIndex) {
             if (!abilityItem.abilities.shortcuts.isEnabled) {
                 return;
             }
@@ -167,12 +167,12 @@ Item{
             }
         }
 
-        function onSglNewInstanceForEntryAtIndex() {
+        function onSglNewInstanceForEntryAtIndex(entryIndex) {
             if (!abilityItem.abilities.shortcuts.isEnabled) {
                 return;
             }
 
-            var shortcutIndex = abilityItem.abilities.shortcuts.shortcutIndex(taskItem.itemIndex);
+            var shortcutIndex = abilityItem.abilities.shortcuts.shortcutIndex(abilityItem.itemIndex);
 
             if (shortcutIndex === entryIndex) {
                 abilityItem.shortcutRequestedNewInstance();

@@ -1311,7 +1311,7 @@ Item {
     Connections{
         target: appletItem.shortcuts
 
-        function onSglActivateEntryAtIndex() {
+        function onSglActivateEntryAtIndex(entryIndex) {
             if (!appletItem.shortcuts.unifiedGlobalShortcuts) {
                 return;
             }
@@ -1323,7 +1323,7 @@ Item {
             }
         }
 
-        function onSglNewInstanceForEntryAtIndex() {
+        function onSglNewInstanceForEntryAtIndex(entryIndex) {
             if (!appletItem.shortcuts.unifiedGlobalShortcuts) {
                 return;
             }

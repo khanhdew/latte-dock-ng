@@ -891,7 +891,8 @@ inline void autoClearQmlCacheOnVersionChange()
                               + QStringLiteral("/lattedock/qmlcache");
     const QString versionFilePath = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
                                     + QStringLiteral("/lattedock/qmlcache_version");
-    const QString currentVersion = QStringLiteral(VERSION);
+    const QString currentVersion = QStringLiteral(VERSION) + QLatin1Char('-')
+                                   + QString::fromLatin1(Latte::App::QMLCACHEREVISION);
 
     QFile versionFile(versionFilePath);
     QString cachedVersion;
