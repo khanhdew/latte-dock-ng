@@ -263,20 +263,12 @@ int main(int argc, char **argv)
     if (parser.isSet(QStringLiteral("enable-autostart"))) {
         Latte::Layouts::Importer::enableAutostart();
 
-        //! Persist the intent so startup keeps ensuring the entry.
-        KSharedConfig::openConfig()->group(QStringLiteral("UniversalSettings")).writeEntry(QStringLiteral("ensureAutostart"), true);
-        KSharedConfig::openConfig()->sync();
-
         qGuiApp->exit();
         return 0;
     }
 
     if (parser.isSet(QStringLiteral("disable-autostart"))) {
         Latte::Layouts::Importer::disableAutostart();
-
-        //! Persist the intent so startup does not recreate the entry.
-        KSharedConfig::openConfig()->group(QStringLiteral("UniversalSettings")).writeEntry(QStringLiteral("ensureAutostart"), false);
-        KSharedConfig::openConfig()->sync();
 
         qGuiApp->exit();
         return 0;

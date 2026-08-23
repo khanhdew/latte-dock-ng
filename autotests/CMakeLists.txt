@@ -931,6 +931,14 @@ add_executable(importerlogictest EXCLUDE_FROM_ALL ${importerlogictest_SRCS})
 target_link_libraries(importerlogictest Qt6::Core Qt6::Test KF6::ConfigCore)
 latte_add_test(importerlogictest)
 
+set(autostartlogictest_SRCS
+    autostartlogictest.cpp
+    ../app/settings/autostart.cpp
+)
+add_executable(autostartlogictest EXCLUDE_FROM_ALL ${autostartlogictest_SRCS})
+target_link_libraries(autostartlogictest Qt6::Core Qt6::Test KF6::ConfigCore)
+latte_add_test(autostartlogictest)
+
 # Some tests compile app sources directly, so they need the shared logging
 # categories (latte_debug.h) just like the application targets.
 foreach(_latte_test_target IN LISTS latte_autotest_targets)

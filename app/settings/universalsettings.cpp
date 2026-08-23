@@ -67,13 +67,6 @@ UniversalSettings::~UniversalSettings()
 
 void UniversalSettings::load()
 {
-    //! Ensure-autostart: when enabled (default), guarantee that at least one
-    //! autostart mechanism exists; when disabled, stay silent and leave every
-    //! autostart mechanism untouched.
-    if (ensureAutostart()) {
-        ensureAutostartEntry();
-    }
-
     //! init screen scales
     m_screenScalesGroup = m_universalGroup.group(QStringLiteral("ScreenScales"));
 
@@ -268,37 +261,6 @@ void UniversalSettings::setAutostart(bool state)
     }
 
     Q_EMIT autostartChanged();
-}
-
-bool UniversalSettings::ensureAutostart() const
-{
-    return m_universalGroup.readEntry(QStringLiteral("ensureAutostart"), true);
-}
-
-void UniversalSettings::setEnsureAutostart(bool enabled)
-{
-    m_universalGroup.writeEntry(QStringLiteral("ensureAutostart"), enabled);
-    //! Flush immediately so an explicit CLI/DBus/UI disable survives even if
-    //! the process exits before the config is saved through the normal path.
-    m_universalGroup.sync();
-
-    if (enabled) {
-        ensureAutostartEntry();
-    }
-    //! Disabled means "don't manage": leave the existing XDG entry untouched.
-
-    Q_EMIT autostartChanged();
-}
-
-void UniversalSettings::ensureAutostartEntry()
-{
-    //! Latte is a Plasma desktop component and uses the freedesktop XDG
-    //! autostart entry as its single managed startup mechanism. Plasma may
-    //! represent that entry as a generated systemd unit; that is an
-    //! implementation detail and must not be managed as a second mechanism.
-    if (!Layouts::Importer::isAutostartEnabled()) {
-        Layouts::Importer::enableAutostart();
-    }
 }
 
 bool UniversalSettings::badges3DStyle() const

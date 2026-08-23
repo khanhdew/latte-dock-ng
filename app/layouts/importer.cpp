@@ -15,6 +15,7 @@
 #include "../lattecorona.h"
 #include "../screenpool.h"
 #include "../layout/abstractlayout.h"
+#include "../settings/autostart.h"
 #include "../settings/universalsettings.h"
 #include "../templates/templatesmanager.h"
 #include "../tools/commontools.h"
@@ -29,7 +30,6 @@
 #include <KArchive/KArchiveEntry>
 #include <KArchive/KArchiveDirectory>
 #include <KConfigGroup>
-#include <KDesktopFile>
 #include <KLocalizedString>
 #include <KNotification>
 
@@ -526,17 +526,8 @@ bool Importer::importHelper(QString fileName)
 
 bool Importer::isAutostartEnabled()
 {
-    QFile autostartFile(Latte::configPath() + QLatin1String("/autostart/org.kde.latte-dock.desktop"));
-
-    if (!autostartFile.exists()) {
-        return false;
-    }
-
-    //! Honor the XDG autostart spec: an entry with Hidden=true exists on disk
-    //! but is disabled. Treat it as "not enabled" so it is neither reported as
-    //! a conflict nor mistaken for a working autostart mechanism.
-    KDesktopFile desktopFile(autostartFile.fileName());
-    return !desktopFile.desktopGroup().readEntry(QStringLiteral("Hidden"), false);
+    const QString entryPath = Latte::configPath() + QLatin1String("/autostart/org.kde.latte-dock.desktop");
+    return Autostart::isEnabled(entryPath);
 }
 
 void Importer::enableAutostart()
@@ -549,59 +540,11 @@ void Importer::enableAutostart()
         oldAutostartFile.remove();
     }
 
-    QFile autostartFile(Latte::configPath() + QLatin1String("/autostart/org.kde.latte-dock.desktop"));
-    //! local-first so user-mode (or user-patched) installs take priority
-    //! over a stale system desktop file — important after adding new keys
-    //! such as X-KDE-autostart-phase.
+    const QString entryPath = Latte::configPath() + QLatin1String("/autostart/org.kde.latte-dock.desktop");
     const QString metaFilePath = standardPath(QStringLiteral("applications/org.kde.latte-dock.desktop"), true);
-    QFile metaFile(metaFilePath);
 
-    if (!metaFile.exists()) {
-        qCWarning(latteApp) << "Cannot enable autostart: system desktop file not found:" << metaFilePath;
-        return;
-    }
-
-    //! check if autostart folder exists and create otherwise
-    QDir autostartDir(Latte::configPath() + QLatin1String("/autostart"));
-
-    if (!autostartDir.exists()) {
-        QDir configDir(Latte::configPath());
-        configDir.mkdir(QStringLiteral("autostart"));
-    }
-
-    if (autostartFile.exists()) {
-        //! Update the autostart file when the system desktop file is newer
-        //! (e.g. after a package upgrade that added X-KDE-autostart-phase).
-        QFileInfo autostartInfo(autostartFile.fileName());
-        QFileInfo metaInfo(metaFilePath);
-
-        //! A present-but-hidden entry is disabled per the XDG spec. Even when
-        //! it is newer than the source, re-enabling must clear Hidden=true by
-        //! replacing it with the clean shipped desktop file.
-        KDesktopFile existingEntry(autostartFile.fileName());
-        const bool hidden = existingEntry.desktopGroup().readEntry(QStringLiteral("Hidden"), false);
-
-        if (!hidden && autostartInfo.lastModified() >= metaInfo.lastModified()) {
-            return;
-        }
-
-        //! Stage the replacement next to the working file so a failed copy
-        //! can never delete the autostart entry.
-        const QString stagedFilePath = autostartFile.fileName() + QLatin1String(".new");
-        QFile::remove(stagedFilePath);
-
-        if (metaFile.copy(stagedFilePath)) {
-            autostartFile.remove();
-            QFile::rename(stagedFilePath, autostartFile.fileName());
-        } else {
-            QFile::remove(stagedFilePath);
-            qCWarning(latteApp) << "Failed to stage autostart update; keeping the existing entry.";
-        }
-        return;
-    }
-
-    if (!metaFile.copy(autostartFile.fileName())) {
-        qCWarning(latteApp) << "Failed to create autostart file:" << autostartFile.fileName();
+    if (!Autostart::enable(entryPath, metaFilePath)) {
+        qCWarning(latteApp) << "Failed to enable XDG autostart entry:" << entryPath;
     }
 }
 
@@ -614,10 +557,10 @@ void Importer::disableAutostart()
         oldAutostartFile.remove();
     }
 
-    QFile autostartFile(Latte::configPath() + QLatin1String("/autostart/org.kde.latte-dock.desktop"));
+    const QString entryPath = Latte::configPath() + QLatin1String("/autostart/org.kde.latte-dock.desktop");
 
-    if (autostartFile.exists()) {
-        autostartFile.remove();
+    if (!Autostart::disable(entryPath)) {
+        qCWarning(latteApp) << "Failed to disable XDG autostart entry:" << entryPath;
     }
 }
 

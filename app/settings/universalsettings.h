@@ -43,7 +43,7 @@ typedef QPair<float, float> ScreenScales;
 class UniversalSettings : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool ensureAutostart READ ensureAutostart WRITE setEnsureAutostart NOTIFY autostartChanged)
+    Q_PROPERTY(bool autostart READ autostart WRITE setAutostart NOTIFY autostartChanged)
     Q_PROPERTY(bool badges3DStyle READ badges3DStyle WRITE setBadges3DStyle NOTIFY badges3DStyleChanged)
     Q_PROPERTY(bool inAdvancedModeForEditSettings READ inAdvancedModeForEditSettings WRITE setInAdvancedModeForEditSettings NOTIFY inAdvancedModeForEditSettingsChanged)
     Q_PROPERTY(bool colorsScriptIsPresent READ colorsScriptIsPresent NOTIFY colorsScriptIsPresentChanged)
@@ -68,9 +68,6 @@ public:
 
     bool autostart() const;
     void setAutostart(bool state);
-
-    bool ensureAutostart() const;
-    void setEnsureAutostart(bool enabled);
 
     bool badges3DStyle() const;
     void setBadges3DStyle(bool enable);
@@ -160,9 +157,6 @@ private Q_SLOTS:
 
 private:
     void cleanupSettings();
-
-    void ensureAutostartEntry();
-    bool isSystemdAutostartEnabled() const;
 
     void setColorsScriptIsPresent(bool present);
 

@@ -723,10 +723,10 @@
              <item row="3" column="1">
               <widget class="QCheckBox" name="autostartChkBox">
                <property name="toolTip">
-                <string>Ensure the standard XDG autostart entry is active after each relogin. When unchecked, Latte removes its XDG autostart entry.</string>
+                <string>Start Latte Dock NG automatically when signing in to KDE Plasma.</string>
                </property>
                <property name="text">
-                <string>Ensure autostart during startup</string>
+                <string>Autostart</string>
                </property>
               </widget>
              </item>

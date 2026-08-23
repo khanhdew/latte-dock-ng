@@ -100,7 +100,7 @@ void TabPreferences::initUi()
 
 void TabPreferences::initSettings()
 {
-    o_preferences.autostart = m_corona->universalSettings()->ensureAutostart();
+    o_preferences.autostart = m_corona->universalSettings()->autostart();
     o_preferences.badgeStyle3D = m_corona->universalSettings()->badges3DStyle();
     o_preferences.contextMenuAlwaysActions = m_corona->universalSettings()->contextMenuActionsAlwaysShown();
     o_preferences.isAvailableGeometryBroadcastedToPlasma = m_corona->universalSettings()->isAvailableGeometryBroadcastedToPlasma();
@@ -189,7 +189,7 @@ void TabPreferences::resetDefaults()
 
 void TabPreferences::save()
 {
-    m_corona->universalSettings()->setEnsureAutostart(m_preferences.autostart);
+    m_corona->universalSettings()->setAutostart(m_preferences.autostart);
     m_corona->universalSettings()->setBadges3DStyle(m_preferences.badgeStyle3D);
     m_corona->universalSettings()->setContextMenuActionsAlwaysShown(m_preferences.contextMenuAlwaysActions);
     m_corona->universalSettings()->setIsAvailableGeometryBroadcastedToPlasma(m_preferences.isAvailableGeometryBroadcastedToPlasma);
