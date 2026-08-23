@@ -178,6 +178,9 @@ PlasmoidItem {
     }
     property bool shouldFilterByActivity: root.showOnlyCurrentActivity && root.tasksModelActivityId.length > 0
     property bool showPreviews:  hoverAction === LatteTasks.types.PreviewWindows || hoverAction === LatteTasks.types.PreviewAndHighlightWindows
+    // The preview delegate pulls in thumbnail and MPRIS components.  Keep it
+    // out of the task scene until previews are actually enabled.
+    property var toolTipDelegate: toolTipDelegateLoader.item
     property bool showWindowActions: plasmoid.configuration.showWindowActions && !disableAllWindowsFunctionality
     property bool showWindowsOnlyFromLaunchers: plasmoid.configuration.showWindowsOnlyFromLaunchers && !disableAllWindowsFunctionality
 
@@ -453,9 +456,10 @@ PlasmoidItem {
 
     /////Window previews///////////
 
-    Previews.ToolTipDelegate2 {
-        id: toolTipDelegate
-        visible: false
+    Loader {
+        id: toolTipDelegateLoader
+        active: root.showPreviews
+        source: "previews/ToolTipDelegate2.qml"
     }
 
     ////BEGIN interfaces
@@ -506,6 +510,10 @@ PlasmoidItem {
 
         function show(taskItem){
             if (root.disableAllWindowsFunctionality) {
+                return;
+            }
+
+            if (!toolTipDelegate) {
                 return;
             }
 
