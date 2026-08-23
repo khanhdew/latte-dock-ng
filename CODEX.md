@@ -54,6 +54,8 @@ project knowledge changes.
 - Task edit-mode polling is one root timer instead of one repeating timer per
   task delegate.
 - Idle task mouse moves return before drag coordinate mapping and reorder work.
+- Disabled preview/highlight configurations skip inactive preview-state checks
+  during task hover while retaining tooltip and auto-scroll behavior.
 - Layout ID allocation builds a `QSet` once instead of repeatedly scanning two
   `QStringList` instances.
 - The task preview delegate is now loaded only when `showPreviews` is enabled;
