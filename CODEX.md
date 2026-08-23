@@ -31,6 +31,9 @@ project knowledge changes.
 - The current system Latte is the latest release ebuild, not this branch. Do
   not restart it automatically for branch validation.
 - Use `-j8` for project builds unless a command has a specific resource limit.
+- User configuration intentionally disables window previews and keeps only the
+  normal tooltip. Treat preview-window rendering as an inactive path unless
+  the user explicitly enables it for a regression check.
 
 ## Completed optimization steps
 
@@ -72,8 +75,8 @@ the exact commit list and push status.
    thumbnail support is unstable. Candidate files are
    `plasmoid/package/contents/ui/main.qml`, `TaskItem.qml`,
    `app/view/parabolic.cpp`, and `app/view/parabolic.h`.
-   The preview delegate itself is now lazy-loaded; validate that change first
-   before changing the dialog architecture.
+   The preview delegate itself is now lazy-loaded. This remains deferred while
+   the user's normal configuration keeps previews disabled.
 2. Revisit the bounce-end zoom micro-stutter. A safe fix needs a layout-change
    hook that re-triggers the existing parabolic calculation without re-entering
    the removal-animation relay.
