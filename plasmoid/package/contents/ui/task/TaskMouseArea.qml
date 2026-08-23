@@ -43,7 +43,11 @@ MouseArea {
         }
 
         //! show previews if enabled
-        if(isAbleToShowPreview && !showPreviewsIsBlockedFromReleaseEvent && !isLauncher
+        // Avoid preview-state checks entirely when both preview and window
+        // highlighting are disabled. Tooltip and task auto-scroll handling
+        // below remain active in that configuration.
+        if((root.showPreviews || root.highlightWindows)
+                && isAbleToShowPreview && !showPreviewsIsBlockedFromReleaseEvent && !isLauncher
                 && (((root.showPreviews || (windowsPreviewDlg.visible && !isLauncher))
                      && windowsPreviewDlg.activeItem !== taskItem)
                     || root.highlightWindows)){
@@ -83,9 +87,14 @@ MouseArea {
         }
     }
 
-    // IMPORTANT: This must be improved ! even for small milliseconds  it reduces performance
     onPositionChanged: (mouse) => {
         if (taskItem.abilities.myView.isReady && !taskItem.abilities.myView.isShownFully) {
+            return;
+        }
+
+        // Hover moves do not affect task dragging.  Skip the remaining work
+        // until a press establishes a drag origin or a drag is already active.
+        if (pressX === -1 && !taskItem.isDragged) {
             return;
         }
 
@@ -124,23 +133,9 @@ MouseArea {
         }
     }
 
-    // containmentEditing is set directly by the containment's
-    // onEditModeChanged via item.applet.containmentEditing = editMode.
-    // Poll it — direct property assignments don't need binding notifications.
-    property bool _containmentEditing: false
-    Timer {
-        id: editModePoller
-        interval: 200
-        repeat: true
-        running: true
-        onTriggered: {
-            try {
-                _containmentEditing = (typeof containmentEditing !== "undefined" && containmentEditing);
-            } catch (e) {
-                _containmentEditing = false;
-            }
-        }
-    }
+    // containmentEditing is polled once by the root task manager because the
+    // containment writes it directly through item.applet.
+    readonly property bool _containmentEditing: root.containmentEditingPolled
 
     function isContainmentEditing() {
         return _containmentEditing;

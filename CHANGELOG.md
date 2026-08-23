@@ -1,3 +1,15 @@
+## [v1.2.41] - 2026-08-23
+
+### Performance
+- Reduce idle task hover work when window previews and window highlighting
+  are disabled, while preserving tooltip and task auto-scroll behavior.
+- Reduce repeated task, PulseAudio, layout-import, and headless desktop
+  integration work across the dock's active and startup paths.
+
+### Tests
+- Add a source-contract autotest covering the inactive preview hover guard.
+- GCC and Clang autotest suites pass all 39 registered tests.
+
 ## [v1.2.39] - 2026-08-21
 
 ### Fixed

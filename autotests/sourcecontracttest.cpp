@@ -166,6 +166,7 @@ private Q_SLOTS:
     void appletItemForAppletExcludedContextsPreservePropertyAccess();
     // Qt5→Qt6 migration guards — patterns that cause regressions
     void mouseButtonEnumUsesMiddleButtonNotMidButton();
+    void taskMouseAreaSkipsInactivePreviewChecks();
     void dragDropHandlersUseBindingSyntaxForQt6();
     void environmentActionsDoesNotAcceptMiddleButton();
     void upgraderQmlUsesPlasmoidConfiguration();
@@ -3471,6 +3472,20 @@ void SourceContractTest::mouseButtonEnumUsesMiddleButtonNotMidButton()
     const QString clickedAnimSource = QString::fromUtf8(clickedAnim.readAll());
     QVERIFY(clickedAnimSource.contains(QStringLiteral("Qt.MiddleButton")));
     QVERIFY(!clickedAnimSource.contains(QStringLiteral("Qt.MidButton")));
+}
+
+void SourceContractTest::taskMouseAreaSkipsInactivePreviewChecks()
+{
+    QFile taskMouse(QStringLiteral(LATTE_SOURCE_DIR
+                                   "/plasmoid/package/contents/ui/task/TaskMouseArea.qml"));
+    QVERIFY(taskMouse.open(QFile::ReadOnly));
+    const QString taskMouseSource = QString::fromUtf8(taskMouse.readAll());
+
+    // Preview eligibility is inactive when both previews and window
+    // highlighting are disabled; keep the guard before the state lookup.
+    const QString guard = QStringLiteral("if((root.showPreviews || root.highlightWindows)\n"
+                                         "                && isAbleToShowPreview");
+    QVERIFY(taskMouseSource.contains(guard));
 }
 
 void SourceContractTest::environmentActionsDoesNotAcceptMiddleButton()

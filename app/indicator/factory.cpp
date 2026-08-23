@@ -15,8 +15,10 @@
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QDirIterator>
+#include <QFile>
 #include <QMessageBox>
 #include <QProcess>
+#include <QSharedPointer>
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTimer>
@@ -263,7 +265,7 @@ void Factory::removeIndicatorRecords(const QString &path)
         KDirWatch::self()->removeDir(path);
 
         //! delay informing the removal in case it is just an update
-        QTimer::singleShot(1000, [this, pluginId]() {
+        QTimer::singleShot(1000, this, [this, pluginId]() {
             Q_EMIT indicatorRemoved(pluginId);
         });
     }
@@ -393,9 +395,10 @@ Latte::ImportExport::State Factory::importIndicatorFile(QString compressedFile)
             QDir(installPath).removeRecursively();
         }
 
-        QProcess process;
-        process.start(QStringLiteral("mv"), {packagePath, installPath});
-        process.waitForFinished();
+        if (!QFile::rename(packagePath, installPath)) {
+            showNotificationError();
+            return Latte::ImportExport::FailedState;
+        }
 
         showNotificationSucceed(metadata.name(), updated);
         return updated ? Latte::ImportExport::UpdatedState : Latte::ImportExport::InstalledState;
@@ -427,7 +430,7 @@ void Factory::removeIndicator(QString id)
                                        KMessageBox::Options{KMessageBox::NoExec},
                                        QString());
 
-        connect(buttonbox, &QDialogButtonBox::accepted, [ &, id, pluginName]() {
+        connect(buttonbox, &QDialogButtonBox::accepted, [this, id, pluginName]() {
             auto showRemovedSucceed = [](QString name) {
                 auto notification = new KNotification(QStringLiteral("remove-done"), KNotification::CloseOnTimeout);
                 notification->setText(i18nc("indicator_name, removed success", "<b>%1</b> indicator removed successfully", name));
@@ -450,18 +453,45 @@ void Factory::removeIndicator(QString id)
                 return;
             }
 
-            QProcess process;
-            process.start(kpackagetool, QStringList{QStringLiteral("-r"), id, QStringLiteral("-t"), QStringLiteral("Latte/Indicator")});
-            process.waitForFinished();
+            auto *process = new QProcess(this);
+            auto handled = QSharedPointer<bool>::create(false);
 
-            if (process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0) {
-                showRemovedSucceed(pluginName);
-            } else {
-                qWarning() << "Failed to remove indicator" << id
-                           << "exitCode:" << process.exitCode()
-                           << "stderr:" << process.readAllStandardError();
+            connect(process, &QProcess::errorOccurred, this,
+                    [process, handled, pluginName, showRemovedError](QProcess::ProcessError error) {
+                if (*handled) {
+                    return;
+                }
+
+                *handled = true;
+                qWarning() << "Failed to start indicator removal process" << pluginName
+                           << "error:" << error
+                           << "stderr:" << process->readAllStandardError();
                 showRemovedError(pluginName);
-            }
+                process->deleteLater();
+            });
+
+            connect(process, &QProcess::finished, this,
+                    [process, handled, id, pluginName, showRemovedSucceed, showRemovedError](int exitCode,
+                                                                                               QProcess::ExitStatus exitStatus) {
+                if (*handled) {
+                    return;
+                }
+
+                *handled = true;
+                if (exitStatus == QProcess::NormalExit && exitCode == 0) {
+                    showRemovedSucceed(pluginName);
+                } else {
+                    qWarning() << "Failed to remove indicator" << id
+                               << "exitCode:" << exitCode
+                               << "stderr:" << process->readAllStandardError();
+                    showRemovedError(pluginName);
+                }
+
+                process->deleteLater();
+            });
+
+            process->start(kpackagetool,
+                           {QStringLiteral("-r"), id, QStringLiteral("-t"), QStringLiteral("Latte/Indicator")});
         });
 
         dialog->show();

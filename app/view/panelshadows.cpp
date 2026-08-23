@@ -8,6 +8,7 @@
 #include "panelshadows_p.h"
 
 #include <QDebug>
+#include <QGuiApplication>
 #include <KWindowShadow>
 
 class PanelShadows::Private
@@ -50,6 +51,11 @@ PanelShadows::PanelShadows(QObject *parent, const QString &prefix)
     : KSvg::Svg(parent)
     , d(new Private(this))
 {
+    if (QGuiApplication::platformName() == QLatin1String("offscreen")
+        || QGuiApplication::platformName() == QLatin1String("minimal")) {
+        return;
+    }
+
     setImagePath(prefix);
     connect(this, &KSvg::Svg::repaintNeeded, this, [this]() {
         d->updateShadows();

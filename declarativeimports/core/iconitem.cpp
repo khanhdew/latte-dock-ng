@@ -16,6 +16,7 @@
 
 // Qt
 #include <QDebug>
+#include <QGuiApplication>
 #include <QPainter>
 #include <QPaintEngine>
 #include <QQuickWindow>
@@ -79,10 +80,14 @@ IconItem::IconItem(QQuickItem *parent)
       m_lastValidSourceName(QString())
 {
     setFlag(ItemHasContents, true);
-    connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
-            this, &IconItem::implicitWidthChanged);
-    connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
-            this, &IconItem::implicitHeightChanged);
+    const bool desktopIntegrationAvailable = QGuiApplication::platformName() != QLatin1String("offscreen")
+                                             && QGuiApplication::platformName() != QLatin1String("minimal");
+    if (desktopIntegrationAvailable) {
+        connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
+                this, &IconItem::implicitWidthChanged);
+        connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
+                this, &IconItem::implicitHeightChanged);
+    }
     connect(this, &QQuickItem::enabledChanged,
             this, &IconItem::enabledChanged);
     connect(this, &QQuickItem::windowChanged,
@@ -93,8 +98,10 @@ IconItem::IconItem(QQuickItem *parent)
             this, &IconItem::schedulePixmapUpdate);
 
     //initialize implicit size to the Dialog size
-    setImplicitWidth(KIconLoader::global()->currentSize(KIconLoader::Dialog));
-    setImplicitHeight(KIconLoader::global()->currentSize(KIconLoader::Dialog));
+    if (desktopIntegrationAvailable) {
+        setImplicitWidth(KIconLoader::global()->currentSize(KIconLoader::Dialog));
+        setImplicitHeight(KIconLoader::global()->currentSize(KIconLoader::Dialog));
+    }
     setSmooth(true);
 }
 

@@ -102,6 +102,8 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
 {
     AppData data;
     data.url = url;
+    const bool desktopServiceQueryAvailable = QGuiApplication::platformName() != QLatin1String("offscreen")
+                                              && QGuiApplication::platformName() != QLatin1String("minimal");
 
     if (url.hasQuery()) {
         QUrlQuery uQuery(url);
@@ -123,15 +125,15 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
     // applications: URLs are used to refer to applications by their KService::menuId
     // (i.e. .desktop file name) rather than the absolute path to a .desktop file.
     if (url.scheme() == QLatin1String("applications")) {
-        KService::Ptr service = KService::serviceByMenuId(url.path());
+        KService::Ptr service = desktopServiceQueryAvailable ? KService::serviceByMenuId(url.path()) : KService::Ptr();
 
-        if (!service) {
+        if (desktopServiceQueryAvailable && !service) {
             // Some distros expose different storage ids/menu ids for the same app
             // (e.g. firefox.desktop vs firefox-esr.desktop). Try storage id first.
             service = KService::serviceByStorageId(url.path());
         }
 
-        if (!service && url.path().endsWith(QLatin1String(".desktop"), Qt::CaseInsensitive)) {
+        if (desktopServiceQueryAvailable && !service && url.path().endsWith(QLatin1String(".desktop"), Qt::CaseInsensitive)) {
             const QString desktopEntryName = url.path().left(url.path().length() - 8);
 
             // Final fallback: match by desktop entry name or its distro-specific
@@ -177,7 +179,7 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
     }
 
     if (url.isLocalFile() && KDesktopFile::isDesktopFile(url.toLocalFile())) {
-        const KService::Ptr service = KService::serviceByStorageId(url.fileName());
+        const KService::Ptr service = desktopServiceQueryAvailable ? KService::serviceByStorageId(url.fileName()) : KService::Ptr();
 
         // Resolve to non-absolute menuId-based URL if possible.
         if (service) {
@@ -216,7 +218,7 @@ AppData appDataFromUrl(const QUrl &url, const QIcon &fallbackIcon)
     } else if (url.scheme() == QLatin1String("preferred")) {
         data.id = defaultApplication(url);
 
-        const KService::Ptr service = KService::serviceByStorageId(data.id);
+        const KService::Ptr service = desktopServiceQueryAvailable ? KService::serviceByStorageId(data.id) : KService::Ptr();
 
         if (service) {
             const QString &menuId = service->menuId();
@@ -624,10 +626,20 @@ KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &proce
         return services;
     }
 
+    // KApplicationTrader starts desktop service discovery synchronously.  It
+    // is unavailable on headless platforms and can block there while trying
+    // to initialize desktop notification integration; executable fallback
+    // below still provides deterministic results for those environments.
+    const bool desktopServiceQueryAvailable = QGuiApplication::platformName() != QLatin1String("offscreen")
+                                              && QGuiApplication::platformName() != QLatin1String("minimal");
+    const auto queryServices = [&desktopServiceQueryAvailable](const auto &predicate) -> KService::List {
+        return desktopServiceQueryAvailable ? KApplicationTrader::query(predicate) : KService::List();
+    };
+
     const int firstSpace = cmdLine.indexOf(QLatin1Char(' '));
     int slash = 0;
 
-    services = KApplicationTrader::query([cmdLine](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
+    services = queryServices([cmdLine](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
 
     if (services.isEmpty()) {
         // Could not find with complete command line, so strip out the path part ...
@@ -635,7 +647,7 @@ KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &proce
 
         if (slash > 0) {
             services =
-            KApplicationTrader::query([&cmdLine, slash](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine.mid(slash + 1)); });
+            queryServices([&cmdLine, slash](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine.mid(slash + 1)); });
         }
     }
 
@@ -643,13 +655,13 @@ KService::List servicesFromCmdLine(const QString &_cmdLine, const QString &proce
         // Could not find with arguments, so try without ...
         cmdLine.truncate(firstSpace);
 
-        services = KApplicationTrader::query([cmdLine](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
+        services = queryServices([cmdLine](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine); });
 
         if (services.isEmpty()) {
             slash = cmdLine.lastIndexOf(QLatin1Char('/'));
 
             if (slash > 0) {
-                services = KApplicationTrader::query([&cmdLine, slash](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine.mid(slash + 1)); });
+                services = queryServices([&cmdLine, slash](const KService::Ptr & s) { return !s->exec().isEmpty() && s->exec().contains(cmdLine.mid(slash + 1)); });
             }
         }
     }

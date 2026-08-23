@@ -13,6 +13,7 @@
 #include <KSharedConfig>
 #include <QIcon>
 #include <QDebug>
+#include <QGuiApplication>
 #include <QPixmapCache>
 #include <QStandardPaths>
 
@@ -37,10 +38,18 @@ Environment::Environment(QObject *parent)
     // connected, but that signal fires once per icon group (Desktop, Toolbar,
     // MainToolbar …) and during theme switches caused a flood of QML binding
     // re-evaluations that could crash when Svg objects were being recreated.
-    connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
-            this, &Environment::markIconThemeChanged);
+    // KIconLoader initializes desktop integration synchronously; that is not
+    // available in the offscreen/minimal platforms used by QML smoke tests.
+    const bool desktopIntegrationAvailable = QGuiApplication::platformName() != QLatin1String("offscreen")
+                                             && QGuiApplication::platformName() != QLatin1String("minimal");
+    if (desktopIntegrationAvailable) {
+        connect(KIconLoader::global(), &KIconLoader::iconLoaderSettingsChanged,
+                this, &Environment::markIconThemeChanged);
+    }
 
-    const QString kdeGlobalsFile = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/kdeglobals");
+    const QString kdeGlobalsFile = desktopIntegrationAvailable
+        ? QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/kdeglobals")
+        : QString();
 
     if (!kdeGlobalsFile.isEmpty()) {
         KDirWatch::self()->addFile(kdeGlobalsFile);

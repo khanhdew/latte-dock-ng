@@ -44,7 +44,9 @@ PlasmaCore.ToolTipArea {
         activeFocusOnTab: true
         objectName: "expandApplet"
         Accessible.name: root.mainText
-        Accessible.description: i18ndc("plasma_shell_org.kde.latte.shell", "@info:whatsthis Accessible description for panel widget %1",  "Open %1", root.subText)
+        Accessible.description: typeof i18ndc === "function"
+                               ? i18ndc("plasma_shell_org.kde.latte.shell", "@info:whatsthis Accessible description for panel widget %1", "Open %1", root.subText)
+                               : root.subText
         Accessible.role: Accessible.Button
         Accessible.onPressAction: {
             if (typeof Plasmoid !== "undefined" && typeof Plasmoid.activated === "function") {
@@ -582,14 +584,14 @@ PlasmaCore.ToolTipArea {
     SequentialAnimation{
         id: clickedAnimation
         alwaysRunToEnd: true
-        running: appletItem
-                 && appletItem.animations
-                 && appletItem.indicators
-                 && appletItem.isSquare
-                 && appletItem.pressed
-                 && !appletItem.originalAppletBehavior
-                 && (appletItem.animations.speedFactor.current > 0)
-                 && !appletItem.indicators.info.providesClickedAnimation
+        running: !!(appletItem
+                    && appletItem.animations
+                    && appletItem.indicators
+                    && appletItem.isSquare
+                    && appletItem.pressed
+                    && !appletItem.originalAppletBehavior
+                    && (appletItem.animations.speedFactor.current > 0)
+                    && !appletItem.indicators.info.providesClickedAnimation)
 
         ParallelAnimation{
             PropertyAnimation {

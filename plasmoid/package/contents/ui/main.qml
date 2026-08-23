@@ -178,6 +178,9 @@ PlasmoidItem {
     }
     property bool shouldFilterByActivity: root.showOnlyCurrentActivity && root.tasksModelActivityId.length > 0
     property bool showPreviews:  hoverAction === LatteTasks.types.PreviewWindows || hoverAction === LatteTasks.types.PreviewAndHighlightWindows
+    // The preview delegate pulls in thumbnail and MPRIS components.  Keep it
+    // out of the task scene until previews are actually enabled.
+    property var toolTipDelegate: toolTipDelegateLoader.item
     property bool showWindowActions: plasmoid.configuration.showWindowActions && !disableAllWindowsFunctionality
     property bool showWindowsOnlyFromLaunchers: plasmoid.configuration.showWindowsOnlyFromLaunchers && !disableAllWindowsFunctionality
 
@@ -248,6 +251,26 @@ PlasmoidItem {
     // Set by containment directly via item.applet.containmentEditing = editMode
     // in main.qml onEditModeChanged. Avoids QML binding notification issues.
     property bool containmentEditing: false
+    property bool containmentEditingPolled: false
+
+    // Keep the compatibility poll in one place instead of creating one
+    // repeating timer per task delegate.  The containment writes directly to
+    // containmentEditing, so this also covers environments that do not emit a
+    // property notification for that assignment.
+    Timer {
+        id: containmentEditingPoller
+        interval: 200
+        repeat: true
+        running: tasksModel.count > 0
+        onRunningChanged: {
+            if (running) {
+                root.containmentEditingPolled = root.containmentEditing;
+            }
+        }
+        onTriggered: root.containmentEditingPolled = root.containmentEditing
+    }
+
+    onContainmentEditingChanged: containmentEditingPolled = containmentEditing
 
     readonly property bool inEditMode: latteInEditMode || plasmoid.userConfiguring || containmentEditing
 
@@ -433,9 +456,10 @@ PlasmoidItem {
 
     /////Window previews///////////
 
-    Previews.ToolTipDelegate2 {
-        id: toolTipDelegate
-        visible: false
+    Loader {
+        id: toolTipDelegateLoader
+        active: root.showPreviews
+        source: "previews/ToolTipDelegate2.qml"
     }
 
     ////BEGIN interfaces
@@ -486,6 +510,10 @@ PlasmoidItem {
 
         function show(taskItem){
             if (root.disableAllWindowsFunctionality) {
+                return;
+            }
+
+            if (!toolTipDelegate) {
                 return;
             }
 

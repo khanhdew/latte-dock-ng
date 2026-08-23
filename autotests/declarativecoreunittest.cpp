@@ -7,6 +7,7 @@
 #include "iconitem.h"
 
 #include <QSignalSpy>
+#include <QGuiApplication>
 #include <QTest>
 
 class DeclarativeCoreUnitTest : public QObject
@@ -53,6 +54,11 @@ void DeclarativeCoreUnitTest::iconItemEmitsOnlyForChangedState()
 
 void DeclarativeCoreUnitTest::dialogTracksMouseAndEdgeChanges()
 {
+    if (QGuiApplication::platformName() == QLatin1String("offscreen")
+        || QGuiApplication::platformName() == QLatin1String("minimal")) {
+        QSKIP("PlasmaQuick dialogs require a real desktop platform");
+    }
+
     Latte::Quick::Dialog dialog;
     QCOMPARE(dialog.edge(), Plasma::Types::BottomEdge);
     QVERIFY(!dialog.containsMouse());

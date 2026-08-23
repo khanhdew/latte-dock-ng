@@ -257,6 +257,10 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
     for (const Plasma::Applet *appletTemp : m_latteView->containment()->applets()) {
         PlasmaQuick::AppletQuickItem *ai = PlasmaQuick::AppletQuickItem::itemForApplet(const_cast<Plasma::Applet *>(appletTemp));
 
+        if (!ai) {
+            continue;
+        }
+
         bool appletContainsMouse = false;
 
         if (m_appletContainsMethod.isValid()) {
@@ -268,7 +272,7 @@ void ContextMenuLayerQuickItem::mousePressEvent(QMouseEvent *event)
             appletContainsMouse = ai->contains(ai->mapFromItem(this, event->pos()));
         }
 
-        if (ai && ai->isVisible() && appletContainsMouse) {
+        if (ai->isVisible() && appletContainsMouse) {
             applet = ai->applet();
             break;
         }

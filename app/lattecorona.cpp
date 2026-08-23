@@ -1187,7 +1187,7 @@ void Corona::quitApplication()
 
     //! this code must be called asynchronously because it is called
     //! also from qml (Settings window).
-    QTimer::singleShot(300, [this]() {
+    QTimer::singleShot(300, this, [this]() {
         m_layoutsManager->hideLatteSettingsDialog();
         m_layoutsManager->synchronizer()->hideAllViews();
     });
@@ -1396,7 +1396,7 @@ void Corona::windowColorScheme(QString windowIdAndScheme)
 
     const QString schemeStr = windowIdAndScheme.mid(firstSlash + 1);
 
-    QTimer::singleShot(200, [this, schemeStr]() {
+    QTimer::singleShot(200, this, [this, schemeStr]() {
         //! Give the compositor enough time to update the active window id.
         const WindowSystem::WindowId activeWid = m_wm->activeWindow();
         m_wm->schemesTracker()->setColorSchemeForWindow(activeWid, schemeStr);

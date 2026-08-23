@@ -232,7 +232,8 @@ AbilityItem.BasicItem {
 
     indicator.isGroup: !root.disableAllWindowsFunctionality && taskItem.isGroupParent
     indicator.isHovered: taskItem.visualContainsMouse
-                         || (windowsPreviewDlg.containsMouse && (toolTipDelegate.parentTask === taskItem))
+                         || (windowsPreviewDlg.containsMouse && toolTipDelegate
+                             && (toolTipDelegate.parentTask === taskItem))
     indicator.isMinimized: !root.disableAllWindowsFunctionality && taskItem.isMinimized
     indicator.isPressed: taskItem.pressed && taskItem.visualContainsMouse
     indicator.inAttention: !root.disableAllWindowsFunctionality && taskItem.inAttention
@@ -577,6 +578,10 @@ AbilityItem.BasicItem {
     }
 
     function preparePreviewWindow(hideClose){
+        if (!toolTipDelegate) {
+            return;
+        }
+
         windowsPreviewDlg.visualParent = tooltipVisualParent;
         toolTipDelegate.parentTask = taskItem;
         toolTipDelegate.rootIndex = tasksModel.makeModelIndex(itemIndex, -1);
