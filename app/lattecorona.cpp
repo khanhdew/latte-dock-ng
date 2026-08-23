@@ -1416,8 +1416,7 @@ void Corona::setAutostart(const bool &enabled)
     m_universalSettings->setEnsureAutostart(enabled);
 
     if (!enabled) {
-        //! Explicit disable removes the XDG entry we own. Any systemd unit is
-        //! intentionally left untouched (it is not latte's to manage).
+        //! Explicit disable removes the XDG entry owned by Latte.
         Layouts::Importer::disableAutostart();
     }
 }

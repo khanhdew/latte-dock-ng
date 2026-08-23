@@ -71,7 +71,6 @@ public:
 
     bool ensureAutostart() const;
     void setEnsureAutostart(bool enabled);
-    bool autostartMechanismsConflict() const;
 
     bool badges3DStyle() const;
     void setBadges3DStyle(bool enable);

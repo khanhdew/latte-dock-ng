@@ -77,7 +77,6 @@ void TabPreferences::initUi()
 
     connect(m_ui->autostartChkBox, &QCheckBox::toggled, this, [this]() {
         m_preferences.autostart = m_ui->autostartChkBox->isChecked();
-        updateAutostartWarning();
         Q_EMIT dataChanged();
     });
 
@@ -136,7 +135,6 @@ void TabPreferences::updateUi()
 {
     //! ui load
     m_ui->autostartChkBox->setChecked(m_preferences.autostart);
-    updateAutostartWarning();
     m_ui->badges3DStyleChkBox->setChecked(m_preferences.badgeStyle3D);
     m_ui->infoWindowChkBox->setChecked(m_preferences.layoutsInformationWindow);
     m_ui->broadcastGeomChkBox->setChecked(m_preferences.isAvailableGeometryBroadcastedToPlasma);
@@ -175,15 +173,6 @@ void TabPreferences::onActionsBtnPressed()
 {
     auto viewsDlg = new Settings::Dialog::ActionsDialog(m_parentDialog, this);
     viewsDlg->exec();
-}
-
-void TabPreferences::updateAutostartWarning()
-{
-    //! Warn only when the user asked latte to ensure autostart and both a
-    //! systemd unit and the XDG entry are active at the same time.
-    const bool conflict = m_ui->autostartChkBox->isChecked()
-                          && m_corona->universalSettings()->autostartMechanismsConflict();
-    m_ui->autostartWarningLbl->setVisible(conflict);
 }
 
 void TabPreferences::reset()

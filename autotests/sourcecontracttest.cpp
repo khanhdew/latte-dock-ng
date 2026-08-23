@@ -58,7 +58,7 @@ private Q_SLOTS:
     void autostartDefaultEnabledContracts();
     void desktopFileHasAutostartPhaseKey();
     void enableAutostartExitsImmediately();
-    void universalSettingsEnsureAutostartEntryHandlesBothMechanisms();
+    void universalSettingsEnsureXdgAutostartEntry();
     void enableAutostartStagesUpdateAndWarns();
     void waylandCheckHasRetryMechanism();
     void enableAutostartUpdatesOutdatedFile();
@@ -1573,7 +1573,7 @@ void SourceContractTest::cmakePackagingConfigLivesInModule()
 void SourceContractTest::autostartDefaultEnabledContracts()
 {
     //! "Ensure autostart during startup" (Preferences page) must default to
-    //! checked, and startup must ensure at least one autostart mechanism exists.
+    //! checked, and startup must ensure the standard XDG entry exists.
 
     QFile preferencesHeader(QStringLiteral(LATTE_SOURCE_DIR "/app/data/preferencesdata.h"));
     QVERIFY(preferencesHeader.open(QFile::ReadOnly));
@@ -1633,27 +1633,19 @@ void SourceContractTest::enableAutostartExitsImmediately()
     QVERIFY(returnZero > exitCall);
 }
 
-void SourceContractTest::universalSettingsEnsureAutostartEntryHandlesBothMechanisms()
+void SourceContractTest::universalSettingsEnsureXdgAutostartEntry()
 {
-    //! ensureAutostartEntry() must implement the flagA/flagB decision table:
-    //! create the XDG entry only when neither mechanism is present, and only
-    //! log when both are present. Disabling must stay silent and never touch
-    //! existing entries.
+    //! ensureAutostartEntry() manages only the standard XDG entry. Plasma may
+    //! expose it as a generated systemd unit, which is not an independent
+    //! mechanism for Latte to detect or manage.
     QFile universalSettings(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.cpp"));
     QVERIFY(universalSettings.open(QFile::ReadOnly));
     const QString source = QString::fromUtf8(universalSettings.readAll());
 
-    QVERIFY(source.contains(QStringLiteral("const bool systemdSet = isSystemdAutostartEnabled();")));
-    QVERIFY(source.contains(QStringLiteral("const bool desktopSet = Layouts::Importer::isAutostartEnabled();")));
-    QVERIFY(source.contains(QStringLiteral("} else if (!systemdSet && !desktopSet) {")));
+    QVERIFY(source.contains(QStringLiteral("if (!Layouts::Importer::isAutostartEnabled()) {")));
     QVERIFY(source.contains(QStringLiteral("Layouts::Importer::enableAutostart();")));
 
-    //! The systemd check must only look at manually/distro-installed units,
-    //! never the xdg-autostart-generator produced app-...@autostart.service.
-    QVERIFY(source.contains(QStringLiteral("latte-dock-ng.service")));
-    QVERIFY(source.contains(QStringLiteral("latte-dock.service")));
-
-    //! setEnsureAutostart(false) must be silent and not remove anything.
+    //! setEnsureAutostart(false) persists the opt-out decision.
     const int setEnsure = source.indexOf(QStringLiteral("void UniversalSettings::setEnsureAutostart(bool enabled)"));
     QVERIFY(setEnsure >= 0);
     QVERIFY(source.indexOf(QStringLiteral("writeEntry(QStringLiteral(\"ensureAutostart\"), enabled)"), setEnsure) > setEnsure);

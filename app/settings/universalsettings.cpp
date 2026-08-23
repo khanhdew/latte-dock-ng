@@ -22,7 +22,6 @@
 // Qt
 #include <QDebug>
 #include <QDir>
-#include <QProcess>
 
 // KDE
 #include <KActivities/Consumer>
@@ -286,61 +285,20 @@ void UniversalSettings::setEnsureAutostart(bool enabled)
     if (enabled) {
         ensureAutostartEntry();
     }
-    //! Disabled means "don't manage": leave every existing autostart mechanism
-    //! (XDG entry or systemd unit) untouched, and stay silent.
+    //! Disabled means "don't manage": leave the existing XDG entry untouched.
 
     Q_EMIT autostartChanged();
 }
 
-bool UniversalSettings::autostartMechanismsConflict() const
-{
-    return isSystemdAutostartEnabled() && Layouts::Importer::isAutostartEnabled();
-}
-
 void UniversalSettings::ensureAutostartEntry()
 {
-    const bool systemdSet = isSystemdAutostartEnabled();
-    const bool desktopSet = Layouts::Importer::isAutostartEnabled();
-
-    if (systemdSet && desktopSet) {
-        //! Both mechanisms are active; a duplicate startup attempt may occur.
-        //! Log-only: the single-instance lock already rejects the second process.
-        qCWarning(latteApp) << "Latte autostart: both a systemd user unit and the XDG autostart entry are enabled; duplicate startup may occur.";
-    } else if (!systemdSet && !desktopSet) {
-        //! No autostart mechanism exists yet; create the XDG entry.
+    //! Latte is a Plasma desktop component and uses the freedesktop XDG
+    //! autostart entry as its single managed startup mechanism. Plasma may
+    //! represent that entry as a generated systemd unit; that is an
+    //! implementation detail and must not be managed as a second mechanism.
+    if (!Layouts::Importer::isAutostartEnabled()) {
         Layouts::Importer::enableAutostart();
     }
-    //! Exactly one mechanism is active; nothing to do.
-}
-
-bool UniversalSettings::isSystemdAutostartEnabled() const
-{
-    //! Only manually/distro-installed units are considered. The
-    //! xdg-autostart-generator produced app-...@autostart.service is derived
-    //! from the XDG entry and therefore must not be counted here, otherwise
-    //! a lone XDG entry would be misreported as a conflict.
-    const QStringList unitNames{QStringLiteral("latte-dock-ng.service"), QStringLiteral("latte-dock.service")};
-
-    for (const QString &unit : unitNames) {
-        QProcess process;
-        process.start(QStringLiteral("systemctl"),
-                      {QStringLiteral("--user"), QStringLiteral("is-enabled"), QStringLiteral("--quiet"), unit});
-
-        if (!process.waitForStarted(2000)) {
-            //! systemctl unavailable; assume there is no systemd-managed autostart.
-            return false;
-        }
-
-        if (!process.waitForFinished(2000)) {
-            continue;
-        }
-
-        if (process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0) {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 bool UniversalSettings::badges3DStyle() const
