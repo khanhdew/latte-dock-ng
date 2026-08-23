@@ -477,7 +477,11 @@ PlasmoidItem {
         property bool signalSent: false
         property Item activeItem: null
 
-        Component.onCompleted: mainItem.visible = true;
+        Component.onCompleted: {
+            if (mainItem) {
+                mainItem.visible = true;
+            }
+        }
 
         onContainsMouseChanged: {
             //! Orchestrate restore zoom and previews window hiding. Both should be
