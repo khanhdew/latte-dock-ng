@@ -58,7 +58,7 @@ private Q_SLOTS:
     void autostartDefaultEnabledContracts();
     void desktopFileHasAutostartPhaseKey();
     void enableAutostartExitsImmediately();
-    void universalSettingsSelfHealsMissingAutostart();
+    void universalSettingsEnsureXdgAutostartEntry();
     void enableAutostartStagesUpdateAndWarns();
     void waylandCheckHasRetryMechanism();
     void enableAutostartUpdatesOutdatedFile();
@@ -1576,8 +1576,8 @@ void SourceContractTest::cmakePackagingConfigLivesInModule()
 
 void SourceContractTest::autostartDefaultEnabledContracts()
 {
-    //! "Enable autostart during startup" (Preferences page) must default to
-    //! enabled and the first-run logic must create the autostart entry once.
+    //! "Ensure autostart during startup" (Preferences page) must default to
+    //! checked, and startup must ensure the standard XDG entry exists.
 
     QFile preferencesHeader(QStringLiteral(LATTE_SOURCE_DIR "/app/data/preferencesdata.h"));
     QVERIFY(preferencesHeader.open(QFile::ReadOnly));
@@ -1589,19 +1589,14 @@ void SourceContractTest::autostartDefaultEnabledContracts()
     QVERIFY(universalSettings.open(QFile::ReadOnly));
     const QString universalSource = QString::fromUtf8(universalSettings.readAll());
 
-    //! First-run chain: when the user never configured autostart and it is
-    //! disabled, enable it exactly once and remember the decision.
-    const int userSetRead = universalSource.indexOf(
-                                QStringLiteral("bool autostartUserSet = m_universalGroup.readEntry(QStringLiteral(\"userConfiguredAutostart\"), false);"));
-    const int firstRunGuard = universalSource.indexOf(
-                                  QStringLiteral("if (!autostartUserSet && !autostart()) {"), userSetRead);
-    const int enableCall = universalSource.indexOf(QStringLiteral("setAutostart(true);"), firstRunGuard);
-    const int rememberDecision = universalSource.indexOf(
-                                     QStringLiteral("m_universalGroup.writeEntry(QStringLiteral(\"userConfiguredAutostart\"), true);"), enableCall);
-    QVERIFY(userSetRead >= 0);
-    QVERIFY(firstRunGuard > userSetRead);
-    QVERIFY(enableCall > firstRunGuard);
-    QVERIFY(rememberDecision > enableCall);
+    //! ensureAutostart() defaults to enabled.
+    QVERIFY(universalSource.contains(QStringLiteral("readEntry(QStringLiteral(\"ensureAutostart\"), true)")));
+
+    //! Startup only acts when ensure-autostart is enabled.
+    const int loadGuard = universalSource.indexOf(QStringLiteral("if (ensureAutostart()) {"));
+    const int ensureCall = universalSource.indexOf(QStringLiteral("ensureAutostartEntry();"), loadGuard);
+    QVERIFY(loadGuard >= 0);
+    QVERIFY(ensureCall > loadGuard);
 
     //! Autostart state is the existence of the desktop file, and enabling
     //! copies the installed application launcher.
@@ -1642,24 +1637,22 @@ void SourceContractTest::enableAutostartExitsImmediately()
     QVERIFY(returnZero > exitCall);
 }
 
-void SourceContractTest::universalSettingsSelfHealsMissingAutostart()
+void SourceContractTest::universalSettingsEnsureXdgAutostartEntry()
 {
-    //! Once the user has configured autostart (userConfiguredAutostart=true),
-    //! the first-run creation path never runs again.  If the desktop file
-    //! disappears later (uninstall, failed update), startup must restore it
-    //! instead of silently breaking autostart on every login.
+    //! ensureAutostartEntry() manages only the standard XDG entry. Plasma may
+    //! expose it as a generated systemd unit, which is not an independent
+    //! mechanism for Latte to detect or manage.
     QFile universalSettings(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.cpp"));
     QVERIFY(universalSettings.open(QFile::ReadOnly));
-    const QString universalSource = QString::fromUtf8(universalSettings.readAll());
+    const QString source = QString::fromUtf8(universalSettings.readAll());
 
-    const int rememberDecision = universalSource.indexOf(
-                                     QStringLiteral("m_universalGroup.writeEntry(QStringLiteral(\"userConfiguredAutostart\"), true);"));
-    QVERIFY(rememberDecision >= 0);
+    QVERIFY(source.contains(QStringLiteral("if (!Layouts::Importer::isAutostartEnabled()) {")));
+    QVERIFY(source.contains(QStringLiteral("Layouts::Importer::enableAutostart();")));
 
-    //! Self-heal call must come after the first-run decision is remembered,
-    //! so the recreate path is the one for a configured-but-missing entry.
-    const int selfHealCall = universalSource.indexOf(QStringLiteral("setAutostart(true);"), rememberDecision);
-    QVERIFY(selfHealCall > rememberDecision);
+    //! setEnsureAutostart(false) persists the opt-out decision.
+    const int setEnsure = source.indexOf(QStringLiteral("void UniversalSettings::setEnsureAutostart(bool enabled)"));
+    QVERIFY(setEnsure >= 0);
+    QVERIFY(source.indexOf(QStringLiteral("writeEntry(QStringLiteral(\"ensureAutostart\"), enabled)"), setEnsure) > setEnsure);
 }
 
 void SourceContractTest::enableAutostartStagesUpdateAndWarns()

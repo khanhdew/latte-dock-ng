@@ -67,21 +67,11 @@ UniversalSettings::~UniversalSettings()
 
 void UniversalSettings::load()
 {
-    //! check if user has set the autostart option
-    bool autostartUserSet = m_universalGroup.readEntry(QStringLiteral("userConfiguredAutostart"), false);
-
-    if (!autostartUserSet && !autostart()) {
-        //! the first time the application is running and autostart is not set, autostart is enabled
-        //! and from now own it will not be recreated in the beginning
-
-        setAutostart(true);
-        m_universalGroup.writeEntry(QStringLiteral("userConfiguredAutostart"), true);
-    } else if (autostartUserSet && !autostart()) {
-        //! autostart was configured before but the desktop file is missing
-        //! (removed by an uninstall, depclean or a failed update); restore it
-        //! so autostart cannot silently break on every login again.
-        qCWarning(latteApp) << "Autostart desktop file is missing while autostart is configured; recreating it.";
-        setAutostart(true);
+    //! Ensure-autostart: when enabled (default), guarantee that at least one
+    //! autostart mechanism exists; when disabled, stay silent and leave every
+    //! autostart mechanism untouched.
+    if (ensureAutostart()) {
+        ensureAutostartEntry();
     }
 
     //! init screen scales
@@ -278,6 +268,37 @@ void UniversalSettings::setAutostart(bool state)
     }
 
     Q_EMIT autostartChanged();
+}
+
+bool UniversalSettings::ensureAutostart() const
+{
+    return m_universalGroup.readEntry(QStringLiteral("ensureAutostart"), true);
+}
+
+void UniversalSettings::setEnsureAutostart(bool enabled)
+{
+    m_universalGroup.writeEntry(QStringLiteral("ensureAutostart"), enabled);
+    //! Flush immediately so an explicit CLI/DBus/UI disable survives even if
+    //! the process exits before the config is saved through the normal path.
+    m_universalGroup.sync();
+
+    if (enabled) {
+        ensureAutostartEntry();
+    }
+    //! Disabled means "don't manage": leave the existing XDG entry untouched.
+
+    Q_EMIT autostartChanged();
+}
+
+void UniversalSettings::ensureAutostartEntry()
+{
+    //! Latte is a Plasma desktop component and uses the freedesktop XDG
+    //! autostart entry as its single managed startup mechanism. Plasma may
+    //! represent that entry as a generated systemd unit; that is an
+    //! implementation detail and must not be managed as a second mechanism.
+    if (!Layouts::Importer::isAutostartEnabled()) {
+        Layouts::Importer::enableAutostart();
+    }
 }
 
 bool UniversalSettings::badges3DStyle() const
