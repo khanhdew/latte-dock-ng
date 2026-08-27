@@ -64,6 +64,19 @@ fi
 log="$build_dir/qmllint-deep.log"
 : > "$log"
 
+# Categories promoted to error level once their backlog reaches zero.
+# Protocol (docs/qmllint-backlog-plan.md): a category may be appended here
+# after two consecutive zero-warning measurements with green CI; the gate
+# then fails on any new occurrence. Waived categories are never added.
+PROMOTED_ERROR_CATEGORIES=(
+    # Phase 1 will promote: unused-imports, signal-handler-parameters, ...
+)
+
+args=(--ignore-settings --max-warnings -1 -I "$build_dir/qml" -I "$stage")
+for category in "${PROMOTED_ERROR_CATEGORIES[@]}"; do
+    args+=("--$category" error)
+done
+
 echo "qmllint-deep: linting ${#files[@]} QML files with import resolution ($qmllint)"
 echo "qmllint-deep: import roots: $build_dir/qml, staged latte modules, system qml"
 
@@ -72,7 +85,7 @@ chunk=200
 total=${#files[@]}
 for ((start = 0; start < total; start += chunk)); do
     batch=("${files[@]:start:chunk}")
-    "$qmllint" --ignore-settings --max-warnings -1 -I "$build_dir/qml" -I "$stage" "${batch[@]}" >>"$log" 2>&1
+    "$qmllint" "${args[@]}" "${batch[@]}" >>"$log" 2>&1
     rc=$?
     if [[ $rc -ne 0 ]]; then
         failed=1
@@ -109,7 +122,10 @@ if grep -qE 'Failed to import org\.kde\.latte\.(core|private\.(containment|tasks
 fi
 
 echo "qmllint-deep: warning categories (full log: $log):"
-grep -oE '\[[A-Za-z][A-Za-z0-9.-]*\]$' "$log" | sort | uniq -c | sort -rn | sed 's/^/  /'
+# Only parse "Warning:"/"Info:" lines: code-context lines may end in
+# brackets too (e.g. "grid.children[i]") and would pollute the histogram.
+# (unused-imports is emitted at info level by current qmllint versions.)
+grep -E '^(Warning|Info): ' "$log" | grep -oE '\[[A-Za-z][A-Za-z0-9.-]*\]$' | sort | uniq -c | sort -rn | sed 's/^/  /'
 
 if [[ $failed -ne 0 ]]; then
     echo "qmllint-deep: FAILED (see $log)" >&2
