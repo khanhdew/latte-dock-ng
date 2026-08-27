@@ -1365,7 +1365,7 @@ void SourceContractTest::modernDockBackgroundShadowDefaultIsCompact()
     QFile backgroundFile(QStringLiteral(LATTE_SOURCE_DIR "/containment/package/contents/ui/background/MultiLayered.qml"));
     QVERIFY(backgroundFile.open(QFile::ReadOnly));
     const QString backgroundSource = QString::fromUtf8(backgroundFile.readAll());
-    QVERIFY(backgroundSource.contains(QStringLiteral("import org.kde.latte.abilities.definition 0.1 as AbilityDefinition")));
+    QVERIFY(backgroundSource.contains(QStringLiteral("import org.kde.latte.abilities.definition as AbilityDefinition")));
     QVERIFY(backgroundSource.contains(QStringLiteral("AbilityDefinition.MetricsConstants.kModernBackgroundShadowMinPixels")));
     QVERIFY(backgroundSource.contains(
                 QStringLiteral("if (modernDockStyle && customDefShadowIsEnabled) {\n            return AbilityDefinition.MetricsConstants.kModernBackgroundShadowMinPixels;\n        }")));

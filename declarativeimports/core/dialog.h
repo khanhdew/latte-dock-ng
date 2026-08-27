@@ -11,6 +11,7 @@
 #include <QObject>
 
 #include <QMetaObject>
+#include <QtQml>
 
 #include <array>
 
@@ -24,6 +25,7 @@ namespace Quick {
 class Dialog : public PlasmaQuick::Dialog
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Dialog)
     Q_PROPERTY(bool containsMouse READ containsMouse NOTIFY containsMouseChanged)
 
     //! it is used instead of location property in order to not break borders drawing

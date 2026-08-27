@@ -27,7 +27,7 @@ private Q_SLOTS:
     void environmentReturnsThemeIconNamesAsSources();
     void environmentDescribesIconAndStringSources();
     void quickWindowSystemReportsWaylandCompositing();
-    void singletonProvidersCreateExpectedObjects();
+    void singletonsCreateExpectedObjects();
 };
 
 void CoreUnitTest::extrasFormatRectsAndEnums()
@@ -119,16 +119,19 @@ void CoreUnitTest::quickWindowSystemReportsWaylandCompositing()
     QVERIFY(windowSystem.isPlatformWayland());
 }
 
-void CoreUnitTest::singletonProvidersCreateExpectedObjects()
+void CoreUnitTest::singletonsCreateExpectedObjects()
 {
-    std::unique_ptr<QObject> tools(Latte::tools_qobject_singletontype_provider(nullptr, nullptr));
-    QVERIFY(qobject_cast<Latte::Tools *>(tools.get()));
+    //! The singletons are declared with QML_SINGLETON; the QML engine simply
+    //! default-constructs them, so constructing them directly asserts the
+    //! same contract the old singleton provider functions did.
+    Latte::Tools tools;
+    QVERIFY(qobject_cast<Latte::Tools *>(&tools));
 
-    std::unique_ptr<QObject> environment(Latte::environment_qobject_singletontype_provider(nullptr, nullptr));
-    QVERIFY(qobject_cast<Latte::Environment *>(environment.get()));
+    Latte::Environment environment;
+    QVERIFY(qobject_cast<Latte::Environment *>(&environment));
 
-    std::unique_ptr<QObject> windowSystem(Latte::windowsystem_qobject_singletontype_provider(nullptr, nullptr));
-    QVERIFY(qobject_cast<Latte::QuickWindowSystem *>(windowSystem.get()));
+    Latte::QuickWindowSystem windowSystem;
+    QVERIFY(qobject_cast<Latte::QuickWindowSystem *>(&windowSystem));
 }
 
 QTEST_MAIN(CoreUnitTest)

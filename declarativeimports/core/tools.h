@@ -9,8 +9,7 @@
 // Qt
 #include <QObject>
 #include <QColor>
-#include <QQmlEngine>
-#include <QJSEngine>
+#include <QtQml>
 
 
 namespace Latte {
@@ -18,6 +17,8 @@ namespace Latte {
 class Tools final: public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Tools)
+    QML_SINGLETON
 
 public:
     explicit Tools(QObject *parent = nullptr);
@@ -33,15 +34,6 @@ private:
     float colorLumina(QRgb rgb);
     float colorLumina(float r, float g, float b);
 };
-
-[[maybe_unused]] static QObject *tools_qobject_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-// NOTE: QML engine is the owner of this resource
-    return new Tools;
-}
 
 }
 
