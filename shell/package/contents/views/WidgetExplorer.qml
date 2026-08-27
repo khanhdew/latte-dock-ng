@@ -5,8 +5,8 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-import QtQuick 2.15
-import QtQuick.Controls 2.5 as QQC2
+import QtQuick
+import QtQuick.Controls as QQC2
 
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -16,8 +16,8 @@ import org.kde.kquickcontrolsaddons 2.0
 import org.kde.kwindowsystem 1.0
 import org.kde.kirigami 2.19 as Kirigami
 
-import QtQuick.Window 2.15
-import QtQuick.Layouts 1.15
+import QtQuick.Window
+import QtQuick.Layouts
 
 import org.kde.plasma.private.shell 2.0 as PlasmaShell
 
