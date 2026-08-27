@@ -45,7 +45,7 @@ Minimum requirements:
 **tools:**
 ```
  bash
- cmake >= 3.16
+ cmake >= 3.20 (C++20 capable compiler: GCC 10+ / Clang 12+)
  extra-cmake-modules
 ```
 

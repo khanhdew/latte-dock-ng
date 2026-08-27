@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(lattedock)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(NOT DEFINED VERSION)
     set(VERSION 1.2.41)
@@ -261,9 +261,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/app/config-latte.h.cmake
                ${CMAKE_CURRENT_BINARY_DIR}/app/config-latte.h)
 
 #add format security check
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat -Werror=format-security")
-
-message(STATUS "COMPILER FLAGS : ${CMAKE_CXX_FLAGS}")
+add_compile_options(-Wformat -Werror=format-security)
 
 # Share Same Core Types between declarativeimports and app
 set(CORETYPESHEADER "LIBCORETYPES_H")

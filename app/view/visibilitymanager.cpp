@@ -1049,7 +1049,7 @@ void VisibilityManager::createEdgeGhostWindow()
     if (!m_edgeGhostWindow) {
         m_edgeGhostWindow = new ScreenEdgeGhostWindow(m_latteView);
 
-        connect(m_edgeGhostWindow, &ScreenEdgeGhostWindow::containsMouseChanged, this, [ = ](bool contains) {
+        connect(m_edgeGhostWindow, &ScreenEdgeGhostWindow::containsMouseChanged, this, [=, this](bool contains) {
             if (contains) {
                 raiseView(true);
             } else {
@@ -1103,7 +1103,7 @@ void VisibilityManager::createFloatingGapWindow()
     if (!m_floatingGapWindow) {
         m_floatingGapWindow = new FloatingGapWindow(m_latteView);
 
-        connect(m_floatingGapWindow, &FloatingGapWindow::asyncContainsMouseChanged, this, [ = ](bool contains) {
+        connect(m_floatingGapWindow, &FloatingGapWindow::asyncContainsMouseChanged, this, [=, this](bool contains) {
             if (contains) {
                 if (m_isFloatingGapWindowEnabled && !m_isHidden) {
                     //! immediate call after contains mouse checks for mouse in sensitive floating areas
