@@ -6,9 +6,9 @@
 
 import QtQuick
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.extras 2.0 as PlasmaExtras
-import org.kde.kirigami 2.0 as Kirigami
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.extras as PlasmaExtras
+import org.kde.kirigami as Kirigami
 
 Item {
     id: audioStreamIconBox

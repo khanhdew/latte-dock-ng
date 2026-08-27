@@ -6,7 +6,7 @@
 
 import QtQuick
 
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.components as PlasmaComponents
 
 MouseArea {
     property var modelIndex

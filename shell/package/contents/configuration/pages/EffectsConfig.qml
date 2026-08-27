@@ -8,15 +8,15 @@ import QtQuick.Layouts
 import QtQuick.Dialogs as QtDialogs
 import QtQuick.Controls as QtQuickControls212
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.kirigami 2.0 as Kirigami
-import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.components 3.0 as PlasmaComponents3
-import org.kde.plasma.extras 2.0 as PlasmaExtras
+import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.components as PlasmaComponents
+import org.kde.plasma.components as PlasmaComponents3
+import org.kde.plasma.extras as PlasmaExtras
 
-import org.kde.latte.core 0.2 as LatteCore
-import org.kde.latte.components 1.0 as LatteComponents
-import org.kde.latte.private.containment 0.1 as LatteContainment
+import org.kde.latte.core as LatteCore
+import org.kde.latte.components as LatteComponents
+import org.kde.latte.private.containment as LatteContainment
 
 import "../../controls" as LatteExtraControls
 

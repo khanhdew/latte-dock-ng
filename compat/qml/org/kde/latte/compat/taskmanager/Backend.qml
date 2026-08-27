@@ -4,7 +4,7 @@
 */
 
 import QtQuick
-import org.kde.latte.private.tasks 0.1 as LatteTasks
+import org.kde.latte.private.tasks as LatteTasks
 
 QtObject {
     id: backend

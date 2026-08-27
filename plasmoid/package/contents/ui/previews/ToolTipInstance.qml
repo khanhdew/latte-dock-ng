@@ -13,18 +13,18 @@ import QtQuick.Window
 import QtQuick.Effects
 import QtQml.Models
 
-import org.kde.kirigami 2.20 as Kirigami
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.extras 2.0 as PlasmaExtras
-import org.kde.kquickcontrolsaddons 2.0 as KQuickControlsAddons
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.components as PlasmaComponents
+import org.kde.plasma.extras as PlasmaExtras
+import org.kde.kquickcontrolsaddons as KQuickControlsAddons
 import org.kde.plasma.private.mpris as Mpris
 
-import org.kde.latte.core 0.2 as LatteCore
+import org.kde.latte.core as LatteCore
 
-import org.kde.draganddrop 2.0
+import org.kde.draganddrop
 
-import org.kde.taskmanager 0.1 as TaskManager
+import org.kde.taskmanager as TaskManager
 
 Column {
     id: instance

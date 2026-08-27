@@ -6,7 +6,7 @@
 import QtQuick
 
 import org.kde.pipewire as PipeWire
-import org.kde.taskmanager 0.1 as TaskManager
+import org.kde.taskmanager as TaskManager
 
 // Mirrors plasma-desktop's applets/taskmanager/qml/PipeWireThumbnail.qml.
 // Latte previously wrapped this in an opacity-animation Item with

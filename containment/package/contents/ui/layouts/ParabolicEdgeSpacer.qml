@@ -4,7 +4,7 @@
 */
 
 import QtQuick
-import org.kde.latte.core 0.2 as LatteCore
+import org.kde.latte.core as LatteCore
 
 Item {
     id: edgeSpacer

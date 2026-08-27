@@ -5,10 +5,10 @@
 
 import QtQuick
 import QtQuick.Templates as T
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.kirigami 2.0 as Kirigami
-import org.kde.ksvg 1.0 as KSvg
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
+import org.kde.ksvg as KSvg
+import org.kde.plasma.components as PlasmaComponents
 
 T.ToolTip {
     id: control

@@ -6,8 +6,8 @@
 import QtQuick
 import QtQuick.Layouts
 
-import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.kirigami 2.0 as Kirigami
+import org.kde.plasma.components as PlasmaComponents
+import org.kde.kirigami as Kirigami
 
 PlasmaComponents.Label {
     readonly property var units: Kirigami.Units

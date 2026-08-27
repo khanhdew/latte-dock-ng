@@ -7,8 +7,8 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Templates as T
-import org.kde.kirigami 2.20 as Kirigami
-import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.core as PlasmaCore
 
 T.Label {
     id: control

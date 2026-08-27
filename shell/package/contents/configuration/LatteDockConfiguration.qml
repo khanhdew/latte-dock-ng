@@ -9,18 +9,18 @@ import QtQuick.Controls as QtQuickControls212
 import QtQuick.Layouts
 import QtQuick.Window
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.ksvg 1.0 as KSvg
-import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.components 3.0 as PlasmaComponents3
-import org.kde.plasma.extras 2.0 as PlasmaExtras
+import org.kde.plasma.core as PlasmaCore
+import org.kde.ksvg as KSvg
+import org.kde.plasma.components as PlasmaComponents
+import org.kde.plasma.components as PlasmaComponents3
+import org.kde.plasma.extras as PlasmaExtras
 
-import org.kde.kquickcontrolsaddons 2.0 as KQuickControlAddons
+import org.kde.kquickcontrolsaddons as KQuickControlAddons
 
-import org.kde.kirigami 2.0 as Kirigami
+import org.kde.kirigami as Kirigami
 
-import org.kde.latte.core 0.2 as LatteCore
-import org.kde.latte.components 1.0 as LatteComponents
+import org.kde.latte.core as LatteCore
+import org.kde.latte.components as LatteComponents
 
 import "pages" as Pages
 import "../controls" as LatteExtraControls

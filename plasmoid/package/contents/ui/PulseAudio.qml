@@ -6,7 +6,7 @@
 
 import QtQuick
 
-import org.kde.plasma.private.volume 0.1
+import org.kde.plasma.private.volume
 
 QtObject {
     id: pulseAudio
