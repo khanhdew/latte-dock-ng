@@ -55,13 +55,13 @@ private Q_SLOTS:
     void cmakeOffscreenTestsUseSharedHelper();
     void cmakeAutotestRegistrationMaintainsAggregateTarget();
     void cmakePackagingConfigLivesInModule();
-    void autostartDefaultEnabledContracts();
+    void autostartUsesXdgStateOnly();
     void desktopFileHasAutostartPhaseKey();
     void enableAutostartExitsImmediately();
-    void universalSettingsEnsureXdgAutostartEntry();
-    void enableAutostartStagesUpdateAndWarns();
+    void autostartInterfacesUseXdgState();
+    void autostartPreservesEntryFields();
     void waylandCheckHasRetryMechanism();
-    void enableAutostartUpdatesOutdatedFile();
+    void normalStartupDoesNotMutateAutostart();
     void autoSizeLoopsUseInequalityNotStrictEquality();
     void cmakeWarningRelaxationLivesInModule();
     void cmakeFindsQtCoreToolsBeforeKdeInstallDirs();
@@ -1574,37 +1574,20 @@ void SourceContractTest::cmakePackagingConfigLivesInModule()
     QVERIFY(guideSource.contains(QStringLiteral("CMake helper modules keep target resolution, compiler warning relaxation, and packaging metadata out of the top-level build file.")));
 }
 
-void SourceContractTest::autostartDefaultEnabledContracts()
+void SourceContractTest::autostartUsesXdgStateOnly()
 {
-    //! "Ensure autostart during startup" (Preferences page) must default to
-    //! checked, and startup must ensure the standard XDG entry exists.
-
-    QFile preferencesHeader(QStringLiteral(LATTE_SOURCE_DIR "/app/data/preferencesdata.h"));
-    QVERIFY(preferencesHeader.open(QFile::ReadOnly));
-    const QString preferencesSource = QString::fromUtf8(preferencesHeader.readAll());
-    QVERIFY(preferencesSource.contains(QStringLiteral("static const bool AUTOSTART = true;")));
-    QVERIFY(preferencesSource.contains(QStringLiteral("bool autostart{AUTOSTART};")));
+    QFile universalHeader(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.h"));
+    QVERIFY(universalHeader.open(QFile::ReadOnly));
+    const QString headerSource = QString::fromUtf8(universalHeader.readAll());
+    QVERIFY(headerSource.contains(QStringLiteral("Q_PROPERTY(bool autostart READ autostart WRITE setAutostart NOTIFY autostartChanged)")));
+    QVERIFY(!headerSource.contains(QStringLiteral("ensureAutostart")));
+    QVERIFY(!headerSource.contains(QStringLiteral("Systemd"), Qt::CaseInsensitive));
 
     QFile universalSettings(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.cpp"));
     QVERIFY(universalSettings.open(QFile::ReadOnly));
     const QString universalSource = QString::fromUtf8(universalSettings.readAll());
-
-    //! ensureAutostart() defaults to enabled.
-    QVERIFY(universalSource.contains(QStringLiteral("readEntry(QStringLiteral(\"ensureAutostart\"), true)")));
-
-    //! Startup only acts when ensure-autostart is enabled.
-    const int loadGuard = universalSource.indexOf(QStringLiteral("if (ensureAutostart()) {"));
-    const int ensureCall = universalSource.indexOf(QStringLiteral("ensureAutostartEntry();"), loadGuard);
-    QVERIFY(loadGuard >= 0);
-    QVERIFY(ensureCall > loadGuard);
-
-    //! Autostart state is the existence of the desktop file, and enabling
-    //! copies the installed application launcher.
-    QFile importer(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
-    QVERIFY(importer.open(QFile::ReadOnly));
-    const QString importerSource = QString::fromUtf8(importer.readAll());
-    QVERIFY(importerSource.contains(QStringLiteral("\"/autostart/org.kde.latte-dock.desktop\"")));
-    QVERIFY(importerSource.contains(QStringLiteral("standardPath(QStringLiteral(\"applications/org.kde.latte-dock.desktop\"), true)")));
+    QVERIFY(!universalSource.contains(QStringLiteral("ensureAutostart")));
+    QVERIFY(universalSource.contains(QStringLiteral("return Layouts::Importer::isAutostartEnabled();")));
 }
 
 void SourceContractTest::desktopFileHasAutostartPhaseKey()
@@ -1637,35 +1620,35 @@ void SourceContractTest::enableAutostartExitsImmediately()
     QVERIFY(returnZero > exitCall);
 }
 
-void SourceContractTest::universalSettingsEnsureXdgAutostartEntry()
+void SourceContractTest::autostartInterfacesUseXdgState()
 {
-    //! ensureAutostartEntry() manages only the standard XDG entry. Plasma may
-    //! expose it as a generated systemd unit, which is not an independent
-    //! mechanism for Latte to detect or manage.
-    QFile universalSettings(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.cpp"));
-    QVERIFY(universalSettings.open(QFile::ReadOnly));
-    const QString source = QString::fromUtf8(universalSettings.readAll());
+    QFile preferences(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/settingsdialog/tabpreferenceshandler.cpp"));
+    QVERIFY(preferences.open(QFile::ReadOnly));
+    const QString preferencesSource = QString::fromUtf8(preferences.readAll());
+    QVERIFY(preferencesSource.contains(QStringLiteral("universalSettings()->autostart()")));
+    QVERIFY(preferencesSource.contains(QStringLiteral("universalSettings()->setAutostart(m_preferences.autostart)")));
 
-    QVERIFY(source.contains(QStringLiteral("if (!Layouts::Importer::isAutostartEnabled()) {")));
-    QVERIFY(source.contains(QStringLiteral("Layouts::Importer::enableAutostart();")));
+    QFile corona(QStringLiteral(LATTE_SOURCE_DIR "/app/lattecorona.cpp"));
+    QVERIFY(corona.open(QFile::ReadOnly));
+    const QString coronaSource = QString::fromUtf8(corona.readAll());
+    QVERIFY(coronaSource.contains(QStringLiteral("m_universalSettings->setAutostart(enabled);")));
 
-    //! setEnsureAutostart(false) persists the opt-out decision.
-    const int setEnsure = source.indexOf(QStringLiteral("void UniversalSettings::setEnsureAutostart(bool enabled)"));
-    QVERIFY(setEnsure >= 0);
-    QVERIFY(source.indexOf(QStringLiteral("writeEntry(QStringLiteral(\"ensureAutostart\"), enabled)"), setEnsure) > setEnsure);
+    QFile mainCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/main.cpp"));
+    QVERIFY(mainCpp.open(QFile::ReadOnly));
+    const QString mainSource = QString::fromUtf8(mainCpp.readAll());
+    QVERIFY(!mainSource.contains(QStringLiteral("ensureAutostart")));
 }
 
-void SourceContractTest::enableAutostartStagesUpdateAndWarns()
+void SourceContractTest::autostartPreservesEntryFields()
 {
-    //! Updating an outdated autostart entry must stage the replacement
-    //! before removing the working file, so a failed copy cannot delete
-    //! the entry.  Failures must be logged, not silent.
-    QFile importer(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
-    QVERIFY(importer.open(QFile::ReadOnly));
-    const QString content = QString::fromUtf8(importer.readAll());
+    QFile autostart(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/autostart.cpp"));
+    QVERIFY(autostart.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(autostart.readAll());
 
-    QVERIFY(content.contains(QStringLiteral("QFile::rename")));
-    QVERIFY(content.contains(QStringLiteral("qCWarning")));
+    QVERIFY(source.contains(QStringLiteral("writeEntry(QStringLiteral(\"Hidden\"), false)")));
+    QVERIFY(source.contains(QStringLiteral("writeEntry(QStringLiteral(\"Hidden\"), true)")));
+    QVERIFY(!source.contains(QStringLiteral("lastModified")));
+    QVERIFY(!source.contains(QStringLiteral("systemctl"), Qt::CaseInsensitive));
 }
 
 void SourceContractTest::waylandCheckHasRetryMechanism()
@@ -1687,18 +1670,18 @@ void SourceContractTest::waylandCheckHasRetryMechanism()
     QVERIFY(msleep > waylandCheck);
 }
 
-void SourceContractTest::enableAutostartUpdatesOutdatedFile()
+void SourceContractTest::normalStartupDoesNotMutateAutostart()
 {
-    //! enableAutostart() must update the autostart desktop file when the
-    //! system-installed source is newer (e.g. after a package upgrade).
-    //! Otherwise users stuck with an old autostart entry would never
-    //! receive fixes in the shipped desktop file.
-    QFile importer(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/importer.cpp"));
-    QVERIFY(importer.open(QFile::ReadOnly));
-    const QString content = QString::fromUtf8(importer.readAll());
+    QFile universalSettings(QStringLiteral(LATTE_SOURCE_DIR "/app/settings/universalsettings.cpp"));
+    QVERIFY(universalSettings.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(universalSettings.readAll());
 
-    QVERIFY(content.contains(QStringLiteral("lastModified()")));
-    QVERIFY(content.contains(QStringLiteral("autostartFile.remove()")));
+    const int loadStart = source.indexOf(QStringLiteral("void UniversalSettings::load()"));
+    const int nextMethod = source.indexOf(QStringLiteral("bool UniversalSettings::inAdvancedModeForEditSettings() const"), loadStart);
+    QVERIFY(loadStart >= 0);
+    QVERIFY(nextMethod > loadStart);
+    const QString loadBody = source.mid(loadStart, nextMethod - loadStart);
+    QVERIFY(!loadBody.contains(QStringLiteral("Autostart"), Qt::CaseInsensitive));
 }
 
 void SourceContractTest::autoSizeLoopsUseInequalityNotStrictEquality()

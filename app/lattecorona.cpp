@@ -1411,14 +1411,7 @@ void Corona::updateDockItemBadge(QString identifier, QString value)
 
 void Corona::setAutostart(const bool &enabled)
 {
-    //! Persist the user's intent so the ensure-autostart logic never
-    //! recreates the entry on the next startup.
-    m_universalSettings->setEnsureAutostart(enabled);
-
-    if (!enabled) {
-        //! Explicit disable removes the XDG entry owned by Latte.
-        Layouts::Importer::disableAutostart();
-    }
+    m_universalSettings->setAutostart(enabled);
 }
 
 void Corona::switchToLayout(QString layout)
