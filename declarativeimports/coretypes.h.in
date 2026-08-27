@@ -20,7 +20,7 @@ class Types
 @CORETYPESQMLDECLARATIONS@
 
 public:
-    Types() = delete;
+    Types() = default;
     ~Types(){};
 
     enum ViewType

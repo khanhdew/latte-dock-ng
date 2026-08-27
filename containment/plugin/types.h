@@ -22,7 +22,7 @@ class Types
     QML_UNCREATABLE("Latte Containment Types uncreatable")
 
 public:
-    Types() = delete;
+    Types() = default;
     ~Types() {}
 
     enum ScrollAction {

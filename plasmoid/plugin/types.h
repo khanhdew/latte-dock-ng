@@ -22,7 +22,7 @@ class Types
     QML_UNCREATABLE("Latte Tasks Types uncreatable")
 
 public:
-    Types() = delete;
+    Types() = default;
     ~Types() {}
 
     enum Modifier {
