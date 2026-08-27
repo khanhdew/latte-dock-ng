@@ -46,8 +46,15 @@ target_include_directories(lattetasksplugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
 
 install(TARGETS lattetasksplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks)
 install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks)
+# Tooling data for qmllint/Qt Creator; generated together with the qmldir.
+install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/lattetasksplugin.qmltypes
+        DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks
+        OPTIONAL)
 
 if(LATTE_QT6_COMPAT_QMLDIR)
     install(TARGETS lattetasksplugin DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/tasks)
     install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/qmldir DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/tasks)
+    install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/lattetasksplugin.qmltypes
+            DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/tasks
+            OPTIONAL)
 endif()

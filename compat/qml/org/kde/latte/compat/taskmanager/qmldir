@@ -1,4 +1,7 @@
 module org.kde.latte.compat.taskmanager
+# Tooling metadata: Backend.qml references org.kde.latte.private.tasks types,
+# so the module declares the dependency for qmllint/Qt Creator resolution.
+depends org.kde.latte.private.tasks 0.1
 
 Backend 0.1 Backend.qml
 SmartLauncherItem 0.1 SmartLauncherItem.qml

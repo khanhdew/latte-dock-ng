@@ -64,6 +64,12 @@ jobs:
       - name: Test
         run: ctest --test-dir build --output-on-failure
 
+      # Type-resolution lint over the freshly built modules: fails on QML
+      # errors and on broken/missing generated latte QML modules. Legacy
+      # warnings are summarized into build/qmllint-deep.log.
+      - name: Deep QML lint
+        run: ./scripts/qmllint-deep.sh build
+
   qml-lint:
     name: QML lint (qmllint)
     runs-on: ubuntu-24.04

@@ -42,8 +42,15 @@ target_include_directories(lattecontainmentplugin PRIVATE ${CMAKE_CURRENT_SOURCE
 
 install(TARGETS lattecontainmentplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/containment)
 install(FILES ${LATTE_CONTAINMENT_QML_BUILD_DIR}/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/containment)
+# Tooling data for qmllint/Qt Creator; generated together with the qmldir.
+install(FILES ${LATTE_CONTAINMENT_QML_BUILD_DIR}/lattecontainmentplugin.qmltypes
+        DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/containment
+        OPTIONAL)
 
 if(LATTE_QT6_COMPAT_QMLDIR)
     install(TARGETS lattecontainmentplugin DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/containment)
     install(FILES ${LATTE_CONTAINMENT_QML_BUILD_DIR}/qmldir DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/containment)
+    install(FILES ${LATTE_CONTAINMENT_QML_BUILD_DIR}/lattecontainmentplugin.qmltypes
+            DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/containment
+            OPTIONAL)
 endif()
