@@ -15,10 +15,12 @@
 #include <QSet>
 #include <QTimer>
 #include <QVariant>
+#include <QtQml>
 
-namespace Plasma {
-class Containment;
-}
+// Plasma
+// Full definition needed: moc's metatype helpers require the return type of
+// containmentObject() to be complete.
+#include <Plasma/Containment>
 
 namespace Latte {
 namespace Containment {
@@ -26,6 +28,7 @@ namespace Containment {
 class LayoutManager : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(LayoutManager)
     Q_PROPERTY(QObject *plasmoidObj READ plasmoid() WRITE setPlasmoid NOTIFY plasmoidChanged)
 
     Q_PROPERTY(QQuickItem *rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)

@@ -8,11 +8,10 @@
 
 // Qt
 #include <QObject>
-#include <QQmlEngine>
-#include <QJSEngine>
 #include <QString>
 #include <QTimer>
 #include <QVariant>
+#include <QtQml>
 
 
 namespace Latte {
@@ -20,6 +19,8 @@ namespace Latte {
 class Environment final: public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Environment)
+    QML_SINGLETON
 
     Q_PROPERTY(int separatorLength READ separatorLength CONSTANT)
 
@@ -59,15 +60,6 @@ private:
     uint m_iconThemeVersion{0};
 
 };
-
-[[maybe_unused]] static QObject *environment_qobject_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-// NOTE: QML engine is the owner of this resource
-    return new Environment;
-}
 
 }
 

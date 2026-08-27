@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(lattedock)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(NOT DEFINED VERSION)
     set(VERSION 1.2.41)
@@ -70,6 +70,12 @@ if(DEFINED KDE_INSTALL_KSERVICETYPESDIR AND NOT KDE_INSTALL_KSERVICETYPESDIR STR
 endif()
 
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Core DBus Gui Qml Quick Widgets)
+
+# Qt 6.8+ moved the default QML resource prefix to :/qt/qml/; adopt the new
+# behavior project-wide so qt_add_qml_module stops warning about QTP0001.
+# qt_policy comes with the Qt6::Core macros loaded by the find_package call
+# above (QTP0001 exists since Qt 6.5; our minimum is 6.6).
+qt_policy(SET QTP0001 NEW)
 if(BUILD_TESTING)
     find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Test)
 endif()
@@ -261,14 +267,20 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/app/config-latte.h.cmake
                ${CMAKE_CURRENT_BINARY_DIR}/app/config-latte.h)
 
 #add format security check
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat -Werror=format-security")
+add_compile_options(-Wformat -Werror=format-security)
 
-message(STATUS "COMPILER FLAGS : ${CMAKE_CXX_FLAGS}")
-
-# Share Same Core Types between declarativeimports and app
+# Share Same Core Types between declarativeimports and app.
+# Only the org.kde.latte.core copy carries QML type declarations: the QML
+# name "Types" must stay exclusive to the core module. The app and
+# containment copies are plain C++ headers and keep the Q_GADGET without
+# QML macros.
 set(CORETYPESHEADER "LIBCORETYPES_H")
+set(CORETYPESQMLINCLUDE "#include <QtQml>")
+set(CORETYPESQMLDECLARATIONS "    QML_NAMED_ELEMENT(Types)\n    QML_UNCREATABLE(\"Latte Types uncreatable\")")
 configure_file(declarativeimports/coretypes.h.in declarativeimports/core/types.h)
 set(CORETYPESHEADER "APPCORETYPES_H")
+set(CORETYPESQMLINCLUDE "")
+set(CORETYPESQMLDECLARATIONS "")
 configure_file(declarativeimports/coretypes.h.in app/coretypes.h)
 set(CORETYPESHEADER "LATTEGENERALCONTAINMENTTYPES_H")
 configure_file(declarativeimports/coretypes.h.in containment/plugin/lattetypes.h)

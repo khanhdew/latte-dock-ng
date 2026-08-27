@@ -1,0 +1,37 @@
+# clang-format configuration for Latte Dock NG.
+#
+# Transcribed from the historical astyle setup (astylerc, Mozilla-based):
+#   --style=mozilla            -> BasedOnStyle: Mozilla
+#   --indent=spaces=4          -> IndentWidth: 4
+#   --max-code-length=200      -> ColumnLimit: 200
+#   --align-pointer=name       -> PointerAlignment: Right
+#   --align-reference=name     -> ReferenceAlignment: Right
+#   --unpad-paren              -> (no portable equivalent; older clang-format
+#                                 versions lack SpaceInParens)
+#   --keep-one-line-blocks     -> AllowShortBlocksOnASingleLine: Always
+#   --keep-one-line-statements -> (no clang-format equivalent)
+#   --indent-switches          -> IndentCaseLabels: true
+#   --convert-tabs             -> UseTab: Never
+#
+# Deliberate deviations:
+#   - SortIncludes: Never. astyle never reordered includes; reordering can
+#     change compilation (include-order-dependent builds) and bloat diffs.
+#   - Standard: Latest. astyle had no notion of language standard; new code
+#     uses current C++.
+#   - astyle's --break-blocks (blank lines around blocks) has no
+#     clang-format equivalent and is not enforced.
+#
+# clang-format does NOT reproduce the historical astyle output
+# byte-for-byte. Do not mass-reformat the tree; run scripts via
+# formatter.sh on the files you touch only.
+---
+BasedOnStyle: Mozilla
+Standard: Latest
+IndentWidth: 4
+ColumnLimit: 200
+PointerAlignment: Right
+ReferenceAlignment: Right
+AllowShortBlocksOnASingleLine: Always
+IndentCaseLabels: true
+UseTab: Never
+SortIncludes: Never

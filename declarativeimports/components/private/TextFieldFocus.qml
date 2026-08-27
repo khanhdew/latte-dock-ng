@@ -5,9 +5,9 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-import QtQuick 2.15
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.ksvg 1.0 as KSvg
+import QtQuick
+import org.kde.plasma.core as PlasmaCore
+import org.kde.ksvg as KSvg
 
 Item {
     id: main

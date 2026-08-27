@@ -10,12 +10,14 @@
 #include <QObject>
 #include <QMetaEnum>
 #include <QMetaType>
+@CORETYPESQMLINCLUDE@
 
 namespace Latte {
 
 class Types
 {
     Q_GADGET
+@CORETYPESQMLDECLARATIONS@
 
 public:
     Types() = delete;

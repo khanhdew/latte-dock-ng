@@ -199,7 +199,7 @@ add_dependencies(qmlsmoketest lattecoreplugin)
 
 target_compile_definitions(qmlsmoketest PRIVATE
     LATTE_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
-    LATTE_CORE_QMLDIR="${CMAKE_SOURCE_DIR}/declarativeimports/core/qmldir"
+    LATTE_CORE_QMLDIR="${CMAKE_BINARY_DIR}/qml/org/kde/latte/core/qmldir"
     LATTE_CORE_PLUGIN="$<TARGET_FILE:lattecoreplugin>"
     LATTE_PARABOLIC_EVENTS_AREA_QML="${CMAKE_SOURCE_DIR}/declarativeimports/abilities/items/basicitem/ParabolicEventsArea.qml"
     LATTE_LAUNCHER_ANIMATION_QML="${CMAKE_SOURCE_DIR}/plasmoid/package/contents/ui/task/animations/LauncherAnimation.qml"
@@ -272,6 +272,7 @@ target_include_directories(typesunittest PRIVATE
 
 target_link_libraries(typesunittest
     Qt6::Core
+    Qt6::Qml
     Qt6::Test
 )
 
@@ -754,12 +755,10 @@ latte_add_offscreen_test(containmentlayoutunittest)
 
 set(pluginregistrationunittest_SRCS
     pluginregistrationunittest.cpp
-    ../containment/plugin/lattecontainmentplugin.cpp
-    ../containment/plugin/layoutmanager.cpp
-    ../containment/plugin/types.h
 )
 
 add_executable(pluginregistrationunittest EXCLUDE_FROM_ALL ${pluginregistrationunittest_SRCS})
+add_dependencies(pluginregistrationunittest lattecontainmentplugin)
 
 target_include_directories(pluginregistrationunittest PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../containment/plugin
@@ -767,15 +766,15 @@ target_include_directories(pluginregistrationunittest PRIVATE
     ${CMAKE_BINARY_DIR}/containment
 )
 
+target_compile_definitions(pluginregistrationunittest PRIVATE
+    LATTE_CONTAINMENT_QMLDIR="${CMAKE_BINARY_DIR}/qml/org/kde/latte/private/containment/qmldir"
+    LATTE_CONTAINMENT_PLUGIN="$<TARGET_FILE:lattecontainmentplugin>"
+)
+
 target_link_libraries(pluginregistrationunittest
     Qt6::Core
-    Qt6::Gui
     Qt6::Qml
-    Qt6::Quick
     Qt6::Test
-    KF6::ConfigCore
-    Plasma::Plasma
-    Plasma::PlasmaQuick
 )
 
 latte_add_test(pluginregistrationunittest)
@@ -807,15 +806,20 @@ latte_add_test(plasmaextendedunittest)
 
 set(taskspluginunittest_SRCS
     taskspluginunittest.cpp
-    ../plasmoid/plugin/lattetasksplugin.cpp
     ../plasmoid/plugin/contextmenuactionsbackend.cpp
     ../plasmoid/plugin/types.h
 )
 
 add_executable(taskspluginunittest EXCLUDE_FROM_ALL ${taskspluginunittest_SRCS})
+add_dependencies(taskspluginunittest lattetasksplugin)
 
 target_include_directories(taskspluginunittest PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../plasmoid/plugin
+)
+
+target_compile_definitions(taskspluginunittest PRIVATE
+    LATTE_TASKS_QMLDIR="${CMAKE_BINARY_DIR}/qml/org/kde/latte/private/tasks/qmldir"
+    LATTE_TASKS_PLUGIN="$<TARGET_FILE:lattetasksplugin>"
 )
 
 target_link_libraries(taskspluginunittest

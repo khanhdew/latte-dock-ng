@@ -9,8 +9,7 @@
 
 // Qt
 #include <QObject>
-#include <QQmlEngine>
-#include <QJSEngine>
+#include <QtQml>
 
 namespace Latte {
 
@@ -21,6 +20,8 @@ namespace Latte {
 class QuickWindowSystem final : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(WindowSystem)
+    QML_SINGLETON
 
     Q_PROPERTY(bool compositingActive READ compositingActive NOTIFY compositingChanged FINAL)
     Q_PROPERTY(bool isPlatformWayland READ isPlatformWayland NOTIFY isPlatformWaylandChanged FINAL)
@@ -39,15 +40,6 @@ Q_SIGNALS:
 private:
     bool m_compositing{true};
 };
-
-[[maybe_unused]] static QObject *windowsystem_qobject_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-// NOTE: QML engine is the owner of this resource
-    return new QuickWindowSystem;
-}
 
 }
 

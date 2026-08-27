@@ -3,11 +3,18 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-#include "lattetasksplugin.h"
+// local
 #include "contextmenuactionsbackend.h"
 
-#include <QtQml/qqml.h>
+// Qt
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QQmlComponent>
+#include <QQmlEngine>
 #include <QSignalSpy>
+#include <QTemporaryDir>
+#include <QtQml/qqml.h>
 #include <QTest>
 
 class TasksPluginUnitTest : public QObject
@@ -19,14 +26,42 @@ private Q_SLOTS:
     void contextMenuBackendRejectsMissingParentAndInvalidLaunchers();
 };
 
+//! The plugin .so and its generated qmldir are staged into a temporary
+//! import path and loaded by a real QML engine, asserting the same
+//! contract as the former hand-written registerTypes(): the
+//! ContextMenuActionsBackend type and the flat "types.<Value>" enum
+//! access used across the tasks QML sources keep working.
 void TasksPluginUnitTest::registersQmlTypes()
 {
-    const char *uri = "org.kde.latte.private.tasks";
-    LatteTasksPlugin plugin;
-    plugin.registerTypes(uri);
+    QTemporaryDir importRoot;
+    QVERIFY(importRoot.isValid());
 
-    QVERIFY(qmlTypeId(uri, 0, 1, "ContextMenuActionsBackend") >= 0);
-    QVERIFY(qmlTypeId(uri, 0, 1, "types") >= 0);
+    const QString modulePath = importRoot.path() + QStringLiteral("/org/kde/latte/private/tasks");
+    QVERIFY(QDir().mkpath(modulePath));
+
+    const QString pluginFile = QStringLiteral(LATTE_TASKS_PLUGIN);
+    QVERIFY(QFile::copy(QStringLiteral(LATTE_TASKS_QMLDIR), modulePath + QStringLiteral("/qmldir")));
+    QVERIFY(QFile::copy(pluginFile, modulePath + QLatin1Char('/') + QFileInfo(pluginFile).fileName()));
+
+    QQmlEngine engine;
+    engine.addImportPath(importRoot.path());
+
+    QQmlComponent component(&engine);
+    component.setData(QByteArrayLiteral(
+                          "import QtQml\n"
+                          "import org.kde.latte.private.tasks\n"
+                          "QtObject {\n"
+                          "    readonly property int click: types.LeftClick\n"
+                          "    property ContextMenuActionsBackend backend\n"
+                          "}\n"),
+                      QUrl(QStringLiteral("qrc:/taskspluginregistrationtest.qml")));
+    if (component.isError()) {
+        qWarning() << component.errors();
+    }
+    QCOMPARE(component.status(), QQmlComponent::Ready);
+
+    QVERIFY(qmlTypeId("org.kde.latte.private.tasks", 0, 1, "ContextMenuActionsBackend") >= 0);
+    QVERIFY(qmlTypeId("org.kde.latte.private.tasks", 0, 1, "types") >= 0);
 }
 
 void TasksPluginUnitTest::contextMenuBackendRejectsMissingParentAndInvalidLaunchers()

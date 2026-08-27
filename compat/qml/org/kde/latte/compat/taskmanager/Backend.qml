@@ -3,8 +3,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
-import org.kde.latte.private.tasks 0.1 as LatteTasks
+import QtQuick
+import org.kde.latte.private.tasks as LatteTasks
 
 QtObject {
     id: backend

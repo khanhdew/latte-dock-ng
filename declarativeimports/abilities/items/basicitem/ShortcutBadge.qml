@@ -3,11 +3,11 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
+import QtQuick
 import QtQuick.Effects
 
-import org.kde.plasma.plasmoid 2.0
-import org.kde.latte.components 1.0 as LatteComponents
+import org.kde.plasma.plasmoid
+import org.kde.latte.components as LatteComponents
 
 Loader{
     id: shorcutBadge

@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QMetaEnum>
 #include <QMetaType>
+#include <QtQml>
 
 namespace Latte {
 namespace Tasks {
@@ -17,6 +18,8 @@ namespace Tasks {
 class Types
 {
     Q_GADGET
+    QML_NAMED_ELEMENT(Types)
+    QML_UNCREATABLE("Latte Tasks Types uncreatable")
 
 public:
     Types() = delete;

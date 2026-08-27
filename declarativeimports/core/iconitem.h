@@ -29,6 +29,7 @@ namespace Latte {
 class IconItem : public QQuickItem
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(IconItem)
 
     /**
      * Sets the icon to be displayed. Source can be one of:
