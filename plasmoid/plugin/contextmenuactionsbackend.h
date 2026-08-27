@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QUrl>
 #include <QVariantList>
+#include <QtQml>
 
 // KDE
 #include <KService>
@@ -20,6 +21,7 @@ namespace Tasks {
 class ContextMenuActionsBackend : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(ContextMenuActionsBackend)
 
 public:
     explicit ContextMenuActionsBackend(QObject *parent = nullptr);

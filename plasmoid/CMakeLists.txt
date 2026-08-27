@@ -6,13 +6,27 @@ find_package(PlasmaActivitiesStats REQUIRED)
 
 set(tasks_SRCS
     plugin/contextmenuactionsbackend.cpp
+    plugin/contextmenuactionsbackend.h
     plugin/types.cpp
-    plugin/lattetasksplugin.cpp
+    plugin/types.h
 )
 
-add_library(lattetasksplugin SHARED ${tasks_SRCS})
+# Types and ContextMenuActionsBackend are registered declaratively via
+# QML_NAMED_ELEMENT; qt_add_qml_module generates the plugin class, the
+# registration code and the qmldir installed below.
+set(LATTE_TASKS_QML_BUILD_DIR ${CMAKE_BINARY_DIR}/qml/org/kde/latte/private/tasks)
 
-target_link_libraries(lattetasksplugin
+qt_add_qml_module(lattetasksplugin
+    URI org.kde.latte.private.tasks
+    VERSION 0.1
+    CLASS_NAME LatteTasksPlugin
+    PLUGIN_TARGET lattetasksplugin
+    NO_PLUGIN_OPTIONAL
+    OUTPUT_DIRECTORY ${LATTE_TASKS_QML_BUILD_DIR}
+    SOURCES ${tasks_SRCS}
+)
+
+target_link_libraries(lattetasksplugin PRIVATE
                       Qt6::Core
                       Qt6::Gui
                       Qt6::Qml
@@ -24,11 +38,16 @@ target_link_libraries(lattetasksplugin
                       Plasma::ActivitiesStats
                       Plasma::Plasma
                       Plasma::PlasmaQuick)
-                      
+
+# The generated qmltyperegistrations.cpp resolves the module headers via
+# __has_include(<types.h>), so the plugin/ header directory must be on the
+# target include path.
+target_include_directories(lattetasksplugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/plugin)
+
 install(TARGETS lattetasksplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks)
-install(FILES plugin/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks)
+install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/latte/private/tasks)
 
 if(LATTE_QT6_COMPAT_QMLDIR)
     install(TARGETS lattetasksplugin DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/tasks)
-    install(FILES plugin/qmldir DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/tasks)
+    install(FILES ${LATTE_TASKS_QML_BUILD_DIR}/qmldir DESTINATION ${LATTE_QT6_COMPAT_QMLDIR}/org/kde/latte/private/tasks)
 endif()

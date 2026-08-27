@@ -10,15 +10,14 @@
 #include <QObject>
 #include <QMetaEnum>
 #include <QMetaType>
-#include <QtQml>
+@CORETYPESQMLINCLUDE@
 
 namespace Latte {
 
 class Types
 {
     Q_GADGET
-    QML_NAMED_ELEMENT(Types)
-    QML_UNCREATABLE("Latte Types uncreatable")
+@CORETYPESQMLDECLARATIONS@
 
 public:
     Types() = delete;

@@ -269,10 +269,18 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/app/config-latte.h.cmake
 #add format security check
 add_compile_options(-Wformat -Werror=format-security)
 
-# Share Same Core Types between declarativeimports and app
+# Share Same Core Types between declarativeimports and app.
+# Only the org.kde.latte.core copy carries QML type declarations: the QML
+# name "Types" must stay exclusive to the core module. The app and
+# containment copies are plain C++ headers and keep the Q_GADGET without
+# QML macros.
 set(CORETYPESHEADER "LIBCORETYPES_H")
+set(CORETYPESQMLINCLUDE "#include <QtQml>")
+set(CORETYPESQMLDECLARATIONS "    QML_NAMED_ELEMENT(Types)\n    QML_UNCREATABLE(\"Latte Types uncreatable\")")
 configure_file(declarativeimports/coretypes.h.in declarativeimports/core/types.h)
 set(CORETYPESHEADER "APPCORETYPES_H")
+set(CORETYPESQMLINCLUDE "")
+set(CORETYPESQMLDECLARATIONS "")
 configure_file(declarativeimports/coretypes.h.in app/coretypes.h)
 set(CORETYPESHEADER "LATTEGENERALCONTAINMENTTYPES_H")
 configure_file(declarativeimports/coretypes.h.in containment/plugin/lattetypes.h)
