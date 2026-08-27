@@ -63,3 +63,21 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build --output-on-failure
+
+  qml-lint:
+    name: QML lint (qmllint)
+    runs-on: ubuntu-24.04
+    container:
+      image: ubuntu:24.04
+    steps:
+      - name: Install qmllint
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends qt6-declarative-dev qt6-declarative-dev-tools
+
+      - uses: actions/checkout@v4
+
+      # Syntax-error gate over every tracked QML file (scripts/qmllint.sh
+      # disables all analyzer warnings; only errors fail the run).
+      - name: Lint QML sources
+        run: ./scripts/qmllint.sh
