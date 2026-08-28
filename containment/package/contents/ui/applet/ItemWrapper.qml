@@ -8,18 +8,27 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
 
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.extras as PlasmaExtras
 
 import org.kde.latte.core as LatteCore
-import org.kde.latte.components as LatteComponents
-
-import "../../code/MathTools.js" as MathTools
 
 Item{
     id: wrapper
+    required property var containmentRoot
+    readonly property var root: containmentRoot
+    required property var appletItem
+    required property var applet
+    required property var communicator
+    required property var layoutsContainer
+    required property var latteView
+    required property var parabolic
+    required property var metrics
+    required property var isSeparator
+    required property var isMarginsAreaSeparator
+    required property var isInternalViewSplitter
+    required property var isHorizontal
+    required property var isVertical
     width: root.isHorizontal ? length : thickness
     height: root.isHorizontal ? thickness : length
 
@@ -676,9 +685,8 @@ Item{
                     anchors.right: undefined; anchors.left: undefined; anchors.top: undefined; anchors.bottom: parent.bottom;
                 }
                 PropertyChanges{
-                    target: _wrapperContainer;
-                    anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin: _wrapperContainer.tailThicknessMargin
-                    anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                    _wrapperContainer.anchors.leftMargin: 0;    _wrapperContainer.anchors.rightMargin: 0;     _wrapperContainer.anchors.topMargin:0;    _wrapperContainer.anchors.bottomMargin: _wrapperContainer.tailThicknessMargin
+                    _wrapperContainer.anchors.horizontalCenterOffset: 0; _wrapperContainer.anchors.verticalCenterOffset: 0;
                 }
             },
             State{
@@ -691,9 +699,8 @@ Item{
                     anchors.right: undefined; anchors.left: undefined; anchors.top: parent.top; anchors.bottom: undefined;
                 }
                 PropertyChanges{
-                    target: _wrapperContainer;
-                    anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin: _wrapperContainer.tailThicknessMargin;    anchors.bottomMargin: 0;
-                    anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                    _wrapperContainer.anchors.leftMargin: 0;    _wrapperContainer.anchors.rightMargin: 0;     _wrapperContainer.anchors.topMargin: _wrapperContainer.tailThicknessMargin;    _wrapperContainer.anchors.bottomMargin: 0;
+                    _wrapperContainer.anchors.horizontalCenterOffset: 0; _wrapperContainer.anchors.verticalCenterOffset: 0;
                 }
             },
             State{
@@ -706,9 +713,8 @@ Item{
                     anchors.right: undefined; anchors.left: parent.left; anchors.top: undefined; anchors.bottom: undefined;
                 }
                 PropertyChanges{
-                    target: _wrapperContainer;
-                    anchors.leftMargin: _wrapperContainer.tailThicknessMargin;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin: 0;
-                    anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                    _wrapperContainer.anchors.leftMargin: _wrapperContainer.tailThicknessMargin;    _wrapperContainer.anchors.rightMargin: 0;     _wrapperContainer.anchors.topMargin:0;    _wrapperContainer.anchors.bottomMargin: 0;
+                    _wrapperContainer.anchors.horizontalCenterOffset: 0; _wrapperContainer.anchors.verticalCenterOffset: 0;
                 }
             },
             State{
@@ -721,9 +727,8 @@ Item{
                     anchors.right: parent.right; anchors.left: undefined; anchors.top: undefined; anchors.bottom: undefined;
                 }
                 PropertyChanges{
-                    target: _wrapperContainer;
-                    anchors.leftMargin: 0;    anchors.rightMargin: _wrapperContainer.tailThicknessMargin;     anchors.topMargin:0;    anchors.bottomMargin: 0;
-                    anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                    _wrapperContainer.anchors.leftMargin: 0;    _wrapperContainer.anchors.rightMargin: _wrapperContainer.tailThicknessMargin;     _wrapperContainer.anchors.topMargin:0;    _wrapperContainer.anchors.bottomMargin: 0;
+                    _wrapperContainer.anchors.horizontalCenterOffset: 0; _wrapperContainer.anchors.verticalCenterOffset: 0;
                 }
             }
         ]

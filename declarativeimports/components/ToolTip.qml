@@ -5,7 +5,6 @@
 
 import QtQuick
 import QtQuick.Templates as T
-import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import org.kde.ksvg as KSvg
 import org.kde.plasma.components as PlasmaComponents

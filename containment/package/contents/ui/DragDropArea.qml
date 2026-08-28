@@ -5,15 +5,15 @@
 
 import QtQuick
 
-import org.kde.plasma.core as PlasmaCore
 import org.kde.draganddrop as DragDrop
-
-import org.kde.latte.core as LatteCore
 
 DragDrop.DropArea {
     id: dragArea
 
+    // Keep the public drag state name used by Latte's containment API.
+    // qmllint disable property-override
     property bool containsDrag: false
+    // qmllint enable property-override
 
     readonly property Item dragInfo: Item {
         readonly property bool entered: latteView && latteView.containsDrag

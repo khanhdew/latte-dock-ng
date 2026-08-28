@@ -14,7 +14,10 @@ AbilityDefinition.Animations {
     readonly property bool bridgeIsActive: bridge !== null
 
     active: ref.animations.active
-    readonly property bool hasThicknessAnimation: ref.animations.hasThicknessAnimation //redefined to make it readonly and switchable
+    // Re-expose this property as readonly so the client bridge can switch it.
+    // qmllint disable property-override
+    readonly property bool hasThicknessAnimation: ref.animations.hasThicknessAnimation
+    // qmllint enable property-override
 
     //! animations tracking
     needBothAxis: ref.animations.needBothAxis

@@ -7,8 +7,6 @@ import QtQuick
 import QtQuick.Effects
 
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.plasmoid
 import org.kde.latte.compat.taskmanager as TaskManagerApplet
 
 import org.kde.kirigami as Kirigami

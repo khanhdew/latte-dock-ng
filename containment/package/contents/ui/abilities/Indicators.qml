@@ -4,8 +4,6 @@
 */
 
 import QtQuick
-import org.kde.plasma.plasmoid
-
 import org.kde.latte.abilities.items as AbilityItem
 
 import "./privates" as Ability

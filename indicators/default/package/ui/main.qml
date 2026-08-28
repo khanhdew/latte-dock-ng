@@ -4,8 +4,6 @@
 */
 
 import QtQuick
-import QtQuick.Layouts
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 import org.kde.latte.core as LatteCore
@@ -132,17 +130,17 @@ LatteComponents.IndicatorItem{
             width: stateWidth
             height: stateHeight
             opacity: {
-                if (indicator.isEmptySpace) {
+                if (root.indicator.isEmptySpace) {
                     return 0;
                 }
 
-                if (indicator.isTask) {
-                    const isPureLauncher = indicator.isLauncher && !indicator.isWindow;
-                    return isPureLauncher || (indicator.inRemoving && !isAnimating) ? 0 : 1
+                if (root.indicator.isTask) {
+                    const isPureLauncher = root.indicator.isLauncher && !root.indicator.isWindow;
+                    return isPureLauncher || (root.indicator.inRemoving && !isAnimating) ? 0 : 1
                 }
 
-                if (indicator.isApplet) {
-                    return (indicator.isActive || isAnimating) ? 1 : 0
+                if (root.indicator.isApplet) {
+                    return (root.indicator.isActive || isAnimating) ? 1 : 0
                 }
 
                 return 0;
@@ -152,22 +150,22 @@ LatteComponents.IndicatorItem{
 
             size: root.size
             glow3D: glow3D
-            animation: Math.max(1.65*3*LatteCore.Environment.longDuration,indicator.durationTime*3*LatteCore.Environment.longDuration)
+            animation: Math.max(1.65*3*LatteCore.Environment.longDuration,root.indicator.durationTime*3*LatteCore.Environment.longDuration)
             location: plasmoid.location
             glowOpacity: root.modernDockStyle ? 1 : root.glowOpacity
-            contrastColor: indicator.shadowColor
-            attentionColor: indicator.palette.negativeTextColor
+            contrastColor: root.indicator.shadowColor
+            attentionColor: root.indicator.palette.negativeTextColor
 
             roundCorners: true
-            showAttention: indicator.inAttention
+            showAttention: root.indicator.inAttention
             showGlow: {
                 if (root.modernDockStyle) {
                     return false;
                 }
 
-                if (glowEnabled && (glowApplyTo === 2 /*All*/ || showAttention ))
+                if (root.glowEnabled && (root.glowApplyTo === 2 /*All*/ || showAttention ))
                     return true;
-                else if (glowEnabled && glowApplyTo === 1 /*OnActive*/ && indicator.hasActive)
+                else if (root.glowEnabled && root.glowApplyTo === 1 /*OnActive*/ && root.indicator.hasActive)
                     return true;
                 else
                     return false;
@@ -176,7 +174,7 @@ LatteComponents.IndicatorItem{
 
             property int stateWidth: {
                 if (!vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/) {
-                    return (indicator.isGroup ? root.width - secondPoint.width : root.width - spacer.width) - glowMargins;
+                    return (root.indicator.isGroup ? root.width - secondPoint.width : root.width - spacer.width) - root.glowMargins;
                 }
 
                 return root.size;
@@ -184,19 +182,19 @@ LatteComponents.IndicatorItem{
 
             property int stateHeight: {
                 if (vertical && isActive && root.effectiveActiveStyle === 0 /*Line*/) {
-                    return (indicator.isGroup ? root.height - secondPoint.height : root.height - spacer.height) - glowMargins;
+                    return (root.indicator.isGroup ? root.height - secondPoint.height : root.height - spacer.height) - root.glowMargins;
                 }
 
                 return root.size;
             }
 
-            property int animationTime: indicator.durationTime* (0.75*LatteCore.Environment.longDuration)
+            property int animationTime: root.indicator.durationTime* (0.75*LatteCore.Environment.longDuration)
 
-            property bool isActive: indicator.hasActive || indicator.isActive
+            property bool isActive: root.indicator.hasActive || root.indicator.isActive
 
             property bool vertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
-            property real scaleFactor: indicator.scaleFactor
+            property real scaleFactor: root.indicator.scaleFactor
 
             readonly property bool isAnimating: inGrowAnimation || inShrinkAnimation
             property bool inGrowAnimation: false
@@ -204,7 +202,7 @@ LatteComponents.IndicatorItem{
 
             property bool isBindingBlocked: isAnimating
 
-            readonly property bool isActiveStateForAnimation: indicator.isActive && root.effectiveActiveStyle === 0 /*Line*/
+            readonly property bool isActiveStateForAnimation: root.indicator.isActive && root.effectiveActiveStyle === 0 /*Line*/
 
             onIsActiveStateForAnimationChanged: {
                 if (root.effectiveActiveStyle === 0 /*Line*/) {
@@ -271,32 +269,32 @@ LatteComponents.IndicatorItem{
 
             size: root.size
             glow3D: glow3D
-            animation: Math.max(1.65*3*LatteCore.Environment.longDuration,indicator.durationTime*3*LatteCore.Environment.longDuration)
+            animation: Math.max(1.65*3*LatteCore.Environment.longDuration,root.indicator.durationTime*3*LatteCore.Environment.longDuration)
             location: plasmoid.location
             glowOpacity: root.glowOpacity
-            contrastColor: indicator.shadowColor
+            contrastColor: root.indicator.shadowColor
             showBorder: glow3D
 
             basicColor: state2Color
             roundCorners: true
-            showGlow: glowEnabled  && glowApplyTo === 2 /*All*/
+            showGlow: root.glowEnabled  && root.glowApplyTo === 2 /*All*/
             visible: !root.modernDockStyle
-                     && (indicator.isGroup && ((extraDotOnActive && root.effectiveActiveStyle === 0) /*Line*/
+                     && (root.indicator.isGroup && ((root.extraDotOnActive && root.effectiveActiveStyle === 0) /*Line*/
                                                || root.effectiveActiveStyle === 1 /*Dot*/
-                                               || !indicator.hasActive) ) ? true: false
+                                               || !root.indicator.hasActive) ) ? true: false
 
             //when there is no active window
-            property color state1Color: indicator.hasShown ? root.isActiveColor : root.minimizedColor
+            property color state1Color: root.indicator.hasShown ? root.isActiveColor : root.minimizedColor
             //when there is active window
-            property color state2Color: indicator.hasMinimized ? root.minimizedColor : root.isActiveColor
+            property color state2Color: root.indicator.hasMinimized ? root.minimizedColor : root.isActiveColor
         }
     }
 
     states: [
         State {
             name: "left"
-            when: ((plasmoid.location === PlasmaCore.Types.LeftEdge && !reversedEnabled) ||
-                   (plasmoid.location === PlasmaCore.Types.RightEdge && reversedEnabled))
+            when: ((plasmoid.location === PlasmaCore.Types.LeftEdge && !root.reversedEnabled) ||
+                   (plasmoid.location === PlasmaCore.Types.RightEdge && root.reversedEnabled))
 
             AnchorChanges {
                 target: grid
@@ -304,16 +302,15 @@ LatteComponents.IndicatorItem{
                     top:undefined; bottom:undefined; left:parent.left; right:undefined;}
             }
             PropertyChanges{
-                target: grid
-                anchors.leftMargin: root.thicknessMargin;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                grid.anchors.leftMargin: root.thicknessMargin;    grid.anchors.rightMargin: 0;     grid.anchors.topMargin:0;    grid.anchors.bottomMargin:0;
+                grid.anchors.horizontalCenterOffset: 0; grid.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "bottom"
             when: (plasmoid.location === PlasmaCore.Types.Floating ||
-                   (plasmoid.location === PlasmaCore.Types.BottomEdge && !reversedEnabled) ||
-                   (plasmoid.location === PlasmaCore.Types.TopEdge && reversedEnabled))
+                   (plasmoid.location === PlasmaCore.Types.BottomEdge && !root.reversedEnabled) ||
+                   (plasmoid.location === PlasmaCore.Types.TopEdge && root.reversedEnabled))
 
             AnchorChanges {
                 target: grid
@@ -321,15 +318,14 @@ LatteComponents.IndicatorItem{
                     top:undefined; bottom:parent.bottom; left:undefined; right:undefined;}
             }
             PropertyChanges{
-                target: grid
-                anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin: root.thicknessMargin;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                grid.anchors.leftMargin: 0;    grid.anchors.rightMargin: 0;     grid.anchors.topMargin:0;    grid.anchors.bottomMargin: root.thicknessMargin;
+                grid.anchors.horizontalCenterOffset: 0; grid.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "top"
-            when: ((plasmoid.location === PlasmaCore.Types.TopEdge && !reversedEnabled) ||
-                   (plasmoid.location === PlasmaCore.Types.BottomEdge && reversedEnabled))
+            when: ((plasmoid.location === PlasmaCore.Types.TopEdge && !root.reversedEnabled) ||
+                   (plasmoid.location === PlasmaCore.Types.BottomEdge && root.reversedEnabled))
 
             AnchorChanges {
                 target: grid
@@ -337,15 +333,14 @@ LatteComponents.IndicatorItem{
                     top:parent.top; bottom:undefined; left:undefined; right:undefined;}
             }
             PropertyChanges{
-                target: grid
-                anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin: root.thicknessMargin;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                grid.anchors.leftMargin: 0;    grid.anchors.rightMargin: 0;     grid.anchors.topMargin: root.thicknessMargin;    grid.anchors.bottomMargin:0;
+                grid.anchors.horizontalCenterOffset: 0; grid.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "right"
-            when: ((plasmoid.location === PlasmaCore.Types.RightEdge && !reversedEnabled) ||
-                   (plasmoid.location === PlasmaCore.Types.LeftEdge && reversedEnabled))
+            when: ((plasmoid.location === PlasmaCore.Types.RightEdge && !root.reversedEnabled) ||
+                   (plasmoid.location === PlasmaCore.Types.LeftEdge && root.reversedEnabled))
 
             AnchorChanges {
                 target: grid
@@ -353,9 +348,8 @@ LatteComponents.IndicatorItem{
                     top:undefined; bottom:undefined; left:undefined; right:parent.right;}
             }
             PropertyChanges{
-                target: grid
-                anchors.leftMargin: 0;    anchors.rightMargin: root.thicknessMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                grid.anchors.leftMargin: 0;    grid.anchors.rightMargin: root.thicknessMargin;     grid.anchors.topMargin:0;    grid.anchors.bottomMargin:0;
+                grid.anchors.horizontalCenterOffset: 0; grid.anchors.verticalCenterOffset: 0;
             }
         }
     ]

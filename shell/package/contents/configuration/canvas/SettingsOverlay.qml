@@ -5,20 +5,25 @@
 
 import QtQuick
 import QtQuick.Effects
-import QtQuick.Layouts
-
-import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
 
 import org.kde.latte.core as LatteCore
 
-import "controls" as SettingsControls
 import "maxlength" as MaximumLength
 
 //import "../../code/ColorizerTools.js" as ColorizerTools
 
 Item{
     id: settingsRoot
+    required property var root
+    required property var latteView
+    required property var plasmoid
+    required property var themeExtended
+    required property var graphicsSystem
+    readonly property var settingsOverlayReference: settingsRoot
+    readonly property var hostRootReference: root
+    readonly property var latteViewReference: latteView
+    readonly property var plasmoidReference: plasmoid
+    readonly property var rulerReference: ruler
     readonly property bool containsMouse: false /*headerSettings.containsMouse || ruler.containsMouse
                                           || tooltipMouseArea.containsMouse || editBackMouseArea.containsMouse*/
     readonly property int thickness: ruler.thickness + headerSettings.thickness + spacing * 6
@@ -51,18 +56,28 @@ Item{
 
     layer.enabled: graphicsSystem.isAccelerated
     layer.effect: MultiEffect {
+        required property var settings
         shadowEnabled: true
-        shadowColor: root.appShadowColorSolid
-        shadowBlur: Math.min(settingsRoot.textShadow / 64.0, 1.0)
+        shadowColor: settings.root.appShadowColorSolid
+        shadowBlur: Math.min(settings.textShadow / 64.0, 1.0)
+        settings: settingsRoot
     }
 
     HeaderSettings{
         id: headerSettings
+        root: settingsOverlayReference.hostRootReference
+        latteView: settingsOverlayReference.latteViewReference
+        plasmoid: settingsOverlayReference.plasmoidReference
+        ruler: settingsOverlayReference.rulerReference
+        settingsRoot: settingsOverlayReference
     }
 
     MaximumLength.Ruler {
         id: ruler
-        thicknessMargin: headerSettings.thickness + 3 * spacing
+        root: settingsOverlayReference.hostRootReference
+        plasmoid: settingsOverlayReference.plasmoidReference
+        settingsRoot: settingsOverlayReference
+        thicknessMargin: headerSettings.thickness + 3 * settingsRoot.spacing
         thickMargin: 3
     }
 }

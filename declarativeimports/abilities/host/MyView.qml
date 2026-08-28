@@ -111,7 +111,10 @@ AbilityDefinition.MyView {
 
         readonly property alias itemShadow: apis.itemShadow
 
+        // Preserve the public view API name from the definition layer.
+        // qmllint disable property-override
         readonly property alias palette: apis.palette
+        // qmllint enable property-override
 
         function action(name) {
             return apis.action(name);

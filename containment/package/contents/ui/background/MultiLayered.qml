@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 /*
     SPDX-FileCopyrightText: 2016 Smith AR <audoban@openmailbox.org>
     SPDX-FileCopyrightText: 2016 Michail Vourlakos <mvourlakos@gmail.com>
@@ -5,14 +6,10 @@
 */
 
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Window
-import org.kde.plasma.plasmoid
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg as KSvg
-import org.kde.plasma.components as PlasmaComponents
-import org.kde.kquickcontrolsaddons
 import org.kde.kirigami as Kirigami
 
 import org.kde.latte.core as LatteCore
@@ -366,8 +363,8 @@ BackgroundProperties{
     //!          in such case the internal drawn shadows are NOT drawn at all.
     KSvg.FrameSvgItem{
         id: shadowsSvgItem
-        width: root.isVertical ?  background.thickness + totals.shadowsThickness : totals.visualLength
-        height: root.isVertical ? totals.visualLength : background.thickness + totals.shadowsThickness
+        width: root.isVertical ?  background.thickness + barLine.totals.shadowsThickness : barLine.totals.visualLength
+        height: root.isVertical ? barLine.totals.visualLength : background.thickness + barLine.totals.shadowsThickness
         enabledBorders: latteView && latteView.effects ? latteView.effects.enabledBorders : KSvg.FrameSvg.NoBorder
         imagePath: "widgets/panel-background"
         prefix: "shadow"
@@ -380,7 +377,7 @@ BackgroundProperties{
         readonly property bool hideShadow: !LatteCore.WindowSystem.compositingActive
                                            || !root.panelShadowsActive
                                            || !themeHasShadow
-                                           || customShadowedRectangleIsEnabled
+                                           || barLine.customShadowedRectangleIsEnabled
 
         Behavior on opacity {
             NumberAnimation { duration: LatteCore.WindowSystem.compositingActive ? barLine.animationTime : 0 }
@@ -412,10 +409,10 @@ BackgroundProperties{
     //!          the compositor to provide blurriness and from Mask calculations to provide the View Local Geometry
     KSvg.FrameSvgItem{
         id: solidBackground
-        anchors.leftMargin: shadows.left
-        anchors.rightMargin: shadows.right
-        anchors.topMargin: shadows.top
-        anchors.bottomMargin: shadows.bottom
+        anchors.leftMargin: barLine.shadows.left
+        anchors.rightMargin: barLine.shadows.right
+        anchors.topMargin: barLine.shadows.top
+        anchors.bottomMargin: barLine.shadows.bottom
         anchors.fill: shadowsSvgItem
 
         imagePath: "widgets/panel-background"
@@ -427,13 +424,13 @@ BackgroundProperties{
         //! must be normalized to plasma theme maximum opacity
         readonly property real normalizedOpacity: Math.min(1, appliedOpacity / themeMaxOpacity)
 
-        readonly property real appliedOpacity: modernDockStyle ? 0
+        readonly property real appliedOpacity: barLine.modernDockStyle ? 0
                                                                : (overlayedBackground.backgroundOpacity > 0 && !paintInstantly ? 0 : overlayedBackground.midOpacity)
-        readonly property real themeMaxOpacity: themeExtendedBackground ? themeExtendedBackground.maxOpacity : 1
+        readonly property real themeMaxOpacity: barLine.themeExtendedBackground ? barLine.themeExtendedBackground.maxOpacity : 1
 
         //! When switching from overlaied background to regular one this must be done
         //! instantly otherwise the transition is not smooth
-        readonly property bool paintInstantly: (root.hasExpandedApplet && root.plasmaBackgroundForPopups && !customRadiusIsEnabled)
+        readonly property bool paintInstantly: (root.hasExpandedApplet && root.plasmaBackgroundForPopups && !barLine.customRadiusIsEnabled)
 
         property rect efGeometry: Qt.rect(-1,-1,0,0)
 
@@ -573,7 +570,7 @@ BackgroundProperties{
                 return root.myView.backgroundStoredOpacity;
             }
 
-            if (modernDockStyle || coloredView || customShadowedRectangleIsEnabled) {
+            if (barLine.modernDockStyle || coloredView || barLine.customShadowedRectangleIsEnabled) {
                 return midOpacity;
             }
 
@@ -581,30 +578,30 @@ BackgroundProperties{
         }
 
         backgroundColor: colorizerManager.backgroundColor
-        shadowColor: modernDockStyle ? Qt.rgba(0, 0, 0, 0.35) : customShadowColor
+        shadowColor: barLine.modernDockStyle ? Qt.rgba(0, 0, 0, 0.35) : barLine.customShadowColor
         shadowSize: {
-            if (modernDockStyle) {
-                if (!customShadowIsEnabled) {
+            if (barLine.modernDockStyle) {
+                if (!barLine.customShadowIsEnabled) {
                     return 0; //! shadows toggled off by user
                 }
-                if (customUserShadowIsEnabled) {
-                    return customShadow; //! user explicitly set a shadow size
+                if (barLine.customUserShadowIsEnabled) {
+                    return barLine.customShadow; //! user explicitly set a shadow size
                 }
                 return customShadow; //! Modern default
             }
-            return customShadowIsEnabled ? customShadow : 0;
+            return barLine.customShadowIsEnabled ? barLine.customShadow : 0;
         }
-        borderWidth: modernDockStyle ? 1 : 0
-        borderColor: modernDockStyle
+        borderWidth: barLine.modernDockStyle ? 1 : 0
+        borderColor: barLine.modernDockStyle
                      ? Qt.rgba(colorizerManager.outlineColor.r, colorizerManager.outlineColor.g, colorizerManager.outlineColor.b, 0.55)
                      : "transparent"
 
         roundness: {
-            if (customRadiusIsEnabled) {
-                return customRadius;
+            if (barLine.customRadiusIsEnabled) {
+                return barLine.customRadius;
             }
 
-            return themeExtendedBackground ? themeExtendedBackground.roundness : 0
+            return barLine.themeExtendedBackground ? barLine.themeExtendedBackground.roundness : 0
         }
 
         property real midOpacity: {
@@ -612,7 +609,7 @@ BackgroundProperties{
                 return 1;
             } else if (!root.userShowPanelBackground || root.forcePanelForBusyBackground || root.forceTransparentPanel) {
                 return 0;
-            } else if (modernDockStyle) {
+            } else if (barLine.modernDockStyle) {
                 var storedOpacity = barLine.isDefaultOpacityEnabled ? 0.62 : root.myView.backgroundStoredOpacity;
                 return Math.max(0.50, storedOpacity);
             } else {
@@ -662,7 +659,7 @@ BackgroundProperties{
         ///Left
         State {
             name: "leftCenter"
-            when: (plasmoid.location === PlasmaCore.Types.LeftEdge)&&(visualAlignment === LatteCore.types.Center)
+            when: (plasmoid.location === PlasmaCore.Types.LeftEdge)&&(barLine.visualAlignment === LatteCore.types.Center)
 
             AnchorChanges {
                 target: barLine
@@ -673,14 +670,13 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: barLine.screenEdgeMargin;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: background.offset;
+                barLine.anchors.leftMargin: barLine.screenEdgeMargin;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: background.offset;
             }
         },
         State {
             name: "leftJustify"
-            when: (plasmoid.location === PlasmaCore.Types.LeftEdge)&&(visualAlignment === LatteCore.types.Justify)
+            when: (plasmoid.location === PlasmaCore.Types.LeftEdge)&&(barLine.visualAlignment === LatteCore.types.Justify)
 
             AnchorChanges {
                 target: barLine
@@ -691,15 +687,14 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: barLine.screenEdgeMargin;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: barLine.screenEdgeMargin;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         ///Left
         State {
             name: "leftTop"
-            when: (plasmoid.location === PlasmaCore.Types.LeftEdge)&&(visualAlignment === LatteCore.types.Top)
+            when: (plasmoid.location === PlasmaCore.Types.LeftEdge)&&(barLine.visualAlignment === LatteCore.types.Top)
 
             AnchorChanges {
                 target: barLine
@@ -710,15 +705,14 @@ BackgroundProperties{
                 anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: barLine.screenEdgeMargin;    anchors.rightMargin:0;     anchors.topMargin:background.offset;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: barLine.screenEdgeMargin;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: background.offset;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         ///Left
         State {
             name: "leftBottom"
-            when: (plasmoid.location === PlasmaCore.Types.LeftEdge)&&(visualAlignment === LatteCore.types.Bottom)
+            when: (plasmoid.location === PlasmaCore.Types.LeftEdge)&&(barLine.visualAlignment === LatteCore.types.Bottom)
 
             AnchorChanges {
                 target: barLine
@@ -729,15 +723,14 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:parent.bottom; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: barLine.screenEdgeMargin;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:background.offset;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: barLine.screenEdgeMargin;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: background.offset;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         ///Right
         State {
             name: "rightCenter"
-            when: (plasmoid.location === PlasmaCore.Types.RightEdge)&&(visualAlignment === LatteCore.types.Center)
+            when: (plasmoid.location === PlasmaCore.Types.RightEdge)&&(barLine.visualAlignment === LatteCore.types.Center)
 
             AnchorChanges {
                 target: barLine
@@ -748,14 +741,13 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin: barLine.screenEdgeMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: background.offset;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: barLine.screenEdgeMargin;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: background.offset;
             }
         },
         State {
             name: "rightJustify"
-            when: (plasmoid.location === PlasmaCore.Types.RightEdge)&&(visualAlignment === LatteCore.types.Justify)
+            when: (plasmoid.location === PlasmaCore.Types.RightEdge)&&(barLine.visualAlignment === LatteCore.types.Justify)
 
             AnchorChanges {
                 target: barLine
@@ -766,14 +758,13 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin: barLine.screenEdgeMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: barLine.screenEdgeMargin;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "rightTop"
-            when: (plasmoid.location === PlasmaCore.Types.RightEdge)&&(visualAlignment === LatteCore.types.Top)
+            when: (plasmoid.location === PlasmaCore.Types.RightEdge)&&(barLine.visualAlignment === LatteCore.types.Top)
 
             AnchorChanges {
                 target: barLine
@@ -784,14 +775,13 @@ BackgroundProperties{
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin: barLine.screenEdgeMargin;     anchors.topMargin:background.offset;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: barLine.screenEdgeMargin;     barLine.anchors.topMargin: background.offset;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "rightBottom"
-            when: (plasmoid.location === PlasmaCore.Types.RightEdge)&&(visualAlignment === LatteCore.types.Bottom)
+            when: (plasmoid.location === PlasmaCore.Types.RightEdge)&&(barLine.visualAlignment === LatteCore.types.Bottom)
 
             AnchorChanges {
                 target: barLine
@@ -802,15 +792,14 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin: barLine.screenEdgeMargin;     anchors.topMargin:0;    anchors.bottomMargin:background.offset;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: barLine.screenEdgeMargin;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: background.offset;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         ///Bottom
         State {
             name: "bottomCenter"
-            when: (plasmoid.location === PlasmaCore.Types.BottomEdge)&&(visualAlignment === LatteCore.types.Center)
+            when: (plasmoid.location === PlasmaCore.Types.BottomEdge)&&(barLine.visualAlignment === LatteCore.types.Center)
 
             AnchorChanges {
                 target: barLine
@@ -821,14 +810,13 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:undefined; horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin: barLine.screenEdgeMargin;
-                anchors.horizontalCenterOffset: background.offset; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: barLine.screenEdgeMargin;
+                barLine.anchors.horizontalCenterOffset: background.offset; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "bottomJustify"
-            when: (plasmoid.location === PlasmaCore.Types.BottomEdge)&&(visualAlignment === LatteCore.types.Justify)
+            when: (plasmoid.location === PlasmaCore.Types.BottomEdge)&&(barLine.visualAlignment === LatteCore.types.Justify)
 
             AnchorChanges {
                 target: barLine
@@ -839,16 +827,15 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:undefined; horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin: barLine.screenEdgeMargin;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: barLine.screenEdgeMargin;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "bottomLeft"
             when: (plasmoid.location === PlasmaCore.Types.BottomEdge)
-                  &&(((visualAlignment === LatteCore.types.Left)&&(Qt.application.layoutDirection !== Qt.RightToLeft))
-                     || ((visualAlignment === LatteCore.types.Right)&&(Qt.application.layoutDirection === Qt.RightToLeft)))
+                  &&(((barLine.visualAlignment === LatteCore.types.Left)&&(Qt.application.layoutDirection !== Qt.RightToLeft))
+                     || ((barLine.visualAlignment === LatteCore.types.Right)&&(Qt.application.layoutDirection === Qt.RightToLeft)))
 
             AnchorChanges {
                 target: barLine
@@ -859,17 +846,16 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:parent.bottom; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: background.offset;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin: barLine.screenEdgeMargin;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: background.offset;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: barLine.screenEdgeMargin;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
 
         },
         State {
             name: "bottomRight"
             when: (plasmoid.location === PlasmaCore.Types.BottomEdge)
-                  &&(((visualAlignment === LatteCore.types.Right)&&(Qt.application.layoutDirection !== Qt.RightToLeft))
-                     ||((visualAlignment === LatteCore.types.Left)&&(Qt.application.layoutDirection === Qt.RightToLeft)))
+                  &&(((barLine.visualAlignment === LatteCore.types.Right)&&(Qt.application.layoutDirection !== Qt.RightToLeft))
+                     ||((barLine.visualAlignment === LatteCore.types.Left)&&(Qt.application.layoutDirection === Qt.RightToLeft)))
 
             AnchorChanges {
                 target: barLine
@@ -880,15 +866,14 @@ BackgroundProperties{
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin:background.offset;     anchors.topMargin:0;    anchors.bottomMargin: barLine.screenEdgeMargin;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: background.offset;     barLine.anchors.topMargin: 0;    barLine.anchors.bottomMargin: barLine.screenEdgeMargin;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         ///Top
         State {
             name: "topCenter"
-            when: (plasmoid.location === PlasmaCore.Types.TopEdge)&&(visualAlignment === LatteCore.types.Center)
+            when: (plasmoid.location === PlasmaCore.Types.TopEdge)&&(barLine.visualAlignment === LatteCore.types.Center)
 
             AnchorChanges {
                 target: barLine
@@ -899,14 +884,13 @@ BackgroundProperties{
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:undefined; horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin: barLine.screenEdgeMargin;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: background.offset; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: barLine.screenEdgeMargin;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: background.offset; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "topJustify"
-            when: (plasmoid.location === PlasmaCore.Types.TopEdge)&&(visualAlignment === LatteCore.types.Justify)
+            when: (plasmoid.location === PlasmaCore.Types.TopEdge)&&(barLine.visualAlignment === LatteCore.types.Justify)
 
             AnchorChanges {
                 target: barLine
@@ -917,16 +901,15 @@ BackgroundProperties{
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:undefined; horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin: barLine.screenEdgeMargin;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: barLine.screenEdgeMargin;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "topLeft"
             when: (plasmoid.location === PlasmaCore.Types.TopEdge)
-                  &&(((visualAlignment === LatteCore.types.Left)&&(Qt.application.layoutDirection !== Qt.RightToLeft))
-                     || ((visualAlignment === LatteCore.types.Right)&&(Qt.application.layoutDirection === Qt.RightToLeft)))
+                  &&(((barLine.visualAlignment === LatteCore.types.Left)&&(Qt.application.layoutDirection !== Qt.RightToLeft))
+                     || ((barLine.visualAlignment === LatteCore.types.Right)&&(Qt.application.layoutDirection === Qt.RightToLeft)))
 
             AnchorChanges {
                 target: barLine
@@ -937,16 +920,15 @@ BackgroundProperties{
                 anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: background.offset;    anchors.rightMargin:0;     anchors.topMargin: barLine.screenEdgeMargin;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: background.offset;    barLine.anchors.rightMargin: 0;     barLine.anchors.topMargin: barLine.screenEdgeMargin;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         },
         State {
             name: "topRight"
             when: (plasmoid.location === PlasmaCore.Types.TopEdge)
-                  &&(((visualAlignment === LatteCore.types.Right)&&(Qt.application.layoutDirection !== Qt.RightToLeft))
-                     ||((visualAlignment === LatteCore.types.Left)&&(Qt.application.layoutDirection === Qt.RightToLeft)))
+                  &&(((barLine.visualAlignment === LatteCore.types.Right)&&(Qt.application.layoutDirection !== Qt.RightToLeft))
+                     ||((barLine.visualAlignment === LatteCore.types.Left)&&(Qt.application.layoutDirection === Qt.RightToLeft)))
 
             AnchorChanges {
                 target: barLine
@@ -957,9 +939,8 @@ BackgroundProperties{
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: barLine
-                anchors.leftMargin: 0;    anchors.rightMargin:background.offset;     anchors.topMargin: barLine.screenEdgeMargin;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                barLine.anchors.leftMargin: 0;    barLine.anchors.rightMargin: background.offset;     barLine.anchors.topMargin: barLine.screenEdgeMargin;    barLine.anchors.bottomMargin: 0;
+                barLine.anchors.horizontalCenterOffset: 0; barLine.anchors.verticalCenterOffset: 0;
             }
         }
     ]

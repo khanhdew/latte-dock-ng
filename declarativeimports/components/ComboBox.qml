@@ -10,7 +10,6 @@ import QtQuick.Templates as T
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
 import QtQuick.Effects
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
 import org.kde.ksvg as KSvg
@@ -116,23 +115,22 @@ T.ComboBox {
 
     delegate: ItemDelegate {
         width: control.popup.width
-        height: isSeparator ? 1 : control.popUpItemHeight
-        enabled: !isSeparator && (control.enabledRole.length>0 ? (isArray ? modelData[control.enabledRole] : model[control.enabledRole]) : true)
-        text: control.textRole.length>0 ? (isArray ? modelData[control.textRole] : model[control.textRole]) : modelData
-        iconName: control.iconRole.length>0 ? (isArray ? modelData[control.iconRole] : model[control.iconRole]) : ''
-        iconToolTip: control.iconToolTipRole.length>0 ? (isArray ? modelData[control.iconToolTipRole] : model[control.iconToolTipRole]) : ''
-        iconOnlyWhenHovered: control.iconOnlyWhenHoveredRole.length>0 ? (isArray ? modelData[control.iconOnlyWhenHoveredRole] : model[control.iconOnlyWhenHoveredRole]) : ''
-        isSeparator: control.isSeparatorRole.length>0 ? (isArray ? modelData[control.isSeparatorRole] : model[control.isSeparatorRole]) : false
-        toolTip: control.toolTipRole.length>0 ? (isArray ? modelData[control.toolTipRole] : model[control.toolTipRole]) : ''
+        height: control.isSeparator ? 1 : control.popUpItemHeight
+        enabled: !control.isSeparator && (!control.enabledRole.length || control.modelRoleAt(index, control.enabledRole))
+        text: control.textRole.length ? control.modelRoleAt(index, control.textRole) : modelData
+        iconName: control.iconRole.length ? control.modelRoleAt(index, control.iconRole) : ''
+        iconToolTip: control.iconToolTipRole.length ? control.modelRoleAt(index, control.iconToolTipRole) : ''
+        iconOnlyWhenHovered: control.iconOnlyWhenHoveredRole.length ? control.modelRoleAt(index, control.iconOnlyWhenHoveredRole) : ''
+        isSeparator: control.isSeparatorRole.length ? control.modelRoleAt(index, control.isSeparatorRole) : false
+        toolTip: control.toolTipRole.length ? control.modelRoleAt(index, control.toolTipRole) : ''
         textColor: control.safePopupTextColor
         highlightedTextColor: control.safePopupHighlightedTextColor
         highlightColor: control.safePopupHighlightColor
 
         highlighted: mouseArea.pressed ? listView.currentIndex == index : control.currentIndex == index
         blankSpaceForEmptyIcons: control.blankSpaceForEmptyIcons
-        textHorizontalAlignment: popUpTextHorizontalAlignment
+        textHorizontalAlignment: control.popUpTextHorizontalAlignment
 
-        readonly property bool isArray: Array.isArray(control.model)
         property bool separatorVisible: false
 
         PlasmaComponents.Button {
@@ -154,7 +152,7 @@ T.ComboBox {
     }
 
     indicator: KSvg.SvgItem {
-        implicitWidth: units.iconSizes.small
+        implicitWidth: control.units.iconSizes.small
         implicitHeight: implicitWidth
         anchors {
             right: parent.right
@@ -282,8 +280,8 @@ T.ComboBox {
                 id: textLabel
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: !selectedIcon.visible && !control.mirrored ? units.smallSpacing : 0
-                Layout.rightMargin: !selectedIcon.visible && control.mirrored ? units.smallSpacing : 0
+                Layout.leftMargin: !selectedIcon.visible && !control.mirrored ? control.units.smallSpacing : 0
+                Layout.rightMargin: !selectedIcon.visible && control.mirrored ? control.units.smallSpacing : 0
 
                 text: {
                     if (control.currentIndex < 0 || !control.textRole || control.textRole.length === 0) {
@@ -293,7 +291,7 @@ T.ComboBox {
                     return item ? (item[control.textRole] || "") : "";
                 }
                 font: control.font
-                color: control.buttonIsTransparent ? safeTextColor : safeButtonTextColor
+                color: control.buttonIsTransparent ? control.safeTextColor : control.safeButtonTextColor
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
                 opacity: control.enabled ? 1 : 0.6
@@ -371,19 +369,19 @@ T.ComboBox {
 
     background: Rectangle {
         id: surfaceNormal
-        implicitWidth: units.gridUnit * 6
+        implicitWidth: control.units.gridUnit * 6
         width: parent.width
         height: parent.height
-        radius: Math.max(2, units.smallSpacing)
-        color: safeButtonColor
+        radius: Math.max(2, control.units.smallSpacing)
+        color: control.safeButtonColor
         border.width: 1
         border.color: control.pressed || control.forcePressed
-                      ? safePressedBorderColor
-                      : safeButtonBorderColor
+                      ? control.safePressedBorderColor
+                      : control.safeButtonBorderColor
 
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.rightMargin: control.buttonIsTransparent ? -frameMargin : 0
+        anchors.rightMargin: control.buttonIsTransparent ? -control.frameMargin : 0
         opacity: control.buttonIsTransparent && !control.pressed && !control.popup.visible ? 0 : 1
 
         MouseArea {
@@ -414,11 +412,11 @@ T.ComboBox {
 
         x: {
             if (!control.mirrored) {
-                return exceedsContent && control.popUpAlignRight ? control.width - width : popUpRelativeX;
+                return exceedsContent && control.popUpAlignRight ? control.width - width : control.popUpRelativeX;
             } else {
                 //! mirrored case
                 if (exceedsContent && control.popUpAlignRight) {
-                    var adjustedX = width - control.width - popUpRelativeX;
+                    var adjustedX = width - control.width - control.popUpRelativeX;
                     return  -adjustedX;
                 } else {
                     return 0;
@@ -471,8 +469,8 @@ T.ComboBox {
                 margins: -1
             }
             radius: 2
-            color: safeBackgroundColor
-            border.color: Qt.rgba(safeTextColor.r, safeTextColor.g, safeTextColor.b, 0.3)
+            color: control.safeBackgroundColor
+            border.color: Qt.rgba(control.safeTextColor.r, control.safeTextColor.g, control.safeTextColor.b, 0.3)
             layer.enabled: true
 
             layer.effect: MultiEffect {

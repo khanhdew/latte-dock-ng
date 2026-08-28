@@ -4,24 +4,25 @@
 */
 
 import QtQuick
-import QtQuick.Layouts
 
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
-
-import org.kde.latte.core as LatteCore
 
 import "controls" as SettingsControls
 
 Item {
     id: headerSettings
+    required property var root
+    required property var latteView
+    required property var plasmoid
+    required property var ruler
+    required property var settingsRoot
     width: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parent.width : parent.height
     height: thickness
 
     readonly property bool containsMouse: stickOnBottomBtn.containsMouse || stickOnTopBtn.containsMouse
     readonly property int thickness: stickOnTopBtn.implicitHeight
 
-    readonly property int headMargin: spacing * 2
+    readonly property int headMargin: headerSettings.settingsRoot.spacing * 2
 
     rotation: {
         if (plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
@@ -61,25 +62,27 @@ Item {
 
     SettingsControls.Button{
         id: stickOnTopBtn
-        visible: root.isVertical
+        latteView: headerSettings.latteView
+        settingsRoot: headerSettings.parent
+        visible: headerSettings.root.isVertical
 
         text: i18n("Stick On Top");
         tooltip: i18n("Stick maximum available space at top screen edge and ignore any top docks")
-        checked: plasmoid.configuration.isStickedOnTopEdge
-        iconPositionReversed: (plasmoid.location === PlasmaCore.Types.RightEdge)
+        checked: headerSettings.plasmoid.configuration.isStickedOnTopEdge
+        iconPositionReversed: (headerSettings.plasmoid.location === PlasmaCore.Types.RightEdge)
 
         icon: SettingsControls.StickIcon{}
 
         onPressedChanged: {
             if (pressed) {
-                plasmoid.configuration.isStickedOnTopEdge = !plasmoid.configuration.isStickedOnTopEdge;
+                headerSettings.plasmoid.configuration.isStickedOnTopEdge = !headerSettings.plasmoid.configuration.isStickedOnTopEdge;
             }
         }
 
         states: [
             State {
                 name: "generalEdge"
-                when: (plasmoid.location !== PlasmaCore.Types.RightEdge)
+                when: (headerSettings.plasmoid.location !== PlasmaCore.Types.RightEdge)
 
                 AnchorChanges {
                     target: stickOnTopBtn
@@ -88,7 +91,7 @@ Item {
             },
             State {
                 name: "rightEdge"
-                when: (plasmoid.location === PlasmaCore.Types.RightEdge)
+                when: (headerSettings.plasmoid.location === PlasmaCore.Types.RightEdge)
 
                 AnchorChanges {
                     target: stickOnTopBtn
@@ -101,25 +104,27 @@ Item {
 
     SettingsControls.Button{
         id: stickOnBottomBtn
-        visible: root.isVertical
+        latteView: headerSettings.latteView
+        settingsRoot: headerSettings.parent
+        visible: headerSettings.root.isVertical
 
         text: i18n("Stick On Bottom");
         tooltip: i18n("Stick maximum available space at bottom screen edge and ignore any bottom docks")
-        checked: plasmoid.configuration.isStickedOnBottomEdge
-        iconPositionReversed: (plasmoid.location !== PlasmaCore.Types.RightEdge)
+        checked: headerSettings.plasmoid.configuration.isStickedOnBottomEdge
+        iconPositionReversed: (headerSettings.plasmoid.location !== PlasmaCore.Types.RightEdge)
 
         icon: SettingsControls.StickIcon{}
 
         onPressedChanged: {
             if (pressed) {
-                plasmoid.configuration.isStickedOnBottomEdge = !plasmoid.configuration.isStickedOnBottomEdge;
+                headerSettings.plasmoid.configuration.isStickedOnBottomEdge = !headerSettings.plasmoid.configuration.isStickedOnBottomEdge;
             }
         }
 
         states: [
             State {
                 name: "generalEdge"
-                when: (plasmoid.location !== PlasmaCore.Types.RightEdge)
+                when: (headerSettings.plasmoid.location !== PlasmaCore.Types.RightEdge)
 
                 AnchorChanges {
                     target: stickOnBottomBtn
@@ -128,7 +133,7 @@ Item {
             },
             State {
                 name: "rightEdge"
-                when: (plasmoid.location === PlasmaCore.Types.RightEdge)
+                when: (headerSettings.plasmoid.location === PlasmaCore.Types.RightEdge)
 
                 AnchorChanges {
                     target: stickOnBottomBtn

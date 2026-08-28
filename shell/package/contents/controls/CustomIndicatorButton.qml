@@ -7,14 +7,13 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2
 
-import org.kde.plasma.plasmoid
-import org.kde.plasma.core as PlasmaCore
-
 import org.kde.latte.components as LatteComponents
 
 
 LatteComponents.ComboBoxButton{
     id: custom
+    required property var latteView
+    required property var viewConfig
     checkable: true
 
     buttonToolTip:  custom.type === "install:" ? i18n("Install indicators from KDE Online Store or local files") :
@@ -23,14 +22,14 @@ LatteComponents.ComboBoxButton{
     buttonIsTransparent: true
     buttonIsTriggeringMenu: false
     comboBoxButtonIsTransparent: true
-    comboBoxButtonIsVisible: latteView.indicator.customPluginsCount > 0
+    comboBoxButtonIsVisible: custom.latteView.indicator.customPluginsCount > 0
 
     comboBoxTextRole: "name"
     comboBoxIconRole: "icon"
     comboBoxIconToolTipRole: "iconToolTip"
     comboBoxIconOnlyWhenHoveredRole: "iconOnlyWhenHovered"
     comboBoxBlankSpaceForEmptyIcons: true
-    comboBoxForcePressed: latteView.indicator.type === type
+    comboBoxForcePressed: custom.latteView.indicator.type === type
     comboBoxPopUpAlignRight: Qt.application.layoutDirection !== Qt.RightToLeft
 
     property string type: ""
@@ -45,7 +44,7 @@ LatteComponents.ComboBoxButton{
     }
 
     Connections{
-        target: latteView.indicator
+        target: custom.latteView.indicator
         function onCustomPluginsCountChanged() {
             custom.reloadModel();
             custom.updateButtonInformation();
@@ -53,9 +52,9 @@ LatteComponents.ComboBoxButton{
     }
 
     Connections {
-        target: viewConfig
+        target: custom.viewConfig
         function onIsReadyChanged() {
-            if (viewConfig.isReady) {
+            if (custom.viewConfig.isReady) {
                 custom.updateButtonInformation();
             }
         }
@@ -63,21 +62,21 @@ LatteComponents.ComboBoxButton{
 
     Connections{
         target: custom.button
-        function onClicked() { onButtonIsPressed(); }
+        function onClicked() { custom.onButtonIsPressed(); }
     }
 
     Connections{
         target: custom.comboBox
 
         function onActivated() {
-            if (index>=0) {
-                var item = actionsModel.get(index);
+            if (custom.comboBox.currentIndex >= 0) {
+                var item = actionsModel.get(custom.comboBox.currentIndex);
                 if (item.pluginId === "add:") {
-                    viewConfig.indicatorUiManager.addIndicator();
+                    custom.viewConfig.indicatorUiManager.addIndicator();
                 } else if (item.pluginId === "download:") {
-                    viewConfig.indicatorUiManager.downloadIndicator();
+                    custom.viewConfig.indicatorUiManager.downloadIndicator();
                 } else {
-                    latteView.indicator.type = item.pluginId;
+                    custom.latteView.indicator.type = item.pluginId;
                 }
             }
 
@@ -85,11 +84,11 @@ LatteComponents.ComboBoxButton{
         }
 
         function onIconClicked() {
-            if (index>=0) {
-                var item = actionsModel.get(index);
+            if (custom.comboBox.currentIndex >= 0) {
+                var item = actionsModel.get(custom.comboBox.currentIndex);
                 var pluginId = item.pluginId;
-                if (latteView.indicator.customLocalPluginIds.indexOf(pluginId)>=0) {
-                    viewConfig.indicatorUiManager.removeIndicator(pluginId);
+                if (custom.latteView.indicator.customLocalPluginIds.indexOf(pluginId)>=0) {
+                    custom.viewConfig.indicatorUiManager.removeIndicator(pluginId);
                     custom.comboBox.popup.close();
                 }
             }
@@ -99,7 +98,7 @@ LatteComponents.ComboBoxButton{
     Connections{
         target: custom.comboBox.popup
         function onVisibleChanged() {
-            if (visible) {
+            if (installPopup.visible) {
                 custom.selectChosenType();
             }
         }
@@ -109,19 +108,19 @@ LatteComponents.ComboBoxButton{
         if (custom.type === "install:") {
             installPopup.open();
         } else {
-            latteView.indicator.type = custom.type;
+        custom.latteView.indicator.type = custom.type;
         }
     }
 
     function updateButtonInformation() {
-        if (latteView.indicator.customPluginsCount === 0) {
+        if (custom.latteView.indicator.customPluginsCount === 0) {
             custom.buttonText = i18n("Install...");
             custom.type = "install:";
             custom.checkable = false;
         } else {
             custom.checkable = true;
 
-            var curCustomIndex = latteView.indicator.customPluginIds.indexOf(latteView.indicator.customType);
+            var curCustomIndex = custom.latteView.indicator.customPluginIds.indexOf(custom.latteView.indicator.customType);
 
             if (curCustomIndex>=0) {
                 custom.buttonText = actionsModel.get(curCustomIndex).name;
@@ -136,10 +135,10 @@ LatteComponents.ComboBoxButton{
     function reloadModel() {
         actionsModel.clear();
 
-        if (latteView.indicator.customPluginsCount > 0) {
-            var pluginIds = latteView.indicator.customPluginIds;
-            var pluginNames = latteView.indicator.customPluginNames;
-            var localPluginIds = latteView.indicator.customLocalPluginIds;
+        if (custom.latteView.indicator.customPluginsCount > 0) {
+            var pluginIds = custom.latteView.indicator.customPluginIds;
+            var pluginNames = custom.latteView.indicator.customPluginNames;
+            var localPluginIds = custom.latteView.indicator.customLocalPluginIds;
 
             for(var i=0; i<pluginIds.length; ++i) {
                 var canBeRemoved = localPluginIds.indexOf(pluginIds[i])>=0;
@@ -239,7 +238,7 @@ LatteComponents.ComboBoxButton{
                     icon.name: "document-import"
                     onClicked: {
                         installPopup.close();
-                        viewConfig.indicatorUiManager.addIndicator();
+                        custom.viewConfig.indicatorUiManager.addIndicator();
                     }
                 }
 
@@ -249,7 +248,7 @@ LatteComponents.ComboBoxButton{
                     icon.name: "get-hot-new-stuff"
                     onClicked: {
                         installPopup.close();
-                        viewConfig.indicatorUiManager.downloadIndicator();
+                        custom.viewConfig.indicatorUiManager.downloadIndicator();
                     }
                 }
             }

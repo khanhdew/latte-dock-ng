@@ -5,9 +5,6 @@
 */
 
 import QtQuick
-import QtQuick.Layouts
-
-import org.kde.plasma.plasmoid
 
 import org.kde.plasma.core as PlasmaCore
 
@@ -19,6 +16,15 @@ import "../debugger" as Debugger
 
 Item{
     id: layoutsContainer
+    required property var containmentRoot
+    readonly property var root: containmentRoot
+    required property var latteView
+    required property var visibilityManager
+    required property var background
+    required property var myView
+    required property var plasmoid
+    required property var metrics
+    required property var layouter
     //! WorkAround: Do not use "visible" because when it becomes "false" the contained applets can hide/show their elements.
     //! That approach can create a conflict with Latte Tasks that after showing the view they reshow windows
     //! that were already shown before hiding.

@@ -5,8 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.core as PlasmaCore
-
 GraphicIcon{
     readonly property int itemLength: 0.22*width
 

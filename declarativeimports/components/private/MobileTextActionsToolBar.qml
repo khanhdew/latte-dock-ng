@@ -10,7 +10,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQuick.Controls
-import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 
 Popup {

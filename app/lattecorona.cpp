@@ -16,8 +16,6 @@
 #include "screenpool.h"
 #include "data/generictable.h"
 #include "data/layouticondata.h"
-#include "declarativeimports/interfaces.h"
-#include "declarativeimports/contextmenulayerquickitem.h"
 #include "indicator/factory.h"
 #include "layout/abstractlayout.h"
 #include "layout/centrallayout.h"
@@ -28,7 +26,6 @@
 #include "shortcuts/globalshortcuts.h"
 #include "package/lattepackage.h"
 #include "plasma/extended/backgroundcache.h"
-#include "plasma/extended/backgroundtracker.h"
 #include "plasma/extended/screengeometries.h"
 #include "plasma/extended/screenpool.h"
 #include "plasma/extended/theme.h"
@@ -1644,9 +1641,6 @@ inline void Corona::qmlRegisterTypes() const
                                      "Settings",                           // name in QML
                                      QStringLiteral("Error: only enums of latte app settings"));
 
-    qmlRegisterType<Latte::BackgroundTracker>(App::PRIVATEQMLURI, 0, 1, "BackgroundTracker");
-    qmlRegisterType<Latte::Interfaces>(App::PRIVATEQMLURI, 0, 1, "Interfaces");
-    qmlRegisterType<Latte::ContextMenuLayerQuickItem>(App::PRIVATEQMLURI, 0, 1, "ContextMenuLayer");
     qmlRegisterAnonymousType<QScreen>(App::QMLURI, 1);
     qmlRegisterAnonymousType<Latte::View>(App::QMLURI, 1);
     qmlRegisterAnonymousType<Latte::ViewPart::WindowsTracker>(App::QMLURI, 1);

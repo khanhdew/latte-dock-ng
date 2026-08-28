@@ -6,8 +6,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-
 ///////Activate animation/////
 SequentialAnimation{
     id: clickedAnimation

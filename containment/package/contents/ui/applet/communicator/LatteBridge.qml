@@ -48,7 +48,10 @@ Item{
     //   USE CASE: when Latte is transparent and applets colors need to be adjusted in order
     //       to look consistent with the underlying desktop background
     // @since: 0.9
+    // Preserve Latte's palette API while intentionally shadowing QQuickItem.palette.
+    // qmllint disable property-override
     readonly property QtObject palette: !applet.latteSideColoringEnabled ? colorizerManager : null
+    // qmllint enable property-override
 
     // NAME: applyPalette
     //   USAGE: read-only

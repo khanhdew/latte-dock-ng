@@ -7,6 +7,8 @@
 #include <latte_debug.h>
 #include "genericlayout.h"
 
+#include <algorithm>
+
 // local
 #include "abstractlayout.h"
 #include "../apptypes.h"
@@ -486,17 +488,11 @@ QList<Latte::View *> GenericLayout::sortedLatteViews(QList<Latte::View *> views,
     //! views on primary screen have higher priority and
     //! for views in the same screen the priority goes to
     //! Bottom,Left,Top,Right
-    for (int i = 0; i < sortedViews.size(); ++i) {
-        for (int j = 0; j < sortedViews.size() - i - 1; ++j) {
-            if (viewAtLowerScreenPriority(sortedViews[j], sortedViews[j + 1], primaryScreen)
-                || (sortedViews[j]->screen() == sortedViews[j + 1]->screen()
-                    && viewAtLowerEdgePriority(sortedViews[j], sortedViews[j + 1]))) {
-                Latte::View *temp = sortedViews[j + 1];
-                sortedViews[j + 1] = sortedViews[j];
-                sortedViews[j] = temp;
-            }
-        }
-    }
+    std::stable_sort(sortedViews.begin(), sortedViews.end(), [primaryScreen](Latte::View *first, Latte::View *second) {
+        return viewAtLowerScreenPriority(second, first, primaryScreen)
+               || (first->screen() == second->screen()
+                   && viewAtLowerEdgePriority(second, first));
+    });
 
     Latte::View *highestPriorityView{nullptr};
 
@@ -647,18 +643,12 @@ QList<Latte::Data::View> GenericLayout::sortedViewsData(const QList<Latte::Data:
     //! views on primary screen have higher priority and
     //! for views in the same screen the priority goes to
     //! Bottom,Left,Top,Right
-    for (int i = 0; i < sortedData.size(); ++i) {
-        for (int j = 0; j < sortedData.size() - i - 1; ++j) {
-            if (viewDataAtLowerStatePriority(sortedData[j], sortedData[j + 1])
-                || viewDataAtLowerScreenPriority(sortedData[j], sortedData[j + 1])
-                || (!viewDataAtLowerScreenPriority(sortedData[j], sortedData[j + 1])
-                    && viewDataAtLowerEdgePriority(sortedData[j], sortedData[j + 1]))) {
-                Latte::Data::View temp = sortedData[j + 1];
-                sortedData[j + 1] = sortedData[j];
-                sortedData[j] = temp;
-            }
-        }
-    }
+    std::stable_sort(sortedData.begin(), sortedData.end(), [this](const Latte::Data::View &first, const Latte::Data::View &second) {
+        return viewDataAtLowerStatePriority(second, first)
+               || viewDataAtLowerScreenPriority(second, first)
+               || (!viewDataAtLowerScreenPriority(second, first)
+                   && viewDataAtLowerEdgePriority(second, first));
+    });
 
     return sortedData;
 }

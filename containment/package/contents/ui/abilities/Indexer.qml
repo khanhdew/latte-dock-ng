@@ -4,8 +4,6 @@
 */
 
 import QtQuick
-import org.kde.plasma.plasmoid
-
 import "./privates" as Ability
 
 Ability.IndexerPrivate {

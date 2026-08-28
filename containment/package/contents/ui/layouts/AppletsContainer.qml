@@ -5,8 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.core as PlasmaCore
-
 import org.kde.latte.core as LatteCore
 
 Grid {
@@ -43,9 +41,9 @@ Grid {
                 anchors{ top:undefined; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignLeft; verticalItemAlignment: Grid.AlignVCenter;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: appletsContainer.offset;
+                appletsContainer.horizontalItemAlignment: Grid.AlignLeft; appletsContainer.verticalItemAlignment: Grid.AlignVCenter;
+                appletsContainer.anchors.leftMargin: 0;    appletsContainer.anchors.rightMargin: 0;     appletsContainer.anchors.topMargin: 0;    appletsContainer.anchors.bottomMargin: 0;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: appletsContainer.offset;
             }
         },
         State {
@@ -57,9 +55,9 @@ Grid {
                 anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignLeft; verticalItemAlignment: Grid.AlignVCenter;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:appletsContainer.offset;    anchors.bottomMargin:appletsContainer.lastMargin;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignLeft; appletsContainer.verticalItemAlignment: Grid.AlignVCenter;
+                appletsContainer.anchors.leftMargin: 0;    appletsContainer.anchors.rightMargin: 0;     appletsContainer.anchors.topMargin: appletsContainer.offset;    appletsContainer.anchors.bottomMargin: appletsContainer.lastMargin;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -71,9 +69,9 @@ Grid {
                 anchors{ top:undefined; bottom:parent.bottom; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignLeft; verticalItemAlignment: Grid.AlignVCenter;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:appletsContainer.lastMargin;    anchors.bottomMargin:appletsContainer.offset;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignLeft; appletsContainer.verticalItemAlignment: Grid.AlignVCenter;
+                appletsContainer.anchors.leftMargin: 0;    appletsContainer.anchors.rightMargin: 0;     appletsContainer.anchors.topMargin: appletsContainer.lastMargin;    appletsContainer.anchors.bottomMargin: appletsContainer.offset;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         ///Right Edge
@@ -86,9 +84,9 @@ Grid {
                 anchors{ top:undefined; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignRight; verticalItemAlignment: Grid.AlignVCenter;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: appletsContainer.offset;
+                appletsContainer.horizontalItemAlignment: Grid.AlignRight; appletsContainer.verticalItemAlignment: Grid.AlignVCenter;
+                appletsContainer.anchors.leftMargin: 0;    appletsContainer.anchors.rightMargin: 0;     appletsContainer.anchors.topMargin: 0;    appletsContainer.anchors.bottomMargin: 0;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: appletsContainer.offset;
             }
         },
         State {
@@ -100,9 +98,9 @@ Grid {
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignRight; verticalItemAlignment: Grid.AlignVCenter;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:appletsContainer.offset;    anchors.bottomMargin:appletsContainer.lastMargin;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignRight; appletsContainer.verticalItemAlignment: Grid.AlignVCenter;
+                appletsContainer.anchors.leftMargin: 0;    appletsContainer.anchors.rightMargin: 0;     appletsContainer.anchors.topMargin: appletsContainer.offset;    appletsContainer.anchors.bottomMargin: appletsContainer.lastMargin;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -114,9 +112,9 @@ Grid {
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignRight; verticalItemAlignment: Grid.AlignVCenter;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:appletsContainer.lastMargin;    anchors.bottomMargin:appletsContainer.offset;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignRight; appletsContainer.verticalItemAlignment: Grid.AlignVCenter;
+                appletsContainer.anchors.leftMargin: 0;    appletsContainer.anchors.rightMargin: 0;     appletsContainer.anchors.topMargin: appletsContainer.lastMargin;    appletsContainer.anchors.bottomMargin: appletsContainer.offset;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         ///Bottom Edge
@@ -129,9 +127,9 @@ Grid {
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:undefined; horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignBottom
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: appletsContainer.offset; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignHCenter; appletsContainer.verticalItemAlignment: Grid.AlignBottom;
+                appletsContainer.anchors.leftMargin: 0;    appletsContainer.anchors.rightMargin: 0;     appletsContainer.anchors.topMargin: 0;    appletsContainer.anchors.bottomMargin: 0;
+                appletsContainer.anchors.horizontalCenterOffset: appletsContainer.offset; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -143,9 +141,9 @@ Grid {
                 anchors{ top:undefined; bottom:parent.bottom; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignBottom
-                anchors.leftMargin: appletsContainer.offset;    anchors.rightMargin:appletsContainer.lastMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignHCenter; appletsContainer.verticalItemAlignment: Grid.AlignBottom;
+                appletsContainer.anchors.leftMargin: appletsContainer.offset;    appletsContainer.anchors.rightMargin: appletsContainer.lastMargin;     appletsContainer.anchors.topMargin: 0;    appletsContainer.anchors.bottomMargin: 0;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -157,9 +155,9 @@ Grid {
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignBottom
-                anchors.leftMargin: appletsContainer.lastMargin;    anchors.rightMargin:appletsContainer.offset;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignHCenter; appletsContainer.verticalItemAlignment: Grid.AlignBottom;
+                appletsContainer.anchors.leftMargin: appletsContainer.lastMargin;    appletsContainer.anchors.rightMargin: appletsContainer.offset;     appletsContainer.anchors.topMargin: 0;    appletsContainer.anchors.bottomMargin: 0;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         ///Top Edge
@@ -172,9 +170,9 @@ Grid {
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:undefined; horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignTop
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: appletsContainer.offset; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignHCenter; appletsContainer.verticalItemAlignment: Grid.AlignTop;
+                appletsContainer.anchors.leftMargin: 0;    appletsContainer.anchors.rightMargin: 0;     appletsContainer.anchors.topMargin: 0;    appletsContainer.anchors.bottomMargin: 0;
+                appletsContainer.anchors.horizontalCenterOffset: appletsContainer.offset; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -186,9 +184,9 @@ Grid {
                 anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignTop
-                anchors.leftMargin: appletsContainer.offset;    anchors.rightMargin:appletsContainer.lastMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignHCenter; appletsContainer.verticalItemAlignment: Grid.AlignTop;
+                appletsContainer.anchors.leftMargin: appletsContainer.offset;    appletsContainer.anchors.rightMargin: appletsContainer.lastMargin;     appletsContainer.anchors.topMargin: 0;    appletsContainer.anchors.bottomMargin: 0;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -200,9 +198,9 @@ Grid {
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: appletsContainer; horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignTop
-                anchors.leftMargin: appletsContainer.lastMargin;    anchors.rightMargin:appletsContainer.offset;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                appletsContainer.horizontalItemAlignment: Grid.AlignHCenter; appletsContainer.verticalItemAlignment: Grid.AlignTop;
+                appletsContainer.anchors.leftMargin: appletsContainer.lastMargin;    appletsContainer.anchors.rightMargin: appletsContainer.offset;     appletsContainer.anchors.topMargin: 0;    appletsContainer.anchors.bottomMargin: 0;
+                appletsContainer.anchors.horizontalCenterOffset: 0; appletsContainer.anchors.verticalCenterOffset: 0;
             }
         }
     ]

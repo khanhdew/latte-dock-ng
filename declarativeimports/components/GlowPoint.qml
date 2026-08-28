@@ -6,9 +6,7 @@
 import QtQuick
 import QtQuick.Shapes
 
-import org.kde.plasma.components as Components
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
 Item{
     //   property string color
@@ -46,7 +44,7 @@ Item{
         anchors.verticalCenter: parent.verticalCenter
         visible: glowItem.showGlow
 
-        flow: isHorizontal ? Flow.LeftToRight : Flow.TopToBottom
+        flow: glowItem.isHorizontal ? Flow.LeftToRight : Flow.TopToBottom
         spacing: 0
 
         property int halfCorner: 3*glowItem.size
@@ -54,8 +52,8 @@ Item{
 
         Item {
             id: firstGlowCorner
-            width: isHorizontal ? mainGlow.halfCorner : mainGlow.fullCorner
-            height: isHorizontal ? mainGlow.fullCorner : mainGlow.halfCorner
+            width: glowItem.isHorizontal ? mainGlow.halfCorner : mainGlow.fullCorner
+            height: glowItem.isHorizontal ? mainGlow.fullCorner : mainGlow.halfCorner
             clip: true
 
             Item {
@@ -92,7 +90,7 @@ Item{
                 states: [
                     State{
                         name: "*"
-                        when:  isHorizontal
+                        when:  glowItem.isHorizontal
 
                         AnchorChanges{
                             target:firstGlowCornerFull;
@@ -101,7 +99,7 @@ Item{
                     },
                     State{
                         name: "vertical"
-                        when:  isVertical
+                        when:  glowItem.isVertical
 
                         AnchorChanges{
                             target:firstGlowCornerFull;
@@ -114,13 +112,13 @@ Item{
 
         Item {
             id:mainGlowPart
-            width: isHorizontal ? glowItem.width - glowItem.size : mainGlow.fullCorner
-            height: isHorizontal ? mainGlow.fullCorner : glowItem.height - glowItem.size
+            width: glowItem.isHorizontal ? glowItem.width - glowItem.size : mainGlow.fullCorner
+            height: glowItem.isHorizontal ? mainGlow.fullCorner : glowItem.height - glowItem.size
 
             Rectangle {
                 anchors.fill: parent
                 gradient: Gradient {
-                    orientation: isHorizontal ? Gradient.Vertical : Gradient.Horizontal
+                    orientation: glowItem.isHorizontal ? Gradient.Vertical : Gradient.Horizontal
                     GradientStop { position: 0.0; color: "transparent" }
                     GradientStop { position: 0.08; color: "transparent" }
                     GradientStop { position: 0.37; color: glowItem.currentColor }
@@ -135,8 +133,8 @@ Item{
 
         Item {
             id:lastGlowCorner
-            width: isHorizontal ? mainGlow.halfCorner : mainGlow.fullCorner
-            height: isHorizontal ? mainGlow.fullCorner : mainGlow.halfCorner
+            width: glowItem.isHorizontal ? mainGlow.halfCorner : mainGlow.fullCorner
+            height: glowItem.isHorizontal ? mainGlow.fullCorner : mainGlow.halfCorner
             clip: true
 
             Item {
@@ -173,7 +171,7 @@ Item{
                 states: [
                     State{
                         name: "*"
-                        when:  isHorizontal
+                        when:  glowItem.isHorizontal
 
                         AnchorChanges{
                             target:lastGlowCornerFull;
@@ -182,7 +180,7 @@ Item{
                     },
                     State{
                         name: "vertical"
-                        when:  isVertical
+                        when:  glowItem.isVertical
 
                         AnchorChanges{
                             target:lastGlowCornerFull;
@@ -196,15 +194,17 @@ Item{
 
     //! add border around indicator without reducing its size
     Loader{
+        id: borderLoader
         anchors.centerIn: mainElement
         active: glowItem.showBorder
 
         sourceComponent:Rectangle {
-            width: mainElement.width + size
-            height: mainElement.height + size
+            id: borderRectangle
+            width: mainElement.width + borderRectangle.size
+            height: mainElement.height + borderRectangle.size
             anchors.centerIn: parent
 
-            color: contrastColorAlpha2
+            color: glowItem.contrastColorAlpha2
             radius: glowItem.roundCorners ? Math.min(width,height) / 2 : 0
 
             property int size: Math.min(2*Math.max(1,mainElement.width/5 ),
@@ -271,29 +271,29 @@ Item{
             anchors.verticalCenter: parent.verticalCenter
 
             anchors.horizontalCenterOffset: {
-                if (isHorizontal)
+                if (glowItem.isHorizontal)
                     return 0;
-                else if (location === PlasmaCore.Types.LeftEdge)
+                else if (glowItem.location === PlasmaCore.Types.LeftEdge)
                     return -glowItem.width / 7;
-                else if (location === PlasmaCore.Types.RightEdge)
+                else if (glowItem.location === PlasmaCore.Types.RightEdge)
                     return glowItem.width / 7;
 
                 return 0;
             }
             anchors.verticalCenterOffset: {
-                if (isVertical)
+                if (glowItem.isVertical)
                     return 0;
-                else if (location === PlasmaCore.Types.BottomEdge)
+                else if (glowItem.location === PlasmaCore.Types.BottomEdge)
                     return glowItem.height / 7;
-                else if (location === PlasmaCore.Types.TopEdge)
+                else if (glowItem.location === PlasmaCore.Types.TopEdge)
                     return -glowItem.height / 7;
 
                 return 0;
             }
 
-            width: isHorizontal ? Math.max(mainGlowPart.width, shadow) : shadow
-            height: isHorizontal ? shadow : Math.max(mainGlowPart.height, shadow)
-            radius: isHorizontal ? height/2 : width/2
+            width: glowItem.isHorizontal ? Math.max(mainGlowPart.width, shadow) : shadow
+            height: glowItem.isHorizontal ? shadow : Math.max(mainGlowPart.height, shadow)
+            radius: glowItem.isHorizontal ? height/2 : width/2
 
             property int shadow: glowItem.size / 3
 

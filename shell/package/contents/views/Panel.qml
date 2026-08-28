@@ -5,9 +5,7 @@
 */
 
 import QtQuick
-import QtQuick.Layouts
 
-import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg as KSvg
 
 KSvg.FrameSvgItem {

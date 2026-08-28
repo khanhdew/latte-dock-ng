@@ -13,19 +13,17 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg as KSvg
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.components as PlasmaComponents3
-import org.kde.plasma.extras as PlasmaExtras
-
-import org.kde.kquickcontrolsaddons as KQuickControlAddons
 
 import org.kde.kirigami as Kirigami
 
-import org.kde.latte.core as LatteCore
 import org.kde.latte.components as LatteComponents
 
 import "pages" as Pages
 import "../controls" as LatteExtraControls
 
 Loader {
+    id: configurationLoader
+
     active: plasmoid && plasmoid.configuration && latteView
 
     sourceComponent: FocusScope {
@@ -35,11 +33,18 @@ Loader {
         width: appliedWidth
         height: appliedHeight
         readonly property var theme: Kirigami.Theme
+        readonly property var dialogReference: dialog
 
         // Plasma 5 provided 'units' as a global context property; Plasma 6
         // removed it — expose Kirigami.Units under the same name so all
         // descendant items continue to work without individual changes.
         readonly property var units: Kirigami.Units
+
+        property var latteView: configurationLatteView
+        property var layoutsManager: configurationLayoutsManager
+        property var themeExtended: configurationThemeExtended
+        property var universalSettings: configurationUniversalSettings
+        property var viewConfig: configurationViewConfig
 
         readonly property bool basicLevel: !advancedLevel
         readonly property bool advancedLevel: universalSettings.inAdvancedModeForEditSettings
@@ -186,11 +191,8 @@ Loader {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     Layout.fillWidth: false
                     Layout.topMargin: units.smallSpacing
-                    Layout.preferredWidth: width
-                    Layout.preferredHeight: height
-
-                    width: latteTrademark.width + units.smallSpacing
-                    height: trademarkHeight
+                    Layout.preferredWidth: latteTrademark.width + units.smallSpacing
+                    Layout.preferredHeight: trademarkHeight
 
                     readonly property int trademarkHeight: 48
 
@@ -488,8 +490,13 @@ Loader {
                     id:hiddenPages
                     anchors.fill: parent
                     visible: false
+                    readonly property var dialogReference: dialog
 
                     Pages.BehaviorConfig {
+                        dialog: hiddenPages.dialogReference
+                        latteView: dialog.latteView
+                        universalSettings: dialog.universalSettings
+                        viewConfig: dialog.viewConfig
                         id: behaviorPage
                         readonly property int pageIndex:0
 
@@ -499,11 +506,18 @@ Loader {
                     }
 
                     Pages.AppearanceConfig {
+                        dialog: hiddenPages.dialogReference
+                        latteView: dialog.latteView
+                        viewConfig: dialog.viewConfig
+                        themeExtended: dialog.themeExtended
                         id: appearancePage
                         readonly property int pageIndex:1
                     }
 
                     Pages.EffectsConfig {
+                        dialog: hiddenPages.dialogReference
+                        latteView: dialog.latteView
+                        viewConfig: dialog.viewConfig
                         id: effectsPage
                         readonly property int pageIndex:2
                     }
@@ -513,6 +527,8 @@ Loader {
                         model: latteView.extendedInterface.latteTasksModel
 
                         Pages.TasksConfig {
+                            dialog: hiddenPages.dialogReference
+                            latteView: hiddenPages.dialogReference.latteView
                             readonly property int pageIndex: tabBar.visibleStaticPages+index
                         }
                     }

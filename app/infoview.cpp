@@ -78,13 +78,12 @@ InfoView::~InfoView()
 
 void InfoView::init()
 {
-    rootContext()->setContextProperty(QStringLiteral("infoWindow"), this);
-
     addLatteQmlImportPaths(engine());
 
     auto source = QUrl::fromLocalFile(m_corona->kPackage().filePath("infoviewui"));
     setSource(source);
 
+    rootObject()->setProperty("infoWindow", QVariant::fromValue(this));
     rootObject()->setProperty("message", m_message);
 
     syncGeometry();

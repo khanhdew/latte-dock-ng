@@ -60,6 +60,7 @@ private Q_SLOTS:
     void enableAutostartExitsImmediately();
     void autostartInterfacesUseXdgState();
     void autostartPreservesEntryFields();
+    void firstRunEnablesDefaultAutostart();
     void waylandCheckHasRetryMechanism();
     void normalStartupDoesNotMutateAutostart();
     void autoSizeLoopsUseInequalityNotStrictEquality();
@@ -1649,6 +1650,22 @@ void SourceContractTest::autostartPreservesEntryFields()
     QVERIFY(source.contains(QStringLiteral("writeEntry(QStringLiteral(\"Hidden\"), true)")));
     QVERIFY(!source.contains(QStringLiteral("lastModified")));
     QVERIFY(!source.contains(QStringLiteral("systemctl"), Qt::CaseInsensitive));
+}
+
+void SourceContractTest::firstRunEnablesDefaultAutostart()
+{
+    QFile manager(QStringLiteral(LATTE_SOURCE_DIR "/app/layouts/manager.cpp"));
+    QVERIFY(manager.open(QFile::ReadOnly));
+    const QString source = QString::fromUtf8(manager.readAll());
+
+    const int firstRun = source.indexOf(QStringLiteral("if (firstRun)"));
+    const int nextBranch = source.indexOf(QStringLiteral("} else if (configVer < 2"), firstRun);
+    QVERIFY(firstRun >= 0);
+    QVERIFY(nextBranch > firstRun);
+
+    const QString firstRunBody = source.mid(firstRun, nextBranch - firstRun);
+    QVERIFY(firstRunBody.contains(QStringLiteral("Layouts::Importer::enableAutostart();")));
+    QVERIFY(firstRunBody.contains(QStringLiteral("Layouts::Importer::autostartEntryExists()")));
 }
 
 void SourceContractTest::waylandCheckHasRetryMechanism()

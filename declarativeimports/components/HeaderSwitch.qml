@@ -7,11 +7,8 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2
 
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
-
-import org.kde.plasma.plasmoid
 
 import "." as LatteExtraControls
 
@@ -40,6 +37,8 @@ Item {
     property bool checked: false
     property bool isFirstSubCategory: false
 
+    // These implicit sizes intentionally define the switch component's content size.
+    // qmllint disable property-override
     readonly property int implicitWidth: row.width
 
     readonly property int implicitHeight: {
@@ -51,6 +50,7 @@ Item {
 
         return Math.max(labelText.implicitHeight, itemSwitch.implicitHeight);
     }
+    // qmllint enable property-override
 
     property string text:""
     property string tooltip:""

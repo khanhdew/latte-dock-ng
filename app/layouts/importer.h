@@ -68,6 +68,7 @@ public:
 
     static void enableAutostart();
     static void disableAutostart();
+    static bool autostartEntryExists();
     static bool isAutostartEnabled();
 
     static Importer::LatteFileVersion fileVersion(QString file);

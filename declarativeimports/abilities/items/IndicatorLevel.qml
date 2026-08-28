@@ -5,8 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.core as PlasmaCore
-
 import "./indicators" as IndicatorItem
 
 Loader {
@@ -21,4 +19,3 @@ Loader {
 
     readonly property IndicatorItem.LevelOptions level: IndicatorItem.LevelOptions{}
 }
-

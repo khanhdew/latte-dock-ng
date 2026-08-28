@@ -3,11 +3,10 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls as QQC2
 
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
 
@@ -23,8 +22,8 @@ Rectangle {
     readonly property color safeButtonTextColor: safeTextColor
     readonly property color safeButtonColor: (theme && theme.backgroundColor !== undefined) ? theme.backgroundColor : "white"
 
-    implicitWidth: buttonMetrics.implicitWidth
-    implicitHeight: buttonMetrics.implicitHeight
+    implicitWidth: mainButton.implicitWidth
+    implicitHeight: mainButton.implicitHeight
 
     property bool checked: false
     property bool checkable: false
@@ -63,29 +62,29 @@ Rectangle {
         anchors.left: Qt.application.layoutDirection === Qt.RightToLeft ? undefined : parent.left
         anchors.right: Qt.application.layoutDirection === Qt.RightToLeft ? parent.right : undefined
         LayoutMirroring.enabled: false
-        enabled: buttonEnabled
-        checked: root.checked || (buttonIsTriggeringMenu && mainComboBox.popup.visible)
-        opacity: buttonIsTransparent && !isButtonIndicatingMenuPopup ? 0 : 1
+        enabled: root.buttonEnabled
+        checked: root.checked || (root.buttonIsTriggeringMenu && mainComboBox.popup.visible)
+        opacity: root.buttonIsTransparent && !root.isButtonIndicatingMenuPopup ? 0 : 1
 
         checkable: root.checkable
 
         width: parent.width
         height: mainComboBox.height
 
-        text: root.checkable ?  " " : buttonText
-        icon.name: buttonIconSource
-        palette.button: safeButtonColor
-        palette.buttonText: safeButtonTextColor
-        palette.window: safeButtonColor
-        palette.windowText: safeTextColor
+        text: root.checkable ?  " " : root.buttonText
+        icon.name: root.buttonIconSource
+        palette.button: root.safeButtonColor
+        palette.buttonText: root.safeButtonTextColor
+        palette.window: root.safeButtonColor
+        palette.windowText: root.safeTextColor
         hoverEnabled: true
 
         QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
-        QQC2.ToolTip.visible: hovered && buttonToolTip !== ""
-        QQC2.ToolTip.text: buttonToolTip
+        QQC2.ToolTip.visible: hovered && root.buttonToolTip !== ""
+        QQC2.ToolTip.text: root.buttonToolTip
 
         onClicked: {
-            if (buttonIsTriggeringMenu) {
+            if (root.buttonIsTriggeringMenu) {
                 //! hiding combobox is triggered by default behavior
                 mainComboBox.popup.visible = !mainComboBox.popup.visible;
                 mainComboBox.down = mainComboBox.popup.visible;
@@ -96,7 +95,7 @@ Rectangle {
         onToggled: {
             if (root.checkable) {
                 checked = Qt.binding(function() {
-                    return root.checked || (buttonIsTriggeringMenu && mainComboBox.popup.visible);
+                    return root.checked || (root.buttonIsTriggeringMenu && mainComboBox.popup.visible);
                 });
             }
         }
@@ -108,7 +107,7 @@ Rectangle {
         //! the menu became hidden
         MouseArea {
             anchors.fill: parent
-            visible: parent.enabled && buttonIsTriggeringMenu && mainComboBox.popup.visible
+            visible: parent.enabled && root.buttonIsTriggeringMenu && mainComboBox.popup.visible
         }
     }
 
@@ -131,39 +130,41 @@ Rectangle {
         width:  units.iconSizes.medium - 2 * units.smallSpacing
         height: parent.height
 
-        enabled: comboBoxEnabled
-        visible: comboBoxButtonIsVisible
+        enabled: root.comboBoxEnabled
+        visible: root.comboBoxButtonIsVisible
 
-        enabledRole: comboBoxEnabledRole
-        iconRole: comboBoxIconRole
-        textRole: comboBoxTextRole
-        iconToolTipRole: comboBoxIconToolTipRole
-        iconOnlyWhenHoveredRole: comboBoxIconOnlyWhenHoveredRole
-        isSeparatorRole: comboBoxIsSeparatorRole
-        buttonIsTransparent: comboBoxButtonIsTransparent
+        enabledRole: root.comboBoxEnabledRole
+        iconRole: root.comboBoxIconRole
+        textRole: root.comboBoxTextRole
+        iconToolTipRole: root.comboBoxIconToolTipRole
+        iconOnlyWhenHoveredRole: root.comboBoxIconOnlyWhenHoveredRole
+        isSeparatorRole: root.comboBoxIsSeparatorRole
+        buttonIsTransparent: root.comboBoxButtonIsTransparent
 
-        blankSpaceForEmptyIcons: comboBoxBlankSpaceForEmptyIcons
-        forcePressed: comboBoxForcePressed
-        popUpAlignRight: comboBoxPopUpAlignRight
+        blankSpaceForEmptyIcons: root.comboBoxBlankSpaceForEmptyIcons
+        forcePressed: root.comboBoxForcePressed
+        popUpAlignRight: root.comboBoxPopUpAlignRight
         popUpRelativeX: Qt.application.layoutDirection === Qt.RightToLeft ?
-                            (popUpAlignRight ? root.width - width : 0) :
-                            (popUpAlignRight ? width : -(root.width - width))
-        popUpTextHorizontalAlignment: comboBoxPopupTextHorizontalAlignment
+                            (root.comboBoxPopUpAlignRight ? root.width - width : 0) :
+                            (root.comboBoxPopUpAlignRight ? width : -(root.width - width))
+        popUpTextHorizontalAlignment: root.comboBoxPopupTextHorizontalAlignment
 
         hideDisplayText: true
         hideSelectedItemIcon: true
 
-        minimumPopUpWidth: Math.max(comboBoxMinimumPopUpWidth, root.width)
+        minimumPopUpWidth: Math.max(root.comboBoxMinimumPopUpWidth, root.width)
 
-        onIconClicked: root.iconClicked(index);
+        function onIconClicked(index) {
+            root.iconClicked(index);
+        }
     }
 
     PlasmaComponents3.Label{
         width: labelMetrics.exceeds ? parent.width-mainComboBox.width :  parent.width
         height: parent.height
-        text: buttonText
+        text: root.buttonText
         font: mainButton.font
-        color: buttonIsTransparent ? safeTextColor : safeButtonTextColor
+        color: root.buttonIsTransparent ? root.safeTextColor : root.safeButtonTextColor
         visible: root.checkable || (mainButton.opacity === 0)
 
         elide: Text.ElideRight

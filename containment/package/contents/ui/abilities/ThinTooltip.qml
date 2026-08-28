@@ -5,10 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-
-import org.kde.latte.core as LatteCore
-
 import "./privates" as Ability
 
 Ability.ThinTooltipPrivate {

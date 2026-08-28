@@ -7,7 +7,6 @@ import QtQuick
 import QtQuick.Effects
 
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 import "code/ColorizerTools.js" as ColorizerTools
@@ -90,8 +89,7 @@ Rectangle{
                 }
 
                 PropertyChanges {
-                    target: heading
-                    anchors{ topMargin: heading.lengthEdge; bottomMargin:0; leftMargin:-units.smallSpacing; rightMargin:-0;}
+                    heading.anchors.topMargin: heading.lengthEdge; heading.anchors.bottomMargin:0; heading.anchors.leftMargin:-units.smallSpacing; heading.anchors.rightMargin:-0;
                 }
             },
             State {
@@ -104,8 +102,7 @@ Rectangle{
                 }
 
                 PropertyChanges {
-                    target: heading
-                    anchors{ topMargin:heading.lengthEdge; bottomMargin:0; leftMargin: 0; rightMargin:-units.smallSpacing;}
+                    heading.anchors.topMargin:heading.lengthEdge; heading.anchors.bottomMargin:0; heading.anchors.leftMargin: 0; heading.anchors.rightMargin:-units.smallSpacing;
                 }
             },
             State {
@@ -118,8 +115,7 @@ Rectangle{
                 }
 
                 PropertyChanges {
-                    target: heading
-                    anchors{ topMargin:0; bottomMargin:units.smallSpacing; leftMargin: heading.lengthEdge; rightMargin:0;}
+                    heading.anchors.topMargin:0; heading.anchors.bottomMargin:units.smallSpacing; heading.anchors.leftMargin: heading.lengthEdge; heading.anchors.rightMargin:0;
                 }
             },
             State {
@@ -134,8 +130,7 @@ Rectangle{
                 }
 
                 PropertyChanges {
-                    target: heading
-                    anchors{ topMargin:units.smallSpacing; bottomMargin:0; leftMargin: heading.lengthEdge; rightMargin:0;}
+                    heading.anchors.topMargin:units.smallSpacing; heading.anchors.bottomMargin:0; heading.anchors.leftMargin: heading.lengthEdge; heading.anchors.rightMargin:0;
                 }
             }
         ]

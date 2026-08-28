@@ -4,10 +4,6 @@
 */
 
 import QtQuick
-import org.kde.plasma.plasmoid
-
-import org.kde.latte.core as LatteCore
-
 import org.kde.latte.abilities.host as AbilityHost
 
 import org.kde.latte.private.containment as LatteContainment
@@ -90,4 +86,3 @@ AbilityHost.MyView {
         return hex;
     }
 }
-

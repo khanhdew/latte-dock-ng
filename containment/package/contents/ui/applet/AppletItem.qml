@@ -6,14 +6,11 @@
 
 import QtQuick
 import QtQuick.Layouts
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents
-import org.kde.kquickcontrolsaddons
 import org.kde.taskmanager as TaskManager
 
 import org.kde.latte.core as LatteCore
-import org.kde.latte.components as LatteComponents
 
 import org.kde.latte.abilities.items as AbilityItem
 
@@ -23,6 +20,19 @@ import "../debugger" as Debugger
 
 Item {
     id: appletItem
+    required property var containmentRoot
+    readonly property var containmentRootReference: containmentRoot
+    readonly property var root: containmentRoot
+    readonly property var appletItemReference: appletItem
+    readonly property var appletReference: applet
+    readonly property var communicatorReference: communicator
+    readonly property var layoutsContainerReference: layoutsContainer
+    readonly property var latteViewReference: latteView
+    readonly property var parabolicReference: parabolic
+    readonly property var metricsReference: metrics
+    readonly property var isSeparatorReference: isSeparator
+    readonly property var isMarginsAreaSeparatorReference: isMarginsAreaSeparator
+    readonly property var isInternalViewSplitterReference: isInternalViewSplitter
     width: isInternalViewSplitter ? 0 : computeWidth
     height: isInternalViewSplitter ? 0 : computeHeight
     z: isSortDragging ? 1600 : ((externalAppletDrawsAboveTasks && !isSystray) ? 1000 : 0)
@@ -1676,6 +1686,19 @@ Item {
 
             ItemWrapper{
                 id: _wrapper
+                containmentRoot: containmentRootReference
+                appletItem: appletItemReference
+                applet: appletReference
+                communicator: communicatorReference
+                layoutsContainer: layoutsContainerReference
+                latteView: latteViewReference
+                parabolic: parabolicReference
+                metrics: metricsReference
+                isSeparator: isSeparatorReference
+                isMarginsAreaSeparator: isMarginsAreaSeparatorReference
+                isInternalViewSplitter: isInternalViewSplitterReference
+                isHorizontal: root.isHorizontal
+                isVertical: root.isVertical
 
                 TitleTooltipParent{
                     id: titleTooltipParent

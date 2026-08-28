@@ -7,12 +7,9 @@
 import QtQuick
 import QtQuick.Effects
 
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 import org.kde.kirigami as Kirigami
-
-import org.kde.latte.core as LatteCore
 
 /////Removing a Window from a group////
 Item{

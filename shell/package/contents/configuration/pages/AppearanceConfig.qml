@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 /*
     SPDX-FileCopyrightText: 2016 Smith AR <audoban@openmailbox.org>
     SPDX-FileCopyrightText: 2016 Michail Vourlakos <mvourlakos@gmail.com>
@@ -7,7 +8,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2
-import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
 
@@ -17,6 +17,11 @@ import org.kde.latte.private.containment as LatteContainment
 
 PlasmaComponents.Page {
     id: page
+    required property var dialog
+    required property var latteView
+    required property var viewConfig
+    required property var themeExtended
+    readonly property var units: page.dialog.units
     width: content.width + content.Layout.leftMargin * 2
     height: content.height + units.smallSpacing * 2
 
@@ -26,14 +31,14 @@ PlasmaComponents.Page {
         running: false
         repeat: false
         interval: 400
-        onTriggered: viewConfig.syncGeometry()
+        onTriggered: page.viewConfig.syncGeometry()
     }
 
     ColumnLayout {
         id: content
 
-        width: (dialog.appliedWidth - units.smallSpacing * 2) - Layout.leftMargin * 2
-        spacing: dialog.subGroupSpacing
+        width: (page.dialog.appliedWidth - units.smallSpacing * 2) - Layout.leftMargin * 2
+        spacing: page.dialog.subGroupSpacing
         anchors.horizontalCenter: parent.horizontalCenter
         Layout.leftMargin: units.smallSpacing * 2
 
@@ -51,7 +56,7 @@ PlasmaComponents.Page {
         }
 
         function applyDockStylePreset(styleValue, previousStyleValue) {
-            if (!latteView || !latteView.indicator) {
+            if (!page.latteView || !page.latteView.indicator) {
                 return;
             }
 
@@ -66,10 +71,10 @@ PlasmaComponents.Page {
                 plasmoid.configuration.iconSize = 64;
             }
 
-            latteView.indicator.type = "org.kde.latte.default";
+            page.latteView.indicator.type = "org.kde.latte.default";
 
-            if (latteView.indicator.configuration && latteView.indicator.configuration.activeStyle !== undefined) {
-                latteView.indicator.configuration.activeStyle = targetStyle === 1 ? 1 : 0;
+            if (page.latteView.indicator.configuration && page.latteView.indicator.configuration.activeStyle !== undefined) {
+                page.latteView.indicator.configuration.activeStyle = targetStyle === 1 ? 1 : 0;
             }
 
             if (targetStyle === 1) { // Modern
@@ -124,7 +129,7 @@ PlasmaComponents.Page {
 
                 PlasmaComponents.Label {
                     id: dockStyleLabel
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     text: i18nc("dock visual style selector", "Dock Style")
                     horizontalAlignment: Text.AlignLeft
@@ -133,7 +138,7 @@ PlasmaComponents.Page {
                 QQC2.ComboBox {
                     id: dockStyleCombo
                     Layout.fillWidth: true
-                    Layout.minimumWidth: Math.max(dialog.optionsWidth, units.gridUnit * 16)
+                    Layout.minimumWidth: Math.max(page.dialog.optionsWidth, units.gridUnit * 16)
                     Layout.preferredWidth: Layout.minimumWidth
                     Layout.minimumHeight: Math.max(30, Math.round(units.gridUnit * 2.1))
                     model: [
@@ -150,10 +155,22 @@ PlasmaComponents.Page {
                     currentIndex: content.dockStyleIndex(plasmoid.configuration.dockStyle)
 
                     delegate: QQC2.ItemDelegate {
+                        id: dockStyleDelegate
+                        required property int index
+                        required property var modelData
                         width: dockStyleCombo.popup.width
                         height: Math.max(30, Math.round(units.gridUnit * 2.2))
                         text: modelData.name
                         highlighted: dockStyleCombo.highlightedIndex === index
+
+                        contentItem: QQC2.Label {
+                            text: dockStyleDelegate.text
+                            color: dockStyleDelegate.highlighted
+                                   ? dockStyleDelegate.palette.highlightedText
+                                   : dockStyleDelegate.palette.text
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                        }
                     }
 
                     Component.onCompleted: {
@@ -174,7 +191,7 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
                     enabled: proportionSizeSlider.value === 1
@@ -191,7 +208,7 @@ PlasmaComponents.Page {
                         value: 2 * Math.round(plasmoid.configuration.iconSize / 2)
                         from: 16
                         to: 512
-                        stepSize: dialog.advancedLevel || (plasmoid.configuration.iconSize % 8 !== 0) ? 2 : 8
+                        stepSize: page.dialog.advancedLevel || (plasmoid.configuration.iconSize % 8 !== 0) ? 2 : 8
                         wheelEnabled: false
 
                         function updateIconSize() {
@@ -223,10 +240,10 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
-                    visible: dialog.advancedLevel || plasmoid.configuration.proportionIconSize>0
+                    visible: page.dialog.advancedLevel || plasmoid.configuration.proportionIconSize>0
 
                     PlasmaComponents.Label {
                         text: i18nc("relative size", "Relative size")
@@ -239,7 +256,7 @@ PlasmaComponents.Page {
                         Layout.fillWidth: true
                         value: plasmoid.configuration.proportionIconSize
                         from: 1.0
-                        to: (latteView.visibility.mode === LatteCore.types.SidebarOnDemand || latteView.visibility.mode === LatteCore.types.SidebarAutoHide)  ? 25 : 12
+                        to: (page.latteView.visibility.mode === LatteCore.types.SidebarOnDemand || page.latteView.visibility.mode === LatteCore.types.SidebarAutoHide)  ? 25 : 12
                         stepSize: 0.1
                         wheelEnabled: false
 
@@ -273,7 +290,7 @@ PlasmaComponents.Page {
 
                         text: proportionSizeSlider.value !== proportionSizeSlider.from ?
                                   (absoluteSizeLblMouseArea.containsMouse ?
-                                       i18nc("number in pixels, e.g. 64 px.","%1 px.", latteView.metrics.maxIconSize) :
+                                       i18nc("number in pixels, e.g. 64 px.","%1 px.", page.latteView.metrics.maxIconSize) :
                                        i18nc("number in percentage, e.g. 85 %","%1 %", proportionSizeSlider.value.toFixed(1))) :
                                   i18nc("no value in percentage","--- %")
                         horizontalAlignment: Text.AlignRight
@@ -288,7 +305,7 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
                     enabled: plasmoid.configuration.animationsEnabled
@@ -359,7 +376,7 @@ PlasmaComponents.Page {
                                                                offsetLbl.implicitWidth)
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
 
@@ -382,7 +399,7 @@ PlasmaComponents.Page {
                         readonly property int localMinValue: 1
 
                         function updateMaxLength() {
-                            if (!pressed && viewConfig.isReady) {
+                            if (!pressed && page.viewConfig.isReady) {
                                 plasmoid.configuration.maxLength = Math.max(value, plasmoid.configuration.minLength, localMinValue);
                                 var newTotal = Math.abs(plasmoid.configuration.offset) + value;
 
@@ -468,10 +485,10 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
-                    visible: dialog.advancedLevel
+                    visible: page.dialog.advancedLevel
                     enabled: (plasmoid.configuration.alignment !== LatteCore.types.Justify)
 
                     PlasmaComponents.Label {
@@ -491,7 +508,7 @@ PlasmaComponents.Page {
                         wheelEnabled: false
 
                         function updateMinLength() {
-                            if (!pressed  && viewConfig.isReady) {
+                            if (!pressed  && page.viewConfig.isReady) {
                                 plasmoid.configuration.minLength = value; //Math.min(value, plasmoid.configuration.maxLength);
 
                                 if (plasmoid.configuration.minLength > maxLengthSlider.value) {
@@ -551,10 +568,10 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
-                    visible: dialog.advancedLevel
+                    visible: page.dialog.advancedLevel
                     enabled: offsetSlider.to > offsetSlider.from
 
                     PlasmaComponents.Label {
@@ -574,7 +591,7 @@ PlasmaComponents.Page {
                         //! these properties are used in order to not update view_offset incorrectly when the primary config view
                         //! is changing between different views
                         property bool userInputIsValid: false
-                        readonly property bool sliderIsReady: viewConfig.isReady && (from===fromValue) && (to===toValue)
+                        readonly property bool sliderIsReady: page.viewConfig.isReady && (from===fromValue) && (to===toValue)
 
                         readonly property int fromValue: ((plasmoid.configuration.alignment === LatteCore.types.Center)
                                                           || (plasmoid.configuration.alignment === LatteCore.types.Justify)) ? -offsetSlider.screenLengthMaxFactor :  0
@@ -587,14 +604,14 @@ PlasmaComponents.Page {
                         Binding {
                             target: offsetSlider
                             property: "from"
-                            when: viewConfig.isReady
+                            when: page.viewConfig.isReady
                             value: offsetSlider.fromValue
                         }
 
                         Binding {
                             target: offsetSlider
                             property: "to"
-                            when: viewConfig.isReady
+                            when: page.viewConfig.isReady
                             value: offsetSlider.toValue
                         }
 
@@ -681,20 +698,20 @@ PlasmaComponents.Page {
                 }
             }
             LatteComponents.SubHeader {
-                visible: dialog.advancedLevel
+                visible: page.dialog.advancedLevel
                 text: i18nc("@label dynamic length configuration", "Dynamic Length Adjustments")
                 enabled: true
             }
 
             LatteComponents.CheckBoxesColumn {
-                enabled: dialog.advancedLevel;
+                enabled: page.dialog.advancedLevel;
                 LatteComponents.CheckBox {
                     id: maximizeWhenMaximizedChk
-                    Layout.maximumWidth: dialog.optionsWidth
+                    Layout.maximumWidth: page.dialog.optionsWidth
                     text: i18nc("@label", "Maximize panel length in presence of maximized windows")
                     tooltip: i18n("Change panel length to maximum screen size when there is a maximized window present on the screen")
                     enabled: showBackground.checked
-                    visible: dialog.advancedLevel
+                    visible: page.dialog.advancedLevel
                     value: plasmoid.configuration.maximizeWhenMaximized
 
                     onClicked: {
@@ -711,7 +728,7 @@ PlasmaComponents.Page {
             Layout.fillWidth: true
 
             spacing: units.smallSpacing
-            visible: dialog.advancedLevel
+            visible: page.dialog.advancedLevel
 
             readonly property int maxMargin: 25
 
@@ -725,7 +742,7 @@ PlasmaComponents.Page {
                 spacing: 0
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
 
                     spacing: units.smallSpacing
@@ -760,7 +777,7 @@ PlasmaComponents.Page {
                         Layout.minimumWidth: Kirigami.Units.gridUnit * 4
                         Layout.maximumWidth: Kirigami.Units.gridUnit * 4
 
-                        readonly property int currentValueInPixels: (lengthExtMarginSlider.value/100) * latteView.metrics.maxIconSize
+                        readonly property int currentValueInPixels: (lengthExtMarginSlider.value/100) * page.latteView.metrics.maxIconSize
 
                         MouseArea {
                             id: lengthMarginLblMouseArea
@@ -771,7 +788,7 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
 
@@ -789,7 +806,7 @@ PlasmaComponents.Page {
                         to: 60
                         stepSize: 1
                         wheelEnabled: false
-                        minimumInternalValue: latteView.indicator.info.minThicknessPadding * 100
+                        minimumInternalValue: page.latteView.indicator.info.minThicknessPadding * 100
 
                         onPressedChanged: {
                             if (!pressed) {
@@ -807,7 +824,7 @@ PlasmaComponents.Page {
                         Layout.maximumWidth: Kirigami.Units.gridUnit * 4
 
                         readonly property int currentValue: Math.max(thickMarginSlider.minimumInternalValue, thickMarginSlider.value)
-                        readonly property int currentValueInPixels: (currentValue/100) * latteView.metrics.maxIconSize
+                        readonly property int currentValueInPixels: (currentValue/100) * page.latteView.metrics.maxIconSize
 
                         MouseArea {
                             id: thickMarginLblMouseArea
@@ -818,7 +835,7 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     spacing: units.smallSpacing
 
@@ -860,7 +877,7 @@ PlasmaComponents.Page {
         //! BEGIN: Colors
         ColumnLayout {
             spacing: units.smallSpacing
-            visible: dialog.advancedLevel
+            visible: page.dialog.advancedLevel
 
             LatteComponents.Header {
                 Layout.columnSpan: 4
@@ -869,7 +886,7 @@ PlasmaComponents.Page {
 
             GridLayout {
                 id: colorsGridLayout
-                Layout.minimumWidth: dialog.optionsWidth
+                Layout.minimumWidth: page.dialog.optionsWidth
                 Layout.maximumWidth: Layout.minimumWidth
                 Layout.leftMargin: units.smallSpacing * 2
                 Layout.rightMargin: units.smallSpacing * 2
@@ -939,7 +956,7 @@ PlasmaComponents.Page {
 
             LatteComponents.HeaderSwitch {
                 id: showBackground
-                Layout.minimumWidth: dialog.optionsWidth + 2 *units.smallSpacing
+                Layout.minimumWidth: page.dialog.optionsWidth + 2 *units.smallSpacing
                 Layout.maximumWidth: Layout.minimumWidth
                 Layout.minimumHeight: implicitHeight
                 Layout.bottomMargin: units.smallSpacing
@@ -958,7 +975,7 @@ PlasmaComponents.Page {
                 spacing: 0
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
 
                     PlasmaComponents.Label {
@@ -1006,7 +1023,7 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
 
                     PlasmaComponents.Label {
@@ -1055,9 +1072,9 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
-                    visible: dialog.advancedLevel && dialog.kirigamiLibraryIsFound
+                    visible: page.dialog.advancedLevel && page.dialog.kirigamiLibraryIsFound
 
                     PlasmaComponents.Label {
                         text: i18n("Radius")
@@ -1097,9 +1114,9 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
-                    visible: dialog.advancedLevel && dialog.kirigamiLibraryIsFound
+                    visible: page.dialog.advancedLevel && page.dialog.kirigamiLibraryIsFound
 
                     PlasmaComponents.Label {
                         text: i18n("Shadow")
@@ -1139,13 +1156,13 @@ PlasmaComponents.Page {
                 }
 
                 RowLayout {
-                    Layout.minimumWidth: dialog.optionsWidth
+                    Layout.minimumWidth: page.dialog.optionsWidth
                     Layout.maximumWidth: Layout.minimumWidth
                     Layout.topMargin: units.smallSpacing
                     spacing: 2
-                    visible: dialog.advancedLevel
+                    visible: page.dialog.advancedLevel
 
-                    readonly property int buttonSize: (dialog.optionsWidth - (2 * spacing)) / children.length
+                    readonly property int buttonSize: (page.dialog.optionsWidth - (2 * spacing)) / children.length
 
                     LatteComponents.Button {
                         id: panelBlur
@@ -1172,7 +1189,7 @@ PlasmaComponents.Page {
                         text: i18n("Shadows")
                         tooltip: i18n("Background shows its shadows")
                         checkable: true
-                        enabled: showBackground.checked && themeExtended.hasShadow
+                        enabled: showBackground.checked && page.themeExtended.hasShadow
 
                         readonly property int panelShadows: plasmoid.configuration.panelShadows
 
@@ -1219,18 +1236,18 @@ PlasmaComponents.Page {
                 }
 
                 LatteComponents.SubHeader {
-                    visible: dialog.advancedLevel
+                    visible: page.dialog.advancedLevel
                     text: i18nc("dynamic visibility for background", "Dynamic Visibility")
                 }
 
                 LatteComponents.CheckBoxesColumn {
                     LatteComponents.CheckBox {
                         id: solidForMaximizedChk
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         text: i18n("Prefer opaque background when touching any window")
                         tooltip: i18n("Background removes its transparency setting when a window is touching")
                         enabled: showBackground.checked
-                        visible: dialog.advancedLevel
+                        visible: page.dialog.advancedLevel
                         value: plasmoid.configuration.solidBackgroundForMaximized
 
                         onClicked: {
@@ -1240,11 +1257,11 @@ PlasmaComponents.Page {
 
                     LatteComponents.CheckBox {
                         id: onlyOnMaximizedChk
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         text: i18n("Hide background when not needed")
                         tooltip: i18n("Background becomes hidden except when a window is touching or the desktop background is busy")
                         enabled: showBackground.checked
-                        visible: dialog.advancedLevel
+                        visible: page.dialog.advancedLevel
                         value: plasmoid.configuration.backgroundOnlyOnMaximized
 
                         onClicked: {
@@ -1254,11 +1271,11 @@ PlasmaComponents.Page {
 
                     LatteComponents.CheckBox {
                         id: hideShadowsOnMaximizedChk
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         text: i18n("Hide background shadow for maximized windows")
                         tooltip: i18n("Background shadows become hidden when an active maximized window is touching the view")
                         enabled: showBackground.checked
-                        visible: dialog.advancedLevel
+                        visible: page.dialog.advancedLevel
                         value: plasmoid.configuration.disablePanelShadowForMaximized
 
                         onClicked: {
@@ -1268,17 +1285,17 @@ PlasmaComponents.Page {
                 }
 
                 LatteComponents.SubHeader {
-                    visible: dialog.advancedLevel
+                    visible: page.dialog.advancedLevel
                     text: i18n("Exceptions")
                 }
 
                 LatteComponents.CheckBox {
                     id: solidForPopupsChk
-                    Layout.maximumWidth: dialog.optionsWidth
+                    Layout.maximumWidth: page.dialog.optionsWidth
                     text: i18n("Prefer Plasma background and colors for expanded applets")
                     tooltip: i18n("Background becomes opaque in plasma style when applets are expanded")
                     enabled: showBackground.checked
-                    visible: dialog.advancedLevel
+                    visible: page.dialog.advancedLevel
                     value: plasmoid.configuration.plasmaBackgroundForPopups
 
                     onClicked: {

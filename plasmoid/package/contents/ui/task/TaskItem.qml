@@ -5,11 +5,8 @@
 */
 
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls as QtControls
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.plasmoid
 
 import org.kde.latte.core as LatteCore
 import org.kde.latte.private.tasks as LatteTasks

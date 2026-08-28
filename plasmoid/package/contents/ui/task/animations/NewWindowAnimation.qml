@@ -6,10 +6,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-
-import org.kde.plasma.core as PlasmaCore
-
 ////////////////// new window and needs attention animation
 Item{
     id:newWindowAnimation

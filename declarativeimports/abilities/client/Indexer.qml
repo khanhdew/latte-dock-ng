@@ -43,13 +43,13 @@ AbilityDefinition.Indexer {
 
     onIsActiveChanged: {
         if (isActive) {
-            bridge.indexer.client = indexer;
+            bridge.indexer.client = _indexer;
         }
     }
 
     Component.onCompleted: {
         if (isActive) {
-            bridge.indexer.client = indexer;
+            bridge.indexer.client = _indexer;
         }
     }
 
@@ -62,7 +62,7 @@ AbilityDefinition.Indexer {
     Binding {
         target: _privates
         property: "firstTailItemIsSeparator"
-        when: isReady
+        when: _indexer.isReady
         value: {
             var _t = _indexer.reorderToken;
             if (_indexer.visibleItemsCount === _indexer.layout.children.length) {
@@ -82,7 +82,7 @@ AbilityDefinition.Indexer {
     Binding {
         target: _privates
         property: "lastHeadItemIsSeparator"
-        when: isReady
+        when: _indexer.isReady
         value: {
             var _t = _indexer.reorderToken;
             if (_indexer.visibleItemsCount === _indexer.layout.children.length) {
@@ -104,12 +104,12 @@ AbilityDefinition.Indexer {
     Binding {
         target: _privates
         property: "firstVisibleItemIndex"
-        when: isReady
+        when: _indexer.isReady
         value: {
             var _t = _indexer.reorderToken;
-            var ind = maxIndex;
-            for(var i=0; i<layout.children.length; ++i) {
-                var item = layout.children[i];
+            var ind = _indexer.maxIndex;
+            for(var i=0; i<_indexer.layout.children.length; ++i) {
+                var item = _indexer.layout.children[i];
                 if (item && item.itemIndex>=0
                         && !item.isSeparator /*not using "separators" array to avoid binding loops*/
                         && !item.isHidden /*not using "hidden" array to avoid binding loops*/
@@ -118,20 +118,20 @@ AbilityDefinition.Indexer {
                 }
             }
 
-            return ind === maxIndex ? -1 : ind;
+            return ind === _indexer.maxIndex ? -1 : ind;
         }
     }
 
     Binding {
         target: _privates
         property: "lastVisibleItemIndex"
-        when: isReady
+        when: _indexer.isReady
         value: {
             var _t = _indexer.reorderToken;
             var ind = -1;
 
-            for(var i=0; i<layout.children.length; ++i) {
-                var item = layout.children[i];
+            for(var i=0; i<_indexer.layout.children.length; ++i) {
+                var item = _indexer.layout.children[i];
 
                 if (item && item.itemIndex>=0
                         && !item.isSeparator /*not using "separators" array to avoid binding loops*/
@@ -151,11 +151,11 @@ AbilityDefinition.Indexer {
         property: "visibleItemsCount"
         value: {
             var count = 0;
-            for(var i=0; i<layout.children.length; ++i) {
-                var item = layout.children[i];
+            for(var i=0; i<_indexer.layout.children.length; ++i) {
+                var item = _indexer.layout.children[i];
                 if (item && item.itemIndex>=0
-                        && separators.indexOf(item.itemIndex)<0
-                        && hidden.indexOf(item.itemIndex)<0) {
+                        && _indexer.separators.indexOf(item.itemIndex)<0
+                        && _indexer.hidden.indexOf(item.itemIndex)<0) {
                     count = count + 1;
                 }
             }
@@ -169,8 +169,8 @@ AbilityDefinition.Indexer {
         property: "itemsCount"
         value: {
             var count = 0;
-            for(var i=0; i<layout.children.length; ++i) {
-                var item = layout.children[i];
+            for(var i=0; i<_indexer.layout.children.length; ++i) {
+                var item = _indexer.layout.children[i];
                 if (item && item.itemIndex>=0) {
                     count = count + 1;
                 }
@@ -183,13 +183,13 @@ AbilityDefinition.Indexer {
     Binding {
         target: _indexer
         property: "hidden"
-        when: isReady
+        when: _indexer.isReady
         value: {
             var _t = _indexer.reorderToken;
             var hdns = [];
 
-            for (var i=0; i<layout.children.length; ++i){
-                var item = layout.children[i];
+            for (var i=0; i<_indexer.layout.children.length; ++i){
+                var item = _indexer.layout.children[i];
                 if (item && (item.isHidden || item.isSeparatorHidden) && item.itemIndex>=0 && hdns.indexOf(item.itemIndex) < 0) {
                     hdns.push(item.itemIndex);
                 }
@@ -202,13 +202,13 @@ AbilityDefinition.Indexer {
     Binding {
         target: _indexer
         property: "separators"
-        when: isReady
+        when: _indexer.isReady
         value: {
             var _t = _indexer.reorderToken;
             var seps = [];
 
-            for (var i=0; i<layout.children.length; ++i){
-                var item = layout.children[i];
+            for (var i=0; i<_indexer.layout.children.length; ++i){
+                var item = _indexer.layout.children[i];
                 if (item && item.isSeparator && item.itemIndex>=0 && seps.indexOf(item.itemIndex) < 0) {
                     seps.push(item.itemIndex);
                 }

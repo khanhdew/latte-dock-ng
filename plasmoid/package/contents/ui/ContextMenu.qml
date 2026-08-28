@@ -14,13 +14,16 @@ import org.kde.plasma.private.mpris as Mpris
 import org.kde.activities as Activities
 import org.kde.taskmanager as TaskManager
 
-import org.kde.latte.core as LatteCore
-import org.kde.latte.private.tasks as LatteTasks
-
 import "../code/activitiesTools.js" as ActivitiesTools
 
 PlasmaExtras.Menu {
     id: menu
+
+    required property var root
+    required property var plasmoid
+    required property var tasksModel
+    required property var virtualDesktopInfo
+    required property var activityInfo
 
     property bool changingLayout: false
 
@@ -665,7 +668,7 @@ PlasmaExtras.Menu {
     }
 
     readonly property var showAllPlacesConnection: Connections {
-        target: backend
+        target: menu.backend
 
         function onShowAllPlaces() {
             menu.requestExpandedPlacesMenu();
@@ -690,7 +693,7 @@ PlasmaExtras.Menu {
 
     PlasmaExtras.MenuItem {
         id: startNewInstanceItem
-        visible: visualParent && canLaunchNewWindow()
+        visible: menu.visualParent && canLaunchNewWindow()
 
         enabled: visible
 
@@ -704,9 +707,9 @@ PlasmaExtras.Menu {
         id: virtualDesktopsMenuItem
 
         visible: virtualDesktopInfo.numberOfDesktops > 1
-                 && (visualParent && isWindowItem()
+                 && (menu.visualParent && isWindowItem()
                      && !isStartupItem()
-                     && get(atm.IsVirtualDesktopsChangeable) === true)
+                     && get(menu.atm.IsVirtualDesktopsChangeable) === true)
 
         enabled: visible
 
@@ -734,7 +737,7 @@ PlasmaExtras.Menu {
                 var menuItem = menu.newMenuItem(virtualDesktopsMenu);
                 menuItem.text = i18n("Move &To Current Desktop");
                 menuItem.enabled = Qt.binding(function() {
-                    var vds = menu.get(atm.VirtualDesktops);
+                    var vds = menu.get(menu.atm.VirtualDesktops);
                     return menu.visualParent && (vds !== undefined) && vds.indexOf(virtualDesktopInfo.currentDesktop) == -1;
                 });
                 menuItem.clicked.connect(function() {
@@ -750,7 +753,7 @@ PlasmaExtras.Menu {
                 menuItem.clicked.connect(function() {
                     tasksModel.requestVirtualDesktops(menu.modelIndex, []);
                 });
-                backend.setActionGroup(menuItem.action);
+                menu.backend.setActionGroup(menuItem.action);
 
                 menu.newSeparator(virtualDesktopsMenu);
 
@@ -761,7 +764,7 @@ PlasmaExtras.Menu {
                     menuItem.checkable = true;
                     menuItem.checked = Qt.binding((function(i) {
                         return function() {
-                            return (menu.visualParent && menu.get(atm.VirtualDesktops).indexOf(virtualDesktopInfo.desktopIds[i]) > -1);
+                            return (menu.visualParent && menu.get(menu.atm.VirtualDesktops).indexOf(virtualDesktopInfo.desktopIds[i]) > -1);
                         };
                     })(i));
                     menuItem.clicked.connect((function(i) {
@@ -769,7 +772,7 @@ PlasmaExtras.Menu {
                             return tasksModel.requestVirtualDesktops(menu.modelIndex, [virtualDesktopInfo.desktopIds[i]]);
                         };
                     })(i));
-                    backend.setActionGroup(menuItem.action);
+                    menu.backend.setActionGroup(menuItem.action);
                 }
 
                 menu.newSeparator(virtualDesktopsMenu);
@@ -790,7 +793,7 @@ PlasmaExtras.Menu {
         id: activitiesDesktopsMenuItem
 
         visible: activityInfo.numberOfRunningActivities > 1
-                 && (visualParent && isWindowItem()
+                 && (menu.visualParent && isWindowItem()
                      && !isStartupItem())
                  && !root.disableAllWindowsFunctionality
 
@@ -809,6 +812,9 @@ PlasmaExtras.Menu {
 
             visualParent: activitiesDesktopsMenuItem.action
 
+            // Plasma exposes action model data through a QVariant-backed
+            // runtime property; qmllint cannot resolve its Activities field.
+            // qmllint disable prefixed-import-type
             function refresh() {
                 clearMenuItems();
 
@@ -878,6 +884,7 @@ PlasmaExtras.Menu {
 
                 menu.newSeparator(activitiesDesktopsMenu);
             }
+            // qmllint enable prefixed-import-type
 
             Component.onCompleted: refresh()
         }
@@ -886,7 +893,7 @@ PlasmaExtras.Menu {
     PlasmaExtras.MenuItem {
         id: moreActionsMenuItem
 
-        visible: (visualParent
+        visible: (menu.visualParent
                   && isWindowItem()
                   && !isStartupItem()
                   && root.showWindowActions
@@ -919,16 +926,16 @@ PlasmaExtras.Menu {
             }
 
             PlasmaExtras.MenuItem {
-                visible: (visualParent
+                visible: (menu.visualParent
                           && isWindowItem()
                           && !isStartupItem()
                           && root.showWindowActions
                           && !root.disableAllWindowsFunctionality)
 
-                enabled: visualParent && visualParent.m.IsMaximizable === true
+                enabled: menu.visualParent && menu.visualParent.m.IsMaximizable === true
 
                 checkable: true
-                checked: visualParent && visualParent.m.IsMaximized === true
+                checked: menu.visualParent && menu.visualParent.m.IsMaximized === true
 
                 text: i18n("Ma&ximize")
                 icon: "window-maximize"
@@ -937,16 +944,16 @@ PlasmaExtras.Menu {
             }
 
             PlasmaExtras.MenuItem {
-                visible: (visualParent
+                visible: (menu.visualParent
                           && isWindowItem()
                           && !isStartupItem()
                           && root.showWindowActions
                           && !root.disableAllWindowsFunctionality)
 
-                enabled: visualParent && visualParent.m.IsMinimizable === true
+                enabled: menu.visualParent && menu.visualParent.m.IsMinimizable === true
 
                 checkable: true
-                checked: visualParent && visualParent.m.IsMinimized === true
+                checked: menu.visualParent && menu.visualParent.m.IsMinimized === true
 
                 text: i18n("Mi&nimize")
                 icon: "window-minimize"
@@ -1000,13 +1007,13 @@ PlasmaExtras.Menu {
 
             PlasmaExtras.MenuItem {
                 enabled: menu.visualParent
-                         && typeof atm.CanSetNoBoder !== "undefined"
-                         && get(atm.CanSetNoBoder) === true
+                         && typeof menu.atm.CanSetNoBoder !== "undefined"
+                         && get(menu.atm.CanSetNoBoder) === true
 
                 checkable: true
                 checked: menu.visualParent
-                         && typeof atm.HasNoBorder !== "undefined"
-                         && get(atm.HasNoBorder) === true
+                         && typeof menu.atm.HasNoBorder !== "undefined"
+                         && get(menu.atm.HasNoBorder) === true
 
                 text: i18n("&No Titlebar and Frame")
                 icon: "edit-none-border"
@@ -1023,8 +1030,8 @@ PlasmaExtras.Menu {
 
                 checkable: true
                 checked: menu.visualParent
-                         && typeof atm.IsExcludedFromCapture !== "undefined"
-                         && get(atm.IsExcludedFromCapture) === true
+                         && typeof menu.atm.IsExcludedFromCapture !== "undefined"
+                         && get(menu.atm.IsExcludedFromCapture) === true
                 visible: Qt.platform.pluginName === "wayland"
 
                 text: i18n("&Hide from Screencast")
@@ -1067,12 +1074,12 @@ PlasmaExtras.Menu {
     PlasmaExtras.MenuItem {
         id: launcherToggleAction
 
-        visible: visualParent
-                 && get(atm.IsStartup) !== true
+        visible: menu.visualParent
+                 && get(menu.atm.IsStartup) !== true
                  && (activityInfo.numberOfRunningActivities < 2)
         //&& plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
 
-        enabled: visualParent && launcherUrlForPin() !== ""
+        enabled: menu.visualParent && launcherUrlForPin() !== ""
 
         checkable: true
 
@@ -1101,9 +1108,9 @@ PlasmaExtras.Menu {
         text: i18n("&Pin Launcher")
         icon: "window-pin"
 
-        visible: visualParent && (!visualParent.isSeparator || (visualParent.isSeparator && root.inEditMode))
+        visible: menu.visualParent && (!menu.visualParent.isSeparator || (menu.visualParent.isSeparator && root.inEditMode))
         // && get(atm.IsLauncher) !== true
-                 && get(atm.IsStartup) !== true
+                 && get(menu.atm.IsStartup) !== true
                  && plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
                  && (activityInfo.numberOfRunningActivities >= 2)
 
@@ -1176,7 +1183,7 @@ PlasmaExtras.Menu {
     }
 
     PlasmaExtras.MenuItem {
-        visible: (visualParent && !visualParent.isSeparator && get(atm.IsLauncher) === true)
+        visible: (menu.visualParent && !menu.visualParent.isSeparator && get(menu.atm.IsLauncher) === true)
                  && (activityInfo.numberOfRunningActivities >= 2)
                  && plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
 
@@ -1184,7 +1191,7 @@ PlasmaExtras.Menu {
         icon: "window-unpin"
 
         onClicked: {
-            appletAbilities.launchers.removeLauncher(get(atm.LauncherUrlWithoutIcon));
+            appletAbilities.launchers.removeLauncher(get(menu.atm.LauncherUrlWithoutIcon));
         }
     }
 
@@ -1192,48 +1199,48 @@ PlasmaExtras.Menu {
 
     PlasmaExtras.MenuItem {
         id: addTailInternalSeparatorItem
-        visible: supportsLauncherSeparators() && !visualParent.tailItemIsSeparator
+        visible: supportsLauncherSeparators() && !menu.visualParent.tailItemIsSeparator
         icon: "add"
-        text: i18nc("add separator","Add %1", tailSeparatorText)
+        text: i18nc("add separator","Add %1", menu.tailSeparatorText)
 
         onClicked: {
             if (!supportsLauncherSeparators()) {
                 return;
             }
-            var pos = visualParent.itemIndex;
+            var pos = menu.visualParent.itemIndex;
             addTailSeparatorAtAppletBoundary(pos);
         }
     }
 
     PlasmaExtras.MenuItem {
         id: addHeadInternalSeparatorItem
-        visible: supportsLauncherSeparators() && !visualParent.headItemIsSeparator
+        visible: supportsLauncherSeparators() && !menu.visualParent.headItemIsSeparator
         icon: "add"
-        text: i18nc("add separator","Add %1", headSeparatorText)
+        text: i18nc("add separator","Add %1", menu.headSeparatorText)
 
         onClicked: {
             if (!supportsLauncherSeparators()) {
                 return;
             }
-            var pos = visualParent.itemIndex;
+            var pos = menu.visualParent.itemIndex;
             addHeadSeparatorAtAppletBoundary(pos);
         }
     }
 
     PlasmaExtras.MenuItem {
         id: removeFollowingInternalSeparatorItem
-        visible: supportsLauncherSeparators() && visualParent.headItemIsSeparator
+        visible: supportsLauncherSeparators() && menu.visualParent.headItemIsSeparator
 
         icon: "remove"
-        text: i18nc("remove separator", "Remove %1", headSeparatorText)
+        text: i18nc("remove separator", "Remove %1", menu.headSeparatorText)
 
         onClicked: {
             if (!supportsLauncherSeparators()) {
                 return;
             }
-            if (visualParent.headItemIsSeparator) {
+            if (menu.visualParent.headItemIsSeparator) {
                 // Prefer launcher-local separator removal first.
-                var rightIndex = visualParent.itemIndex + 1;
+                var rightIndex = menu.visualParent.itemIndex + 1;
                 if (!appletAbilities.launchers.removeInternalSeparatorAtPos(rightIndex)) {
                     // Fall back to containment boundary separator for edge cases
                     // where the separator belongs to applet boundaries.
@@ -1245,18 +1252,18 @@ PlasmaExtras.Menu {
 
     PlasmaExtras.MenuItem {
         id: removeTailInternalSeparatorItem
-        visible: supportsLauncherSeparators() && visualParent.tailItemIsSeparator
+        visible: supportsLauncherSeparators() && menu.visualParent.tailItemIsSeparator
 
         icon: "remove"
-        text: i18nc("remove separator", "Remove %1", tailSeparatorText)
+        text: i18nc("remove separator", "Remove %1", menu.tailSeparatorText)
 
         onClicked: {
             if (!supportsLauncherSeparators()) {
                 return;
             }
-            if (visualParent.tailItemIsSeparator) {
+            if (menu.visualParent.tailItemIsSeparator) {
                 // Prefer launcher-local separator removal first.
-                var leftIndex = visualParent.itemIndex - 1;
+                var leftIndex = menu.visualParent.itemIndex - 1;
                 if (!appletAbilities.launchers.removeInternalSeparatorAtPos(leftIndex)) {
                     // Fall back to containment boundary separator for edge cases
                     // where the separator belongs to applet boundaries.
@@ -1319,11 +1326,11 @@ PlasmaExtras.Menu {
     //!comparing with the design decisions of other taskmanagers
     PlasmaExtras.MenuItem {
         id: closeWindowItem
-        visible: (visualParent && isWindowItem() && !isStartupItem()) && !root.disableAllWindowsFunctionality
+        visible: (menu.visualParent && isWindowItem() && !isStartupItem()) && !root.disableAllWindowsFunctionality
 
-        enabled: visualParent && visualParent.m.IsClosable === true
+        enabled: menu.visualParent && menu.visualParent.m.IsClosable === true
 
-        text: get(atm.IsGroupParent) === true ? i18n("&Close All") : i18n("&Close")
+        text: get(menu.atm.IsGroupParent) === true ? i18n("&Close All") : i18n("&Close")
         icon: "window-close"
 
         onClicked: {

@@ -16,10 +16,27 @@ import org.kde.latte.private.containment as LatteContainment
 import "canvas" as CanvasComponent
 
 Loader {
-    active: plasmoid && plasmoid.configuration && latteView
+    id: configurationLoader
+
+    // Capture context properties on the Loader before creating the inline
+    // component. Inline component contexts do not reliably inherit dynamic
+    // context properties during their initial binding evaluation.
+    readonly property var configurationPlasmoid: plasmoid
+    readonly property var configurationLatteView: latteView
+    readonly property var configurationThemeExtended: themeExtended
+
+    active: configurationPlasmoid && configurationPlasmoid.configuration && configurationLatteView
 
     sourceComponent: Item{
         id: root
+        property var latteView: configurationLoader.configurationLatteView
+        property var plasmoid: configurationLoader.configurationPlasmoid
+        property var themeExtended: configurationLoader.configurationThemeExtended
+        readonly property var canvasRootReference: root
+        readonly property var latteViewReference: latteView
+        readonly property var plasmoidReference: plasmoid
+        readonly property var themeExtendedReference: themeExtended
+        readonly property var graphicsSystemReference: graphicsSystem
         readonly property var theme: Kirigami.Theme
         readonly property var units: Kirigami.Units
         readonly property bool isVertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
@@ -120,6 +137,11 @@ Loader {
         //! Settings Overlay
         CanvasComponent.SettingsOverlay {
             id: settingsOverlay
+            root: canvasRootReference
+            latteView: latteViewReference
+            plasmoid: plasmoidReference
+            themeExtended: themeExtendedReference
+            graphicsSystem: graphicsSystemReference
             anchors.fill: parent
         }
     }

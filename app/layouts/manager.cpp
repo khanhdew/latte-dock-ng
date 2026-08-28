@@ -81,6 +81,13 @@ void Manager::init()
         m_corona->universalSettings()->setVersion(2);
         m_corona->universalSettings()->setSingleModeLayoutName(i18n("My Layout"));
 
+        // Match the original Latte default: a first-run installation is
+        // enabled for XDG autostart. Later launches only read the entry's
+        // state, so an explicit user disable is never overridden.
+        if (!Layouts::Importer::autostartEntryExists()) {
+            Layouts::Importer::enableAutostart();
+        }
+
         //startup create what is necessary....
         if (!layoutsDir.exists()) {
             QDir(Latte::configPath()).mkdir(QStringLiteral("latte"));

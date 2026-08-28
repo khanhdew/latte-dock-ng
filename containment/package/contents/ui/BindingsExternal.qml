@@ -6,13 +6,24 @@
 import QtQuick
 
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
 import org.kde.latte.core as LatteCore
 import org.kde.latte.private.containment as LatteContainment
 
 Item {
+    required property var containmentRoot
+    readonly property var root: containmentRoot
+    required property var latteView
+    required property var autosize
+    required property var visibilityManager
+    required property var metrics
+    required property var plasmoid
+    required property var myView
+    required property var background
+    required property var indexer
+    required property var fastLayoutManager
+    required property var effects
+
     property bool updateIsEnabled: autosize.inCalculatedIconSize
                                    && !visibilityManager.inSlidingIn
                                    && !visibilityManager.inSlidingOut

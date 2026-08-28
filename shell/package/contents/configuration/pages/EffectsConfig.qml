@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 /*
     SPDX-FileCopyrightText: 2018 Michail Vourlakos <mvourlakos@gmail.com>
     SPDX-License-Identifier: GPL-2.0-or-later
@@ -8,13 +9,9 @@ import QtQuick.Layouts
 import QtQuick.Dialogs as QtDialogs
 import QtQuick.Controls as QtQuickControls212
 
-import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.components as PlasmaComponents3
-import org.kde.plasma.extras as PlasmaExtras
 
-import org.kde.latte.core as LatteCore
 import org.kde.latte.components as LatteComponents
 import org.kde.latte.private.containment as LatteContainment
 
@@ -22,6 +19,10 @@ import "../../controls" as LatteExtraControls
 
 PlasmaComponents.Page {
     id: page
+    required property var dialog
+    required property var latteView
+    required property var viewConfig
+    readonly property var units: page.dialog.units
     width: content.width + content.Layout.leftMargin * 2
     height: content.height + units.smallSpacing
 
@@ -29,8 +30,8 @@ PlasmaComponents.Page {
         id: content
         anchors.horizontalCenter: parent.horizontalCenter
         Layout.leftMargin: units.smallSpacing * 2
-        width: (dialog.appliedWidth - units.smallSpacing * 2) - Layout.leftMargin * 2
-        spacing: dialog.subGroupSpacing
+        width: (page.dialog.appliedWidth - units.smallSpacing * 2) - Layout.leftMargin * 2
+        spacing: page.dialog.subGroupSpacing
 
         //! BEGIN: Shadows
         ColumnLayout {
@@ -205,7 +206,7 @@ PlasmaComponents.Page {
                         id: userShadowBtn
                         Layout.fillWidth: true
                         Layout.minimumWidth: shadowOpacityLbl.width
-                        height: parent.height
+                        Layout.fillHeight: true
                         text: " "
                         tooltip: i18n("Use set shadow color")
 
@@ -239,7 +240,7 @@ PlasmaComponents.Page {
                                 anchors.fill: parent
                                 onClicked: {
                                     plasmoid.configuration.shadowColorType = userShadowBtn.type;
-                                    viewConfig.setSticker(true);
+                                    page.viewConfig.setSticker(true);
                                     colorDialogLoader.showDialog = true;
                                 }
                             }
@@ -372,12 +373,12 @@ PlasmaComponents.Page {
                 Layout.fillWidth: true
                 Layout.minimumHeight: implicitHeight
 
-                checked: latteView.indicator.enabled
+                checked: page.latteView.indicator.enabled
                 text: i18n("Indicators")
                 tooltip: i18n("Enable/disable indicators")
 
                 onPressed: {
-                    latteView.indicator.enabled = !latteView.indicator.enabled;
+                    page.latteView.indicator.enabled = !page.latteView.indicator.enabled;
                 }
             }
 
@@ -399,7 +400,7 @@ PlasmaComponents.Page {
                         id: tabBar
                         width: parent.width
 
-                        property string type: latteView.indicator.type
+                        property string type: page.latteView.indicator.type
 
                         PlasmaComponents.TabButton {
                             id: latteBtn
@@ -407,17 +408,21 @@ PlasmaComponents.Page {
                             readonly property string type: "org.kde.latte.default"
 
                             onClicked: {
-                                latteView.indicator.type = type;
+                                page.latteView.indicator.type = type;
                             }
                         }
                         PlasmaComponents.TabButton {
                             id: customBtn
+                            implicitWidth: customIndicator.implicitWidth
+                            implicitHeight: customIndicator.implicitHeight
 
                             onClicked: {
                                 customIndicator.onButtonIsPressed();
                             }
 
                             LatteExtraControls.CustomIndicatorButton {
+                                latteView: page.latteView
+                                viewConfig: page.viewConfig
                                 id: customIndicator
                                 anchors.fill: parent
                                 implicitWidth: latteBtn.implicitWidth
@@ -445,7 +450,7 @@ PlasmaComponents.Page {
                         Connections {
                             target: indicatorsStackView
                             function onCurrentItemChanged() {
-                                if (!indicatorsStackView.currentItem || !viewConfig.isReady) {
+                                if (!indicatorsStackView.currentItem || !page.viewConfig.isReady) {
                                     return;
                                 }
 
@@ -470,11 +475,11 @@ PlasmaComponents.Page {
                     id: indicatorsStackView
                     Layout.fillWidth: true
                     Layout.maximumHeight: Layout.minimumHeight
-                    enabled: latteView.indicator.enabled
+                    enabled: page.latteView.indicator.enabled
 
                     property bool forwardSliding: true
 
-                    readonly property int optionsWidth: dialog.optionsWidth
+                    readonly property int optionsWidth: page.dialog.optionsWidth
                     readonly property bool deprecatedOptionsAreHidden: true // @since 0.10.0
 
                     replaceEnter: Transition {
@@ -522,6 +527,9 @@ PlasmaComponents.Page {
     LatteExtraControls.IndicatorConfigUiManager {
         id: indicatorUiManager
         visible: false
+        dialog: page.dialog
+        latteView: page.latteView
+        viewConfig: page.viewConfig
         stackView: indicatorsStackView
     }
 

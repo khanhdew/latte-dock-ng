@@ -5,7 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 import org.kde.latte.core as LatteCore
@@ -24,7 +23,10 @@ MouseArea {
     // which should never participate in hover-triggered behaviour.
     hoverEnabled: taskItem.visible && !isStartup && !isSeparator
 
+    // Preserve the task API's pressed state independently of QQuickMouseArea.pressed.
+    // qmllint disable property-override
     property bool pressed: false
+    // qmllint enable property-override
     // Drag should start only after resistance delay expires and pointer
     // moved enough. This avoids getting stuck in drag state on canceled clicks.
     property bool dragReady: false
@@ -443,7 +445,7 @@ MouseArea {
 
         onTriggered: {
             if (!taskItem.inBlockingAnimation){
-                dragReady = true;
+                taskMouseArea.dragReady = true;
             }
 
             if (taskItem.abilities.debug.timersEnabled) {

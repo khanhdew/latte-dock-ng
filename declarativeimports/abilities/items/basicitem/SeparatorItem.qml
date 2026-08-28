@@ -6,7 +6,6 @@
 import QtQuick
 import QtQuick.Effects
 
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 import org.kde.latte.core as LatteCore

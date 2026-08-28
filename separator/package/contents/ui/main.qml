@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 
 import org.kde.plasma.core as PlasmaCore
@@ -7,9 +9,9 @@ PlasmoidItem {
     id: root
 
     // Exposed by Latte applet communicator when this applet lives in a Latte containment.
-    property QtObject latteBridge: null
+    property var latteBridge: null
 
-    readonly property bool horizontal: plasmoid.formFactor === PlasmaCore.Types.Horizontal
+    readonly property bool horizontal: Plasmoid.formFactor === PlasmaCore.Types.Horizontal
     readonly property int thickness: 2
     readonly property int length: 12
     readonly property color separatorColor: {
@@ -19,9 +21,13 @@ PlasmoidItem {
             return latteBridge.panelPalette.textColor;
         }
 
+        // Plasma provides the optional theme object through the applet context.
+        // Static analysis cannot model that runtime-provided object for standalone applets.
+        // qmllint disable unqualified
         if (typeof theme !== "undefined" && theme && theme.textColor !== undefined) {
             return theme.textColor;
         }
+        // qmllint enable unqualified
 
         return "white";
     }

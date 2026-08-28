@@ -18,8 +18,11 @@ Item{
 
     readonly property bool isHorizontal : (shadowDirection !== PlasmaCore.Types.LeftEdge) && (shadowDirection !== PlasmaCore.Types.RightEdge)
 
+    // These implicit sizes intentionally define the shadow component's content size.
+    // qmllint disable property-override
     readonly property int implicitWidth: shadow.width
     readonly property int implicitHeight: shadow.height
+    // qmllint enable property-override
 
     Item{
         id: shadow
@@ -54,8 +57,7 @@ Item{
                     anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined}
                 }
                 PropertyChanges{
-                    target: editShadow
-                    anchors{ leftMargin: 0; rightMargin:0; topMargin:shadowSize; bottomMargin:0}
+                    editShadow.anchors.leftMargin: 0; editShadow.anchors.rightMargin:0; editShadow.anchors.topMargin:shadowSize; editShadow.anchors.bottomMargin:0
                 }
             },
             ///bottomShadow
@@ -68,8 +70,7 @@ Item{
                     anchors{ top:undefined; bottom:parent.bottom; left:parent.left; right:undefined}
                 }
                 PropertyChanges{
-                    target: editShadow
-                    anchors{ leftMargin: 0; rightMargin:0; topMargin:0; bottomMargin:shadowSize}
+                    editShadow.anchors.leftMargin: 0; editShadow.anchors.rightMargin:0; editShadow.anchors.topMargin:0; editShadow.anchors.bottomMargin:shadowSize
                 }
             },
             ///leftShadow
@@ -82,8 +83,7 @@ Item{
                     anchors{ top:parent.top; bottom: undefined; left:parent.left; right:undefined}
                 }
                 PropertyChanges{
-                    target: editShadow
-                    anchors{ leftMargin: shadowSize; rightMargin:0; topMargin:0; bottomMargin:0}
+                    editShadow.anchors.leftMargin: shadowSize; editShadow.anchors.rightMargin:0; editShadow.anchors.topMargin:0; editShadow.anchors.bottomMargin:0
                 }
             },
             ///rightShadow
@@ -96,8 +96,7 @@ Item{
                     anchors{top:parent.top; bottom:undefined; left:undefined; right:parent.right}
                 }
                 PropertyChanges{
-                    target: editShadow
-                    anchors{ leftMargin: 0; rightMargin:shadowSize; topMargin:0; bottomMargin:0}
+                    editShadow.anchors.leftMargin: 0; editShadow.anchors.rightMargin:shadowSize; editShadow.anchors.topMargin:0; editShadow.anchors.bottomMargin:0
                 }
             }
         ]

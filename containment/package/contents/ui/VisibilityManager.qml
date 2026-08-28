@@ -8,7 +8,6 @@ import QtQuick
 import QtQuick.Window
 
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
 import org.kde.latte.core as LatteCore
 
@@ -451,12 +450,12 @@ Item{
             property: root.isVertical ? "x" : "y"
             to: {
                 if (LatteCore.WindowSystem.compositingActive) {
-                    return slidingOutToPos;
+                    return manager.slidingOutToPos;
                 } else {
                     if ((plasmoid.location===PlasmaCore.Types.LeftEdge)||(plasmoid.location===PlasmaCore.Types.TopEdge)) {
-                        return slidingOutToPos + 1;
+                        return manager.slidingOutToPos + 1;
                     } else {
-                        return slidingOutToPos - 1;
+                        return manager.slidingOutToPos - 1;
                     }
                 }
             }
@@ -515,7 +514,7 @@ Item{
         id: slidingAnimationAutoHiddenIn
 
         PauseAnimation{
-            duration: manager.inRelocationHiding && animations.active ? 500 : 0
+            duration: manager.inRelocationHiding && slidingAnimationAutoHiddenIn.animations.active ? 500 : 0
         }
 
         PropertyAnimation {
@@ -536,7 +535,7 @@ Item{
         }
 
         onStopped: {
-            inSlidingIn = false;
+            manager.inSlidingIn = false;
 
             manager.inRelocationHiding = false;
             autosize.updateIconSize();
@@ -557,7 +556,7 @@ Item{
                 return;
             }
 
-            inSlidingIn = true;
+            manager.inSlidingIn = true;
 
             if (slidingAnimationAutoHiddenOut.running) {
                 slidingAnimationAutoHiddenOut.stop();

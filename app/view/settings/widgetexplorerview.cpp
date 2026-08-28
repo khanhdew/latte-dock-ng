@@ -87,6 +87,10 @@ void WidgetExplorerView::init()
 
     auto source = QUrl::fromLocalFile(m_latteView->containment()->corona()->kPackage().filePath(tempFilePath));
     setSource(source);
+    rootObject()->setProperty("viewConfig", QVariant::fromValue(this));
+    rootObject()->setProperty("themeExtended", QVariant::fromValue(m_corona->themeExtended()));
+    rootObject()->setProperty("latteView", QVariant::fromValue(m_latteView));
+    rootObject()->setProperty("containmentFromView", QVariant::fromValue(m_latteView->containment()));
     syncGeometry();
 }
 
@@ -151,7 +155,6 @@ void WidgetExplorerView::initParentView(Latte::View *view)
 {
     SubConfigView::initParentView(view);
 
-    rootContext()->setContextProperty(QStringLiteral("containmentFromView"), m_latteView->containment());
     rootContext()->setContextProperty(QStringLiteral("latteView"), m_latteView);
 
     updateEnabledBorders();

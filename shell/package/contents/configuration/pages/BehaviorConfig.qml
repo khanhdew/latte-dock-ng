@@ -8,7 +8,6 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.components as PlasmaComponents3
 
 import org.kde.latte.core as LatteCore
 import org.kde.latte.components as LatteComponents
@@ -18,13 +17,18 @@ import "../../controls" as LatteExtraControls
 
 PlasmaComponents.Page {
     id: page
+    required property var dialog
+    required property var latteView
+    required property var universalSettings
+    required property var viewConfig
+    readonly property var units: page.dialog.units
     width: content.width + content.Layout.leftMargin * 2
     height: content.height + units.smallSpacing * 2
 
     ColumnLayout {
         id: content       
-        width: (dialog.appliedWidth - units.smallSpacing * 2) - Layout.leftMargin * 2
-        spacing: dialog.subGroupSpacing
+        width: (page.dialog.appliedWidth - units.smallSpacing * 2) - Layout.leftMargin * 2
+        spacing: page.dialog.subGroupSpacing
         anchors.horizontalCenter: parent.horizontalCenter
         Layout.leftMargin: units.smallSpacing * 2
 
@@ -39,7 +43,7 @@ PlasmaComponents.Page {
             }
 
             Connections {
-                target: universalSettings
+                target: page.universalSettings
                 function onScreensCountChanged() { screenRow.updateScreens() }
             }
 
@@ -49,12 +53,12 @@ PlasmaComponents.Page {
                 Layout.leftMargin: units.smallSpacing * 2
                 Layout.rightMargin: units.smallSpacing * 3
                 spacing: 2
-                visible: screensCount > 1 || dialog.advancedLevel
+                visible: screensCount > 1 || page.dialog.advancedLevel
 
                 property int screensCount: 1
 
                 function updateScreens() {
-                    screensCount = universalSettings.screens.length;
+                    screensCount = page.universalSettings.screens.length;
                     screensModel.clear();
 
                     var primary = {name: i18n("On Primary Screen"), icon: 'favorite'};
@@ -70,36 +74,36 @@ PlasmaComponents.Page {
                     //the view automatically to primaryScreen in order for the user
                     //to has always a view with tasks shown
                     var screenExists = false
-                    for (var i = 0; i < universalSettings.screens.length; i++) {
-                        if (universalSettings.screens[i].name === latteView.positioner.currentScreenName) {
+                    for (var i = 0; i < page.universalSettings.screens.length; i++) {
+                        if (page.universalSettings.screens[i].name === page.latteView.positioner.currentScreenName) {
                             screenExists = true;
                         }
                     }
 
-                    if (!screenExists && !latteView.onPrimary) {
-                        var scr = {name: latteView.positioner.currentScreenName, icon: 'view-fullscreen'};
+                    if (!screenExists && !page.latteView.onPrimary) {
+                        var scr = {name: page.latteView.positioner.currentScreenName, icon: 'view-fullscreen'};
                         screensModel.append(scr);
                     }
 
-                    for (var i = 0; i < universalSettings.screens.length; i++) {
-                        var scr = {name: universalSettings.screens[i].name, icon: 'view-fullscreen'};
+                    for (var i = 0; i < page.universalSettings.screens.length; i++) {
+                        var scr = {name: page.universalSettings.screens[i].name, icon: 'view-fullscreen'};
                         screensModel.append(scr);
                     }
 
-                    if (latteView.onPrimary && latteView.screensGroup === LatteCore.types.SingleScreenGroup) {
+                    if (page.latteView.onPrimary && page.latteView.screensGroup === LatteCore.types.SingleScreenGroup) {
                         screenCmb.currentIndex = 0;
-                    } else if (latteView.screensGroup === LatteCore.types.AllScreensGroup) {
+                    } else if (page.latteView.screensGroup === LatteCore.types.AllScreensGroup) {
                         screenCmb.currentIndex = 1;
-                    } else if (latteView.screensGroup === LatteCore.types.AllSecondaryScreensGroup) {
+                    } else if (page.latteView.screensGroup === LatteCore.types.AllSecondaryScreensGroup) {
                         screenCmb.currentIndex = 2;
                     } else {
-                        screenCmb.currentIndex = screenCmb.findScreen(latteView.positioner.currentScreenName);
+                        screenCmb.currentIndex = screenCmb.findScreen(page.latteView.positioner.currentScreenName);
                     }
 
                 }
 
                 Connections{
-                    target: viewConfig
+                    target: page.viewConfig
                     function onShowSignal() { screenRow.updateScreens(); }
                 }
 
@@ -118,13 +122,13 @@ PlasmaComponents.Page {
 
                     onActivated: function(index) {
                         if (index === 0) { // primary
-                            latteView.positioner.setNextLocation("", LatteCore.types.SingleScreenGroup, "{primary-screen}", PlasmaCore.Types.Floating, LatteCore.types.NoneAlignment);
+                            page.latteView.positioner.setNextLocation("", LatteCore.types.SingleScreenGroup, "{primary-screen}", PlasmaCore.Types.Floating, LatteCore.types.NoneAlignment);
                         } else if (index === 1) { // all screens
-                            latteView.positioner.setNextLocation("", LatteCore.types.AllScreensGroup, "{primary-screen}", PlasmaCore.Types.Floating, LatteCore.types.NoneAlignment);
+                            page.latteView.positioner.setNextLocation("", LatteCore.types.AllScreensGroup, "{primary-screen}", PlasmaCore.Types.Floating, LatteCore.types.NoneAlignment);
                         } else if (index === 2) { // all secondary screens
-                            latteView.positioner.setNextLocation("", LatteCore.types.AllSecondaryScreensGroup, "", PlasmaCore.Types.Floating, LatteCore.types.NoneAlignment);
-                        } else if (index>2 && (index !== findScreen(latteView.positioner.currentScreenName) || latteView.onPrimary)) {// explicit screen
-                            latteView.positioner.setNextLocation("", LatteCore.types.SingleScreenGroup, textAt(index), PlasmaCore.Types.Floating, LatteCore.types.NoneAlignment);
+                            page.latteView.positioner.setNextLocation("", LatteCore.types.AllSecondaryScreensGroup, "", PlasmaCore.Types.Floating, LatteCore.types.NoneAlignment);
+                        } else if (index>2 && (index !== findScreen(page.latteView.positioner.currentScreenName) || page.latteView.onPrimary)) {// explicit screen
+                            page.latteView.positioner.setNextLocation("", LatteCore.types.SingleScreenGroup, textAt(index), PlasmaCore.Types.Floating, LatteCore.types.NoneAlignment);
                         }
                     }
 
@@ -149,7 +153,7 @@ PlasmaComponents.Page {
                 LayoutMirroring.enabled: false
                 spacing: 2
 
-                readonly property int buttonSize: (dialog.optionsWidth - (spacing * 3)) / 4
+                readonly property int buttonSize: (page.dialog.optionsWidth - (spacing * 3)) / 4
 
                 LatteComponents.Button {
                     id: bottomEdgeBtn
@@ -163,8 +167,8 @@ PlasmaComponents.Page {
                     readonly property int edge: PlasmaCore.Types.BottomEdge
 
                     onClicked: {
-                        if (viewConfig.isReady && plasmoid.location !== edge) {
-                            latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
+                        if (page.viewConfig.isReady && plasmoid.location !== edge) {
+                            page.latteView.positioner.setNextLocation("", page.latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
                         checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
@@ -181,8 +185,8 @@ PlasmaComponents.Page {
                     readonly property int edge: PlasmaCore.Types.LeftEdge
 
                     onClicked: {
-                        if (viewConfig.isReady && plasmoid.location !== edge) {
-                            latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
+                        if (page.viewConfig.isReady && plasmoid.location !== edge) {
+                            page.latteView.positioner.setNextLocation("", page.latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
                         checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
@@ -199,8 +203,8 @@ PlasmaComponents.Page {
                     readonly property int edge: PlasmaCore.Types.TopEdge
 
                     onClicked: {
-                        if (viewConfig.isReady && plasmoid.location !== edge) {
-                            latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
+                        if (page.viewConfig.isReady && plasmoid.location !== edge) {
+                            page.latteView.positioner.setNextLocation("", page.latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
                         checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
@@ -217,8 +221,8 @@ PlasmaComponents.Page {
                     readonly property int edge: PlasmaCore.Types.RightEdge
 
                     onClicked: {
-                        if (viewConfig.isReady && plasmoid.location !== edge) {
-                            latteView.positioner.setNextLocation("", latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
+                        if (page.viewConfig.isReady && plasmoid.location !== edge) {
+                            page.latteView.positioner.setNextLocation("", page.latteView.screensGroup, "", edge, LatteCore.types.NoneAlignment);
                         }
                         checked = Qt.binding(function() { return plasmoid.location === edge })
                     }
@@ -244,18 +248,18 @@ PlasmaComponents.Page {
                 LayoutMirroring.enabled: false
                 spacing: 2
 
-                readonly property int currentAlignment: latteView && latteView.alignment !== LatteCore.types.NoneAlignment ? latteView.alignment : plasmoid.configuration.alignment
-                readonly property int buttonSize: (dialog.optionsWidth - (spacing * 3)) / 4
+                readonly property int currentAlignment: page.latteView && page.latteView.alignment !== LatteCore.types.NoneAlignment ? page.latteView.alignment : plasmoid.configuration.alignment
+                readonly property int buttonSize: (page.dialog.optionsWidth - (spacing * 3)) / 4
                 function applyAlignment(alignment) {
                     if (plasmoid.configuration.alignment !== alignment) {
                         plasmoid.configuration.alignment = alignment;
                     }
 
-                    if (latteView && latteView.alignment !== alignment) {
-                        latteView.alignment = alignment;
+                    if (page.latteView && page.latteView.alignment !== alignment) {
+                        page.latteView.alignment = alignment;
                     }
 
-                    latteView.positioner.setNextLocation("", latteView.screensGroup, "", PlasmaCore.Types.Floating, alignment);
+                    page.latteView.positioner.setNextLocation("", page.latteView.screensGroup, "", PlasmaCore.Types.Floating, alignment);
                 }
 
                 LatteComponents.Button {
@@ -343,7 +347,7 @@ PlasmaComponents.Page {
                 spacing: 2
 
                 readonly property int currentItemsAlignment: normalizedItemsAlignment(plasmoid.configuration.itemsAlignment)
-                readonly property int buttonSize: (dialog.optionsWidth - (spacing * 2)) / 3
+                readonly property int buttonSize: (page.dialog.optionsWidth - (spacing * 2)) / 3
 
                 function normalizedItemsAlignment(alignment) {
                     if (alignment === LatteCore.types.Center) {
@@ -424,7 +428,8 @@ PlasmaComponents.Page {
             }
 
             GridLayout {
-                width: parent.width
+                id: visibilityModeGrid
+                Layout.fillWidth: true
                 rowSpacing: 1
                 columnSpacing: 2
                 Layout.leftMargin: units.smallSpacing * 2
@@ -432,55 +437,61 @@ PlasmaComponents.Page {
 
                 columns: 2
 
-                property int mode: latteView.visibility.mode
-                readonly property int buttonSize: (dialog.optionsWidth - (columnSpacing)) / 2
+                readonly property int selectedMode: page.latteView.visibility.mode
+                readonly property int buttonSize: (page.dialog.optionsWidth - (columnSpacing)) / 2
+
+                function applyMode(mode) {
+                    if (page.latteView.visibility.mode !== mode) {
+                        page.latteView.visibility.mode = mode;
+                    }
+                }
 
                 LatteComponents.Button {
                     id:alwaysVisibleBtn
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     text: i18n("Always Visible")
-                    checked: parent.mode === mode
+                    checked: visibilityModeGrid.selectedMode === alwaysVisibleBtn.mode
                     checkable: true
 
                     property int mode: LatteCore.types.AlwaysVisible
 
                     onClicked: {
-                        latteView.visibility.mode = mode
-                        checked = Qt.binding(function() { return parent.mode === mode })
+                        visibilityModeGrid.applyMode(alwaysVisibleBtn.mode)
                     }
                 }
                 LatteComponents.Button {
+                    id: autoHideBtn
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     text: i18n("Auto Hide")
-                    checked: parent.mode === mode
+                    checked: visibilityModeGrid.selectedMode === autoHideBtn.mode
                     checkable: true
 
                     property int mode: LatteCore.types.AutoHide
 
                     onClicked: {
-                        latteView.visibility.mode = mode
-                        checked = Qt.binding(function() { return parent.mode === mode })
+                        visibilityModeGrid.applyMode(autoHideBtn.mode)
                     }
                 }
                 LatteComponents.Button {
+                    id: dodgeActiveBtn
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     text: i18n("Dodge Active")
-                    checked: parent.mode === mode
+                    checked: visibilityModeGrid.selectedMode === dodgeActiveBtn.mode
                     checkable: true
 
                     property int mode: LatteCore.types.DodgeActive
 
                     onClicked: {
-                        latteView.visibility.mode = mode
-                        checked = Qt.binding(function() { return parent.mode === mode })
+                        visibilityModeGrid.applyMode(dodgeActiveBtn.mode)
                     }
                 }
 
                 LatteExtraControls.CustomVisibilityModeButton {
                     id: dodgeModeBtn
+                    latteView: page.latteView
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     implicitWidth: alwaysVisibleBtn.implicitWidth
@@ -502,11 +513,12 @@ PlasmaComponents.Page {
                         }
                     ]
 
-                    onViewRelevantVisibilityModeChanged: plasmoid.configuration.lastDodgeVisibilityMode = latteView.visibility.mode;
+                    onViewRelevantVisibilityModeChanged: plasmoid.configuration.lastDodgeVisibilityMode = page.latteView.visibility.mode;
                 }
 
                 LatteExtraControls.CustomVisibilityModeButton {
                     id: windowsModeBtn
+                    latteView: page.latteView
                     Layout.minimumWidth: parent.buttonSize
                     Layout.maximumWidth: Layout.minimumWidth
                     implicitWidth: alwaysVisibleBtn.implicitWidth
@@ -533,7 +545,7 @@ PlasmaComponents.Page {
                         }
                     ]
 
-                    onViewRelevantVisibilityModeChanged: plasmoid.configuration.lastWindowsVisibilityMode = latteView.visibility.mode;
+                    onViewRelevantVisibilityModeChanged: plasmoid.configuration.lastWindowsVisibilityMode = page.latteView.visibility.mode;
                 }
 
             }
@@ -550,9 +562,9 @@ PlasmaComponents.Page {
             }
 
             Flow {
-                width: dialog.optionsWidth
-                Layout.minimumWidth: dialog.optionsWidth
-                Layout.maximumWidth: dialog.optionsWidth
+                Layout.minimumWidth: page.dialog.optionsWidth
+                Layout.preferredWidth: page.dialog.optionsWidth
+                Layout.maximumWidth: page.dialog.optionsWidth
                 Layout.leftMargin: units.smallSpacing * 2
                 Layout.rightMargin: units.smallSpacing * 2
                 Layout.topMargin: units.smallSpacing
@@ -563,7 +575,7 @@ PlasmaComponents.Page {
 
                 Item {
                     id: showContainer
-                    width: parent.overlap ? dialog.optionsWidth : oneLineWidth
+                    width: parent.overlap ? page.dialog.optionsWidth : oneLineWidth
                     height: childrenRect.height
                     implicitWidth: width
                     implicitHeight: height
@@ -582,10 +594,10 @@ PlasmaComponents.Page {
 
                         LatteComponents.TextField {
                             Layout.preferredWidth: implicitWidth
-                            text: latteView.visibility.timerShow
+                            text: page.latteView.visibility.timerShow
 
                             onValueChanged: {
-                                latteView.visibility.timerShow = value
+                                page.latteView.visibility.timerShow = value
                             }
                         }
                     }
@@ -593,7 +605,7 @@ PlasmaComponents.Page {
 
                 Item {
                     id: hideContainer
-                    width: parent.overlap ? dialog.optionsWidth : oneLineWidth
+                    width: parent.overlap ? page.dialog.optionsWidth : oneLineWidth
                     height: childrenRect.height
                     implicitWidth: width
                     implicitHeight: height
@@ -613,11 +625,11 @@ PlasmaComponents.Page {
 
                         LatteComponents.TextField{
                             Layout.preferredWidth: implicitWidth
-                            text: latteView.visibility.timerHide
+                            text: page.latteView.visibility.timerHide
                             maxValue: 5000
 
                             onValueChanged: {
-                                latteView.visibility.timerHide = value
+                                page.latteView.visibility.timerHide = value
                             }
                         }
                     }
@@ -629,7 +641,7 @@ PlasmaComponents.Page {
         //! BEGIN: Actions
         ColumnLayout {
             spacing: units.smallSpacing
-            visible: dialog.advancedLevel
+            visible: page.dialog.advancedLevel
 
             LatteComponents.Header {
                 text: i18n("Actions")
@@ -768,7 +780,7 @@ PlasmaComponents.Page {
                 LatteComponents.CheckBoxesColumn {
                     LatteComponents.CheckBox {
                         id: titleTooltipsChk
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         text: i18n("Thin title tooltips on hovering")
                         tooltip: i18n("Show narrow tooltips produced by Latte for items.\nThese tooltips are not drawn when applets zoom effect is disabled");
                         value: plasmoid.configuration.titleTooltips
@@ -780,7 +792,7 @@ PlasmaComponents.Page {
 
                     LatteComponents.CheckBox {
                         id: appletsZoomChk
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         text: i18n("Zoom widgets on hovering")
                         tooltip: i18n("Enlarge external widgets (applets) when hovering them. When disabled, widgets keep their original size so their icons stay sharp, while task icons and launchers still zoom")
                         value: plasmoid.configuration.appletsZoomEnabled
@@ -792,11 +804,11 @@ PlasmaComponents.Page {
 
                     LatteComponents.CheckBox {
                         id: mouseWheelChk
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         text: i18n("Expand popup through mouse wheel")
                         tooltip: i18n("Show or Hide applet popup through mouse wheel action")
                         value: plasmoid.configuration.mouseWheelActions
-                        visible: dialog.advancedLevel
+                        visible: page.dialog.advancedLevel
 
                         onClicked: {
                             plasmoid.configuration.mouseWheelActions = !plasmoid.configuration.mouseWheelActions;
@@ -805,11 +817,11 @@ PlasmaComponents.Page {
 
                     LatteComponents.CheckBox {
                         id: autoSizeChk
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         text: i18n("Adjust size automatically when needed")
                         tooltip: i18n("Items decrease their size when exceed maximum length and increase it when they can fit in")
                         value: plasmoid.configuration.autoSizeEnabled
-                        visible: dialog.advancedLevel
+                        visible: page.dialog.advancedLevel
 
                         onClicked: {
                             plasmoid.configuration.autoSizeEnabled = !plasmoid.configuration.autoSizeEnabled;
@@ -817,16 +829,16 @@ PlasmaComponents.Page {
                     }
 
                     LatteComponents.CheckBox {
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                        // Layout.maximumHeight: mouseWheelChk.height
                         text: i18n("Activate based on position global shortcuts")
                         tooltip: i18n("This view is used for based on position global shortcuts. Take note that only one view can have that option enabled for each layout")
-                        value: latteView.isPreferredForShortcuts || (!latteView.layout.preferredForShortcutsTouched && latteView.isHighestPriorityView())
+                        value: page.latteView.isPreferredForShortcuts || (!page.latteView.layout.preferredForShortcutsTouched && page.latteView.isHighestPriorityView())
 
                         onClicked: {
-                            latteView.isPreferredForShortcuts = checked;
-                            if (!latteView.layout.preferredForShortcutsTouched) {
-                                latteView.layout.preferredForShortcutsTouched = true;
+                            page.latteView.isPreferredForShortcuts = checked;
+                            if (!page.latteView.layout.preferredForShortcutsTouched) {
+                                page.latteView.layout.preferredForShortcutsTouched = true;
                             }
                         }
                     }
@@ -844,7 +856,7 @@ PlasmaComponents.Page {
 
                 LatteComponents.CheckBoxesColumn {
                     LatteComponents.CheckBox {
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         text: i18n("Always use floating gap for user interaction")
                         tooltip: i18n("Floating gap is always used for applets and window interaction")
                         value: plasmoid.configuration.floatingInternalGapIsForced
@@ -856,7 +868,7 @@ PlasmaComponents.Page {
                     }
 
                     LatteComponents.CheckBox {
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         text: i18n("Hide floating gap for maximized windows")
                         tooltip: i18n("Floating gap is disabled when there are maximized windows")
                         value: plasmoid.configuration.hideFloatingGapForMaximized
@@ -867,7 +879,7 @@ PlasmaComponents.Page {
                     }
 
                     LatteComponents.CheckBox {
-                        Layout.maximumWidth: dialog.optionsWidth
+                        Layout.maximumWidth: page.dialog.optionsWidth
                         enabled: plasmoid.configuration.hideFloatingGapForMaximized
                         text: i18n("Delay floating gap hiding until mouse leaves")
                         tooltip: i18n("to avoid clicking on adjacent items accidentally in some cases")
@@ -879,8 +891,8 @@ PlasmaComponents.Page {
                     }
 
                     LatteComponents.CheckBox {
-                        Layout.maximumWidth: dialog.optionsWidth
-                        enabled: latteView.visibility.mode === LatteCore.types.AlwaysVisible
+                        Layout.maximumWidth: page.dialog.optionsWidth
+                        enabled: page.latteView.visibility.mode === LatteCore.types.AlwaysVisible
                         text: i18n("Mirror floating gap when it is shown")
                         tooltip: i18n("Floating gap is mirrored when it is shown in Always Visible mode")
                         value: plasmoid.configuration.floatingGapIsMirrored
@@ -898,7 +910,7 @@ PlasmaComponents.Page {
         ColumnLayout {
             spacing: units.smallSpacing
 
-            visible: dialog.advancedLevel
+            visible: page.dialog.advancedLevel
 
             LatteComponents.Header {
                 text: i18n("Environment")
@@ -909,12 +921,12 @@ PlasmaComponents.Page {
                 Layout.rightMargin: units.smallSpacing * 2
 
                 LatteComponents.CheckBox {
-                    Layout.maximumWidth: dialog.optionsWidth
+                    Layout.maximumWidth: page.dialog.optionsWidth
                     text: i18n("Raise on desktop change")
-                    value: latteView.visibility.raiseOnDesktop
+                    value: page.latteView.visibility.raiseOnDesktop
 
                     onClicked: {
-                        latteView.visibility.raiseOnDesktop = !latteView.visibility.raiseOnDesktop;
+                        page.latteView.visibility.raiseOnDesktop = !page.latteView.visibility.raiseOnDesktop;
                     }
                 }
             }

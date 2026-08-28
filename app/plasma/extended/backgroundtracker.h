@@ -8,6 +8,7 @@
 
 // Qt
 #include <QObject>
+#include <QtQml>
 
 // Plasma
 #include <Plasma/Plasma>
@@ -17,6 +18,7 @@ namespace Latte {
 class BackgroundTracker: public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(BackgroundTracker)
 
     Q_PROPERTY(bool isBusy READ isBusy NOTIFY isBusyChanged)
 

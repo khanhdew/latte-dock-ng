@@ -4,8 +4,6 @@
 */
 
 import QtQuick
-import org.kde.plasma.core as PlasmaCore
-
 Item {
     id: _parabolicArea
     signal parabolicEntered(real mouseX, real mouseY);

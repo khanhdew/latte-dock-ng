@@ -5,8 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-
 import org.kde.latte.abilities.client as AbilityClient
 
 import "abilities" as Ability

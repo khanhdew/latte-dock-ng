@@ -7,12 +7,13 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2
 
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
 
 Item{
     id: button
+    required property var latteView
+    required property var settingsRoot
     readonly property var units: Kirigami.Units
     width: visibleButton.width
     height: visibleButton.height
@@ -26,7 +27,10 @@ Item{
     property string tooltip: ""
 
     readonly property bool containsMouse: tooltipBtn.hovered
+    // Define the control's implicit size from its actual visible button.
+    // qmllint disable property-override
     readonly property int implicitHeight: visibleButton.height
+    // qmllint enable property-override
 
     readonly property color appliedTextColor: checked ? checkedTextColor : textColor
     readonly property color appliedBackgroundColor: checked ? checkedBackgroundColor : backgroundColor
@@ -73,21 +77,21 @@ Item{
             width: buttonRow.width + 4 * margin
             height: buttonRow.height + 2 * margin
             radius: 2
-            color: appliedBackgroundColor
+            color: button.appliedBackgroundColor
             border.width: 1
-            border.color: appliedBorderColor
+            border.color: button.appliedBorderColor
 
-            readonly property int margin: units.smallSpacing
+            readonly property int margin: button.units.smallSpacing
 
             RowLayout{
                 id: buttonRow
                 anchors.centerIn: parent
-                spacing: units.smallSpacing
-                layoutDirection: iconPositionReversed ? Qt.RightToLeft : Qt.LeftToRight
+                spacing: button.units.smallSpacing
+                layoutDirection: button.iconPositionReversed ? Qt.RightToLeft : Qt.LeftToRight
 
                 Loader {
-                    width: height
-                    height: textLbl.implicitHeight
+                    Layout.preferredWidth: textLbl.implicitHeight
+                    Layout.preferredHeight: textLbl.implicitHeight
                     active: button.icon
                     sourceComponent: button.icon
                     visible: active

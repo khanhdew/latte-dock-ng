@@ -24,6 +24,7 @@
 #include "../layout/genericlayout.h"
 #include "../plasma/quick/containmentview.h"
 #include "../plasma/quick/configview.h"
+#include "../declarativeimports/interfaces.h"
 
 // C++
 #include <array>
@@ -60,7 +61,6 @@ class PlasmaShellSurface;
 
 namespace Latte {
 class Corona;
-class Interfaces;
 class GenericLayout;
 }
 

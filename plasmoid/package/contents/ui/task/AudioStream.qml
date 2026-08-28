@@ -6,7 +6,6 @@
 
 import QtQuick
 
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
 
@@ -142,8 +141,7 @@ Item {
                 when: root.vertical && audioStreamIconBox.iconBoxWidth < audioStreamIcon.requiredSpace
 
                 PropertyChanges {
-                    target: audioStreamIconBox
-                    anchors.rightMargin: Math.round(audioStreamIconBox.outerMargin * audioStreamIconBox.indicatorScale)
+                    audioStreamIconBox.anchors.rightMargin: Math.round(audioStreamIconBox.outerMargin * audioStreamIconBox.indicatorScale)
                 }
             },
 
@@ -158,14 +156,12 @@ Item {
                 }
 
                 PropertyChanges {
-                    target: audioStreamIconBox
-                    width: audioStreamIconBox.roundedIconSize(Math.min(audioStreamIconBox.iconBoxSize, audioStreamIconBox.maximumBadgeSize))
+                    audioStreamIconBox.width: audioStreamIconBox.roundedIconSize(Math.min(audioStreamIconBox.iconBoxSize, audioStreamIconBox.maximumBadgeSize))
                 }
 
                 PropertyChanges {
-                    target: audioStreamIcon
-                    height: audioStreamIcon.parent.height
-                    width: audioStreamIcon.parent.width
+                    audioStreamIcon.height: audioStreamIcon.parent.height
+                    audioStreamIcon.width: audioStreamIcon.parent.width
                 }
             },
 
@@ -180,15 +176,13 @@ Item {
                 }
 
                 PropertyChanges {
-                    target: audioStreamIconBox
-                    anchors.topMargin: audioStreamIconBox.outerMargin
-                    width: audioStreamIconBox.roundedIconSize(Math.min(audioStreamIconBox.iconBoxSize, audioStreamIconBox.maximumBadgeSize))
+                    audioStreamIconBox.anchors.topMargin: audioStreamIconBox.outerMargin
+                    audioStreamIconBox.width: audioStreamIconBox.roundedIconSize(Math.min(audioStreamIconBox.iconBoxSize, audioStreamIconBox.maximumBadgeSize))
                 }
 
                 PropertyChanges {
-                    target: audioStreamIcon
-                    height: audioStreamIcon.parent.height
-                    width: audioStreamIcon.parent.width
+                    audioStreamIcon.height: audioStreamIcon.parent.height
+                    audioStreamIcon.width: audioStreamIcon.parent.width
                 }
             }
         ]

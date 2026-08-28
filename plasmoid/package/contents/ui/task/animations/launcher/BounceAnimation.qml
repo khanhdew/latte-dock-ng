@@ -5,8 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-
 SequentialAnimation{
     readonly property string bouncePropertyName: taskItem.isVertical ? "iconAnimatedOffsetX" : "iconAnimatedOffsetY"
 

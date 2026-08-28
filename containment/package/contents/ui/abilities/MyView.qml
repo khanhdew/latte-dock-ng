@@ -4,8 +4,6 @@
 */
 
 import QtQuick
-import org.kde.plasma.plasmoid
-
 import org.kde.latte.core as LatteCore
 
 import "./privates" as Ability
@@ -50,6 +48,5 @@ Ability.MyViewPrivate {
     itemShadow.shadowColor: "#" + myView.decimalToHex(myView.itemShadowOpacity) + myView.itemShadowCurrentColor
     itemShadow.shadowSolidColor: "#" + myView.itemShadowCurrentColor
 }
-
 
 

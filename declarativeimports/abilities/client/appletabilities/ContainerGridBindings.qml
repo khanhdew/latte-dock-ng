@@ -5,7 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 import org.kde.latte.core as LatteCore
@@ -48,8 +47,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignLeft; verticalItemAlignment: Grid.AlignVCenter;
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignLeft; _abilityContainer.layout.verticalItemAlignment: Grid.AlignVCenter;
             }
         },
         State {
@@ -57,8 +55,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.types.Top)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignLeft; verticalItemAlignment: Grid.AlignVCenter;
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignLeft; _abilityContainer.layout.verticalItemAlignment: Grid.AlignVCenter;
             }
         },
         State {
@@ -66,8 +63,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.LeftEdge && _abilityContainer.alignment===LatteCore.types.Bottom)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignLeft; verticalItemAlignment: Grid.AlignVCenter;
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignLeft; _abilityContainer.layout.verticalItemAlignment: Grid.AlignVCenter;
             }
         },
         ///Right Edge
@@ -76,8 +72,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignRight; verticalItemAlignment: Grid.AlignVCenter;
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignRight; _abilityContainer.layout.verticalItemAlignment: Grid.AlignVCenter;
             }
         },
         State {
@@ -85,8 +80,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.types.Top)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignRight; verticalItemAlignment: Grid.AlignVCenter;
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignRight; _abilityContainer.layout.verticalItemAlignment: Grid.AlignVCenter;
             }
         },
         State {
@@ -94,7 +88,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.RightEdge && _abilityContainer.alignment===LatteCore.types.Bottom)
 
             PropertyChanges{
-                target: _abilityContainer.layout; horizontalItemAlignment: Grid.AlignRight; verticalItemAlignment: Grid.AlignVCenter;
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignRight; _abilityContainer.layout.verticalItemAlignment: Grid.AlignVCenter;
             }
         },
         ///Bottom Edge
@@ -103,8 +97,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignBottom
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignHCenter; _abilityContainer.layout.verticalItemAlignment: Grid.AlignBottom
             }
         },
         State {
@@ -112,8 +105,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.types.Left)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignBottom
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignHCenter; _abilityContainer.layout.verticalItemAlignment: Grid.AlignBottom
             }
         },
         State {
@@ -121,8 +113,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.BottomEdge && _abilityContainer.alignment===LatteCore.types.Right)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignBottom
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignHCenter; _abilityContainer.layout.verticalItemAlignment: Grid.AlignBottom
             }
         },
         ///Top Edge
@@ -131,8 +122,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.types.Center)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignTop
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignHCenter; _abilityContainer.layout.verticalItemAlignment: Grid.AlignTop
             }
         },
         State {
@@ -140,8 +130,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.types.Left)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignTop
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignHCenter; _abilityContainer.layout.verticalItemAlignment: Grid.AlignTop
             }
         },
         State {
@@ -149,8 +138,7 @@ Item {
             when: (_abilityContainer.location===PlasmaCore.Types.TopEdge && _abilityContainer.alignment===LatteCore.types.Right)
 
             PropertyChanges{
-                target: _abilityContainer.layout;
-                horizontalItemAlignment: Grid.AlignHCenter; verticalItemAlignment: Grid.AlignTop
+                _abilityContainer.layout.horizontalItemAlignment: Grid.AlignHCenter; _abilityContainer.layout.verticalItemAlignment: Grid.AlignTop
             }
         }
     ]

@@ -4,10 +4,7 @@
 */
 
 import QtQuick
-import QtQuick.Layouts
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
 
 import org.kde.latte.core as LatteCore
 import org.kde.latte.components as LatteComponents
@@ -285,9 +282,8 @@ LatteComponents.IndicatorItem{
                         top:undefined; bottom:undefined; left:parent.left; right:undefined;}
                 }
                 PropertyChanges{
-                    target: mainIndicatorElement
-                    anchors.leftMargin: root.effectiveScreenEdgeMargin;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                    anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                    mainIndicatorElement.anchors.leftMargin: root.effectiveScreenEdgeMargin;    mainIndicatorElement.anchors.rightMargin: 0;     mainIndicatorElement.anchors.topMargin:0;    mainIndicatorElement.anchors.bottomMargin:0;
+                    mainIndicatorElement.anchors.horizontalCenterOffset: 0; mainIndicatorElement.anchors.verticalCenterOffset: 0;
                 }
             },
             State {
@@ -302,9 +298,8 @@ LatteComponents.IndicatorItem{
                         top:undefined; bottom:parent.bottom; left:undefined; right:undefined;}
                 }
                 PropertyChanges{
-                    target: mainIndicatorElement
-                    anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin: root.effectiveScreenEdgeMargin;
-                    anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                    mainIndicatorElement.anchors.leftMargin: 0;    mainIndicatorElement.anchors.rightMargin: 0;     mainIndicatorElement.anchors.topMargin:0;    mainIndicatorElement.anchors.bottomMargin: root.effectiveScreenEdgeMargin;
+                    mainIndicatorElement.anchors.horizontalCenterOffset: 0; mainIndicatorElement.anchors.verticalCenterOffset: 0;
                 }
             },
             State {
@@ -318,9 +313,8 @@ LatteComponents.IndicatorItem{
                         top:parent.top; bottom:undefined; left:undefined; right:undefined;}
                 }
                 PropertyChanges{
-                    target: mainIndicatorElement
-                    anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin: root.effectiveScreenEdgeMargin;    anchors.bottomMargin:0;
-                    anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                    mainIndicatorElement.anchors.leftMargin: 0;    mainIndicatorElement.anchors.rightMargin: 0;     mainIndicatorElement.anchors.topMargin: root.effectiveScreenEdgeMargin;    mainIndicatorElement.anchors.bottomMargin:0;
+                    mainIndicatorElement.anchors.horizontalCenterOffset: 0; mainIndicatorElement.anchors.verticalCenterOffset: 0;
                 }
             },
             State {
@@ -334,9 +328,8 @@ LatteComponents.IndicatorItem{
                         top:undefined; bottom:undefined; left:undefined; right:parent.right;}
                 }
                 PropertyChanges{
-                    target: mainIndicatorElement
-                    anchors.leftMargin: 0;    anchors.rightMargin: root.effectiveScreenEdgeMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                    anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                    mainIndicatorElement.anchors.leftMargin: 0;    mainIndicatorElement.anchors.rightMargin: root.effectiveScreenEdgeMargin;     mainIndicatorElement.anchors.topMargin:0;    mainIndicatorElement.anchors.bottomMargin:0;
+                    mainIndicatorElement.anchors.horizontalCenterOffset: 0; mainIndicatorElement.anchors.verticalCenterOffset: 0;
                 }
             }
         ]

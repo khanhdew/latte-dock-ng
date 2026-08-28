@@ -11,7 +11,6 @@ import QtQuick.Layouts
 
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.extras as PlasmaExtras
-import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import org.kde.kwindowsystem
 import org.kde.draganddrop
@@ -74,8 +73,8 @@ Item {
 
             Item {
                 id: iconContainer
-                width: Kirigami.Units.iconSizes.enormous
-                height: width
+                Layout.preferredWidth: Kirigami.Units.iconSizes.enormous
+                Layout.preferredHeight: Kirigami.Units.iconSizes.enormous
                 Layout.alignment: Qt.AlignHCenter
                 opacity: delegate.pendingUninstall ? 0.6 : 1
                 Behavior on opacity {
@@ -216,7 +215,6 @@ Item {
             }
             PlasmaComponents.Label {
                 Layout.fillWidth: true
-                height: implicitHeight
                 text: model.description
                 font: Kirigami.Theme.smallFont
                 wrapMode: Text.WordWrap

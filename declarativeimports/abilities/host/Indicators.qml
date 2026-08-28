@@ -18,7 +18,10 @@ AbilityDefinition.Indicators {
         readonly property alias type: apis.type
 
         readonly property alias configuration: apis.configuration
+        // Preserve the public indicator API name from the definition layer.
+        // qmllint disable property-override
         readonly property alias resources: apis.resources
+        // qmllint enable property-override
 
         readonly property alias indicatorComponent: apis.indicatorComponent
 

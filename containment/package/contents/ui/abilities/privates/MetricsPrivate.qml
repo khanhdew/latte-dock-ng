@@ -4,8 +4,6 @@
 */
 
 import QtQuick
-import org.kde.plasma.plasmoid
-
 import org.kde.latte.abilities.host as AbilityHost
 
 import "./metrics" as MetricsPrivateTypes

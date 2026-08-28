@@ -6,7 +6,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 import org.kde.latte.core as LatteCore
@@ -216,9 +215,8 @@ Flickable{
                 anchors{ top:undefined; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: flickableContainer.offset;
+                flickableContainer.anchors.leftMargin: 0;    flickableContainer.anchors.rightMargin: 0;     flickableContainer.anchors.topMargin: 0;    flickableContainer.anchors.bottomMargin: 0;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: flickableContainer.offset;
             }
         },
         State {
@@ -230,9 +228,8 @@ Flickable{
                 anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:flickableContainer.offset;    anchors.bottomMargin:flickableContainer.lastMargin;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: 0;    flickableContainer.anchors.rightMargin: 0;     flickableContainer.anchors.topMargin: flickableContainer.offset;    flickableContainer.anchors.bottomMargin: flickableContainer.lastMargin;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -244,9 +241,8 @@ Flickable{
                 anchors{ top:undefined; bottom:parent.bottom; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:flickableContainer.lastMargin;    anchors.bottomMargin:flickableContainer.offset;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: 0;    flickableContainer.anchors.rightMargin: 0;     flickableContainer.anchors.topMargin: flickableContainer.lastMargin;    flickableContainer.anchors.bottomMargin: flickableContainer.offset;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         },
         ///Right Edge
@@ -259,9 +255,8 @@ Flickable{
                 anchors{ top:undefined; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: flickableContainer.offset;
+                flickableContainer.anchors.leftMargin: 0;    flickableContainer.anchors.rightMargin: 0;     flickableContainer.anchors.topMargin: 0;    flickableContainer.anchors.bottomMargin: 0;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: flickableContainer.offset;
             }
         },
         State {
@@ -273,9 +268,8 @@ Flickable{
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:flickableContainer.offset;    anchors.bottomMargin:flickableContainer.lastMargin;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: 0;    flickableContainer.anchors.rightMargin: 0;     flickableContainer.anchors.topMargin: flickableContainer.offset;    flickableContainer.anchors.bottomMargin: flickableContainer.lastMargin;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -287,9 +281,8 @@ Flickable{
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:flickableContainer.lastMargin;    anchors.bottomMargin:flickableContainer.offset;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: 0;    flickableContainer.anchors.rightMargin: 0;     flickableContainer.anchors.topMargin: flickableContainer.lastMargin;    flickableContainer.anchors.bottomMargin: flickableContainer.offset;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         },
         ///Bottom Edge
@@ -302,9 +295,8 @@ Flickable{
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:undefined; horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: flickableContainer.offset; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: 0;    flickableContainer.anchors.rightMargin: 0;     flickableContainer.anchors.topMargin: 0;    flickableContainer.anchors.bottomMargin: 0;
+                flickableContainer.anchors.horizontalCenterOffset: flickableContainer.offset; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -316,9 +308,8 @@ Flickable{
                 anchors{ top:undefined; bottom:parent.bottom; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: flickableContainer.offset;    anchors.rightMargin:flickableContainer.lastMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: flickableContainer.offset;    flickableContainer.anchors.rightMargin: flickableContainer.lastMargin;     flickableContainer.anchors.topMargin: 0;    flickableContainer.anchors.bottomMargin: 0;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -330,9 +321,8 @@ Flickable{
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: flickableContainer.lastMargin;    anchors.rightMargin:flickableContainer.offset;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: flickableContainer.lastMargin;    flickableContainer.anchors.rightMargin: flickableContainer.offset;     flickableContainer.anchors.topMargin: 0;    flickableContainer.anchors.bottomMargin: 0;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         },
         ///Top Edge
@@ -345,9 +335,8 @@ Flickable{
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:undefined; horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: flickableContainer.offset; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: 0;    flickableContainer.anchors.rightMargin: 0;     flickableContainer.anchors.topMargin: 0;    flickableContainer.anchors.bottomMargin: 0;
+                flickableContainer.anchors.horizontalCenterOffset: flickableContainer.offset; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -359,9 +348,8 @@ Flickable{
                 anchors{ top:parent.top; bottom:undefined; left:parent.left; right:undefined; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: flickableContainer.offset;    anchors.rightMargin:flickableContainer.lastMargin;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: flickableContainer.offset;    flickableContainer.anchors.rightMargin: flickableContainer.lastMargin;     flickableContainer.anchors.topMargin: 0;    flickableContainer.anchors.bottomMargin: 0;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -373,9 +361,8 @@ Flickable{
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:parent.right; horizontalCenter:undefined; verticalCenter:undefined}
             }
             PropertyChanges{
-                target: flickableContainer;
-                anchors.leftMargin: flickableContainer.lastMargin;    anchors.rightMargin:flickableContainer.offset;     anchors.topMargin:0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                flickableContainer.anchors.leftMargin: flickableContainer.lastMargin;    flickableContainer.anchors.rightMargin: flickableContainer.offset;     flickableContainer.anchors.topMargin: 0;    flickableContainer.anchors.bottomMargin: 0;
+                flickableContainer.anchors.horizontalCenterOffset: 0; flickableContainer.anchors.verticalCenterOffset: 0;
             }
         }
     ]

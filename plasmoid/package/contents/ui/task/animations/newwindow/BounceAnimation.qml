@@ -5,8 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-
 SequentialAnimation{
     loops: newWindowAnimation.isDemandingAttention ? 20 : 1
 

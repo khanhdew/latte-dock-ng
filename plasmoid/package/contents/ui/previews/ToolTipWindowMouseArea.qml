@@ -6,8 +6,6 @@
 
 import QtQuick
 
-import org.kde.plasma.components as PlasmaComponents
-
 MouseArea {
     property var modelIndex
     property int winId // FIXME Legacy

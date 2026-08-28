@@ -5,8 +5,6 @@
 
 import QtQuick
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
 Item{
     id: _indicator
@@ -55,6 +53,8 @@ Item{
 
     property int screenEdgeMargin: _indicator.metrics ? Math.max(0, _indicator.metrics.margin.screenEdge) : 0 /*since 0.10*/
 
+    // Keep the indicator API's palette name while supplying Latte's palette object.
+    // qmllint disable property-override
     property QtObject palette: null
 
     //!icon colors
@@ -64,6 +64,7 @@ Item{
     //! grouped options
     property Item shared: host
     property QtObject configuration: shared ? shared.configuration : null
+    // Keep the indicator API's shared resource name.
     property QtObject resources: shared ?  shared.resources : null
 
 
@@ -120,6 +121,7 @@ Item{
             return configModern || metricsModern;
         }
 
+        // Preserve the public indicator palette API name.
         readonly property QtObject palette: _indicator.palette ? _indicator.palette : theme
 
         //!icon colors
@@ -129,6 +131,8 @@ Item{
         //! grouped options
         readonly property alias shared: _indicator.shared
         readonly property alias configuration: _indicator.configuration
+        // Preserve the public indicator resources API name.
         readonly property alias resources: _indicator.resources
+        // qmllint enable property-override
     }
 }

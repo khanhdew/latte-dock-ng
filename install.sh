@@ -438,6 +438,20 @@ if [[ "$install_mode" == "user" ]]; then
 export QML2_IMPORT_PATH="${kde_install_qmldir}\${QML2_IMPORT_PATH:+:\${QML2_IMPORT_PATH}}"
 export QML_IMPORT_PATH="${kde_install_qmldir}\${QML_IMPORT_PATH:+:\${QML_IMPORT_PATH}}"
 export QT_QML_IMPORT_PATH="${kde_install_qmldir}\${QT_QML_IMPORT_PATH:+:\${QT_QML_IMPORT_PATH}}"
+# Plasma stores the session's selected look-and-feel package in the KDE
+# defaults overlay. Preserve the existing search path so development launches
+# receive the same theme as the XDG desktop-session launch.
+export XDG_CONFIG_DIRS="\${HOME}/.config/kdedefaults:/etc/xdg\${XDG_CONFIG_DIRS:+:\${XDG_CONFIG_DIRS}}"
+# Match the KDE session language for terminal/nohup debug launches.  A stale
+# LC_ALL from the command runner otherwise overrides plasma-localerc.
+if [[ -f "\${HOME}/.config/plasma-localerc" ]]; then
+    latte_debug_lang="\$(sed -n 's/^LANG=//p' "\${HOME}/.config/plasma-localerc" | head -n 1)"
+    latte_debug_language="\$(sed -n 's/^LANGUAGE=//p' "\${HOME}/.config/plasma-localerc" | head -n 1)"
+    [[ -n "\${latte_debug_lang}" ]] && export LANG="\${latte_debug_lang}"
+    [[ -n "\${latte_debug_language}" ]] && export LANGUAGE="\${latte_debug_language}"
+    [[ -n "\${latte_debug_lang}" ]] && export LC_MESSAGES="\${latte_debug_lang}"
+    unset LC_ALL
+fi
 ENVEOF
 
     # Keep desktop Exec as direct latte binary path. KWin resolves privileged

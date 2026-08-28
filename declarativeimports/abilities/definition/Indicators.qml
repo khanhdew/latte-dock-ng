@@ -15,7 +15,10 @@ Item{
     property string type: "org.kde.latte.default"
 
     property QtObject configuration: null
-    property QtObject resources: null   
+    // This name is part of the indicator ability API and intentionally shadows QQuickItem.resources.
+    // qmllint disable property-override
+    property QtObject resources: null
+    // qmllint enable property-override
 
     property Component indicatorComponent
 
@@ -44,4 +47,3 @@ Item{
         svgPaths: []
     }
 }
-

@@ -301,16 +301,12 @@ Window{
                     switch(plasmoid.location){
                     case PlasmaCore.Types.LeftEdge:
                         return "Left Edge";
-                        break;
                     case PlasmaCore.Types.RightEdge:
                         return "Right Edge";
-                        break;
                     case PlasmaCore.Types.TopEdge:
                         return "Top Edge";
-                        break;
                     case PlasmaCore.Types.BottomEdge:
                         return "Bottom Edge";
-                        break;
                     }
 
                     return " <unknown> : " + plasmoid.location;
@@ -326,22 +322,16 @@ Window{
                     switch(plasmoid.configuration.alignment){
                     case LatteCore.types.Left:
                         return "Left";
-                        break;
                     case LatteCore.types.Right:
                         return "Right";
-                        break;
                     case LatteCore.types.Center:
                         return "Center";
-                        break;
                     case LatteCore.types.Top:
                         return "Top";
-                        break;
                     case LatteCore.types.Bottom:
                         return "Bottom";
-                        break;
                     case LatteCore.types.Justify:
                         return "Justify";
-                        break;
                     }
 
                     return "<unknown> : " + plasmoid.configuration.alignment;
@@ -360,43 +350,30 @@ Window{
                     switch(latteView.visibility.mode){
                     case LatteCore.types.AlwaysVisible:
                         return "Always Visible";
-                        break;
                     case LatteCore.types.AutoHide:
                         return "Auto Hide";
-                        break;
                     case LatteCore.types.DodgeActive:
                         return "Dodge Active";
-                        break;
                     case LatteCore.types.DodgeMaximized:
                         return "Dodge Maximized";
-                        break;
                     case LatteCore.types.DodgeAllWindows:
                         return "Dodge All Windows";
-                        break;
                     case LatteCore.types.DodgeAllWindows:
                         return "Dodge All Windows";
-                        break;
                     case LatteCore.types.WindowsGoBelow:
                         return "Windows Go Below";
-                        break;
                     case LatteCore.types.WindowsCanCover:
                         return "Windows Can Cover";
-                        break;
                     case LatteCore.types.WindowsAlwaysCover:
                         return "Windows Always Cover";
-                        break;
                     case LatteCore.types.SidebarOnDemand:
                         return "OnDemand Sidebar";
-                        break;
                     case LatteCore.types.SidebarAutoHide:
                         return "AutoHide Sidebar";
-                    break;
                     case LatteCore.types.NormalWindow:
                         return "Normal Window";
-                        break;
                     case LatteCore.types.None:
                         return "None";
-                        break;
                     }
 
                     return "<unknown> : " + latteView.visibility.mode;

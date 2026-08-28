@@ -15,6 +15,7 @@
 #include <QPointer>
 #include <QMouseEvent>
 #include <QObject>
+#include <QtQml>
 
 // Plasma
 #include <Plasma/Plasma>
@@ -34,6 +35,7 @@ namespace Latte {
 class ContextMenuLayerQuickItem : public QQuickItem
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(ContextMenuLayer)
     Q_PROPERTY(bool menuIsShown READ menuIsShown NOTIFY menuChanged)
     Q_PROPERTY(QObject *view READ view WRITE setView NOTIFY viewChanged)
     Q_PROPERTY(bool closeActiveWindowEnabled READ closeActiveWindowEnabled WRITE setCloseActiveWindowEnabled NOTIFY closeActiveWindowEnabledChanged)

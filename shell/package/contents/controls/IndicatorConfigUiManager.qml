@@ -7,10 +7,12 @@ import QtQuick
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.core as PlasmaCore
 
 Item {
     id: uiManager
+    required property var dialog
+    required property var latteView
+    required property var viewConfig
     visible: false
     Kirigami.Theme.inherit: false
     Kirigami.Theme.colorSet: Kirigami.Theme.Window

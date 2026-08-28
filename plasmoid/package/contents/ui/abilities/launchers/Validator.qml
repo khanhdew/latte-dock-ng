@@ -5,10 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-
-import org.kde.latte.core as LatteCore
-
 //! Launchers Validate Timer
 Timer{
     id:launchersOrderValidatorTimer

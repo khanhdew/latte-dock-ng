@@ -8,8 +8,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
-import org.kde.kquickcontrolsaddons
 import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
 
@@ -30,6 +28,16 @@ import "./debugger" as Debugger
 ContainmentItem {
     id: root
     objectName: "containmentViewLayout"
+    readonly property var containmentRootReference: root
+    readonly property var latteViewReference: latteView
+    readonly property var autosizeReference: autosize
+    readonly property var visibilityManagerReference: visibilityManager
+    readonly property var metricsReference: metrics
+    readonly property var plasmoidReference: plasmoid
+    readonly property var myViewReference: myView
+    readonly property var backgroundReference: background
+    readonly property var indexerReference: indexer
+    readonly property var layouterReference: layouter
 
     // Decouple Kirigami theme from parent window to ensure every
     // containment (original or clone) resolves colors from the
@@ -748,16 +756,17 @@ ContainmentItem {
         }
     }
 
-    Containment.onAppletAdded: function(applet, x, y) {
+    Containment.onAppletAdded: function(applet, geometryHint) {
         // C++ drag-drop path sets _latte_pendingInsertionIndex before
         // creating the applet.  Use it when present.
         var pendingIndex = fastLayoutManager._latte_pendingInsertionIndex;
         if (pendingIndex !== undefined && pendingIndex >= 0) {
             fastLayoutManager.addAppletItem(applet, pendingIndex);
             fastLayoutManager._latte_pendingInsertionIndex = undefined;
-        } else if (typeof x === "object" && x !== null) {
+        } else {
             // Plasma 6: signal is appletAdded(Plasma::Applet*, const QRectF&).
-            // The QRectF arrives as x, and y is undefined.
+            // The geometry hint is not used because Latte determines the
+            // insertion position from its saved layout.
             var order = fastLayoutManager.order;
             if (order && order.length > 0 && order.indexOf(applet.id) < 0) {
                 // New applet (e.g. double-click from Widget Explorer):
@@ -767,11 +776,6 @@ ContainmentItem {
             }
             // else: startup saved applet — skip, the repair timer will
             // create containers at the correct positions from saved order.
-        } else if (fastLayoutManager.isMasqueradedIndex(x, y)) {
-            var index = fastLayoutManager.masquearadedIndex(x, y);
-            fastLayoutManager.addAppletItem(applet, index);
-        } else {
-            fastLayoutManager.addAppletItem(applet, x, y);
         }
 
         runtimeAppletRepairTimer.schedule();
@@ -1165,6 +1169,7 @@ ContainmentItem {
     Component {
         id: appletItemComponent
         Applet.AppletItem{
+            containmentRoot: layoutsContainer.root
             animations: _animations
             debug: _debug
             environment: _environment
@@ -1264,6 +1269,17 @@ ContainmentItem {
 
     BindingsExternal {
         id: bindingsExternal
+        containmentRoot: containmentRootReference
+        latteView: latteViewReference
+        autosize: autosizeReference
+        visibilityManager: visibilityManagerReference
+        metrics: metricsReference
+        plasmoid: plasmoidReference
+        myView: myViewReference
+        background: backgroundReference
+        indexer: indexerReference
+        fastLayoutManager: fastLayoutManager
+        effects: latteViewReference ? latteViewReference.effects : null
     }
 
     VisibilityManager{
@@ -1285,6 +1301,14 @@ ContainmentItem {
 
         Layouts.LayoutsContainer {
             id: layoutsContainer
+            containmentRoot: containmentRootReference
+            latteView: latteViewReference
+            visibilityManager: visibilityManagerReference
+            background: backgroundReference
+            myView: myViewReference
+            plasmoid: plasmoidReference
+            metrics: metricsReference
+            layouter: layouterReference
         }
     }
 
@@ -1525,9 +1549,8 @@ ContainmentItem {
                         anchors.right: undefined; anchors.left: undefined; anchors.top: undefined; anchors.bottom: parent.bottom;
                     }
                     PropertyChanges{
-                        target: dndSpacerAddItemContainer;
-                        anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin: dndSpacerAddItemContainer.thickMargin;
-                        anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                        dndSpacerAddItemContainer.anchors.leftMargin: 0;    dndSpacerAddItemContainer.anchors.rightMargin: 0;     dndSpacerAddItemContainer.anchors.topMargin:0;    dndSpacerAddItemContainer.anchors.bottomMargin: dndSpacerAddItemContainer.thickMargin;
+                        dndSpacerAddItemContainer.anchors.horizontalCenterOffset: 0; dndSpacerAddItemContainer.anchors.verticalCenterOffset: 0;
                     }
                 },
                 State{
@@ -1540,9 +1563,8 @@ ContainmentItem {
                         anchors.right: undefined; anchors.left: undefined; anchors.top: parent.top; anchors.bottom: undefined;
                     }
                     PropertyChanges{
-                        target: dndSpacerAddItemContainer;
-                        anchors.leftMargin: 0;    anchors.rightMargin: 0;     anchors.topMargin: dndSpacerAddItemContainer.thickMargin;    anchors.bottomMargin: 0;
-                        anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                        dndSpacerAddItemContainer.anchors.leftMargin: 0;    dndSpacerAddItemContainer.anchors.rightMargin: 0;     dndSpacerAddItemContainer.anchors.topMargin: dndSpacerAddItemContainer.thickMargin;    dndSpacerAddItemContainer.anchors.bottomMargin: 0;
+                        dndSpacerAddItemContainer.anchors.horizontalCenterOffset: 0; dndSpacerAddItemContainer.anchors.verticalCenterOffset: 0;
                     }
                 },
                 State{
@@ -1555,9 +1577,8 @@ ContainmentItem {
                         anchors.right: undefined; anchors.left: parent.left; anchors.top: undefined; anchors.bottom: undefined;
                     }
                     PropertyChanges{
-                        target: dndSpacerAddItemContainer;
-                        anchors.leftMargin: dndSpacerAddItemContainer.thickMargin;    anchors.rightMargin: 0;     anchors.topMargin:0;    anchors.bottomMargin: 0;
-                        anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                        dndSpacerAddItemContainer.anchors.leftMargin: dndSpacerAddItemContainer.thickMargin;    dndSpacerAddItemContainer.anchors.rightMargin: 0;     dndSpacerAddItemContainer.anchors.topMargin:0;    dndSpacerAddItemContainer.anchors.bottomMargin: 0;
+                        dndSpacerAddItemContainer.anchors.horizontalCenterOffset: 0; dndSpacerAddItemContainer.anchors.verticalCenterOffset: 0;
                     }
                 },
                 State{
@@ -1570,9 +1591,8 @@ ContainmentItem {
                         anchors.right: parent.right; anchors.left: undefined; anchors.top: undefined; anchors.bottom: undefined;
                     }
                     PropertyChanges{
-                        target: dndSpacerAddItemContainer;
-                        anchors.leftMargin: 0;    anchors.rightMargin: dndSpacerAddItemContainer.thickMargin;     anchors.topMargin:0;    anchors.bottomMargin: 0;
-                        anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                        dndSpacerAddItemContainer.anchors.leftMargin: 0;    dndSpacerAddItemContainer.anchors.rightMargin: dndSpacerAddItemContainer.thickMargin;     dndSpacerAddItemContainer.anchors.topMargin:0;    dndSpacerAddItemContainer.anchors.bottomMargin: 0;
+                        dndSpacerAddItemContainer.anchors.horizontalCenterOffset: 0; dndSpacerAddItemContainer.anchors.verticalCenterOffset: 0;
                     }
                 }
             ]

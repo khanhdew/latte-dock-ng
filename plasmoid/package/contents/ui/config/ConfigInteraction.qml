@@ -9,7 +9,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
 
 import org.kde.latte.private.tasks as LatteTasks
 
@@ -127,7 +126,7 @@ Item {
             Label {
                 text: i18n("Filters")
                // Layout.fillWidth: true
-                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.alignment: Qt.AlignHCenter
                // anchors.centerIn: parent
                 font.bold: true
                 font.italic: true

@@ -5,7 +5,6 @@
 
 import QtQuick
 
-import org.kde.latte.core as LatteCore
 import org.kde.latte.abilities.definition as AbilityDefinition
 
 AbilityDefinition.Containment {

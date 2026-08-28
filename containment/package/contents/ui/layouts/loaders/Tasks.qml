@@ -7,7 +7,6 @@ import QtQuick
 
 import org.kde.taskmanager as TaskManager
 
-import org.kde.latte.core as LatteCore
 import org.kde.latte.private.containment as LatteContainment
 
 Loader {

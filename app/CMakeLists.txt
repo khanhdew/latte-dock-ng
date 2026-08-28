@@ -4,6 +4,7 @@ set(lattedock-app_SRCS
     infoview.cpp
     knscompat.cpp
     lattecorona.cpp
+    declarativeimports/interfaces.cpp
     screenpool.cpp
     primaryoutputwatcher.cpp
     main.cpp
@@ -66,6 +67,13 @@ ecm_add_qtwayland_client_protocol(lattedock-app_SRCS
 
 add_executable(latte-dock-ng ${lattedock-app_SRCS})
 add_executable(latte-dock-ng-add-launcher launcherhelper.cpp)
+
+# The private.app QML plugin is hosted by this executable and resolves its
+# application-facing type dependencies from the exported process symbols.
+set_target_properties(latte-dock-ng PROPERTIES
+    ENABLE_EXPORTS TRUE
+    CXX_VISIBILITY_PRESET default
+)
 
 if(LATTE_LAYERSHELL_HAS_SET_SCREEN)
     target_compile_definitions(latte-dock-ng PRIVATE LATTE_LAYERSHELL_HAS_SET_SCREEN)

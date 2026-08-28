@@ -5,9 +5,9 @@
 
 import QtQuick
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.plasmoid
 
 Rectangle {
+    id: badge
     readonly property var units: Kirigami.Units
 
     property double proportion: 0
@@ -85,11 +85,11 @@ Rectangle {
 
         width: parent.width - 2 * parent.borderWidth
         height: parent.height - 2 * parent.borderWidth
-        opacity: proportion > 0 ? 1 : 0
+        opacity: badge.proportion > 0 ? 1 : 0
 
         anchors.centerIn: parent
 
-        property color drawColor: highlightedColor
+        property color drawColor: badge.highlightedColor
 
         onDrawColorChanged: requestPaint();
 
@@ -100,11 +100,11 @@ Rectangle {
 
             var startRadian = - Math.PI / 2;
 
-            var radians = pi2 * proportion;
+            var radians = badge.pi2 * badge.proportion;
 
             ctx.beginPath();
-            ctx.arc(width/2, height/2, stdThickness, startRadian, startRadian + radians + filler, false);
-            ctx.arc(width/2, height/2, circleThicknessAttr, startRadian + radians + filler, startRadian, true);
+            ctx.arc(width/2, height/2, badge.stdThickness, startRadian, startRadian + radians + filler, false);
+            ctx.arc(width/2, height/2, badge.circleThicknessAttr, startRadian + radians + filler, startRadian, true);
 
             ctx.closePath();
             ctx.fill();
@@ -116,7 +116,7 @@ Rectangle {
         anchors.fill: canvas
         color: canvas.drawColor
 
-        visible: proportion === 1 && showNumber
+        visible: badge.proportion === 1 && badge.showNumber
         radius: parent.radius
     }
 
@@ -124,31 +124,31 @@ Rectangle {
         id: valueText
         anchors.centerIn: canvas
 
-        width: Math.min(maximumWidth - 4*units.smallSpacing, implicitWidth)
+        width: Math.min(badge.maximumWidth - 4*badge.units.smallSpacing, implicitWidth)
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
 
         elide: Text.ElideRight
 
         text: {
-            if (showNumber) {
-                if (numberValue > 9999) {
+            if (badge.showNumber) {
+                if (badge.numberValue > 9999) {
                     return i18nc("Over 9999 new messages, overlay, keep short", "9,999+");
-                } else if (numberValue > 0) {
-                    return numberValue.toLocaleString(Qt.locale(), 'f', 0);
+                } else if (badge.numberValue > 0) {
+                    return badge.numberValue.toLocaleString(Qt.locale(), 'f', 0);
                 }
             }
 
-            if (showText) {
-                return textValue;
+            if (badge.showText) {
+                return badge.textValue;
             }
 
             return "";
         }
-        font.pixelSize: Math.round(0.62 * parent.height)
+        font.pixelSize: Math.round(0.62 * badge.height)
         font.bold: true
-        color: textWithBackgroundColor ? parent.color : parent.textColor
-        visible: showNumber || showText
+        color: badge.textWithBackgroundColor ? badge.color : badge.textColor
+        visible: badge.showNumber || badge.showText
     }
 
     Rectangle{
@@ -163,18 +163,18 @@ Rectangle {
         radius: parent.radius
         opacity: 0.4
 
-        visible: style3d
+        visible: badge.style3d
     }
 
     Rectangle{
         anchors.fill: parent
         border.width: parent.borderWidth
         border.color: {
-            if (style3d) {
-                return parent.borderColor
+            if (badge.style3d) {
+                return badge.borderColor
             }
 
-            return proportion === 1 ? parent.highlightedColor : parent.color
+            return badge.proportion === 1 ? badge.highlightedColor : badge.color
         }
         color: "transparent"
         radius: parent.radius

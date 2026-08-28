@@ -6,8 +6,6 @@
 import QtQuick
 
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
 import org.kde.latte.core as LatteCore
 
@@ -51,7 +49,10 @@ Item {
 
     property var containmentActions: []
 
+    // Keep the ability API's theme-backed palette name.
+    // qmllint disable property-override
     property QtObject palette: theme
+    // qmllint enable property-override
 
     property MyViewTypes.ItemShadow itemShadow: MyViewTypes.ItemShadow {
         isEnabled: true

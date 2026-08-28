@@ -23,7 +23,7 @@ QtObject {
 
     readonly property QtObject contextMenuActionsBackend: LatteTasks.ContextMenuActionsBackend {}
     readonly property var contextMenuActionsBridge: Connections {
-        target: contextMenuActionsBackend
+        target: backend.contextMenuActionsBackend
         function onShowAllPlaces() {
             backend.showAllPlaces()
         }

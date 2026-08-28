@@ -7,10 +7,8 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
-import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg as KSvg
 import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.extras as PlasmaExtras
 
 import org.kde.latte.core as LatteCore
 
@@ -24,6 +22,7 @@ KSvg.FrameSvgItem {
     width: Screen.width + 1
     height: Math.min(Screen.height - units.gridUnit * 8, logo.height + messageLbl.height + 2 *units.gridUnit)
 
+    property var infoWindow
     property string message
 
     ColumnLayout {

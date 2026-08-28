@@ -6,8 +6,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-
 import org.kde.latte.core as LatteCore
 
 ///item's added Animation

@@ -5,7 +5,6 @@
 
 import QtQuick
 import QtQuick.Controls as QQC2
-import QtQuick.Layouts
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents
@@ -15,6 +14,10 @@ import org.kde.latte.core as LatteCore
 
 Item{
     id: rulerItem
+    required property var root
+    required property var plasmoid
+    required property var settingsRoot
+    readonly property var rulerItemReference: rulerItem
 
     Kirigami.Theme.inherit: true
     readonly property var theme: Kirigami.Theme
@@ -70,18 +73,18 @@ Item{
     property int yL: 0
 
     Binding{
-        target: ruler
+        target: rulerItem
         property: "xL"
         value: {
-            if (root.isHorizontal) {
-                if (plasmoid.configuration.alignment === LatteCore.types.Justify) {
-                    return root.width/2 - rulerItem.length/2 + root.offset;
-                } else if (root.panelAlignment === LatteCore.types.Left) {
-                    return root.offset;
-                } else if (root.panelAlignment === LatteCore.types.Center) {
-                    return root.width/2 - rulerItem.length/2 + root.offset;
-                } else if (root.panelAlignment === LatteCore.types.Right) {
-                    return root.width - rulerItem.length - root.offset;
+            if (rulerItem.root.isHorizontal) {
+                if (rulerItem.plasmoid.configuration.alignment === LatteCore.types.Justify) {
+                    return rulerItem.root.width/2 - rulerItem.length/2 + rulerItem.root.offset;
+                } else if (rulerItem.root.panelAlignment === LatteCore.types.Left) {
+                    return rulerItem.root.offset;
+                } else if (rulerItem.root.panelAlignment === LatteCore.types.Center) {
+                    return rulerItem.root.width/2 - rulerItem.length/2 + rulerItem.root.offset;
+                } else if (rulerItem.root.panelAlignment === LatteCore.types.Right) {
+                    return rulerItem.root.width - rulerItem.length - rulerItem.root.offset;
                 }
             } else {
                 return ;
@@ -90,18 +93,18 @@ Item{
     }
 
     Binding{
-        target: ruler
+        target: rulerItem
         property: "yL"
         value: {
-            if (root.isVertical) {
-                if (plasmoid.configuration.alignment === LatteCore.types.Justify) {
-                    return root.height/2 - rulerItem.length/2 + root.offset;
-                } else if (root.panelAlignment === LatteCore.types.Top) {
-                    return root.offset;
-                } else if (root.panelAlignment === LatteCore.types.Center) {
-                    return root.height/2 - rulerItem.length/2 + root.offset;
-                } else if (root.panelAlignment === LatteCore.types.Bottom) {
-                    return root.height - rulerItem.length - root.offset;
+            if (rulerItem.root.isVertical) {
+                if (rulerItem.plasmoid.configuration.alignment === LatteCore.types.Justify) {
+                    return rulerItem.root.height/2 - rulerItem.length/2 + rulerItem.root.offset;
+                } else if (rulerItem.root.panelAlignment === LatteCore.types.Top) {
+                    return rulerItem.root.offset;
+                } else if (rulerItem.root.panelAlignment === LatteCore.types.Center) {
+                    return rulerItem.root.height/2 - rulerItem.length/2 + rulerItem.root.offset;
+                } else if (rulerItem.root.panelAlignment === LatteCore.types.Bottom) {
+                    return rulerItem.root.height - rulerItem.length - rulerItem.root.offset;
                 }
             } else {
                 return;
@@ -112,7 +115,7 @@ Item{
     Behavior on width {
         NumberAnimation {
             id: horizontalAnimation
-            duration: rulerAnimationTime
+            duration: rulerItem.rulerAnimationTime
             easing.type: Easing.OutCubic
         }
     }
@@ -120,51 +123,51 @@ Item{
     Behavior on height {
         NumberAnimation {
             id: verticalAnimation
-            duration: rulerAnimationTime
+            duration: rulerItem.rulerAnimationTime
             easing.type: Easing.OutCubic
         }
     }
 
     Behavior on x {
-        enabled: root.isHorizontal && !offsetAnimation.running
+        enabled: rulerItem.root.isHorizontal && !horizontalAnimation.running
         NumberAnimation {
-            duration: rulerAnimationTime
+            duration: rulerItem.rulerAnimationTime
             easing.type: Easing.OutCubic
         }
     }
 
     Behavior on y {
-        enabled: root.isVertical && !offsetAnimation.running
+        enabled: rulerItem.root.isVertical && !verticalAnimation.running
         NumberAnimation {
-            duration: rulerAnimationTime
+            duration: rulerItem.rulerAnimationTime
             easing.type: Easing.OutCubic
         }
     }
 
     Flow{
         id: rulerGrid
-        width: root.isHorizontal ? parent.length : undefined
-        height: root.isVertical ? parent.length : undefined
+        width: rulerItem.root.isHorizontal ? rulerItem.length : undefined
+        height: rulerItem.root.isVertical ? rulerItem.length : undefined
 
         spacing: 2
 
-        flow: root.isHorizontal ? Flow.LeftToRight : Flow.TopToBottom
+        flow: rulerItem.root.isHorizontal ? Flow.LeftToRight : Flow.TopToBottom
 
         x: {
-            if (plasmoid.location === PlasmaCore.Types.LeftEdge) {
-                return -thickMargin;
-            } else if (plasmoid.location === PlasmaCore.Types.RightEdge) {
-                return thickMargin;
+            if (rulerItem.plasmoid.location === PlasmaCore.Types.LeftEdge) {
+                return -rulerItem.thickMargin;
+            } else if (rulerItem.plasmoid.location === PlasmaCore.Types.RightEdge) {
+                return rulerItem.thickMargin;
             } else {
                 return 0;
             }
         }
 
         y: {
-            if (plasmoid.location === PlasmaCore.Types.BottomEdge) {
-                return thickMargin;
-            } else if (plasmoid.location === PlasmaCore.Types.TopEdge) {
-                return -thickMargin;
+            if (rulerItem.plasmoid.location === PlasmaCore.Types.BottomEdge) {
+                return rulerItem.thickMargin;
+            } else if (rulerItem.plasmoid.location === PlasmaCore.Types.TopEdge) {
+                return -rulerItem.thickMargin;
             } else {
                 return 0;
             }
@@ -172,20 +175,20 @@ Item{
 
         Behavior on width {
             NumberAnimation {
-                duration: rulerAnimationTime
+                duration: rulerItem.rulerAnimationTime
                 easing.type: Easing.OutCubic
             }
         }
 
         Behavior on height {
             NumberAnimation {
-                duration: rulerAnimationTime
+                duration: rulerItem.rulerAnimationTime
                 easing.type: Easing.OutCubic
             }
         }
 
         property int freeSpace: {
-            if (root.isHorizontal) {
+            if (rulerItem.root.isHorizontal) {
                 return rulerItem.width - rulerGrid.spacing - 1 //((rulerGrid.children.length-2) * rulerGrid.spacing)
                         - (startLine.width + startArrow.width + labelItem.width + endArrow.width + endArrow.width);
             } else {
@@ -196,49 +199,49 @@ Item{
 
         Rectangle{
             id: startLine
-            width: root.isHorizontal ? 2 : theme.defaultFont.pixelSize
-            height: root.isVertical ? 2 : theme.defaultFont.pixelSize
+            width: rulerItem.root.isHorizontal ? 2 : rulerItem.theme.defaultFont.pixelSize
+            height: rulerItem.root.isVertical ? 2 : rulerItem.theme.defaultFont.pixelSize
 
-            color: settingsRoot.textColor
+            color: rulerItem.settingsRoot.textColor
         }
 
         Item{
             id: startArrow
-            width: root.isHorizontal ? 0.6 * theme.defaultFont.pixelSize : theme.defaultFont.pixelSize
-            height: root.isVertical ? 0.6 * theme.defaultFont.pixelSize : theme.defaultFont.pixelSize
+            width: rulerItem.root.isHorizontal ? 0.6 * rulerItem.theme.defaultFont.pixelSize : rulerItem.theme.defaultFont.pixelSize
+            height: rulerItem.root.isVertical ? 0.6 * rulerItem.theme.defaultFont.pixelSize : rulerItem.theme.defaultFont.pixelSize
 
             clip:true
 
             Rectangle{
-                anchors.verticalCenter: root.isHorizontal ? parent.verticalCenter : parent.bottom
-                anchors.horizontalCenter: root.isHorizontal ? parent.right : parent.horizontalCenter
-                width: 0.75*theme.defaultFont.pixelSize
+                anchors.verticalCenter: rulerItem.root.isHorizontal ? parent.verticalCenter : parent.bottom
+                anchors.horizontalCenter: rulerItem.root.isHorizontal ? parent.right : parent.horizontalCenter
+                width: 0.75*rulerItem.theme.defaultFont.pixelSize
                 height: width
                 rotation: 45
 
-                color: settingsRoot.textColor
+                color: rulerItem.settingsRoot.textColor
             }
         }
 
         Item{
             id: startSpacer
-            width: root.isHorizontal ? rulerGrid.freeSpace / 2 : theme.defaultFont.pixelSize
-            height: root.isVertical ? rulerGrid.freeSpace / 2 : theme.defaultFont.pixelSize
+            width: rulerItem.root.isHorizontal ? rulerGrid.freeSpace / 2 : rulerItem.theme.defaultFont.pixelSize
+            height: rulerItem.root.isVertical ? rulerGrid.freeSpace / 2 : rulerItem.theme.defaultFont.pixelSize
 
             Rectangle{
-                height: root.isHorizontal ? 2 : parent.height
-                width: root.isVertical ? 2 : parent.width
+                height: rulerItem.root.isHorizontal ? 2 : parent.height
+                width: rulerItem.root.isVertical ? 2 : parent.width
 
                 anchors.centerIn: parent
 
-                color: settingsRoot.textColor
+                color: rulerItem.settingsRoot.textColor
             }
         }
 
         Item {
             id: labelItem
-            width: root.isHorizontal ? labelMetricsRec.width : labelMetricsRec.height / 2
-            height: root.isVertical ? labelMetricsRec.width : labelMetricsRec.height / 2
+            width: rulerItem.root.isHorizontal ? labelMetricsRec.width : labelMetricsRec.height / 2
+            height: rulerItem.root.isVertical ? labelMetricsRec.width : labelMetricsRec.height / 2
 
             PlasmaComponents.Label{
                 id: maxLengthLbl
@@ -246,16 +249,16 @@ Item{
                 anchors.centerIn: parent
 
                 text: i18n("Maximum Length")
-                color: settingsRoot.textColor
+                color: rulerItem.settingsRoot.textColor
 
                 transformOrigin: Item.Center
 
                 rotation: {
-                    if (root.isHorizontal) {
+                    if (rulerItem.root.isHorizontal) {
                         return 0;
-                    } else if (plasmoid.location === PlasmaCore.Types.LeftEdge){
+                    } else if (rulerItem.plasmoid.location === PlasmaCore.Types.LeftEdge){
                         return 90;
-                    } else if (plasmoid.location === PlasmaCore.Types.RightEdge){
+                    } else if (rulerItem.plasmoid.location === PlasmaCore.Types.RightEdge){
                         return -90;
                     }
                 }
@@ -274,43 +277,46 @@ Item{
             height: startSpacer.height
 
             Rectangle{
-                height: root.isHorizontal ? 2 : parent.height
-                width: root.isVertical ? 2 : parent.width
+                height: rulerItem.root.isHorizontal ? 2 : parent.height
+                width: rulerItem.root.isVertical ? 2 : parent.width
 
                 anchors.centerIn: parent
 
-                color: settingsRoot.textColor
+                color: rulerItem.settingsRoot.textColor
             }
         }
 
         Item{
             id: endArrow
-            width: root.isHorizontal ? 0.6 * theme.defaultFont.pixelSize : theme.defaultFont.pixelSize
-            height: root.isVertical ? 0.6 * theme.defaultFont.pixelSize : theme.defaultFont.pixelSize
+            width: rulerItem.root.isHorizontal ? 0.6 * rulerItem.theme.defaultFont.pixelSize : rulerItem.theme.defaultFont.pixelSize
+            height: rulerItem.root.isVertical ? 0.6 * rulerItem.theme.defaultFont.pixelSize : rulerItem.theme.defaultFont.pixelSize
             clip:true
 
             Rectangle{
-                anchors.verticalCenter: root.isHorizontal ? parent.verticalCenter : parent.top
-                anchors.horizontalCenter: root.isHorizontal ? parent.left : parent.horizontalCenter
-                width: 0.75*theme.defaultFont.pixelSize
+                anchors.verticalCenter: rulerItem.root.isHorizontal ? parent.verticalCenter : parent.top
+                anchors.horizontalCenter: rulerItem.root.isHorizontal ? parent.left : parent.horizontalCenter
+                width: 0.75*rulerItem.theme.defaultFont.pixelSize
                 height: width
                 rotation: 45
 
-                color: settingsRoot.textColor
+                color: rulerItem.settingsRoot.textColor
             }
         }
 
         Rectangle{
             id: endLine
-            width: root.isHorizontal ? 2 : theme.defaultFont.pixelSize
-            height: root.isVertical ? 2 : theme.defaultFont.pixelSize
+            width: rulerItem.root.isHorizontal ? 2 : rulerItem.theme.defaultFont.pixelSize
+            height: rulerItem.root.isVertical ? 2 : rulerItem.theme.defaultFont.pixelSize
 
-            color: settingsRoot.textColor
+            color: rulerItem.settingsRoot.textColor
         }
     } // end of grid
 
     RulerMouseArea {
         id: rulerMouseArea
+        root: rulerItem.root
+        plasmoid: rulerItem.plasmoid
+        rulerItem: rulerItem.rulerItemReference
         anchors.fill: parent
     }
 

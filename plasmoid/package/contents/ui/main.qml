@@ -12,7 +12,6 @@ import QtQuick.Effects
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg as KSvg
-import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.plasmoid
 import org.kde.plasma.private.mpris as Mpris
 
@@ -24,8 +23,6 @@ import org.kde.latte.components as LatteComponents
 
 import org.kde.latte.private.tasks as LatteTasks
 
-import "abilities" as Ability
-import "previews" as Previews
 import "task" as Task
 import "taskslayout" as TasksLayout
 import "../code/tools.js" as TaskTools
@@ -34,6 +31,7 @@ import "../code/ColorizerTools.js" as ColorizerTools
 
 PlasmoidItem {
     id:root
+    readonly property var containmentRootReference: root
 
     // Match the containment-level Kirigami override so audio badges
     // and other symbolic icons use the same Window color set on
@@ -310,7 +308,7 @@ PlasmoidItem {
     }
 
     Connections {
-        target: plasmoid
+        target: root.plasmoid
         function onLocationChanged() {
             iconGeometryTimer.start();
             refreshTaskLayoutAfterEdgeChange("locationChanged");
@@ -323,24 +321,24 @@ PlasmoidItem {
     }
 
     Connections {
-        target: plasmoid.configuration
+        target: root.plasmoid.configuration
 
         // onLaunchersChanged: tasksModel.launcherList = plasmoid.configuration.launchers
-        function onGroupingAppIdBlacklistChanged() { tasksModel.groupingAppIdBlacklist = plasmoid.configuration.groupingAppIdBlacklist; }
-        function onGroupingLauncherUrlBlacklistChanged() { tasksModel.groupingLauncherUrlBlacklist = plasmoid.configuration.groupingLauncherUrlBlacklist; }
+        function onGroupingAppIdBlacklistChanged() { tasksModel.groupingAppIdBlacklist = root.plasmoid.configuration.groupingAppIdBlacklist; }
+        function onGroupingLauncherUrlBlacklistChanged() { tasksModel.groupingLauncherUrlBlacklist = root.plasmoid.configuration.groupingLauncherUrlBlacklist; }
     }
 
 
     Connections {
-        target: appletAbilities.myView
+        target: root.appletAbilities.myView
         function onIsHiddenChanged() {
-            if (appletAbilities.myView.isHidden) {
+            if (root.appletAbilities.myView.isHidden) {
                 windowsPreviewDlg.hide("3.3");
             }
         }
 
         function onIsReadyChanged() {
-            if (appletAbilities.myView.isReady) {
+            if (root.appletAbilities.myView.isReady) {
                 // Plasma 6 dropped JS plasmoid.action(); use internalAction()
                 // and tolerate older builds that may not expose it yet.
                 var configureAction = null;
@@ -354,13 +352,13 @@ PlasmoidItem {
                 if (configureAction) {
                     configureAction.visible = false;
                 }
-                plasmoid.configuration.isInLatteDock = true;
+                root.plasmoid.configuration.isInLatteDock = true;
             }
         }
     }
 
     Binding {
-        target: plasmoid
+        target: root.plasmoid
         property: "status"
         value: {
             var hastaskinattention = root.hasTaskDemandingAttention && tasksModel.anyTaskDemandsAttentionInValidTime;
@@ -371,10 +369,10 @@ PlasmoidItem {
     Binding {
         target: root
         property: "hasTaskDemandingAttention"
-        when: appletAbilities.indexer.isReady
+        when: root.appletAbilities.indexer.isReady
         value: {
-            for (var i=0; i<appletAbilities.indexer.layout.children.length; ++i){
-                var item = appletAbilities.indexer.layout.children[i];
+            for (var i=0; i<root.appletAbilities.indexer.layout.children.length; ++i){
+                var item = root.appletAbilities.indexer.layout.children[i];
                 if (item && item.isDemandingAttention) {
                     return true;
                 }
@@ -466,12 +464,12 @@ PlasmoidItem {
 
     LatteCore.Dialog{
         id: windowsPreviewDlg
-        type: plasmoid.configuration.previewWindowAsPopup ? PlasmaCore.Dialog.PopupMenu : PlasmaCore.Dialog.Tooltip
-        flags: plasmoid.configuration.previewWindowAsPopup ? Qt.WindowStaysOnTopHint | Qt.WindowDoesNotAcceptFocus | Qt.Popup :
+        type: root.plasmoid.configuration.previewWindowAsPopup ? PlasmaCore.Dialog.PopupMenu : PlasmaCore.Dialog.Tooltip
+        flags: root.plasmoid.configuration.previewWindowAsPopup ? Qt.WindowStaysOnTopHint | Qt.WindowDoesNotAcceptFocus | Qt.Popup :
                                                              Qt.WindowStaysOnTopHint | Qt.WindowDoesNotAcceptFocus | Qt.ToolTip
         location: root.location
         edge: root.location
-        mainItem: toolTipDelegate
+        mainItem: root.toolTipDelegate
         visible: false
 
         property bool signalSent: false
@@ -488,7 +486,7 @@ PlasmoidItem {
             //! triggered together.
             if (containsMouse) {
                 hidePreviewWinTimer.stop();
-                appletAbilities.parabolic.setDirectRenderingEnabled(false);
+                root.appletAbilities.parabolic.setDirectRenderingEnabled(false);
             } else {
                 hide(7.3);
             }
@@ -496,11 +494,11 @@ PlasmoidItem {
 
         function hide(debug){
             //console.log("   Tasks: hide previews event called: "+debug);
-            if (containsMouse || !visible) {
+            if (containsMouse || !root.visible) {
                 return;
             }
 
-            if (appletAbilities.myView.isReady && signalSent) {
+            if (root.appletAbilities.myView.isReady && signalSent) {
                 //it is used to unblock dock hiding
                 signalSent = false;
             }
@@ -517,7 +515,7 @@ PlasmoidItem {
                 return;
             }
 
-            if (!toolTipDelegate) {
+            if (!root.toolTipDelegate) {
                 return;
             }
 
@@ -529,14 +527,14 @@ PlasmoidItem {
 
                 //this can be used from others to hide their appearance
                 //e.g but applets from the dock to hide themselves
-                if (!visible) {
+                if (!root.visible) {
                     root.signalPreviewsShown();
                 }
 
                 activeItem = taskItem;
-                toolTipDelegate.parentTask = taskItem;
+                root.toolTipDelegate.parentTask = taskItem;
 
-                if (appletAbilities.myView.isReady && !signalSent) {
+                if (root.appletAbilities.myView.isReady && !signalSent) {
                     //it is used to block dock hiding
                     signalSent = true;
                 }
@@ -545,7 +543,7 @@ PlasmoidItem {
                 //! when switching between single thumbnail to another single thumbnail
                 //! maybe is not needed any more, let's disable it
                 //mainItem.visible = false;
-                visible = true;
+                root.visible = true;
                 //mainItem.visible = true;
             }
         }
@@ -591,14 +589,14 @@ PlasmoidItem {
     Timer{
         id: delayWindowRemovalTimer
         //this is the animation time needed in order for tasks to restore their zoom first
-        interval: 7 * (appletAbilities.animations.speedFactor.current * appletAbilities.animations.duration.small)
+        interval: 7 * (root.appletAbilities.animations.speedFactor.current * root.appletAbilities.animations.duration.small)
 
         property var modelIndex
 
         onTriggered: {
             tasksModel.requestClose(delayWindowRemovalTimer.modelIndex)
 
-            if (appletAbilities.debug.timersEnabled) {
+            if (root.appletAbilities.debug.timersEnabled) {
                 console.log("plasmoid timer: delayWindowRemovalTimer called...");
             }
         }
@@ -612,7 +610,7 @@ PlasmoidItem {
             root.publishTasksGeometries();
             activityInfo.previousActivity = activityInfo.currentActivity;
 
-            if (appletAbilities.debug.timersEnabled) {
+            if (root.appletAbilities.debug.timersEnabled) {
                 console.log("plasmoid timer: activityChangeDelayer called...");
             }
         }
@@ -625,7 +623,7 @@ PlasmoidItem {
         id: tasksModel
 
         virtualDesktop: virtualDesktopInfo.currentDesktop
-        screenGeometry: appletAbilities.myView.screenGeometry
+        screenGeometry: root.appletAbilities.myView.screenGeometry
         activity: root.tasksModelActivityId
 
         filterByVirtualDesktop: root.showOnlyCurrentDesktop
@@ -639,7 +637,7 @@ PlasmoidItem {
         separateLaunchers: true
         groupInline: false
 
-        groupMode: groupTasksByDefault ? TaskManager.TasksModel.GroupApplications : TaskManager.TasksModel.GroupDisabled
+        groupMode: root.groupTasksByDefault ? TaskManager.TasksModel.GroupApplications : TaskManager.TasksModel.GroupDisabled
         sortMode: TaskManager.TasksModel.SortManual
         taskReorderingEnabled: true
 
@@ -650,11 +648,11 @@ PlasmoidItem {
         }
 
         onGroupingAppIdBlacklistChanged: {
-            plasmoid.configuration.groupingAppIdBlacklist = groupingAppIdBlacklist;
+            root.plasmoid.configuration.groupingAppIdBlacklist = groupingAppIdBlacklist;
         }
 
         onGroupingLauncherUrlBlacklistChanged: {
-            plasmoid.configuration.groupingLauncherUrlBlacklist = groupingLauncherUrlBlacklist;
+            root.plasmoid.configuration.groupingLauncherUrlBlacklist = groupingLauncherUrlBlacklist;
         }
 
         onAnyTaskDemandsAttentionChanged: {
@@ -670,15 +668,15 @@ PlasmoidItem {
         Component.onCompleted: {
             ActivitiesTools.launchersOnActivities = root.launchersOnActivities
             ActivitiesTools.currentActivity = String(activityInfo.currentActivity);
-            ActivitiesTools.plasmoid = plasmoid;
+            ActivitiesTools.plasmoid = root.plasmoid;
 
             //var loadedLaunchers = ActivitiesTools.restoreLaunchers();
             ActivitiesTools.importLaunchersToNewArchitecture();
 
-            appletAbilities.launchers.importLauncherListInModel();
+            root.appletAbilities.launchers.importLauncherListInModel();
 
-            groupingAppIdBlacklist = plasmoid.configuration.groupingAppIdBlacklist;
-            groupingLauncherUrlBlacklist = plasmoid.configuration.groupingLauncherUrlBlacklist;
+            groupingAppIdBlacklist = root.plasmoid.configuration.groupingAppIdBlacklist;
+            groupingLauncherUrlBlacklist = root.plasmoid.configuration.groupingLauncherUrlBlacklist;
 
             groupingWindowTasksThreshold = -1;
         }
@@ -782,7 +780,7 @@ PlasmoidItem {
         taskManagerItem: root
         highlightWindows: root.highlightWindows
 
-        onAddLauncher: {
+        onAddLauncher: function(url) {
             tasksModel.requestAddLauncher(url);
         }
 
@@ -833,12 +831,12 @@ PlasmoidItem {
 
     AppletAbilities {
         id: _appletAbilities
-        bridge: latteBridge
+        bridge: root.latteBridge
         layout: icList.contentItem
         tasksModel: tasksModel
 
-        animations.local.speedFactor.current: plasmoid.configuration.durationTime
-        animations.local.requirements.zoomFactor: hasHighThicknessAnimation && LatteCore.WindowSystem.compositingActive ? 1.65 : 1.0
+        animations.local.speedFactor.current: root.plasmoid.configuration.durationTime
+        animations.local.requirements.zoomFactor: root.hasHighThicknessAnimation && LatteCore.WindowSystem.compositingActive ? 1.65 : 1.0
 
         // override by Connections for inDraggingPhase (binding not reliable here)
         indexer.updateIsBlocked: root.inActivityChange
@@ -846,32 +844,32 @@ PlasmoidItem {
         // Keep a temporary fallback when latteBridge attachment is delayed.
         // Once bridge is ready in Latte, use bridge indicators only to avoid
         // duplicate indicator layers that can interfere with task interaction.
-        indicators.local.isEnabled: !plasmoid.configuration.isInLatteDock || latteBridge === null
+        indicators.local.isEnabled: !root.plasmoid.configuration.isInLatteDock || root.latteBridge === null
 
-        launchers.group: plasmoid.configuration.launchersGroup
-        launchers.isStealingDroppedLaunchers: plasmoid.configuration.isPreferredForDroppedLaunchers
-        launchers.syncer.isBlocked: inDraggingPhase
+        launchers.group: root.plasmoid.configuration.launchersGroup
+        launchers.isStealingDroppedLaunchers: root.plasmoid.configuration.isPreferredForDroppedLaunchers
+        launchers.syncer.isBlocked: root.inDraggingPhase
 
-        metrics.local.iconSize: inPlasmaDesktop ? maxIconSizeInPlasma : (inPlasmaPanel ? Math.max(16, panelThickness - metrics.margin.tailThickness - metrics.margin.headThickness) : maxIconSizeInPlasma)
+        metrics.local.iconSize: root.inPlasmaDesktop ? maxIconSizeInPlasma : (root.inPlasmaPanel ? Math.max(16, panelThickness - metrics.margin.tailThickness - metrics.margin.headThickness) : maxIconSizeInPlasma)
         metrics.local.backgroundThickness: metrics.totals.thickness
         metrics.local.margin.length: 0.1 * metrics.iconSize
-        metrics.local.margin.tailThickness: inPlasmaDesktop ? 0.16 * metrics.iconSize : Math.max(2, (panelThickness - maxIconSizeInPlasma) / 2)
+        metrics.local.margin.tailThickness: root.inPlasmaDesktop ? 0.16 * metrics.iconSize : Math.max(2, (panelThickness - maxIconSizeInPlasma) / 2)
         metrics.local.margin.headThickness: metrics.local.margin.tailThickness
         metrics.local.padding.length: 0.04 * metrics.iconSize
 
         myView.local.isHidingBlocked: root.contextMenu || root.windowPreviewIsShown
-        myView.local.itemShadow.size: Math.ceil(0.12*appletAbilities.metrics.iconSize)
+        myView.local.itemShadow.size: Math.ceil(0.12*root.appletAbilities.metrics.iconSize)
 
         // Avoid self-referential bindings between parabolic.isEnabled and
         // parabolic.local.factor.zoom that can keep zoom disabled after startup.
-        readonly property real localParabolicZoom: 1 + (plasmoid.configuration.zoomLevel / 20)
+        readonly property real localParabolicZoom: 1 + (root.plasmoid.configuration.zoomLevel / 20)
         readonly property bool localParabolicEnabled: (!root.inPlasma || root.inPlasmaDesktop) && localParabolicZoom > 1.0
         parabolic.local.isEnabled: localParabolicEnabled
         parabolic.local.factor.zoom: localParabolicEnabled ? localParabolicZoom : 1.0
         parabolic.local.factor.maxZoom: localParabolicEnabled ? Math.max(parabolic.local.factor.zoom, 1.6) : 1.0
         parabolic.local.restoreZoomIsBlocked: root.contextMenu || windowsPreviewDlg.containsMouse
 
-        shortcuts.isStealingGlobalPositionShortcuts: plasmoid.configuration.isPreferredForPositionShortcuts
+        shortcuts.isStealingGlobalPositionShortcuts: root.plasmoid.configuration.isPreferredForPositionShortcuts
 
         requires.activeIndicatorEnabled: false
         requires.lengthMarginsEnabled: false
@@ -904,7 +902,7 @@ PlasmoidItem {
         onTriggered: {
             tasksModel.anyTaskDemandsAttentionInValidTime = false;
 
-            if (appletAbilities.debug.timersEnabled) {
+            if (root.appletAbilities.debug.timersEnabled) {
                 console.log("plasmoid timer: attentionTimer called...");
             }
         }
@@ -917,7 +915,7 @@ PlasmoidItem {
     Timer {
         id: restoreDraggingPhaseTimer
         interval: 150
-        onTriggered: inDraggingPhase = false;
+        onTriggered: root.inDraggingPhase = false;
     }
 
     ///Red Liner!!! show the upper needed limit for animations
@@ -925,15 +923,15 @@ PlasmoidItem {
         anchors.horizontalCenter: !root.vertical ? parent.horizontalCenter : undefined
         anchors.verticalCenter: root.vertical ? parent.verticalCenter : undefined
 
-        width: root.vertical ? 1 : 2 * appletAbilities.metrics.iconSize
-        height: root.vertical ? 2 * appletAbilities.metrics.iconSize : 1
+        width: root.vertical ? 1 : 2 * root.appletAbilities.metrics.iconSize
+        height: root.vertical ? 2 * root.appletAbilities.metrics.iconSize : 1
         color: "red"
         x: (root.location === PlasmaCore.Types.LeftEdge) ? neededSpace : parent.width - neededSpace
         y: (root.location === PlasmaCore.Types.TopEdge) ? neededSpace : parent.height - neededSpace
 
-        visible: plasmoid.configuration.zoomHelper
+        visible: root.plasmoid.configuration.zoomHelper
 
-        property int neededSpace: appletAbilities.parabolic.factor.zoom*appletAbilities.metrics.totals.length
+        property int neededSpace: root.appletAbilities.parabolic.factor.zoom*root.appletAbilities.metrics.totals.length
     }
 
     Item{
@@ -955,11 +953,11 @@ PlasmoidItem {
                 ? icList.height + spacing
                 : Math.max(icList.height + spacing, scrollableList.thickness, smallSize)
 
-        property int spacing: latteBridge ? 0 : appletAbilities.metrics.iconSize / 2
-        property int smallSize: Math.max(0.10 * appletAbilities.metrics.iconSize, 16)
+        property int spacing: root.latteBridge ? 0 : root.appletAbilities.metrics.iconSize / 2
+        property int smallSize: Math.max(0.10 * root.appletAbilities.metrics.iconSize, 16)
 
         Behavior on opacity{
-            NumberAnimation { duration: appletAbilities.animations.speedFactor.current * appletAbilities.animations.duration.large }
+            NumberAnimation { duration: root.appletAbilities.animations.speedFactor.current * root.appletAbilities.animations.duration.large }
         }
 
         /// plasmoid's default panel
@@ -968,7 +966,7 @@ PlasmoidItem {
             source: "../images/panel-west.png"
             border { left:8; right:8; top:8; bottom:8 }
 
-            opacity: (plasmoid.configuration.showBarLine && !plasmoid.configuration.useThemePanel && inPlasma) ? 1 : 0
+            opacity: (root.plasmoid.configuration.showBarLine && !root.plasmoid.configuration.useThemePanel && root.inPlasma) ? 1 : 0
 
             visible: (opacity == 0) ? false : true
 
@@ -976,7 +974,7 @@ PlasmoidItem {
             verticalTileMode: BorderImage.Stretch
 
             Behavior on opacity{
-                NumberAnimation { duration: appletAbilities.animations.speedFactor.current * appletAbilities.animations.duration.large }
+                NumberAnimation { duration: root.appletAbilities.animations.speedFactor.current * root.appletAbilities.animations.duration.large }
             }
         }
 
@@ -1013,23 +1011,23 @@ PlasmoidItem {
             imagePath: "translucent/widgets/panel-background"
             prefix:"shadow"
 
-            opacity: (plasmoid.configuration.showBarLine && plasmoid.configuration.useThemePanel && inPlasma) ? 1 : 0
+            opacity: (root.plasmoid.configuration.showBarLine && root.plasmoid.configuration.useThemePanel && root.inPlasma) ? 1 : 0
             visible: (opacity == 0) ? false : true
 
             property int panelSize: ((root.location === PlasmaCore.Types.BottomEdge) ||
                                      (root.location === PlasmaCore.Types.TopEdge)) ?
-                                        plasmoid.configuration.panelSize + belower.height:
-                                        plasmoid.configuration.panelSize + belower.width
+                                        root.plasmoid.configuration.panelSize + belower.height:
+                                        root.plasmoid.configuration.panelSize + belower.width
 
             Behavior on opacity{
-                NumberAnimation { duration: appletAbilities.animations.speedFactor.current * appletAbilities.animations.duration.large }
+                NumberAnimation { duration: root.appletAbilities.animations.speedFactor.current * root.appletAbilities.animations.duration.large }
             }
 
 
             KSvg.FrameSvgItem{
                 anchors.margins: belower.width-1
                 anchors.fill:parent
-                imagePath: plasmoid.configuration.transparentPanel ? "translucent/widgets/panel-background" :
+                imagePath: root.plasmoid.configuration.transparentPanel ? "translucent/widgets/panel-background" :
                                                                      "widgets/panel-background"
             }
         }
@@ -1050,11 +1048,11 @@ PlasmoidItem {
 
             target: icList
 
-            property int maxThickness: ((appletAbilities.parabolic.isEnabled && appletAbilities.parabolic.isHovered)
-                                        || (appletAbilities.parabolic.isEnabled && windowPreviewIsShown)
-                                        || appletAbilities.animations.hasThicknessAnimation) ?
-                                           appletAbilities.metrics.mask.thickness.maxZoomedForItems : // dont clip bouncing tasks when zoom=1
-                                           appletAbilities.metrics.mask.thickness.normalForItems
+            property int maxThickness: ((root.appletAbilities.parabolic.isEnabled && root.appletAbilities.parabolic.isHovered)
+                                        || (root.appletAbilities.parabolic.isEnabled && root.windowPreviewIsShown)
+                                        || root.appletAbilities.animations.hasThicknessAnimation) ?
+                                           root.appletAbilities.metrics.mask.thickness.maxZoomedForItems : // dont clip bouncing tasks when zoom=1
+                                           root.appletAbilities.metrics.mask.thickness.normalForItems
 
             function onlyLaunchersInDroppedList(list){
                 return list.every(function (item) {
@@ -1065,7 +1063,7 @@ PlasmoidItem {
             onUrlsDropped: (urls) => {
                 //! inform synced docks for new dropped launchers
                 if (onlyLaunchersInDroppedList(urls)) {
-                    appletAbilities.launchers.addDroppedLaunchers(urls);
+                    root.appletAbilities.launchers.addDroppedLaunchers(urls);
                     return;
                 }
 
@@ -1114,11 +1112,11 @@ PlasmoidItem {
                 target: scrollableList
                 property: "thickness"
                 value: {
-                    if (appletAbilities.myView.isReady) {
-                        return appletAbilities.animations.hasThicknessAnimation ? appletAbilities.metrics.mask.thickness.zoomed : appletAbilities.metrics.mask.thickness.normal;
+                    if (root.appletAbilities.myView.isReady) {
+                        return root.appletAbilities.animations.hasThicknessAnimation ? root.appletAbilities.metrics.mask.thickness.zoomed : root.appletAbilities.metrics.mask.thickness.normal;
                     }
 
-                    return appletAbilities.metrics.totals.thickness * appletAbilities.parabolic.factor.zoom;
+                    return root.appletAbilities.metrics.totals.thickness * root.appletAbilities.parabolic.factor.zoom;
                 }
             }
 
@@ -1162,7 +1160,7 @@ PlasmoidItem {
 
                     //more of a trouble
                     moveDisplaced: Transition {
-                        NumberAnimation { properties: "x,y"; duration: appletAbilities.animations.speedFactor.current * appletAbilities.animations.duration.large; easing.type: Easing.Linear }
+                        NumberAnimation { properties: "x,y"; duration: root.appletAbilities.animations.speedFactor.current * root.appletAbilities.animations.duration.large; easing.type: Easing.Linear }
                     }
 
                     ///this transition can not be used with dragging !!!! I breaks
@@ -1239,14 +1237,14 @@ PlasmoidItem {
 
         LatteComponents.AddingArea {
             id: newDroppedLauncherVisual
-            width: root.vertical ? appletAbilities.metrics.totals.thickness : scrollableList.length
-            height: root.vertical ? scrollableList.length : appletAbilities.metrics.totals.thickness
+            width: root.vertical ? root.appletAbilities.metrics.totals.thickness : scrollableList.length
+            height: root.vertical ? scrollableList.length : root.appletAbilities.metrics.totals.thickness
 
             visible: backgroundOpacity > 0
-            radius: appletAbilities.metrics.iconSize/10
-            backgroundOpacity: mouseHandler.isDroppingOnlyLaunchers || appletAbilities.launchers.isShowingAddLaunchersMessage ? 0.75 : 0
-            duration: appletAbilities.animations.speedFactor.current
-            iconSize: appletAbilities.metrics.iconSize
+            radius: root.appletAbilities.metrics.iconSize/10
+            backgroundOpacity: mouseHandler.isDroppingOnlyLaunchers || root.appletAbilities.launchers.isShowingAddLaunchersMessage ? 0.75 : 0
+            duration: root.appletAbilities.animations.speedFactor.current
+            iconSize: root.appletAbilities.metrics.iconSize
             z: 99
 
             title: i18n("Tasks Area")
@@ -1264,8 +1262,8 @@ PlasmoidItem {
                     }
 
                     PropertyChanges {
-                        target: newDroppedLauncherVisual
-                        anchors{ topMargin:0; bottomMargin:0; leftMargin: appletAbilities.metrics.margin.screenEdge; rightMargin:0;}
+                        newDroppedLauncherVisual.anchors.topMargin: 0; newDroppedLauncherVisual.anchors.bottomMargin: 0;
+                        newDroppedLauncherVisual.anchors.leftMargin: appletAbilities.metrics.margin.screenEdge; newDroppedLauncherVisual.anchors.rightMargin: 0;
                     }
                 },
                 State {
@@ -1279,8 +1277,8 @@ PlasmoidItem {
                     }
 
                     PropertyChanges {
-                        target: newDroppedLauncherVisual
-                        anchors{ topMargin:0; bottomMargin:0; leftMargin:0; rightMargin: appletAbilities.metrics.margin.screenEdge;}
+                        newDroppedLauncherVisual.anchors.topMargin: 0; newDroppedLauncherVisual.anchors.bottomMargin: 0;
+                        newDroppedLauncherVisual.anchors.leftMargin: 0; newDroppedLauncherVisual.anchors.rightMargin: appletAbilities.metrics.margin.screenEdge;
                     }
                 },
                 State {
@@ -1294,8 +1292,8 @@ PlasmoidItem {
                     }
 
                     PropertyChanges {
-                        target: newDroppedLauncherVisual
-                        anchors{ topMargin: appletAbilities.metrics.margin.screenEdge; bottomMargin:0; leftMargin:0; rightMargin:0;}
+                        newDroppedLauncherVisual.anchors.topMargin: appletAbilities.metrics.margin.screenEdge; newDroppedLauncherVisual.anchors.bottomMargin: 0;
+                        newDroppedLauncherVisual.anchors.leftMargin: 0; newDroppedLauncherVisual.anchors.rightMargin: 0;
                     }
                 },
                 State {
@@ -1311,8 +1309,8 @@ PlasmoidItem {
                     }
 
                     PropertyChanges {
-                        target: newDroppedLauncherVisual
-                        anchors{ topMargin:0; bottomMargin: appletAbilities.metrics.margin.screenEdge; leftMargin:0; rightMargin:0;}
+                        newDroppedLauncherVisual.anchors.topMargin: 0; newDroppedLauncherVisual.anchors.bottomMargin: appletAbilities.metrics.margin.screenEdge;
+                        newDroppedLauncherVisual.anchors.leftMargin: 0; newDroppedLauncherVisual.anchors.rightMargin: 0;
                     }
                 }
             ]
@@ -1330,7 +1328,7 @@ PlasmoidItem {
         onTriggered: {
             root.publishTasksGeometries();
 
-            if (appletAbilities.debug.timersEnabled) {
+            if (root.appletAbilities.debug.timersEnabled) {
                 console.log("plasmoid timer: iconGeometryTimer called...");
             }
         }
@@ -1342,10 +1340,10 @@ PlasmoidItem {
         repeat: true
 
         onTriggered: {
-            pendingTaskLayoutRefreshPass = pendingTaskLayoutRefreshPass + 1;
-            refreshTaskLayoutPass(pendingTaskLayoutRefreshReason, pendingTaskLayoutRefreshPass);
+            root.pendingTaskLayoutRefreshPass = root.pendingTaskLayoutRefreshPass + 1;
+            refreshTaskLayoutPass(root.pendingTaskLayoutRefreshReason, root.pendingTaskLayoutRefreshPass);
 
-            if (pendingTaskLayoutRefreshPass >= 8) {
+            if (root.pendingTaskLayoutRefreshPass >= 8) {
                 stop();
             }
         }
@@ -1466,6 +1464,11 @@ PlasmoidItem {
         var initialArgs = args || {}
         initialArgs.visualParent = rootTask;
         initialArgs.modelIndex = modelIndex;
+        initialArgs.root = root;
+        initialArgs.plasmoid = plasmoid;
+        initialArgs.tasksModel = tasksModel;
+        initialArgs.virtualDesktopInfo = virtualDesktopInfo;
+        initialArgs.activityInfo = activityInfo;
         initialArgs.mpris2Source = mpris2Source;
         initialArgs.backend = backend;
 

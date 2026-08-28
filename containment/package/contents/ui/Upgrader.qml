@@ -5,11 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-
-import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
-
 Item{
     Component.onCompleted:  {
         v010_upgrade();

@@ -527,7 +527,12 @@ bool Importer::importHelper(QString fileName)
 bool Importer::isAutostartEnabled()
 {
     const QString entryPath = Latte::configPath() + QLatin1String("/autostart/org.kde.latte-dock.desktop");
-    return Autostart::isEnabled(entryPath);
+    return autostartEntryExists() && Autostart::isEnabled(entryPath);
+}
+
+bool Importer::autostartEntryExists()
+{
+    return QFile::exists(Latte::configPath() + QLatin1String("/autostart/org.kde.latte-dock.desktop"));
 }
 
 void Importer::enableAutostart()

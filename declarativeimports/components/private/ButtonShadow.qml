@@ -17,7 +17,6 @@ Properties:
 **/
 
 import QtQuick
-import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg as KSvg
 
 Item {
@@ -60,49 +59,41 @@ Item {
         State {
             name: "shadow"
             PropertyChanges {
-                target: shadow
-                opacity: 1
+                shadow.opacity: 1
             }
             PropertyChanges {
-                target: hover
-                opacity: 0
-                prefix: "hover"
+                hover.opacity: 0
+                hover.prefix: "hover"
             }
         },
         State {
             name: "hover"
             PropertyChanges {
-                target: shadow
-                opacity: 0
+                shadow.opacity: 0
             }
             PropertyChanges {
-                target: hover
-                opacity: 1
-                prefix: "hover"
+                hover.opacity: 1
+                hover.prefix: "hover"
             }
         },
         State {
             name: "focus"
             PropertyChanges {
-                target: shadow
-                opacity: 0
+                shadow.opacity: 0
             }
             PropertyChanges {
-                target: hover
-                opacity: 1
-                prefix: "focus"
+                hover.opacity: 1
+                hover.prefix: "focus"
             }
         },
         State {
             name: "hidden"
             PropertyChanges {
-                target: shadow
-                opacity: 0
+                shadow.opacity: 0
             }
             PropertyChanges {
-                target: hover
-                opacity: 0
-                prefix: "hover"
+                hover.opacity: 0
+                hover.prefix: "hover"
             }
         }
     ]

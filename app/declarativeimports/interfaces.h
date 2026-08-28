@@ -9,6 +9,7 @@
 // Qt
 #include <QObject>
 #include <QTimer>
+#include <QtQml>
 
 
 // Plasma
@@ -19,6 +20,7 @@ namespace Latte {
 class Interfaces: public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Interfaces)
     Q_PROPERTY(QObject *plasmoidInterface READ plasmoidInterface WRITE setPlasmoidInterface NOTIFY interfaceChanged)
 
     Q_PROPERTY(QObject *globalShortcuts READ globalShortcuts NOTIFY globalShortcutsChanged)

@@ -5,14 +5,12 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-import org.kde.plasma.core as PlasmaCore
-
 import org.kde.latte.core as LatteCore
 import org.kde.latte.components as LatteComponents
 
 LatteComponents.ComboBoxButton{
     id: custom
+    required property var latteView
     checkable: true
 
     buttonText: modes[currentModeIndex].name
@@ -38,7 +36,7 @@ LatteComponents.ComboBoxButton{
 
     readonly property bool containsActiveMode: {
         for (var i=0; i<modes.length; ++i) {
-            if (modes[i].pluginId === latteView.visibility.mode) {
+            if (modes[i].pluginId === custom.latteView.visibility.mode) {
                 return true;
             }
         }
@@ -67,25 +65,25 @@ LatteComponents.ComboBoxButton{
     Connections{
         target: custom.button
         function onClicked() {
-            latteView.visibility.mode = custom.mode;
+            custom.latteView.visibility.mode = custom.mode;
         }
     }
 
     Connections{
         target: custom.comboBox.popup
         function onVisibleChanged() {
-            if (visible) {
+            if (custom.comboBox.popup.visible) {
                 custom.selectChosenType();
             }
         }
     }
 
     Connections {
-        target: latteView.visibility
+        target: custom.latteView.visibility
         function onModeChanged() {
             for (var i=0; i<custom.modes.length; ++i) {
-                if (custom.modes[i].pluginId === latteView.visibility.mode) {
-                    custom.mode = latteView.visibility.mode;
+                if (custom.modes[i].pluginId === custom.latteView.visibility.mode) {
+                    custom.mode = custom.latteView.visibility.mode;
                     custom.viewRelevantVisibilityModeChanged();
                     return;
                 }
@@ -96,23 +94,23 @@ LatteComponents.ComboBoxButton{
     Connections{
         target: custom.comboBox
 
-        function onActivated() {
+        function onActivated(index) {
             if (index>=0) {
                 var item = actionsModel.get(index);
-                latteView.visibility.mode = item.pluginId;
+                custom.latteView.visibility.mode = item.pluginId;
             }
         }
 
         function onCurrentIndexChanged() {
-            if (_initializing) {
+            if (custom._initializing) {
                 return;
             }
 
             var idx = custom.comboBox.currentIndex;
             if (idx >= 0 && idx < actionsModel.count) {
                 var item = actionsModel.get(idx);
-                if (item && item.pluginId !== latteView.visibility.mode) {
-                    latteView.visibility.mode = item.pluginId;
+                if (item && item.pluginId !== custom.latteView.visibility.mode) {
+                    custom.latteView.visibility.mode = item.pluginId;
                 }
             }
         }

@@ -5,7 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 import org.kde.latte.components as LatteComponents

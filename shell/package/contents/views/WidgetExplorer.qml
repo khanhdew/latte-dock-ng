@@ -12,7 +12,6 @@ import org.kde.plasma.components as PC3
 import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg as KSvg
 import org.kde.plasma.extras as PlasmaExtras
-import org.kde.kquickcontrolsaddons
 import org.kde.kwindowsystem
 import org.kde.kirigami as Kirigami
 
@@ -57,6 +56,11 @@ PC3.Page {
     property bool outputOnly: draggingWidget
 
     property Item categoryButton
+
+    property var containmentFromView
+    property var latteView
+    property var themeExtended
+    property var viewConfig
 
     property bool draggingWidget: false
 
@@ -277,7 +281,11 @@ PC3.Page {
         sourceComponent: PlasmaShell.WidgetExplorer {
             //id:widgetExplorer
              //view: desktop
+            // Plasma's private WidgetExplorer type omits this property from
+            // its qmltypes, although the runtime accepts a Plasma containment.
+            // qmllint disable missing-type
             containment: containmentFromView
+            // qmllint enable missing-type
             onShouldClose: main.closed();
         }
     }

@@ -5,9 +5,7 @@
 
 import QtQuick
 import QtQuick.Layouts
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
 
 import org.kde.latte.components as LatteComponents
@@ -106,7 +104,7 @@ ColumnLayout {
         property int indicatorType: root.activeStyleValue
 
         readonly property int buttonsCount: 2
-        readonly property int buttonSize: (safeOptionsWidth - (spacing * buttonsCount-1)) / buttonsCount
+        readonly property int buttonSize: (root.safeOptionsWidth - (spacing * buttonsCount-1)) / buttonsCount
 
         LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
@@ -143,7 +141,7 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: units.smallSpacing
+        spacing: root.units.smallSpacing
 
         PlasmaComponents.Label {
             text: i18n("Thickness")
@@ -179,7 +177,7 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: units.smallSpacing
+        spacing: root.units.smallSpacing
 
         PlasmaComponents.Label {
             text: i18n("Position")
@@ -215,7 +213,7 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: units.smallSpacing
+        spacing: root.units.smallSpacing
 
         PlasmaComponents.Label {
             text: i18n("Padding")
@@ -253,7 +251,7 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: units.smallSpacing
+        spacing: root.units.smallSpacing
 
         PlasmaComponents.Label {
             text: i18n("Corner Margin")
@@ -311,7 +309,7 @@ ColumnLayout {
         property int option: root.glowApplyToValue
 
         readonly property int buttonsCount: 2
-        readonly property int buttonSize: (safeOptionsWidth - (spacing * buttonsCount-1)) / buttonsCount
+        readonly property int buttonSize: (root.safeOptionsWidth - (spacing * buttonsCount-1)) / buttonsCount
 
         LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
@@ -355,7 +353,7 @@ ColumnLayout {
         PlasmaComponents.Label {
             Layout.minimumWidth: implicitWidth
             horizontalAlignment: Text.AlignLeft
-            Layout.rightMargin: units.smallSpacing
+            Layout.rightMargin: root.units.smallSpacing
             text: i18n("Opacity")
         }
 
@@ -396,7 +394,7 @@ ColumnLayout {
 
         LatteComponents.CheckBoxesColumn {
             LatteComponents.CheckBox {
-                Layout.maximumWidth: safeOptionsWidth
+                Layout.maximumWidth: root.safeOptionsWidth
                 text: i18n("Different color for minimized windows")
                 value: root.minimizedTaskColoredDifferentlyValue
 
@@ -406,7 +404,7 @@ ColumnLayout {
             }
 
             LatteComponents.CheckBox {
-                Layout.maximumWidth: safeOptionsWidth
+                Layout.maximumWidth: root.safeOptionsWidth
                 text: i18n("Show an extra dot for grouped windows when active")
                 tooltip: i18n("Grouped windows show both a line and a dot when one of them is active and the Line Active Indicator is enabled")
                 enabled: root.activeStyleValue === 0 /*Line*/
@@ -425,7 +423,7 @@ ColumnLayout {
     }
 
     LatteComponents.CheckBox {
-        Layout.maximumWidth: safeOptionsWidth
+        Layout.maximumWidth: root.safeOptionsWidth
         text: i18n("Show indicators for applets")
         tooltip: i18n("Indicators are shown for applets")
         value: root.enabledForAppletsValue
@@ -436,7 +434,7 @@ ColumnLayout {
     }
 
     LatteComponents.CheckBox {
-        Layout.maximumWidth: safeOptionsWidth
+        Layout.maximumWidth: root.safeOptionsWidth
         text: i18n("Reverse indicator style")
         value: root.reversedValue
 

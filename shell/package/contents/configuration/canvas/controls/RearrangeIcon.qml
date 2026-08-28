@@ -14,30 +14,36 @@ GraphicIcon{
         color: "transparent"
 
         Rectangle{
+            required property var iconRoot
             anchors.top: parent.top
             anchors.left: parent.left
-            width: itemLength
+            width: iconRoot.itemLength
             height: parent.height
             radius: width/2
-            color: iconColor
+            color: iconRoot.iconColor
+            iconRoot: parent.parent
         }
 
         Rectangle{
+            required property var iconRoot
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            width: itemLength
+            width: iconRoot.itemLength
             height: parent.height
             radius: width/2
-            color: iconColor
+            color: iconRoot.iconColor
+            iconRoot: parent.parent
         }
 
         Rectangle{
+            required property var iconRoot
             anchors.top: parent.top
             anchors.right: parent.right
-            width: itemLength
+            width: iconRoot.itemLength
             height: parent.height
             radius: width/2
-            color: iconColor
+            color: iconRoot.iconColor
+            iconRoot: parent.parent
         }
     }
 }

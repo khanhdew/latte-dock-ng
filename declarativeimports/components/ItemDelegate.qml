@@ -7,12 +7,9 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Templates as T
-import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 
 import org.kde.latte.components as LatteComponents
-
-import "private" as Private
 
 T.CheckDelegate {
     id: control
@@ -102,8 +99,8 @@ T.CheckDelegate {
         }
 
         Rectangle {
-            width: parent.width
-            height: 1
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
             color: control.textColor
             opacity: 0.25
             visible: isSeparator

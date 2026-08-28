@@ -46,8 +46,7 @@ KSvg.FrameSvgItem {    id: frame
             when: (indicator.isLauncher && !indicator.isWindow) || (indicator.isApplet && !indicator.isActive)
 
             PropertyChanges {
-                target: frame
-                basePrefix: ""
+                frame.basePrefix: ""
             }
         },
         State {
@@ -55,8 +54,7 @@ KSvg.FrameSvgItem {    id: frame
             when: indicator.isHovered && frame.hasElementPrefix("hover")
 
             PropertyChanges {
-                target: frame
-                basePrefix: "hover"
+                frame.basePrefix: "hover"
             }
         },
         State {
@@ -64,8 +62,7 @@ KSvg.FrameSvgItem {    id: frame
             when: indicator.inAttention
 
             PropertyChanges {
-                target: frame
-                basePrefix: "attention"
+                frame.basePrefix: "attention"
             }
         },
         State {
@@ -73,8 +70,7 @@ KSvg.FrameSvgItem {    id: frame
             when: indicator.isMinimized
 
             PropertyChanges {
-                target: frame
-                basePrefix: "minimized"
+                frame.basePrefix: "minimized"
             }
         },
         State {
@@ -82,8 +78,7 @@ KSvg.FrameSvgItem {    id: frame
             when: indicator.isActive
 
             PropertyChanges {
-                target: frame
-                basePrefix: "focus"
+                frame.basePrefix: "focus"
             }
         }
     ]

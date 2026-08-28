@@ -5,7 +5,6 @@
 */
 
 import QtQuick
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 Item {
@@ -63,9 +62,8 @@ Item {
                     horizontalCenter:flickable.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges {
-                target: shadowsContainer
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin: 0;    anchors.bottomMargin: appletAbilities.metrics.margin.screenEdge;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                shadowsContainer.anchors.leftMargin: 0;    shadowsContainer.anchors.rightMargin: 0;     shadowsContainer.anchors.topMargin: 0;    shadowsContainer.anchors.bottomMargin: appletAbilities.metrics.margin.screenEdge;
+                shadowsContainer.anchors.horizontalCenterOffset: 0; shadowsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -88,9 +86,8 @@ Item {
                     horizontalCenter:flickable.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges {
-                target: shadowsContainer
-                anchors.leftMargin: 0;    anchors.rightMargin:0;     anchors.topMargin: appletAbilities.metrics.margin.screenEdge;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                shadowsContainer.anchors.leftMargin: 0;    shadowsContainer.anchors.rightMargin: 0;     shadowsContainer.anchors.topMargin: appletAbilities.metrics.margin.screenEdge;    shadowsContainer.anchors.bottomMargin: 0;
+                shadowsContainer.anchors.horizontalCenterOffset: 0; shadowsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -113,9 +110,8 @@ Item {
                     horizontalCenter:undefined; verticalCenter:flickable.verticalCenter}
             }
             PropertyChanges {
-                target: shadowsContainer
-                anchors.leftMargin: appletAbilities.metrics.margin.screenEdge;    anchors.rightMargin:0;     anchors.topMargin: 0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                shadowsContainer.anchors.leftMargin: appletAbilities.metrics.margin.screenEdge;    shadowsContainer.anchors.rightMargin: 0;     shadowsContainer.anchors.topMargin: 0;    shadowsContainer.anchors.bottomMargin: 0;
+                shadowsContainer.anchors.horizontalCenterOffset: 0; shadowsContainer.anchors.verticalCenterOffset: 0;
             }
         },
         State {
@@ -138,9 +134,8 @@ Item {
                     horizontalCenter:undefined; verticalCenter:flickable.verticalCenter}
             }
             PropertyChanges {
-                target: shadowsContainer
-                anchors.leftMargin: 0;    anchors.rightMargin: appletAbilities.metrics.margin.screenEdge;     anchors.topMargin: 0;    anchors.bottomMargin:0;
-                anchors.horizontalCenterOffset: 0; anchors.verticalCenterOffset: 0;
+                shadowsContainer.anchors.leftMargin: 0;    shadowsContainer.anchors.rightMargin: appletAbilities.metrics.margin.screenEdge;     shadowsContainer.anchors.topMargin: 0;    shadowsContainer.anchors.bottomMargin: 0;
+                shadowsContainer.anchors.horizontalCenterOffset: 0; shadowsContainer.anchors.verticalCenterOffset: 0;
             }
         }
     ]

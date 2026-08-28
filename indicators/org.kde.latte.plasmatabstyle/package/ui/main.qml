@@ -18,12 +18,12 @@ LatteComponents.IndicatorItem {
     Loader{
         id: backLayer
         anchors.fill: parent
-        anchors.topMargin: plasmoid.location === PlasmaCore.Types.TopEdge ? indicator.screenEdgeMargin : 0
-        anchors.bottomMargin: plasmoid.location === PlasmaCore.Types.BottomEdge ? indicator.screenEdgeMargin : 0
-        anchors.leftMargin: plasmoid.location === PlasmaCore.Types.LeftEdge ? indicator.screenEdgeMargin : 0
-        anchors.rightMargin: plasmoid.location === PlasmaCore.Types.RightEdge ? indicator.screenEdgeMargin : 0
+        anchors.topMargin: plasmoid.location === PlasmaCore.Types.TopEdge ? root.indicator.screenEdgeMargin : 0
+        anchors.bottomMargin: plasmoid.location === PlasmaCore.Types.BottomEdge ? root.indicator.screenEdgeMargin : 0
+        anchors.leftMargin: plasmoid.location === PlasmaCore.Types.LeftEdge ? root.indicator.screenEdgeMargin : 0
+        anchors.rightMargin: plasmoid.location === PlasmaCore.Types.RightEdge ? root.indicator.screenEdgeMargin : 0
 
-        active: level.isBackground && !indicator.isEmptySpace
+        active: root.level.isBackground && !root.indicator.isEmptySpace
         sourceComponent: BackLayer{}
     }
 }

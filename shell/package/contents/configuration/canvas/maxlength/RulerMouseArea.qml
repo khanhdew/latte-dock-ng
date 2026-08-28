@@ -5,22 +5,15 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
-import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.core as PlasmaCore
-
 import org.kde.latte.core as LatteCore
 
 MouseArea{
     id: rulerMouseArea
+    required property var root
+    required property var plasmoid
+    required property var rulerItem
     hoverEnabled: true
     cursorShape: root.isHorizontal ? Qt.SizeHorCursor : Qt.SizeVerCursor
-
-    onVisibleChanged: {
-        if (!visible) {
-            tooltip.visible = false;
-        }
-    }
 
     onWheel: {
         var angle = wheel.angleDelta.y / 8;

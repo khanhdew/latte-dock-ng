@@ -97,6 +97,16 @@ void PrimaryConfigView::init()
 
     QByteArray tempFilePath = "lattedockconfigurationui";
 
+    // Configuration QML creates dynamic indicator pages during component
+    // completion. Make every dependency available before setSource() so those
+    // pages never observe a transient undefined value.
+    rootContext()->setContextProperty(QStringLiteral("latteView"), m_latteView);
+    rootContext()->setContextProperty(QStringLiteral("configurationLatteView"), m_latteView);
+    rootContext()->setContextProperty(QStringLiteral("configurationViewConfig"), this);
+    rootContext()->setContextProperty(QStringLiteral("configurationUniversalSettings"), m_corona->universalSettings());
+    rootContext()->setContextProperty(QStringLiteral("configurationLayoutsManager"), m_corona->layoutsManager());
+    rootContext()->setContextProperty(QStringLiteral("configurationThemeExtended"), m_corona->themeExtended());
+
     auto source = QUrl::fromLocalFile(m_latteView->containment()->corona()->kPackage().filePath(tempFilePath));
     setSource(source);
     syncGeometry();

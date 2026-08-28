@@ -5,7 +5,6 @@
 
 import QtQuick
 
-import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg as KSvg
 
@@ -186,9 +185,9 @@ Item{
                             return 0;
                         } else if (noOfBorders === 2 || (noOfBorders === 3 && bothHorizontals)) {
                             if (leftBorder) {
-                                return centerStep;
+                                return painter.centerStep;
                             } else if (rightBorder) {
-                                return -centerStep;
+                                return -painter.centerStep;
                             }
                         }
 
@@ -200,7 +199,7 @@ Item{
                         }
 
                         //bottom edge and top edge
-                        return plasmoid.location === PlasmaCore.Types.TopEdge ? -centerStep : centerStep;
+                        return plasmoid.location === PlasmaCore.Types.TopEdge ? -painter.centerStep : painter.centerStep;
                     }
                 }
             },
@@ -215,9 +214,9 @@ Item{
                             return 0;
                         } else if (noOfBorders === 2 || (noOfBorders === 3 && bothVerticals)) {
                             if (bottomBorder) {
-                                return -centerStep;
+                                return -painter.centerStep;
                             } else if (topBorder) {
-                                return centerStep;
+                                return painter.centerStep;
                             }
                         }
 
@@ -229,7 +228,7 @@ Item{
                         }
 
                         //left edge and right edge
-                        return plasmoid.location === PlasmaCore.Types.LeftEdge ? -centerStep : centerStep;
+                        return plasmoid.location === PlasmaCore.Types.LeftEdge ? -painter.centerStep : painter.centerStep;
                     }
                 }
             }
