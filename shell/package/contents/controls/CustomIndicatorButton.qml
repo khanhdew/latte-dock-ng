@@ -98,7 +98,7 @@ LatteComponents.ComboBoxButton{
     Connections{
         target: custom.comboBox.popup
         function onVisibleChanged() {
-            if (installPopup.visible) {
+            if (custom.comboBox.popup.visible) {
                 custom.selectChosenType();
             }
         }

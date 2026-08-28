@@ -8,8 +8,6 @@ import QtQuick.Effects
 
 import org.kde.latte.core as LatteCore
 
-import "maxlength" as MaximumLength
-
 //import "../../code/ColorizerTools.js" as ColorizerTools
 
 Item{
@@ -23,10 +21,9 @@ Item{
     readonly property var hostRootReference: root
     readonly property var latteViewReference: latteView
     readonly property var plasmoidReference: plasmoid
-    readonly property var rulerReference: ruler
     readonly property bool containsMouse: false /*headerSettings.containsMouse || ruler.containsMouse
                                           || tooltipMouseArea.containsMouse || editBackMouseArea.containsMouse*/
-    readonly property int thickness: ruler.thickness + headerSettings.thickness + spacing * 6
+    readonly property int thickness: headerSettings.thickness + spacing * 2
     readonly property int spacing: 4
 
     property int textShadow: {
@@ -43,8 +40,12 @@ Item{
     readonly property bool textColorIsDark: textColorBrightness < 127.5
 
     readonly property color bestContrastedTextColor: {
+        if (latteView && latteView.colorizer && latteView.colorizer.textColor !== undefined) {
+            return latteView.colorizer.textColor;
+        }
+
         if (themeExtended) {
-            return latteView.colorizer.currentBackgroundBrightness > 127.5 ?
+            return latteView && latteView.colorizer && latteView.colorizer.currentBackgroundBrightness > 127.5 ?
                         themeExtended.lightTheme.textColor :
                         themeExtended.darkTheme.textColor;
         }
@@ -68,16 +69,6 @@ Item{
         root: settingsOverlayReference.hostRootReference
         latteView: settingsOverlayReference.latteViewReference
         plasmoid: settingsOverlayReference.plasmoidReference
-        ruler: settingsOverlayReference.rulerReference
         settingsRoot: settingsOverlayReference
-    }
-
-    MaximumLength.Ruler {
-        id: ruler
-        root: settingsOverlayReference.hostRootReference
-        plasmoid: settingsOverlayReference.plasmoidReference
-        settingsRoot: settingsOverlayReference
-        thicknessMargin: headerSettings.thickness + 3 * settingsRoot.spacing
-        thickMargin: 3
     }
 }

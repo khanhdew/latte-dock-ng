@@ -14,7 +14,6 @@ Item {
     required property var root
     required property var latteView
     required property var plasmoid
-    required property var ruler
     required property var settingsRoot
     width: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parent.width : parent.height
     height: thickness
@@ -42,7 +41,7 @@ Item {
         }
 
         if (plasmoid.location === PlasmaCore.Types.LeftEdge) {
-            return latteView.maxNormalThickness + ruler.thickness + headMargin * 2 - width/2 + height/2;
+            return latteView.maxNormalThickness + headMargin * 2 - width/2 + height/2;
         } else if (plasmoid.location === PlasmaCore.Types.RightEdge) {
             return headMargin - width/2 + height/2;
         }

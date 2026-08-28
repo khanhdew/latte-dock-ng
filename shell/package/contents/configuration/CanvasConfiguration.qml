@@ -4,9 +4,7 @@
 */
 
 import QtQuick
-import QtQuick.Controls as QQC2
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
 
 import org.kde.latte.private.app as LatteApp
@@ -87,51 +85,6 @@ Loader {
             id: contextMenuLayer
             anchors.fill: parent
             view: latteView
-        }
-
-        MouseArea {
-            id: editBackMouseArea
-            anchors.fill: parent
-            visible: true
-            hoverEnabled: true
-
-            property bool wheelIsBlocked: false
-            readonly property int opacityStep: 5
-            readonly property string tooltip: i18nc("opacity for dock background, %1 is opacity percentage",
-                                                    "You can use mouse wheel to change background opacity of %1%",
-                                                    plasmoid.configuration.panelTransparency < 0 ? 100 : plasmoid.configuration.panelTransparency)
-
-            onWheel: (wheel) => {
-                if (wheelIsBlocked) return
-                wheelIsBlocked = true
-                scrollDelayer.start()
-                var angle = wheel.angleDelta.y / 8
-                var current = plasmoid.configuration.panelTransparency
-                if (current < 0) current = 100
-                var newVal = -1
-                if (angle > 10) newVal = Math.min(100, current + opacityStep)
-                else if (angle < -10) newVal = Math.max(0, current - opacityStep)
-                if (newVal >= 0) {
-                    plasmoid.configuration.panelTransparency = newVal
-                }
-            }
-
-            Timer {
-                id: scrollDelayer
-                interval: 80
-                onTriggered: editBackMouseArea.wheelIsBlocked = false
-            }
-        }
-
-        PlasmaComponents.Button {
-            anchors.fill: editBackMouseArea
-            opacity: 0
-            Kirigami.Theme.inherit: true
-            hoverEnabled: true
-
-            QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
-            QQC2.ToolTip.visible: hovered && editBackMouseArea.tooltip !== ""
-            QQC2.ToolTip.text: editBackMouseArea.tooltip
         }
 
         //! Settings Overlay

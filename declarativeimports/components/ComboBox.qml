@@ -115,8 +115,8 @@ T.ComboBox {
 
     delegate: ItemDelegate {
         width: control.popup.width
-        height: control.isSeparator ? 1 : control.popUpItemHeight
-        enabled: !control.isSeparator && (!control.enabledRole.length || control.modelRoleAt(index, control.enabledRole))
+        height: isSeparator ? 1 : control.popUpItemHeight
+        enabled: !isSeparator && (!control.enabledRole.length || control.modelRoleAt(index, control.enabledRole))
         text: control.textRole.length ? control.modelRoleAt(index, control.textRole) : modelData
         iconName: control.iconRole.length ? control.modelRoleAt(index, control.iconRole) : ''
         iconToolTip: control.iconToolTipRole.length ? control.modelRoleAt(index, control.iconToolTipRole) : ''
