@@ -37,6 +37,7 @@ Item{
     property bool hasMinimized: false;
     property bool hasShown: false;
     property bool hasActive: false;
+    property int activeWindowIndex: -1;
 
     Repeater{
         id: windowsRepeater
@@ -105,14 +106,17 @@ Item{
         hasMinimized = false;
         hasShown = false;
         hasActive = false;
+        activeWindowIndex = -1;
 
         if(IsGroupParent){
             checkInternalStates();
         } else {
             var minimized = 0;
 
-            if(taskItem.isActive)
+            if(taskItem.isActive){
                 hasActive = true;
+                activeWindowIndex = 0;
+            }
 
             if(taskItem.isMinimized){
                 hasMinimized = true;
@@ -129,12 +133,15 @@ Item{
         var childs = windowsLocalModel.items;
 
         var minimized = 0;
+        var activeIndex = -1;
 
         for(var i=0; i<childs.count; ++i){
             var kid = childs.get(i);
 
-            if (kid.model.IsActive)
+            if (kid.model.IsActive) {
                 hasActive = true;
+                activeIndex = i;
+            }
 
             if(kid.model.IsMinimized) {
                 hasMinimized = true;
@@ -145,6 +152,7 @@ Item{
         }
 
         windowsMinimized = minimized;
+        activeWindowIndex = activeIndex;
     }
 
     function windowsTitles() {
