@@ -125,6 +125,12 @@ ColumnLayout {
         LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
             Layout.maximumWidth: Layout.minimumWidth
+            Kirigami.Theme.inherit: true
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+            Kirigami.Theme.backgroundColor: root.cfgBackgroundColor
+            Kirigami.Theme.textColor: root.cfgTextColor
+            Kirigami.Theme.highlightColor: root.cfgHighlightColor
+            Kirigami.Theme.highlightedTextColor: root.cfgHighlightedTextColor
             text: i18nc("line indicator","Line")
             checked: parent.indicatorType === indicatorType
             checkable: true
@@ -141,6 +147,12 @@ ColumnLayout {
         LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
             Layout.maximumWidth: Layout.minimumWidth
+            Kirigami.Theme.inherit: true
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+            Kirigami.Theme.backgroundColor: root.cfgBackgroundColor
+            Kirigami.Theme.textColor: root.cfgTextColor
+            Kirigami.Theme.highlightColor: root.cfgHighlightColor
+            Kirigami.Theme.highlightedTextColor: root.cfgHighlightedTextColor
             text: i18nc("dots indicator", "Dots")
             checked: parent.indicatorType === indicatorType
             checkable: true
@@ -330,8 +342,14 @@ ColumnLayout {
         LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
             Layout.maximumWidth: Layout.minimumWidth
+            Kirigami.Theme.inherit: true
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+            Kirigami.Theme.backgroundColor: root.cfgBackgroundColor
+            Kirigami.Theme.textColor: root.cfgTextColor
+            Kirigami.Theme.highlightColor: root.cfgHighlightColor
+            Kirigami.Theme.highlightedTextColor: root.cfgHighlightedTextColor
             text: i18nc("glow only to active task/applet indicators","On Active")
-            checked: parent.option === option
+            checked: root.glowEnabledValue && parent.option === option
             checkable: true
             tooltip: i18n("Add glow only to active task/applet indicator")
 
@@ -346,8 +364,14 @@ ColumnLayout {
         LatteComponents.Button {
             Layout.minimumWidth: parent.buttonSize
             Layout.maximumWidth: Layout.minimumWidth
+            Kirigami.Theme.inherit: true
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+            Kirigami.Theme.backgroundColor: root.cfgBackgroundColor
+            Kirigami.Theme.textColor: root.cfgTextColor
+            Kirigami.Theme.highlightColor: root.cfgHighlightColor
+            Kirigami.Theme.highlightedTextColor: root.cfgHighlightedTextColor
             text: i18nc("glow to all task/applet indicators","All")
-            checked: parent.option === option
+            checked: root.glowEnabledValue && parent.option === option
             checkable: true
             tooltip: i18n("Add glow to all task/applet indicators")
 
@@ -376,6 +400,12 @@ ColumnLayout {
         LatteComponents.Slider {
             id: glowOpacitySlider
             Layout.fillWidth: true
+            Kirigami.Theme.inherit: true
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+            Kirigami.Theme.backgroundColor: root.cfgBackgroundColor
+            Kirigami.Theme.textColor: root.cfgTextColor
+            Kirigami.Theme.highlightColor: root.cfgHighlightColor
+            Kirigami.Theme.highlightedTextColor: root.cfgHighlightedTextColor
 
             leftPadding: 0
             value: root.glowOpacityValue * 100
