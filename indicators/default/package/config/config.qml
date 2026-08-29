@@ -44,6 +44,7 @@ ColumnLayout {
         glowOpacity: 0.55,
         minimizedTaskColoredDifferently: false,
         extraDotOnActive: true,
+        dynamicWindowDots: false,
         enabledForApplets: true,
         reversed: false
     })
@@ -62,7 +63,19 @@ ColumnLayout {
         }
 
         var numeric = Number(value);
-        return isNaN(numeric) ? fallback : numeric;
+        if (!isNaN(numeric)) {
+            return numeric;
+        }
+
+        if (value === "Line") {
+            return 0;
+        }
+
+        if (value === "Dot" || value === "Dots") {
+            return 1;
+        }
+
+        return fallback;
     }
 
     function configReal(value, fallback) {
@@ -75,6 +88,8 @@ ColumnLayout {
     }
 
     readonly property int activeStyleValue: configInt(indicatorConfig.activeStyle, indicatorConfigFallback.activeStyle)
+    readonly property bool modernDockStyleValue: (typeof indicator !== "undefined" && indicator && indicator.isModernDockStyle === true)
+    readonly property int effectiveActiveStyleValue: modernDockStyleValue ? 1 : activeStyleValue
     readonly property real thicknessValue: configReal(indicatorConfig.size, indicatorConfigFallback.size)
     readonly property real thickMarginValue: configReal(indicatorConfig.thickMargin, indicatorConfigFallback.thickMargin)
     readonly property real lengthPaddingValue: configReal(indicatorConfig.lengthPadding, indicatorConfigFallback.lengthPadding)
@@ -84,6 +99,7 @@ ColumnLayout {
     readonly property real glowOpacityValue: configReal(indicatorConfig.glowOpacity, indicatorConfigFallback.glowOpacity)
     readonly property bool minimizedTaskColoredDifferentlyValue: configBool(indicatorConfig.minimizedTaskColoredDifferently, indicatorConfigFallback.minimizedTaskColoredDifferently)
     readonly property bool extraDotOnActiveValue: configBool(indicatorConfig.extraDotOnActive, indicatorConfigFallback.extraDotOnActive)
+    readonly property bool dynamicWindowDotsValue: configBool(indicatorConfig.dynamicWindowDots, indicatorConfigFallback.dynamicWindowDots)
     readonly property bool enabledForAppletsValue: configBool(indicatorConfig.enabledForApplets, indicatorConfigFallback.enabledForApplets)
     readonly property bool reversedValue: configBool(indicatorConfig.reversed, indicatorConfigFallback.reversed)
     readonly property int valueLabelWidth: valueTextMetrics.advanceWidth + units.smallSpacing * 2
@@ -101,7 +117,7 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: 2
 
-        property int indicatorType: root.activeStyleValue
+        property int indicatorType: root.effectiveActiveStyleValue
 
         readonly property int buttonsCount: 2
         readonly property int buttonSize: (root.safeOptionsWidth - (spacing * buttonsCount-1)) / buttonsCount
@@ -407,11 +423,22 @@ ColumnLayout {
                 Layout.maximumWidth: root.safeOptionsWidth
                 text: i18n("Show an extra dot for grouped windows when active")
                 tooltip: i18n("Grouped windows show both a line and a dot when one of them is active and the Line Active Indicator is enabled")
-                enabled: root.activeStyleValue === 0 /*Line*/
+                enabled: root.effectiveActiveStyleValue === 0 /*Line*/
                 value: root.extraDotOnActiveValue
 
                 onClicked: {
                     root.indicatorConfig.extraDotOnActive = !root.indicatorConfig.extraDotOnActive;
+                }
+            }
+
+            LatteComponents.CheckBox {
+                Layout.maximumWidth: root.safeOptionsWidth
+                text: i18n("Show one dot per grouped window")
+                tooltip: i18n("Show up to four individual windows and a fifth dot for all remaining windows. Requires the Dots indicator style")
+                value: root.dynamicWindowDotsValue
+
+                onClicked: {
+                    root.indicatorConfig.dynamicWindowDots = !root.indicatorConfig.dynamicWindowDots;
                 }
             }
         }

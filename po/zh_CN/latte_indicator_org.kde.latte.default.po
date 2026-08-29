@@ -152,3 +152,15 @@ msgstr "指示器将在小程序活动时显示"
 #, kde-format
 msgid "Reverse indicator style"
 msgstr "反转指示器样式"
+
+#: default/package/config/config.qml:422
+#, kde-format
+msgid "Show one dot per grouped window"
+msgstr "每个窗口组窗口显示一个点"
+
+#: default/package/config/config.qml:423
+#, kde-format
+msgid ""
+"Show up to four individual windows and a fifth dot for all remaining windows. "
+"Requires the Dots indicator style"
+msgstr "显示最多四个单独窗口，以及第五个表示其余窗口的点。需要使用点指示器样式"

@@ -42,6 +42,7 @@ class Indicator: public QObject
     Q_PROPERTY(bool enabledForApplets READ enabledForApplets WRITE setEnabledForApplets NOTIFY enabledForAppletsChanged)
     Q_PROPERTY(bool latteTasksArePresent READ latteTasksArePresent NOTIFY latteTasksArePresentChanged)
     Q_PROPERTY(bool pluginIsReady READ pluginIsReady NOTIFY pluginIsReadyChanged)
+    Q_PROPERTY(bool isModernDockStyle READ isModernDockStyle CONSTANT)
 
     Q_PROPERTY(QString type READ type WRITE setType NOTIFY pluginChanged)
     Q_PROPERTY(QString customType READ customType NOTIFY customPluginChanged)
@@ -86,6 +87,8 @@ public:
     bool latteTasksArePresent();
 
     bool pluginIsReady();
+
+    bool isModernDockStyle() const;
 
     int index(const QString &type);
 

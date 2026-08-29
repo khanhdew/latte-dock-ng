@@ -19,7 +19,16 @@ Item{
         }
 
         if (isGroupParent) {
-            return windowsRepeater.count;
+            var childs = windowsLocalModel.items;
+            var count = 0;
+
+            for (var i = 0; i < childs.count; ++i) {
+                if (childs.get(i).model.IsWindow === true) {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         return 1;
@@ -77,6 +86,11 @@ Item{
     Connections{
         target: taskItem
         function onItemIndexChanged() { windowsContainer.updateStates(); }
+    }
+
+    Connections{
+        target: windowsRepeater
+        function onCountChanged() { windowsContainer.updateStates(); }
     }
 
     Connections{
@@ -144,12 +158,20 @@ Item{
         var activeIndex = -1;
         var minList = [];
 
+        var windowIndex = -1;
+
         for(var i=0; i<childs.count; ++i){
             var kid = childs.get(i);
 
-            if (kid.model.IsActive) {
+            if (kid.model.IsWindow !== true) {
+                continue;
+            }
+
+            windowIndex++;
+
+            if (kid.model.IsActive){
                 hasActive = true;
-                activeIndex = i;
+                activeIndex = windowIndex;
             }
 
             if(kid.model.IsMinimized) {

@@ -150,3 +150,14 @@ msgstr ""
 #, kde-format
 msgid "Reverse indicator style"
 msgstr ""
+
+#: default/package/config/config.qml:422
+#, kde-format
+msgid "Show one dot per grouped window"
+msgstr ""
+
+#: default/package/config/config.qml:423
+#, kde-format
+msgid ""
+"Show up to four individual windows and a fifth dot for all remaining windows"
+msgstr ""

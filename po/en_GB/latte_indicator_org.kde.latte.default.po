@@ -154,6 +154,18 @@ msgstr "Indicators are shown for applets"
 msgid "Reverse indicator style"
 msgstr "Reverse indicator style"
 
+#: default/package/config/config.qml:422
+#, kde-format
+msgid "Show one dot per grouped window"
+msgstr "Show one dot per grouped window"
+
+#: default/package/config/config.qml:423
+#, kde-format
+msgid ""
+"Show up to four individual windows and a fifth dot for all remaining windows. "
+"Requires the Dots indicator style"
+msgstr "Show up to four individual windows and a fifth dot for all remaining windows. Requires the Dots indicator style"
+
 #~ msgid "Size"
 #~ msgstr "Size"
 

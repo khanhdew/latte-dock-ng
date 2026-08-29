@@ -131,6 +131,17 @@ bool Indicator::pluginIsReady()
     return m_pluginIsReady;
 }
 
+bool Indicator::isModernDockStyle() const
+{
+    if (!m_view || !m_view->containment()) {
+        return false;
+    }
+
+    const QString dockStyle = m_view->containment()->config().group(QStringLiteral("General"))
+                                      .readEntry(QStringLiteral("dockStyle"), QStringLiteral("Classic"));
+    return dockStyle == QLatin1String("Modern") || dockStyle == QLatin1String("1");
+}
+
 void Indicator::setPluginIsReady(bool ready)
 {
     if (m_pluginIsReady == ready) {
@@ -336,10 +347,7 @@ void Indicator::updateScheme()
         m_configLoader = new KConfigLoader(m_view->containment()->config().group(QStringLiteral("Indicator")).group(m_metadata.pluginId()), &file);
         m_configuration = new KDeclarative::ConfigPropertyMap(m_configLoader, this);
 
-        const QString dockStyle = m_view->containment()->config().group(QStringLiteral("General")).readEntry(QStringLiteral("dockStyle"), QStringLiteral("Classic"));
-        const bool modernDockStyle = (dockStyle == QLatin1String("Modern")) || (dockStyle == QLatin1String("1"));
-
-        if (modernDockStyle && m_metadata.pluginId() == QLatin1String(Latte::PluginId::kDefaultIndicator)) {
+        if (isModernDockStyle() && m_metadata.pluginId() == QLatin1String(Latte::PluginId::kDefaultIndicator)) {
             // Modern is macOS-like: active/running state is always represented by a dot.
             // Apply this before the QML indicator is instantiated to avoid a startup line frame.
             m_configuration->setProperty("activeStyle", 1);

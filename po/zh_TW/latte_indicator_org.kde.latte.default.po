@@ -157,6 +157,18 @@ msgstr "指示器會對小工具顯示"
 msgid "Reverse indicator style"
 msgstr "反轉指示器樣式"
 
+#: default/package/config/config.qml:422
+#, kde-format
+msgid "Show one dot per grouped window"
+msgstr "每個視窗群組顯示一個點"
+
+#: default/package/config/config.qml:423
+#, kde-format
+msgid ""
+"Show up to four individual windows and a fifth dot for all remaining windows. "
+"Requires the Dots indicator style"
+msgstr "顯示最多四個個別視窗，以及代表其餘視窗的第五個點。需要使用點指示器樣式"
+
 #~ msgid "Size"
 #~ msgstr "大小"
 

@@ -99,6 +99,7 @@ private Q_SLOTS:
     void clonedViewDefersInitialAppletOrderSyncUntilStructuralReady();
     void indicatorFactoryExcludesBuiltinPluginsFromCustomLists();
     void waylandInterfaceAcceptableWindowHasHardcodedAppIdWhitelist();
+    void dynamicWindowDotsAreOptInAndAggregateOverflow();
     void genericLayoutReassertsDefaultContextMenuOnContainmentWiring();
     void layoutManagerCleanupOnStartupRemovesLegacyAndGhostApplets();
     void containmentInterfaceHasSeparatorPluginConstantsAndHelper();
@@ -2565,6 +2566,47 @@ void SourceContractTest::indicatorPlasmaTypeIsRemappedToDefault()
     // remapped to "org.kde.latte.default" for backwards compatibility.
     QVERIFY(src.contains(QStringLiteral("\"org.kde.latte.default\"")));
     QVERIFY(src.contains(QStringLiteral("kPlasmaIndicator")));
+}
+
+void SourceContractTest::dynamicWindowDotsAreOptInAndAggregateOverflow()
+{
+    QFile configXml(QStringLiteral(LATTE_SOURCE_DIR "/indicators/default/package/config/main.xml"));
+    QVERIFY(configXml.open(QFile::ReadOnly));
+    const QString config = QString::fromUtf8(configXml.readAll());
+    const int dynamicEntry = config.indexOf(QStringLiteral("<entry name=\"dynamicWindowDots\" type=\"Bool\">"));
+    QVERIFY(dynamicEntry >= 0);
+    QVERIFY(config.indexOf(QStringLiteral("<default>false</default>"), dynamicEntry) > dynamicEntry);
+
+    QFile indicator(QStringLiteral(LATTE_SOURCE_DIR "/indicators/default/package/ui/main.qml"));
+    QVERIFY(indicator.open(QFile::ReadOnly));
+    const QString indicatorSrc = QString::fromUtf8(indicator.readAll());
+
+    // The legacy two-dot behavior must remain active unless the option is
+    // explicitly enabled, while the dynamic mode is capped at five dots.
+    QVERIFY(indicatorSrc.contains(QStringLiteral("dynamicWindowDotsEnabled: dynamicWindowDots")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("effectiveActiveStyle: modernDockStyle ? 1 /*Dot*/ : activeStyle")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("value === \"Dot\" || value === \"Dots\" ? 1 : 0")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("Math.min(5, indicator.windowsCount")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("indicator.activeWindowIndex >= 4")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("for (var i = 4; i < minimizedList.length; ++i)")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("visible: !root.dynamicWindowDotsEnabled")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("lineDotReserve: extraDotsCount * (size + dotSpacing) + glowMargins")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("return root.width - root.lineDotReserve")));
+    QVERIFY(indicatorSrc.contains(QStringLiteral("return root.height - root.lineDotReserve")));
+
+    QFile subWindows(QStringLiteral(LATTE_SOURCE_DIR "/plasmoid/package/contents/ui/task/SubWindows.qml"));
+    QVERIFY(subWindows.open(QFile::ReadOnly));
+    const QString subWindowsSrc = QString::fromUtf8(subWindows.readAll());
+    QVERIFY(subWindowsSrc.contains(QStringLiteral("property int activeWindowIndex: -1")));
+    QVERIFY(subWindowsSrc.contains(QStringLiteral("property var windowsMinimizedList: []")));
+    QVERIFY(subWindowsSrc.contains(QStringLiteral("if (childs.get(i).model.IsWindow === true)")));
+    QVERIFY(subWindowsSrc.contains(QStringLiteral("target: windowsRepeater")));
+    QVERIFY(subWindowsSrc.contains(QStringLiteral("function onCountChanged() { windowsContainer.updateStates(); }")));
+
+    QFile indicatorHeader(QStringLiteral(LATTE_SOURCE_DIR "/app/view/indicator/indicator.h"));
+    QVERIFY(indicatorHeader.open(QFile::ReadOnly));
+    const QString indicatorHeaderSrc = QString::fromUtf8(indicatorHeader.readAll());
+    QVERIFY(indicatorHeaderSrc.contains(QStringLiteral("Q_PROPERTY(bool isModernDockStyle READ isModernDockStyle CONSTANT)")));
 }
 
 void SourceContractTest::mainCppMessageSuppressionCoversFrameworkWarnings()

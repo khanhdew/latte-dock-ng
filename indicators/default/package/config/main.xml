@@ -22,6 +22,10 @@
     <entry name="extraDotOnActive" type="Bool">
       <default>false</default>
     </entry>
+    <entry name="dynamicWindowDots" type="Bool">
+      <label>Show one dot per grouped window</label>
+      <default>false</default>
+    </entry>
     <entry name="glowEnabled" type="Bool">
        <default>false</default>
     </entry>
@@ -57,4 +61,3 @@
     </entry>
   </group>
 </kcfg>
-

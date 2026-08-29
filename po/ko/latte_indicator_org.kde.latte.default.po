@@ -155,6 +155,17 @@ msgstr "애플릿에 표시기 표시됨"
 msgid "Reverse indicator style"
 msgstr "표시기 스타일 반전"
 
+#: default/package/config/config.qml:422
+#, kde-format
+msgid "Show one dot per grouped window"
+msgstr ""
+
+#: default/package/config/config.qml:423
+#, kde-format
+msgid ""
+"Show up to four individual windows and a fifth dot for all remaining windows"
+msgstr ""
+
 #~ msgid "Size"
 #~ msgstr "크기"
 
