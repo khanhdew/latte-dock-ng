@@ -35,10 +35,9 @@ void PluginRegistrationUnitTest::containmentPluginRegistersTypes()
 
     const QString pluginFile = QStringLiteral(LATTE_CONTAINMENT_PLUGIN);
     QVERIFY(QFile::copy(QStringLiteral(LATTE_CONTAINMENT_QMLDIR), modulePath + QStringLiteral("/qmldir")));
-    // The QML engine resolves the qmldir "plugin <name>" entry as lib<name>.so
-    // on Unix, so the plugin must be staged under the lib-prefixed name.
-    const QString stagedPluginName = QLatin1String("lib") + QFileInfo(pluginFile).fileName();
-    QVERIFY(QFile::copy(pluginFile, modulePath + QLatin1Char('/') + stagedPluginName));
+    // $<TARGET_FILE> already includes the platform's shared-library prefix.
+    QVERIFY(QFile::copy(pluginFile, modulePath + QLatin1Char('/')
+                                  + QFileInfo(pluginFile).fileName()));
 
     QQmlEngine engine;
     engine.addImportPath(importRoot.path());
