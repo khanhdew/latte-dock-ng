@@ -86,6 +86,13 @@ the exact commit list and push status.
    preview delegate only after measuring startup RSS and verifying task-manager
    backend behavior.
 
+### Gentoo overlay release rule
+
+- When publishing a new overlay version, remove the previous versioned ebuild
+  from `ruizhi-overlay` before regenerating `Manifest`; keep only the current
+  versioned ebuild and the `9999` ebuild. Push the overlay update together with
+  the new release.
+
 ### Requires profiling before code changes
 
 1. Split the monolithic application target into focused libraries or object

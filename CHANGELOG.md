@@ -71,6 +71,65 @@
 
 ## [Unreleased]
 
+## [v1.2.42] - 2026-08-29
+
+### Fixed
+- XDG autostart is now the single source of truth (PR #50): the internal
+  ensureAutostart flag is removed, so a normal dock start never changes the
+  autostart state. Enabling autostart creates the desktop entry or sets
+  Hidden=false, disabling sets Hidden=true; the Preferences dialog, CLI and
+  DBus all use the same XDG state. Previously disabling could leave the active
+  desktop entry untouched, while enabling could overwrite Hidden=true set by
+  KDE.
+- The configuration controls restored after the QML review regressions: the
+  leftover maxlength debug ruler (Ruler/RulerMouseArea) and the stale qmllint
+  backlog plan are removed, and the canvas configuration controls
+  (MarginsArea, SettingsOverlay, HeaderSettings, CustomIndicatorButton) work
+  again.
+
+### Build & Toolchain
+- CMake baseline modernized to 3.20 / C++20: the deprecated implicit capture
+  of `this` via `[=]` is removed and `add_compile_options()` replaces the
+  global CMAKE_CXX_FLAGS append.
+- All three C++ QML plugin modules (org.kde.latte.core,
+  org.kde.latte.private.containment, org.kde.latte.private.tasks) migrate from
+  hand-written QQmlExtensionPlugin + qmldir to `qt_add_qml_module`: the
+  generated qmldir and plugin are installed into both QML install roots, and
+  the Types Q_GADGET / QObject types register declaratively via
+  QML_NAMED_ELEMENT.
+- plugins.qmltypes is installed next to each generated qmldir so qmllint and
+  Qt Creator can resolve the latte types; a new type-resolution deep lint
+  (scripts/qmllint-deep.sh) runs in CI against the freshly built modules.
+- New scripts/qmllint.sh syntax gate lints every git-tracked QML file and runs
+  as a dedicated `qml-lint` CI job; astyle is replaced by a clang-format
+  configuration.
+- The plugin-registration smoke tests no longer compile the removed plugin
+  classes: they stage the generated qmldir + plugin .so into a temporary
+  import path and resolve the types through a real QML engine, fixing the
+  false-positive local pass (the engine silently fell back to the system
+  latte-dock module).
+- default.nix version is kept in lockstep with CMakeLists (was stuck at
+  1.2.21).
+
+### QML modernization
+- Unversioned Qt module imports (QtQuick, QtQuick.Controls, Layouts, ...)
+  across all 229 tracked QML files - strict 1:1 rewrite, no behavior change.
+- Unversioned org.kde.* imports across 182 QML files (505 lines), dropping the
+  Qt5-style version mix inherited from upstream.
+
+### i18n
+- Shared LatteComponents QML strings (CheckBox, TextField, BadgeText) are now
+  extracted into latte-dock.pot (they were previously in no catalog), and the
+  separator plasmoid strings into plasma_applet_org.kde.latte.separator.pot.
+
+### Tests
+- New direct tests for the shared XDG autostart implementation
+  (autostartlogictest).
+- New source-contract tests cover the qt_add_qml_module registration,
+  singleton construction through the engine, and the unversioned abilities
+  import.
+- GCC and Clang autotest suites pass all 40 registered tests.
+
 ## [v1.2.40] - 2026-08-21
 
 ### Fixed
