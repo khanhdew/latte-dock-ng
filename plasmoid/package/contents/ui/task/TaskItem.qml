@@ -197,8 +197,6 @@ AbilityItem.BasicItem {
     property int dragRequestToken: 0
     property int windowsCount: subWindows.windowsCount
     property int windowsMinimizedCount: subWindows.windowsMinimized
-    property int activeWindowIndex: (IsGroupParent === true) ? subWindows.activeWindowIndex : (isActive ? 0 : -1)
-    property var windowsMinimizedList: (IsGroupParent === true) ? subWindows.windowsMinimizedList : [isMinimized]
 
     property string activity: tasksModel.activity
 
