@@ -1,3 +1,21 @@
+## [v1.2.44] - 2026-08-30
+
+### Added
+- Add opt-in per-window dots for grouped task indicators, showing up to four
+  individual windows and an additional dot for remaining windows.
+- Add the updated Latte application icon.
+
+### Fixed
+- Keep classic and modern indicator styles consistent when grouped-window
+  options are enabled, including line width and active-window behavior.
+- Restore the dock editor header settings context and keep indicator settings
+  controls aligned with the desktop theme.
+- Remove duplicate grouped-indicator properties from task items.
+
+### Tests
+- GCC and Clang autotest suites pass all 40 registered tests.
+- QML lint passes without errors.
+
 ## [v1.2.43] - 2026-08-29
 
 ### Fixed

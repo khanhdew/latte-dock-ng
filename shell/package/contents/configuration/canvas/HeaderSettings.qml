@@ -15,73 +15,89 @@ Item {
     required property var latteView
     required property var plasmoid
     required property var settingsRoot
-    width: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parent.width : parent.height
+    readonly property var _root: headerSettings.root
+    readonly property var _latteView: headerSettings.latteView
+    readonly property var _plasmoid: headerSettings.plasmoid
+    readonly property var _settingsRoot: headerSettings.settingsRoot
+
+    width: _plasmoid && parent ? (_plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parent.width : parent.height) : 0
     height: thickness
 
     readonly property bool containsMouse: stickOnBottomBtn.containsMouse || stickOnTopBtn.containsMouse
     readonly property int thickness: stickOnTopBtn.implicitHeight
 
-    readonly property int headMargin: headerSettings.settingsRoot.spacing * 2
+    readonly property int headMargin: _settingsRoot ? _settingsRoot.spacing * 2 : 0
 
     rotation: {
-        if (plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
+        if (!_plasmoid || _plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
             return  0;
         }
 
-        if (plasmoid.location === PlasmaCore.Types.LeftEdge) {
+        if (_plasmoid.location === PlasmaCore.Types.LeftEdge) {
             return 90;
-        } else if (plasmoid.location === PlasmaCore.Types.RightEdge) {
+        } else if (_plasmoid.location === PlasmaCore.Types.RightEdge) {
             return -90;
         }
     }
 
     x: {
-        if (plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
+        if (!_plasmoid || !_latteView || !_plasmoid.formFactor || !parent) {
             return 0;
         }
 
-        if (plasmoid.location === PlasmaCore.Types.LeftEdge) {
-            return latteView.maxNormalThickness + headMargin * 2 - width/2 + height/2;
-        } else if (plasmoid.location === PlasmaCore.Types.RightEdge) {
+        if (_plasmoid.formFactor === PlasmaCore.Types.Horizontal) {
+            return 0;
+        }
+
+        if (_plasmoid.location === PlasmaCore.Types.LeftEdge) {
+            return _latteView.maxNormalThickness + headMargin * 2 - width/2 + height/2;
+        } else if (_plasmoid.location === PlasmaCore.Types.RightEdge) {
             return headMargin - width/2 + height/2;
         }
     }
 
     y: {
-        if (plasmoid.formFactor === PlasmaCore.Types.Vertical) {
+        if (!_plasmoid || !parent) {
+            return 0;
+        }
+
+        if (_plasmoid.formFactor === PlasmaCore.Types.Vertical) {
             return width/2 - height/2;
         }
 
-        if (plasmoid.location === PlasmaCore.Types.BottomEdge) {
+        if (_plasmoid.location === PlasmaCore.Types.BottomEdge) {
             return headMargin;
-        } else if (plasmoid.location === PlasmaCore.Types.TopEdge) {
+        } else if (_plasmoid.location === PlasmaCore.Types.TopEdge) {
             return parent.height - stickOnTopBtn.height - headMargin;
         }
     }
 
     SettingsControls.Button{
         id: stickOnTopBtn
-        latteView: headerSettings.latteView
-        settingsRoot: headerSettings.parent
-        visible: headerSettings.root.isVertical
+        latteView: headerSettings._latteView
+        settingsRoot: headerSettings._settingsRoot
+        visible: headerSettings._root ? headerSettings._root.isVertical : false
 
         text: i18n("Stick On Top");
         tooltip: i18n("Stick maximum available space at top screen edge and ignore any top docks")
-        checked: headerSettings.plasmoid.configuration.isStickedOnTopEdge
-        iconPositionReversed: (headerSettings.plasmoid.location === PlasmaCore.Types.RightEdge)
+        checked: headerSettings._plasmoid && headerSettings._plasmoid.configuration
+                 ? headerSettings._plasmoid.configuration.isStickedOnTopEdge : false
+        iconPositionReversed: !!(headerSettings._plasmoid
+                                 && headerSettings._plasmoid.location === PlasmaCore.Types.RightEdge)
 
         icon: SettingsControls.StickIcon{}
 
         onPressedChanged: {
-            if (pressed) {
-                headerSettings.plasmoid.configuration.isStickedOnTopEdge = !headerSettings.plasmoid.configuration.isStickedOnTopEdge;
+            if (pressed && headerSettings._plasmoid && headerSettings._plasmoid.configuration) {
+                headerSettings._plasmoid.configuration.isStickedOnTopEdge = !headerSettings._plasmoid.configuration.isStickedOnTopEdge;
             }
         }
 
         states: [
             State {
                 name: "generalEdge"
-                when: (headerSettings.plasmoid.location !== PlasmaCore.Types.RightEdge)
+                when: !!(headerSettings._plasmoid
+                         && headerSettings._plasmoid.location !== PlasmaCore.Types.RightEdge)
 
                 AnchorChanges {
                     target: stickOnTopBtn
@@ -90,7 +106,8 @@ Item {
             },
             State {
                 name: "rightEdge"
-                when: (headerSettings.plasmoid.location === PlasmaCore.Types.RightEdge)
+                when: !!(headerSettings._plasmoid
+                         && headerSettings._plasmoid.location === PlasmaCore.Types.RightEdge)
 
                 AnchorChanges {
                     target: stickOnTopBtn
@@ -103,27 +120,30 @@ Item {
 
     SettingsControls.Button{
         id: stickOnBottomBtn
-        latteView: headerSettings.latteView
-        settingsRoot: headerSettings.parent
-        visible: headerSettings.root.isVertical
+        latteView: headerSettings._latteView
+        settingsRoot: headerSettings._settingsRoot
+        visible: headerSettings._root ? headerSettings._root.isVertical : false
 
         text: i18n("Stick On Bottom");
         tooltip: i18n("Stick maximum available space at bottom screen edge and ignore any bottom docks")
-        checked: headerSettings.plasmoid.configuration.isStickedOnBottomEdge
-        iconPositionReversed: (headerSettings.plasmoid.location !== PlasmaCore.Types.RightEdge)
+        checked: headerSettings._plasmoid && headerSettings._plasmoid.configuration
+                 ? headerSettings._plasmoid.configuration.isStickedOnBottomEdge : false
+        iconPositionReversed: !!(headerSettings._plasmoid
+                                 && headerSettings._plasmoid.location !== PlasmaCore.Types.RightEdge)
 
         icon: SettingsControls.StickIcon{}
 
         onPressedChanged: {
-            if (pressed) {
-                headerSettings.plasmoid.configuration.isStickedOnBottomEdge = !headerSettings.plasmoid.configuration.isStickedOnBottomEdge;
+            if (pressed && headerSettings._plasmoid && headerSettings._plasmoid.configuration) {
+                headerSettings._plasmoid.configuration.isStickedOnBottomEdge = !headerSettings._plasmoid.configuration.isStickedOnBottomEdge;
             }
         }
 
         states: [
             State {
                 name: "generalEdge"
-                when: (headerSettings.plasmoid.location !== PlasmaCore.Types.RightEdge)
+                when: !!(headerSettings._plasmoid
+                         && headerSettings._plasmoid.location !== PlasmaCore.Types.RightEdge)
 
                 AnchorChanges {
                     target: stickOnBottomBtn
@@ -132,7 +152,8 @@ Item {
             },
             State {
                 name: "rightEdge"
-                when: (headerSettings.plasmoid.location === PlasmaCore.Types.RightEdge)
+                when: !!(headerSettings._plasmoid
+                         && headerSettings._plasmoid.location === PlasmaCore.Types.RightEdge)
 
                 AnchorChanges {
                     target: stickOnBottomBtn

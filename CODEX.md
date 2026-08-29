@@ -12,6 +12,10 @@ project knowledge changes.
 - GCC and Clang builds must complete with zero warnings and zero errors.
 - Before removing code, trace all consumers and verify build plus runtime behavior.
 - Release work requires `cd build && ctest --output-on-failure` before versioning.
+- Release versioning must update both `CMakeLists.txt` (`VERSION`) and
+  `default.nix` (`version`) so NixOS packages stay synchronized. Before tagging,
+  run `nix flake check --print-build-logs` and
+  `nix build .#default --no-link --print-build-logs`.
 - The active optimization branch is `perf/memory-cpu-optimization-v2`, not
   `main`. For this user-requested optimization run, completed steps may be
   committed and pushed automatically. This is an explicit exception to the
