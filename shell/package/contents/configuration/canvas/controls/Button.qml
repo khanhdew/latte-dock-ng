@@ -36,8 +36,9 @@ Item{
     readonly property color appliedBackgroundColor: checked ? checkedBackgroundColor : backgroundColor
     readonly property color appliedBorderColor: checked ? checkedBorderColor : borderColor
 
-    readonly property bool _hasColorizer: latteView && latteView.colorizer
-    readonly property color _fallbackText: settingsRoot.textColor
+    readonly property bool _hasColorizer: !!(latteView && latteView.colorizer)
+    readonly property color _fallbackText: settingsRoot && settingsRoot.textColor !== undefined
+                                            ? settingsRoot.textColor : "#D7E3FF"
     readonly property color _fallbackBg: "#2d2d2d"
 
     readonly property color textColor: containsMouse && _hasColorizer ? latteView.colorizer.buttonTextColor : _fallbackText
@@ -58,9 +59,9 @@ Item{
                                                                         latteView.colorizer.buttonHoverColor.b,
                                                                         0.7) : _fallbackBg
 
-    readonly property color normalBorder: Qt.rgba(settingsRoot.textColor.r,
-                                                  settingsRoot.textColor.g,
-                                                  settingsRoot.textColor.b,
+    readonly property color normalBorder: Qt.rgba(_fallbackText.r,
+                                                  _fallbackText.g,
+                                                  _fallbackText.b,
                                                   0.7)
 
     readonly property color hoveredBorder: "#222222"
