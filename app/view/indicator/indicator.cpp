@@ -347,11 +347,12 @@ void Indicator::updateScheme()
         m_configLoader = new KConfigLoader(m_view->containment()->config().group(QStringLiteral("Indicator")).group(m_metadata.pluginId()), &file);
         m_configuration = new KDeclarative::ConfigPropertyMap(m_configLoader, this);
 
-        if (isModernDockStyle() && m_metadata.pluginId() == QLatin1String(Latte::PluginId::kDefaultIndicator)) {
-            // Modern is macOS-like: active/running state is always represented by a dot.
-            // Apply this before the QML indicator is instantiated to avoid a startup line frame.
-            m_configuration->setProperty("activeStyle", 1);
-        }
+        connect(m_configuration, &QQmlPropertyMap::valueChanged, this, [this]() {
+            if (m_view && m_view->containment()) {
+                auto config = m_view->containment()->config().group(QStringLiteral("Indicator"));
+                config.sync();
+            }
+        });
     } else {
         m_configLoader = nullptr;
         m_configuration = nullptr;
