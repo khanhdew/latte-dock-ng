@@ -144,6 +144,7 @@ AbilityItem.BasicItem {
     property bool hasMinimized: (IsGroupParent === true) ? subWindows.hasMinimized : isMinimized
     property bool hasShown: (IsGroupParent === true) ? subWindows.hasShown : !isMinimized && isWindow
     property int activeWindowIndex: (IsGroupParent === true) ? subWindows.activeWindowIndex : (isActive ? 0 : -1)
+    property var windowsMinimizedList: (IsGroupParent === true) ? subWindows.windowsMinimizedList : [isMinimized]
     property bool inAttention: isDemandingAttention && plasmoid.status === PlasmaCore.Types.NeedsAttentionStatus ? true : false
 
     /*animations flags*/
@@ -245,6 +246,7 @@ AbilityItem.BasicItem {
     indicator.windowsCount: !root.disableAllWindowsFunctionality ? taskItem.windowsCount : 0
     indicator.windowsMinimizedCount: !root.disableAllWindowsFunctionality ? taskItem.windowsMinimizedCount : 0
     indicator.activeWindowIndex: !root.disableAllWindowsFunctionality ? taskItem.activeWindowIndex : -1
+    indicator.windowsMinimizedList: !root.disableAllWindowsFunctionality ? taskItem.windowsMinimizedList : []
 
     indicator.scaleFactor: taskItem.parabolicItem.zoom
     indicator.panelOpacity: taskItem.abilities.myView.backgroundOpacity

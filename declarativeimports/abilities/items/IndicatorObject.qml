@@ -39,6 +39,7 @@ Item{
     property int windowsCount: 0
     property int windowsMinimizedCount: 0
     property int activeWindowIndex: -1
+    property var windowsMinimizedList: []
 
     property int currentIconSize: _indicator.metrics ? _indicator.metrics.iconSize : 48
     property int maxIconSize: _indicator.metrics ? _indicator.metrics.maxIconSize : 48
@@ -95,6 +96,7 @@ Item{
         readonly property alias windowsCount: _indicator.windowsCount
         readonly property alias windowsMinimizedCount: _indicator.windowsMinimizedCount
         readonly property alias activeWindowIndex: _indicator.activeWindowIndex
+        readonly property alias windowsMinimizedList: _indicator.windowsMinimizedList
 
         readonly property alias currentIconSize: _indicator.currentIconSize
         readonly property alias maxIconSize: _indicator.maxIconSize
