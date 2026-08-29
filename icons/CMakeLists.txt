@@ -7,6 +7,12 @@ ecm_install_icons(ICONS
     32-apps-latte-dock.svg
     48-apps-latte-dock.svg
     sc-apps-latte-dock.svg
+    16-apps-latte-dock.png
+    22-apps-latte-dock.png
+    24-apps-latte-dock.png
+    32-apps-latte-dock.png
+    48-apps-latte-dock.png
+    sc-apps-latte-dock.png
 THEME hicolor
 DESTINATION ${KDE_INSTALL_ICONDIR})
 
