@@ -104,9 +104,11 @@ Prebuilt packages are attached to every
   Mageia 10+
 - **`pkg.tar.zst`** — Arch Linux
 
-Every package format is install-checked automatically on its target
+Every binary package format is install-checked automatically on its target
 distro before release: source install, package-manager install
-(apt / dnf / pacman) and a headless launch.
+(apt / dnf / pacman) and a headless launch. The NixOS flake is also checked
+and built as a release gate; Nix users consume it through the flake interface
+instead of a standalone binary archive.
 
 The RPM requires glibc >= 2.34, a toolchain artifact
 (`__libc_start_main@GLIBC_2.34` from the build host's crt1) present in every

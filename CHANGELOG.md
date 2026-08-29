@@ -15,6 +15,8 @@
   development QML path overrides.
 - NixOS package and flake metadata are kept in sync with the release version
   and supported Plasma baseline.
+- The release workflow validates the NixOS flake with `nix flake check` and
+  `nix build` before publishing release artifacts.
 
 ## [v1.2.41] - 2026-08-23
 

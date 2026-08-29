@@ -191,9 +191,26 @@ jobs:
           name: package-${{ matrix.distro }}
           path: dist/
 
+  nixos:
+    name: NixOS (flake)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Check flake
+        run: nix flake check --print-build-logs
+
+      - name: Build NixOS package
+        run: nix build .#default --no-link --print-build-logs
+
   release:
     name: Create Release
-    needs: package
+    needs: [package, nixos]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
