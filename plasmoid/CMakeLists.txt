@@ -26,6 +26,11 @@ qt_add_qml_module(lattetasksplugin
     SOURCES ${tasks_SRCS}
 )
 
+# QML's Unix plugin loader expects the conventional lib-prefixed filename.
+set_target_properties(lattetasksplugin PROPERTIES
+    PREFIX "lib"
+)
+
 target_link_libraries(lattetasksplugin PRIVATE
                       Qt6::Core
                       Qt6::Gui

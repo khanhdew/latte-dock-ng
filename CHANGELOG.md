@@ -1,3 +1,21 @@
+## [v1.2.43] - 2026-08-29
+
+### Fixed
+- Fix Qt 6 QML plugin loading on Unix installations by using the
+  conventional `lib` prefix expected by the QML plugin loader for the core,
+  containment, and tasks modules.
+- Register Latte QML value types with valid lowercase names, preventing
+  `Types` registration errors that could leave the dock invisible after a
+  distribution package installation.
+
+### Tests
+- GCC and Clang builds complete successfully.
+- GCC and Clang autotest suites pass all 40 registered tests.
+- Runtime verification passes using the installed user build without
+  development QML path overrides.
+- NixOS package and flake metadata are kept in sync with the release version
+  and supported Plasma baseline.
+
 ## [v1.2.41] - 2026-08-23
 
 ### Performance

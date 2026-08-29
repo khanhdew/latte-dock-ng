@@ -18,7 +18,7 @@ namespace Tasks {
 class Types
 {
     Q_GADGET
-    QML_NAMED_ELEMENT(Types)
+    QML_NAMED_ELEMENT(types)
     QML_UNCREATABLE("Latte Tasks Types uncreatable")
 
 public:

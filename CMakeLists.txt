@@ -4,7 +4,7 @@ project(lattedock)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(NOT DEFINED VERSION)
-    set(VERSION 1.2.42)
+    set(VERSION 1.2.43)
 endif()
 set(AUTHOR "Ruizhi Zhong")
 set(EMAIL "ruizhi.zhong88@gmail.com")
@@ -270,13 +270,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/app/config-latte.h.cmake
 add_compile_options(-Wformat -Werror=format-security)
 
 # Share Same Core Types between declarativeimports and app.
-# Only the org.kde.latte.core copy carries QML type declarations: the QML
-# name "Types" must stay exclusive to the core module. The app and
-# containment copies are plain C++ headers and keep the Q_GADGET without
-# QML macros.
+# Only the org.kde.latte.core copy carries QML type declarations. The app and
+# containment copies are plain C++ headers and keep the Q_GADGET without QML
+# macros. QML value type names must start with a lowercase letter.
 set(CORETYPESHEADER "LIBCORETYPES_H")
 set(CORETYPESQMLINCLUDE "#include <QtQml>")
-set(CORETYPESQMLDECLARATIONS "    QML_NAMED_ELEMENT(Types)\n    QML_UNCREATABLE(\"Latte Types uncreatable\")")
+set(CORETYPESQMLDECLARATIONS "    QML_NAMED_ELEMENT(types)\n    QML_UNCREATABLE(\"Latte Types uncreatable\")")
 configure_file(declarativeimports/coretypes.h.in declarativeimports/core/types.h)
 set(CORETYPESHEADER "APPCORETYPES_H")
 set(CORETYPESQMLINCLUDE "")

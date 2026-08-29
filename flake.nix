@@ -1,5 +1,5 @@
 {
-  description = "Latte Dock NG: a Wayland-first dock for KDE Plasma 6.5+";
+  description = "Latte Dock NG: a Wayland-first dock for KDE Plasma 6.3+";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 

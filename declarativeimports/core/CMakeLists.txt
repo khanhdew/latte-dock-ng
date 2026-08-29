@@ -29,6 +29,11 @@ qt_add_qml_module(lattecoreplugin
     SOURCES ${lattecoreplugin_SRCS}
 )
 
+# QML's Unix plugin loader expects the conventional lib-prefixed filename.
+set_target_properties(lattecoreplugin PROPERTIES
+    PREFIX "lib"
+)
+
 target_link_libraries(lattecoreplugin PRIVATE
     latteLogging
     Qt6::Quick

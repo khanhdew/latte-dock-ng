@@ -25,6 +25,11 @@ qt_add_qml_module(lattecontainmentplugin
     SOURCES ${containment_SRCS}
 )
 
+# QML's Unix plugin loader expects the conventional lib-prefixed filename.
+set_target_properties(lattecontainmentplugin PROPERTIES
+    PREFIX "lib"
+)
+
 target_link_libraries(lattecontainmentplugin PRIVATE
                       latteLogging
                       Qt6::Core
