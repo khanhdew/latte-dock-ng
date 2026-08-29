@@ -37,6 +37,8 @@ Item{
     property bool hasMinimized: false;
     property bool hasShown: false;
     property bool hasActive: false;
+    property int activeWindowIndex: -1;
+    property var windowsMinimizedList: [];
 
     Repeater{
         id: windowsRepeater
@@ -105,23 +107,33 @@ Item{
         hasMinimized = false;
         hasShown = false;
         hasActive = false;
+        activeWindowIndex = -1;
+        windowsMinimizedList = [];
 
         if(IsGroupParent){
             checkInternalStates();
         } else {
             var minimized = 0;
+            var minList = [];
 
-            if(taskItem.isActive)
+            if(taskItem.isActive){
                 hasActive = true;
+                activeWindowIndex = 0;
+            }
 
             if(taskItem.isMinimized){
                 hasMinimized = true;
                 minimized = minimized + 1;
-            } else if (taskItem.isWindow) {
-                hasShown = true;
+                minList.push(true);
+            } else {
+                minList.push(false);
+                if (taskItem.isWindow) {
+                    hasShown = true;
+                }
             }
 
             windowsMinimized = minimized;
+            windowsMinimizedList = minList;
         }
     }
 
@@ -129,22 +141,32 @@ Item{
         var childs = windowsLocalModel.items;
 
         var minimized = 0;
+        var activeIndex = -1;
+        var minList = [];
 
         for(var i=0; i<childs.count; ++i){
             var kid = childs.get(i);
 
-            if (kid.model.IsActive)
+            if (kid.model.IsActive) {
                 hasActive = true;
+                activeIndex = i;
+            }
 
             if(kid.model.IsMinimized) {
                 hasMinimized = true;
                 minimized = minimized + 1;
-            } else if (kid.model.IsWindow) {
-                hasShown = true;
+                minList.push(true);
+            } else {
+                minList.push(false);
+                if (kid.model.IsWindow) {
+                    hasShown = true;
+                }
             }
         }
 
         windowsMinimized = minimized;
+        activeWindowIndex = activeIndex;
+        windowsMinimizedList = minList;
     }
 
     function windowsTitles() {
