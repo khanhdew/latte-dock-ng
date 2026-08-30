@@ -106,6 +106,7 @@ private Q_SLOTS:
     void appletsModelHasNoPersonalDataAppletList();
     void lattePackageShellPluginNameBranchingIsCorrect();
     void indicatorPlasmaTypeIsRemappedToDefault();
+    void appearanceConfigPreservesIndicatorStyleConfiguration();
     void mainCppMessageSuppressionCoversFrameworkWarnings();
     void appletItemInternalViewSplitterAndSortDragGuards();
     void appletItemFallbackTrackedWindowsAndConstraintHints();
@@ -2607,6 +2608,27 @@ void SourceContractTest::dynamicWindowDotsAreOptInAndAggregateOverflow()
     QVERIFY(indicatorHeader.open(QFile::ReadOnly));
     const QString indicatorHeaderSrc = QString::fromUtf8(indicatorHeader.readAll());
     QVERIFY(indicatorHeaderSrc.contains(QStringLiteral("Q_PROPERTY(bool isModernDockStyle READ isModernDockStyle CONSTANT)")));
+}
+
+void SourceContractTest::appearanceConfigPreservesIndicatorStyleConfiguration()
+{
+    QFile appearance(QStringLiteral(LATTE_SOURCE_DIR "/shell/package/contents/configuration/pages/AppearanceConfig.qml"));
+    QVERIFY(appearance.open(QFile::ReadOnly));
+    const QString appearanceSource = QString::fromUtf8(appearance.readAll());
+
+    // AppearanceConfig must not run applyDockStylePreset on Component.onCompleted,
+    // which would clobber user configuration when the settings dialog is opened.
+    QVERIFY(!appearanceSource.contains(QStringLiteral("applyDockStylePreset(plasmoid.configuration.dockStyle")));
+
+    // Preset application must not overwrite activeStyle back to Line (0).
+    QVERIFY(!appearanceSource.contains(QStringLiteral("activeStyle = targetStyle === 1 ? 1 : 0")));
+
+    QFile indicatorCpp(QStringLiteral(LATTE_SOURCE_DIR "/app/view/indicator/indicator.cpp"));
+    QVERIFY(indicatorCpp.open(QFile::ReadOnly));
+    const QString indicatorCppSrc = QString::fromUtf8(indicatorCpp.readAll());
+
+    // Indicator scheme update must connect valueChanged to immediately sync config to disk.
+    QVERIFY(indicatorCppSrc.contains(QStringLiteral("connect(m_configuration, &QQmlPropertyMap::valueChanged")));
 }
 
 void SourceContractTest::mainCppMessageSuppressionCoversFrameworkWarnings()
