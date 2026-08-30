@@ -107,6 +107,18 @@
   stale Dock/Panel msgids across all po domains, and that the translation
   Messages.sh scripts reference only existing directories.
 
+## [v1.2.45] - 2026-08-30
+
+### Fixed
+- Use the versioned `latte-dock-ng` icon name consistently in the application
+  desktop entry, kicker action, and application window so updated shortcuts
+  load the current artwork instead of a cached legacy icon.
+- Fix the SVG icon wrappers to reference the PNG companion installed beside
+  them, allowing KDE icon themes to render the new artwork correctly.
+
+### Tests
+- CMake build and the full registered autotest suite pass.
+
 ## [Unreleased]
 
 ## [v1.2.42] - 2026-08-29
