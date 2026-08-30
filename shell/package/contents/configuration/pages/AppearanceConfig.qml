@@ -71,8 +71,9 @@ PlasmaComponents.Page {
                 plasmoid.configuration.iconSize = 64;
             }
 
+            page.latteView.indicator.type = "org.kde.latte.default";
+
             if (targetStyle === 1) { // Modern
-                page.latteView.indicator.type = "org.kde.latte.default";
                 // Modern keeps the default indicator but changes its geometry in the indicator QML.
             } else { // Classic
                 var classicPanelSize = Number(plasmoid.configuration.panelSize);
