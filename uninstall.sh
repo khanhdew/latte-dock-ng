@@ -12,6 +12,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 dry_run="false"
 manifest_provided="false"
 purge_user_data="false"
+preserve_autostart="false"
 install_mode="auto"   # auto | user | system
 
 declare -a manifest_paths=()
@@ -56,6 +57,7 @@ Options:
   --dry-run             Print what would be removed without deleting
   --purge-user-data     Also remove user config/cache (default ON for --system)
   --no-purge-user-data  Skip user data removal even in --system mode
+  --preserve-autostart  Keep user XDG autostart entries (used during upgrades)
 EOF
 }
 
@@ -72,6 +74,7 @@ while (($# > 0)); do
         --dry-run)            dry_run="true" ;;
         --purge-user-data)    purge_user_data="true" ;;
         --no-purge-user-data) purge_user_data="no" ;;
+        --preserve-autostart) preserve_autostart="true" ;;
         --help|-h)            usage; exit 0 ;;
         *)
             echo "Error: unknown option '$1'." >&2; usage; exit 2 ;;
@@ -331,9 +334,7 @@ for user_home in "${user_homes[@]:-}"; do
                 "${user_home}/.local/bin/latte-dock-ng-add-launcher" \
                 "${user_home}/.local/share/applications/org.kde.latte-dock.desktop" \
                 "${user_home}/.local/share/applications/latte-dock.desktop" \
-                "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop" \
-                "${user_home}/.config/autostart/org.kde.latte-dock.desktop" \
-                "${user_home}/.config/autostart/latte-dock.desktop"; do
+                "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }
             rm -f -- "$file_path"
         done
@@ -353,7 +354,14 @@ for user_home in "${user_homes[@]:-}"; do
                 "${user_home}/.local/bin/latte-dock-ng-add-launcher" \
                 "${user_home}/.local/share/applications/org.kde.latte-dock.desktop" \
                 "${user_home}/.local/share/applications/latte-dock.desktop" \
-                "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop" \
+                "${user_home}/.local/share/plasma/kickeractions/org.kde.latte-dock.kickeractions.desktop"; do
+            [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }
+            rm -f -- "$file_path"
+        done
+    fi
+
+    if [[ "$preserve_autostart" != "true" ]]; then
+        for file_path in \
                 "${user_home}/.config/autostart/org.kde.latte-dock.desktop" \
                 "${user_home}/.config/autostart/latte-dock.desktop"; do
             [[ "$dry_run" == "true" ]] && { echo "rm -f -- $file_path"; continue; }

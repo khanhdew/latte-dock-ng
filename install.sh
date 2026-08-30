@@ -216,6 +216,9 @@ if [[ "$preclean_install" == "true" ]]; then
         uninstall_cmd+=(--purge-user-data)
     else
         uninstall_cmd+=(--no-purge-user-data)
+        # The XDG autostart entry is user preference, not an installed file.
+        # Preserve it while replacing the application package during upgrades.
+        uninstall_cmd+=(--preserve-autostart)
     fi
     echo "Info: running pre-install cleanup: ${uninstall_cmd[*]}"
     "${uninstall_cmd[@]}"
